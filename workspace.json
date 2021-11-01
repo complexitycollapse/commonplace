@@ -1,6 +1,29 @@
 {
   "version": 2,
-  "projects": {},
+  "projects": {
+    "commonplace-core": {
+      "root": "libs/commonplace-core",
+      "sourceRoot": "libs/commonplace-core/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/commonplace-core/**/*.js"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/commonplace-core"],
+          "options": {
+            "jestConfig": "libs/commonplace-core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   }
