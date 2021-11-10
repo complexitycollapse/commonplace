@@ -40,6 +40,18 @@ export function span(origin, start, length) {
     return offset >= 0 && offset < length;
   }
 
+  function abuts(span) {
+    return equalOrigin(span) && s.next() === span.start;
+  }
+
+  function overlaps(span) {
+    return s.equalOrigin(span) && !(s.end() < span.start || span.end() < start);
+  }
+
+  function canMergeWith(span) {
+      return s.overlaps(span) || s.abuts(span) || span.abuts(s);
+  }
+
   addMethods(s, {
     clone,
     next: () => start + length,
@@ -48,7 +60,10 @@ export function span(origin, start, length) {
     startDiff: (span) => start - span.start,
     endDiff: (span) => s.end() - span.end(),
     displace: (n) => clone({ start: start + n}),
-    contains
+    contains,
+    abuts,
+    overlaps,
+    canMergeWith
   });
 
   return s;

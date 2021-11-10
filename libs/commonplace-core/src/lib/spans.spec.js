@@ -120,3 +120,147 @@ describe('contains', () => {
         expect(s.contains(s.start)).toBeTruthy();
     });
 });
+
+describe('abuts', () => {
+    it('returns true when the next position of the 1st span is equal to the start of the 2nd', () => {
+        let s1 = make();
+        let s2 = s1.clone({start: s1.next()});
+        expect(s1.abuts(s2)).toBeTruthy();
+    });
+
+    it('returns false if the spans have different origins', () => {
+        let s1 = make();
+        let s2 = s1.clone({origin: "something else", start: s1.next()});
+        expect(s1.abuts(s2)).toBeFalsy();
+    });
+
+    it('returns false if the spans overlap', () => {
+        let s1 = make();
+        let s2 = s1.clone({start: s1.end()});
+        expect(s1.abuts(s2)).toBeFalsy();
+    });
+
+    it('returns false the abut the wrong way round', () => {
+        let s1 = make();
+        let s2 = s1.clone({start: s1.next()});
+        expect(s2.abuts(s1)).toBeFalsy();
+    });
+
+    it('returns false if the spans have a gap between them', () => {
+        let s1 = make();
+        let s2 = s1.clone({start: s1.next() + 1});
+        expect(s1.abuts(s2)).toBeFalsy();
+    });
+});
+
+describe('overlaps', () => {
+    it('returns false if the span has a different origin', () => {
+        let s1 = make();
+        let s2 = s1.clone({ origin: "different" });
+        expect(s1.overlaps(s2)).toBeFalsy();
+    });
+
+    it('returns true if the span touches our end', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.end() });
+        expect(s1.overlaps(s2)).toBeTruthy();
+    });
+
+    it('returns true if we touch the end of the span', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.end() });
+        expect(s2.overlaps(s1)).toBeTruthy();
+    });
+
+    it('returns true if the spans are coextensive', () => {
+        let s1 = make();
+        let s2 = s1.clone();
+        expect(s1.overlaps(s2)).toBeTruthy();
+    });
+
+    it('returns false if the span is just after', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() });
+        expect(s1.overlaps(s2)).toBeFalsy();
+    });
+
+    it('returns false if the span is just before', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() });
+        expect(s2.overlaps(s1)).toBeFalsy();
+    });
+
+    it('returns true if we contain the span', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.start + 1, length: s1.length - 1});
+        expect(s1.overlaps(s2)).toBeTruthy();
+    });
+
+    it('returns true if the span contains us', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.start + 1, length: s1.length - 1});
+        expect(s2.overlaps(s1)).toBeTruthy();
+    });
+});
+
+describe('canMergeWith', () => {
+    it('is false if the spans have different origins', () => {
+        let s1 = make();
+        let s2 = s1.clone({ origin: "different" });
+        expect(s1.canMergeWith(s2)).toBeFalsy();
+    });
+
+    it('returns true if the span touches our end', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.end() });
+        expect(s1.canMergeWith(s2)).toBeTruthy();
+    });
+
+    it('returns true if we touch the end of the span', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.end() });
+        expect(s2.canMergeWith(s1)).toBeTruthy();
+    });
+
+    it('returns true if the spans are coextensive', () => {
+        let s1 = make();
+        let s2 = s1.clone();
+        expect(s1.canMergeWith(s2)).toBeTruthy();
+    });
+
+    it('returns true if the span is just after', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() });
+        expect(s1.canMergeWith(s2)).toBeTruthy();
+    });
+
+    it('returns true if the span is just before', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() });
+        expect(s2.canMergeWith(s1)).toBeTruthy();
+    });
+
+    it('returns false if the span is after with a gap between', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() + 1 });
+        expect(s1.canMergeWith(s2)).toBeFalsy();
+    });
+
+    it('returns false if the span is before with a gap between', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.next() + 1 });
+        expect(s2.canMergeWith(s1)).toBeFalsy();
+    });
+
+    it('returns true if we contain the span', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.start + 1, length: s1.length - 1});
+        expect(s1.canMergeWith(s2)).toBeTruthy();
+    });
+
+    it('returns true if the span contains us', () => {
+        let s1 = make();
+        let s2 = s1.clone({ start: s1.start + 1, length: s1.length - 1});
+        expect(s2.canMergeWith(s1)).toBeTruthy();
+    });
+});
