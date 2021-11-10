@@ -31,7 +31,18 @@ export function span(origin, start, length) {
     return span(origin, start, length);
   }
 
-  addMethods(s, {clone});
+  function equalOrigin(span) {
+    return span.origin == origin;
+  }
+
+  addMethods(s, {
+    clone,
+    next: () => start + length,
+    end: () => start + length - 1,
+    equalOrigin,
+    startDiff: (span) => start - span.start,
+    endDiff: (span) => s.end() - span.end()
+  });
 
   return s;
 }

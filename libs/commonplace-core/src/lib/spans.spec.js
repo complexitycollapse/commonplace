@@ -20,6 +20,10 @@ expect.extend({
     }
 });
 
+function make() {
+    return span("origin", 10, 20);
+}
+
 describe('span', () => {
     it('has origin, start and length', () => {
         let actual = span("origin", 1, 100);
@@ -31,19 +35,50 @@ describe('span', () => {
 
 describe('clone', () => {
     it('produces an exact copy when there are no arguments', () => {
-        let original = span("origin", 10, 20);
+        let original = make();
         expect(original.clone()).toEqualSpan(original);
     });
 
+    it('produces an exact copy when passed an empty object', () => {
+        let original = make();
+        expect(original.clone({})).toEqualSpan(original);
+    });
+
     it('replaces only origin when that is passed as a parameter', () => {
-        expect(span("origin", 10, 20).clone({ origin: "other" })).toEqual(expect.objectContaining({origin: "other", start: 10, length: 20}))
+        expect(make().clone({ origin: "other" })).toEqual(expect.objectContaining({origin: "other", start: 10, length: 20}))
     });
 
     it('replaces only start when that is passed as a parameter', () => {
-        expect(span("origin", 10, 20).clone({ start: 99 })).toEqual(expect.objectContaining({origin: "origin", start: 99, length: 20}))
+        expect(make().clone({ start: 99 })).toEqual(expect.objectContaining({origin: "origin", start: 99, length: 20}))
     });
 
     it('replaces only length when that is passed as a parameter', () => {
-        expect(span("origin", 10, 20).clone({ length: 99 })).toEqual(expect.objectContaining({origin: "origin", start: 10, length: 99}))
+        expect(make().clone({ length: 99 })).toEqual(expect.objectContaining({origin: "origin", start: 10, length: 99}))
+    });
+});
+
+describe('basic span functions', () => {
+    it('next returns the position exactly after the end of the span', () => {
+        expect(make().next()).toEqual(30);
+    });
+
+    it('end returns the last position occupied by the span', () => {
+        expect(make().end()).toEqual(29);
+    });
+
+    it('equalOrigin returns true if the origins are the same', () => {
+        expect(span("origin1", 10, 20).equalOrigin(span("origin1", 15, 25)));
+    });
+
+    it('equalOrigin returns false if the origins are different', () => {
+        expect(span("origin1", 10, 20).equalOrigin(span("origin2", 10, 20)));
+    });
+
+    it('startDiff returns the difference between the start points or two spans', () => {
+        expect(make().startDiff(span("abc", 15, 20))).toEqual(-5);
+    });
+
+    it('endDiff returns the difference between the start points or two spans', () => {
+        expect(make().endDiff(span("abc", 10, 15))).toEqual(5);
     });
 });
