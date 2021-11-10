@@ -88,3 +88,35 @@ describe('basic span functions', () => {
         expect(original.displace(22)).toEqualSpan(span(original.origin, original.start + 22, original.length));
     });
 });
+
+describe('contains', () => {
+    it('is false if the point is before the span', () => {
+        let s = make();
+        expect(s.contains(s.start -1)).toBeFalsy();
+    });
+
+    it('is false if the point is after the span', () => {
+        let s = make();
+        expect(s.contains(s.next())).toBeFalsy();
+    });
+
+    it('is true if the point is the start of the span', () => {
+        let s = make();
+        expect(s.contains(s.start)).toBeTruthy();
+    });
+
+    it('is true if the point is the end of the span', () => {
+        let s = make();
+        expect(s.contains(s.end())).toBeTruthy();
+    });
+
+    it('is true if the point is within the span', () => {
+        let s = make();
+        expect(s.contains(15)).toBeTruthy();
+    });
+
+    it('is true if the span is one point long and the point equals it', () => {
+        let s = span("origin", 100, 1);
+        expect(s.contains(s.start)).toBeTruthy();
+    });
+});

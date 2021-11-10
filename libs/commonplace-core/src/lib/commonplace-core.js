@@ -35,6 +35,11 @@ export function span(origin, start, length) {
     return span.origin == origin;
   }
 
+  function contains(point) {
+    let offset = point - start;
+    return offset >= 0 && offset < length;
+  }
+
   addMethods(s, {
     clone,
     next: () => start + length,
@@ -42,7 +47,8 @@ export function span(origin, start, length) {
     equalOrigin,
     startDiff: (span) => start - span.start,
     endDiff: (span) => s.end() - span.end(),
-    displace: (n) => clone({ start: start + n})
+    displace: (n) => clone({ start: start + n}),
+    contains
   });
 
   return s;
