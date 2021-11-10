@@ -1,4 +1,5 @@
-import { span, clone } from './commonplace-core';
+import {describe, expect, it, test} from '@jest/globals';
+import { span } from './commonplace-core';
 
 expect.extend({
     toEqualSpan(actualSpan, expectedSpan) {
@@ -58,27 +59,27 @@ describe('clone', () => {
 });
 
 describe('basic span functions', () => {
-    it('next returns the position exactly after the end of the span', () => {
+    test('next returns the position exactly after the end of the span', () => {
         expect(make().next()).toEqual(30);
     });
 
-    it('end returns the last position occupied by the span', () => {
+    test('end returns the last position occupied by the span', () => {
         expect(make().end()).toEqual(29);
     });
 
-    it('equalOrigin returns true if the origins are the same', () => {
+    test('equalOrigin returns true if the origins are the same', () => {
         expect(span("origin1", 10, 20).equalOrigin(span("origin1", 15, 25)));
     });
 
-    it('equalOrigin returns false if the origins are different', () => {
+    test('equalOrigin returns false if the origins are different', () => {
         expect(span("origin1", 10, 20).equalOrigin(span("origin2", 10, 20)));
     });
 
-    it('startDiff returns the difference between the start points or two spans', () => {
+    test('startDiff returns the difference between the start points or two spans', () => {
         expect(make().startDiff(span("abc", 15, 20))).toEqual(-5);
     });
 
-    it('endDiff returns the difference between the start points or two spans', () => {
+    test('endDiff returns the difference between the start points or two spans', () => {
         expect(make().endDiff(span("abc", 10, 15))).toEqual(5);
     });
 });
