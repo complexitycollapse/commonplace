@@ -82,4 +82,9 @@ describe('basic span functions', () => {
     test('endDiff returns the difference between the start points or two spans', () => {
         expect(make().endDiff(span("abc", 10, 15))).toEqual(5);
     });
+
+    test('displace returns a span whose start has been moved by the given amount', () => {
+        let original = make();
+        expect(original.displace(22)).toEqualSpan(span(original.origin, original.start + 22, original.length));
+    });
 });

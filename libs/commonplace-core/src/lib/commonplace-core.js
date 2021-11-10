@@ -41,7 +41,8 @@ export function span(origin, start, length) {
     end: () => start + length - 1,
     equalOrigin,
     startDiff: (span) => start - span.start,
-    endDiff: (span) => s.end() - span.end()
+    endDiff: (span) => s.end() - span.end(),
+    displace: (n) => clone({ start: start + n})
   });
 
   return s;
