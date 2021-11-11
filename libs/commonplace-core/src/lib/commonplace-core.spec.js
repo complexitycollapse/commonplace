@@ -1,4 +1,4 @@
-import {describe, expect, it, test} from '@jest/globals';
+import { describe, expect, it, test } from '@jest/globals';
 import { commonplaceCore } from './commonplace-core';
 describe('commonplaceCore', () => {
   it('is an object', () => {
