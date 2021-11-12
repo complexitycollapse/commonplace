@@ -273,3 +273,35 @@ describe('canMergeWith', () => {
     expect(s2.canMergeWith(s1)).toBeTruthy();
   });
 });
+
+describe('merge', () => {
+  it('returns an identical span if the argument is contained in this', () => {
+    let s1 = span("o", 10, 20);
+    let s2 = span ("o", 11, 10);
+    expect(s1.merge(s2)).toEqualSpan(s1);
+  });
+
+  it('returns a span identical to the argument if this is contained in the argument', () => {
+    let s1 = span("o", 10, 20);
+    let s2 = span ("o", 11, 10);
+    expect(s2.merge(s1)).toEqualSpan(s1);
+  });
+
+  it('returns a span identical to the original if they are both equal', () => {
+    let s1 = span("o", 10, 20);
+    let s2 = s1.clone();
+    expect(s1.merge(s2)).toEqualSpan(s1);
+  });
+
+  it('returns a span encompassing both spans if this comes before that', () => {
+    let s1 = span("o", 10, 20);
+    let s2 = span ("o", 11, 30);
+    expect(s1.merge(s2)).toEqualSpan(span("o", 10, 31));
+  });
+
+  it('returns a span encompassing both spans if that comes before this', () => {
+    let s1 = span("o", 10, 20);
+    let s2 = span ("o", 11, 30);
+    expect(s2.merge(s1)).toEqualSpan(span("o", 10, 31));
+  });
+});

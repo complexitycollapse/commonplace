@@ -1,23 +1,4 @@
-function addProperties(obj, props) {
-  for (const key in props) {
-    if (Object.hasOwnProperty.call(props, key)) {
-      Object.defineProperty(obj, key, {
-        value: props[key],
-        enumerable: true,
-      });
-    }
-  }
-}
-
-function addMethods(obj, props) {
-  for (const key in props) {
-    if (Object.hasOwnProperty.call(props, key)) {
-      Object.defineProperty(obj, key, {
-        value: props[key],
-      });
-    }
-  }
-}
+import { addProperties, addMethods } from "./utils";
 
 export function span(origin, start, length) {
   let s = {};
@@ -51,6 +32,11 @@ export function span(origin, start, length) {
     return s.overlaps(span) || s.abuts(span) || span.abuts(s);
   }
 
+  function merge(sp) {
+      let newStart = Math.min(start, sp.start);
+      return span("o", newStart, Math.max(s.next(), sp.next()) - newStart);
+  }
+
   addMethods(s, {
     clone,
     next: () => start + length,
@@ -63,6 +49,7 @@ export function span(origin, start, length) {
     abuts,
     overlaps,
     canMergeWith,
+    merge
   });
 
   return s;
