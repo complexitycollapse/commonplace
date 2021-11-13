@@ -1,6 +1,11 @@
 import { describe, expect, it, test } from '@jest/globals';
 import { spanSet } from './span-sets';
 import { span } from './spans';
+import { toEqualSpan } from './spans.test-helpers';
+
+expect.extend({
+  toEqualSpan
+});
 
 function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
   return span(origin, start, length);
@@ -29,5 +34,28 @@ describe('concLength', () => {
     ss.append(makeSpan({length: 50}));
     ss.append(makeSpan({length: 3}));
     expect(ss.concLength()).toEqual(153);
+  });
+});
+
+describe('iterate', () => {
+  it('returns undefined if the array is empty', () => {
+    let iterator = spanSet(10).iterate();
+    expect(iterator()).toBeUndefined();
+    expect(iterator()).toBeUndefined();
+    expect(iterator()).toBeUndefined();
+  });
+
+  it('returns the spans in sequence', () => {
+    let ss = spanSet(10);
+    let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
+    ss.append(s1);
+    ss.append(s2);
+    ss.append(s3);
+    let iterator = ss.iterate();
+
+    expect(iterator()).toEqualSpan(s1);
+    expect(iterator()).toEqualSpan(s2);
+    expect(iterator()).toEqualSpan(s3);
+    expect(iterator()).toBeUndefined();
   });
 });

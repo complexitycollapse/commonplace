@@ -1,38 +1,26 @@
 import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
-function cons(head, rest) {
-  return { head, rest };
-}
-
-let nil = {isNull: true};
-
-function fold(init, fn, list) {
-  for(let rest = list; rest != nil; rest = rest.rest) {
-    init = fn(init, rest.head);
-  }
-
-  return init;
-}
-
 export function spanSet(offset) {
   let ss = {};
-  let spans = nil;
+  let spans = [];
 
   function append(span) {
-    if (spans == nil) {
-      spans = cons(span, nil);
-    } else {
-      let rest = spans;
-      for(; rest.rest != nil; rest = rest.rest);
-      rest.rest = cons(span, nil);
-    }
+    spans.push(span);
+  }
+
+  function iterate() {
+    let i = 0;
+    return () => {
+      return spans[i++];
+    };
   }
 
   addMethods(ss, {
-    concLength: () => fold(0, (x, y)=> x + y.length, spans),
+    concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
-    offset: () => offset
+    offset: () => offset,
+    iterate
   });
 
   return ss;
