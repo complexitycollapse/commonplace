@@ -117,6 +117,18 @@ describe('iterate', () => {
       expect(mockCallback.mock.calls[1][0]).toEqualSpan(s2);
       expect(mockCallback.mock.calls[2][0]).toEqualSpan(s3);
     });
+
+    it('calls the callback with the sum of the lengths of the previous spans', () => {
+      const mockCallback = jest.fn((x, y) => x);
+      let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
+      let ss = spanSet(10, s1, s2, s3);
+
+      ss.iterate().forEach(mockCallback);
+
+      expect(mockCallback.mock.calls[0][1]).toEqual(0);
+      expect(mockCallback.mock.calls[1][1]).toEqual(20);
+      expect(mockCallback.mock.calls[2][1]).toEqual(50);
+    });
   });
 });
 
@@ -179,5 +191,57 @@ describe('mergeSets', () => {
     ss1.mergeSets(ss2);
 
     expect(ss1).hasSpans(s1a, s1b, s1c.merge(s2a), s2b, s2c);
+  });
+});
+
+describe('split', () => {
+  it('returns two empty SpanSets if the original set was empty', () => {
+    let ss = spanSet(1);
+
+    let result = ss.split(0);
+
+    expect(result[0]).hasSpans();
+    expect(result[1]).hasSpans();
+  });
+
+  it('returns an empty span and a copy of the original SpanSet if the point is zero', () => {
+    let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
+    let ss = spanSet(1, s1, s2);
+
+    let result = ss.split(0);
+
+    expect(result[0]).hasSpans();
+    expect(result[1]).hasSpans(s1, s2);
+  });
+
+  it('returns a copy of the original SpanSet then an empty span if the point is beyond the total length', () => {
+    let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
+    let ss = spanSet(1, s1, s2);
+
+    let result = ss.split(ss.concLength);
+
+    expect(result[0]).hasSpans(s1, s2);
+    expect(result[1]).hasSpans();
+  });
+
+  it('divides the spans in two if the point is exactly between them', () => {
+    let s1 = span("a", 0, 5), s2 = span("a", 2, 5);
+    let ss = spanSet(1, s1, s2);
+
+    let result = ss.split(5);
+
+    expect(result[0]).hasSpans(s1);
+    expect(result[1]).hasSpans(s2);
+  });
+
+  it('splits the span that the point lies within, with the point included in the second span', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5), s3 = span("c", 10, 20);
+    let ss = spanSet(1, s1, s2, s3);
+    let splits = s2.split(3);
+
+    let result = ss.split(8);
+
+    expect(result[0]).hasSpans(s1, splits[0]);
+    expect(result[1]).hasSpans(splits[1], s3);
   });
 });

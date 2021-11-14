@@ -17,8 +17,10 @@ export function spanSet(offset, ...initialSpans) {
 
 
     iterator.forEach = (fn) => {
-      for (var next = iterator(); next !== undefined; next = iterator()) {
-        fn(next);
+      let position = 0;
+      for (let next = iterator(); next !== undefined; next = iterator()) {
+        fn(next, position);
+        position += next.length;
       }
     }
 
@@ -45,12 +47,32 @@ export function spanSet(offset, ...initialSpans) {
     iterator.forEach(append);
   }
 
+  function split(point) {
+    let iterator = iterate();
+    let first = spanSet(1), second = spanSet(1);
+
+    iterator.forEach((span, position) => {
+      if (position >= point) {
+        second.append(span);
+      } else if (position + span.length > point) {
+        let splits = span.split(point - position);
+        first.append(splits[0]);
+        second.append(splits[1]);
+      } else {
+        first.append(span);
+      }
+    });
+
+    return [first, second];
+  }
+
   addMethods(ss, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     offset: () => offset,
     iterate,
-    mergeSets
+    mergeSets,
+    split
   });
 
   return ss;
