@@ -50,7 +50,7 @@ export function span(origin, start, length) {
     overlaps,
     canMergeWith,
     merge,
-    divide: (length) => length <= 0 || length >= s.length
+    split: (length) => length <= 0 || length >= s.length
         ? [s]
         : [clone({length}), clone({start: start + length, length: s.length - length})]
   });
