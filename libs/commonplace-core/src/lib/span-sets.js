@@ -11,9 +11,18 @@ export function spanSet(offset) {
 
   function iterate() {
     let i = 0;
-    return () => {
+    let iterator = () => {
       return spans[i++];
     };
+
+
+    iterator.forEach = (fn) => {
+      for (var next = iterator(); next !== undefined; next = iterator()) {
+        fn(next);
+      }
+    }
+
+    return iterator;
   }
 
   function mergeSets(spanSet) {
@@ -33,9 +42,7 @@ export function spanSet(offset) {
       append(first);
     }
 
-    for (var next = iterator(); next !== undefined; next = iterator()) {
-      append(next);
-    }
+    iterator.forEach(append);
   }
 
   addMethods(ss, {

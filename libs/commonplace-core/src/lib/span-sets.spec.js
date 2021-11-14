@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from '@jest/globals';
+import { describe, expect, it, test, jest} from '@jest/globals';
 import { spanSet } from './span-sets';
 import { span } from './spans';
 import { toEqualSpan } from './spans.test-helpers';
@@ -88,6 +88,36 @@ describe('iterate', () => {
     expect(iterator()).toEqualSpan(s2);
     expect(iterator()).toEqualSpan(s3);
     expect(iterator()).toBeUndefined();
+  });
+
+  describe('iterator.foreach', () => {
+    it('is present on the iterator', () => {
+      expect(spanSet(10).iterate()).toHaveProperty("forEach");
+    });
+
+    it('never calls the callback if the SpanSet is empty', () => {
+      const mockCallback = jest.fn(x => x);
+
+      spanSet(10).iterate().forEach(mockCallback);
+
+      expect(mockCallback.mock.calls.length).toEqual(0);
+    });
+
+    it('calls the callback with all the present spans in order', () => {
+      const mockCallback = jest.fn(x => x);
+      let ss = spanSet(10);
+      let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
+      ss.append(s1);
+      ss.append(s2);
+      ss.append(s3);
+
+      ss.iterate().forEach(mockCallback);
+
+      expect(mockCallback.mock.calls.length).toEqual(3);
+      expect(mockCallback.mock.calls[0][0]).toEqualSpan(s1);
+      expect(mockCallback.mock.calls[1][0]).toEqualSpan(s2);
+      expect(mockCallback.mock.calls[2][0]).toEqualSpan(s3);
+    });
   });
 });
 
