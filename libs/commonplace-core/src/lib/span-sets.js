@@ -1,9 +1,9 @@
 import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
-export function spanSet(offset) {
+export function spanSet(offset, ...initialSpans) {
   let ss = {};
-  let spans = [];
+  let spans = [...initialSpans];
 
   function append(span) {
     spans.push(span);
