@@ -16,11 +16,34 @@ export function spanSet(offset) {
     };
   }
 
+  function mergeSets(spanSet) {
+    let iterator = spanSet.iterate();
+    let first = iterator();
+
+    if (first === undefined) return;
+
+    if (spans.length > 0) {
+      let last = spans[spans.length - 1];
+      if (last.abuts(first)) {
+        spans[spans.length - 1] = last.merge(first);
+      } else {
+        append(first);
+      }
+    } else {
+      append(first);
+    }
+
+    for (var next = iterator(); next !== undefined; next = iterator()) {
+      append(next);
+    }
+  }
+
   addMethods(ss, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     offset: () => offset,
-    iterate
+    iterate,
+    mergeSets
   });
 
   return ss;

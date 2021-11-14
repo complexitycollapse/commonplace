@@ -1,4 +1,14 @@
 export function toEqualSpan(actualSpan, expectedSpan) {
+  if (actualSpan === undefined) return {
+    message: () => `expected ${JSON.stringify(expectedSpan)} but received undefined`,
+    pass: false
+  };
+
+  if (actualSpan === undefined) return {
+    message: () => `undefined expectation, actual was ${JSON.stringify(actualSpan)}`,
+    pass: false
+  };
+
   let pass =
     actualSpan.origin === expectedSpan.origin &&
     actualSpan.start === expectedSpan.start &&
