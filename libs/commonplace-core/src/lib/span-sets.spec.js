@@ -43,29 +43,25 @@ function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
 }
 
 describe('spanSet', () => {
-  it('sets the offset', () => {
-    expect(spanSet(123).offset()).toEqual(123);
-  });
-
   it('sets the spans to the given initial spans', () => {
     let s1 = span("a", 1, 2), s2 = span("b", 3, 4);
-    expect(spanSet(10, s1, s2)).hasSpans(s1, s2);
+    expect(spanSet(s1, s2)).hasSpans(s1, s2);
   });
 });
 
 describe('concLength', () => {
   it('returns 0 for empty set', () => {
-    expect(spanSet(123).concLength()).toEqual(0);
+    expect(spanSet().concLength()).toEqual(0);
   });
 
   it('returns the length of a span when it has one span', () => {
-    let ss = spanSet(123);
+    let ss = spanSet();
     ss.append(makeSpan({length: 100}));
     expect(ss.concLength()).toEqual(100);
   });
 
   it('returns the sum of the lengths of spans it contains', () => {
-    let ss = spanSet(123);
+    let ss = spanSet();
     ss.append(makeSpan({length: 100}));
     ss.append(makeSpan({length: 50}));
     ss.append(makeSpan({length: 3}));
@@ -75,7 +71,7 @@ describe('concLength', () => {
 
 describe('iterate', () => {
   it('returns undefined if the array is empty', () => {
-    let iterator = spanSet(10).iterate();
+    let iterator = spanSet().iterate();
     expect(iterator()).toBeUndefined();
     expect(iterator()).toBeUndefined();
     expect(iterator()).toBeUndefined();
@@ -83,7 +79,7 @@ describe('iterate', () => {
 
   it('returns the spans in sequence', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
-    let ss = spanSet(10, s1, s2, s3);
+    let ss = spanSet(s1, s2, s3);
     let iterator = ss.iterate();
 
     expect(iterator()).toEqualSpan(s1);
@@ -94,13 +90,13 @@ describe('iterate', () => {
 
   describe('iterator.foreach', () => {
     it('is present on the iterator', () => {
-      expect(spanSet(10).iterate()).toHaveProperty("forEach");
+      expect(spanSet().iterate()).toHaveProperty("forEach");
     });
 
     it('never calls the callback if the SpanSet is empty', () => {
       const mockCallback = jest.fn(x => x);
 
-      spanSet(10).iterate().forEach(mockCallback);
+      spanSet().iterate().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toEqual(0);
     });
@@ -108,7 +104,7 @@ describe('iterate', () => {
     it('calls the callback with all the present spans in order', () => {
       const mockCallback = jest.fn(x => x);
       let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
-      let ss = spanSet(10, s1, s2, s3);
+      let ss = spanSet(s1, s2, s3);
 
       ss.iterate().forEach(mockCallback);
 
@@ -121,7 +117,7 @@ describe('iterate', () => {
     it('calls the callback with the sum of the lengths of the previous spans', () => {
       const mockCallback = jest.fn((x, y) => x);
       let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
-      let ss = spanSet(10, s1, s2, s3);
+      let ss = spanSet(s1, s2, s3);
 
       ss.iterate().forEach(mockCallback);
 
@@ -134,14 +130,14 @@ describe('iterate', () => {
 
 describe('mergeSets', () => {
   it('leaves an empty SpanSet unchanged if it is merged with an empty SpanSet', () => {
-    let ss1 = spanSet(10), ss2 = spanSet(10);
+    let ss1 = spanSet(), ss2 = spanSet();
     ss1.mergeSets(ss2);
     expect(ss1.concLength()).toEqual(0);
   });
 
   it('leaves a populated SpanSet unchanged if it is merged with an empty SpanSet', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
-    let ss1 = spanSet(10, s1, s2, s3), ss2 = spanSet(10);
+    let ss1 = spanSet(s1, s2, s3), ss2 = spanSet();
 
     ss1.mergeSets(ss2);
     expect(ss1).hasSpans(s1, s2, s3);
@@ -149,7 +145,7 @@ describe('mergeSets', () => {
 
   it('moves all given spans to an empty SpanSet', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
-    let ss1 = spanSet(10), ss2 = spanSet(10, s1, s2, s3);
+    let ss1 = spanSet(), ss2 = spanSet(s1, s2, s3);
 
     ss1.mergeSets(ss2);
 
@@ -158,7 +154,7 @@ describe('mergeSets', () => {
 
   it('appends the given span if doesn\'t overlap or abut the existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("b", 15, 20);
-    let ss1 = spanSet(10, s1), ss2 = spanSet(10, s2);
+    let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
     ss1.mergeSets(ss2);
 
@@ -167,7 +163,7 @@ describe('mergeSets', () => {
 
   it('appends the given span if overlaps he existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 15, 20);
-    let ss1 = spanSet(10, s1), ss2 = spanSet(10, s2);
+    let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
     ss1.mergeSets(ss2);
 
@@ -176,7 +172,7 @@ describe('mergeSets', () => {
 
   it('merges the given span if it abuts the existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 30, 20);
-    let ss1 = spanSet(10, s1), ss2 = spanSet(10, s2);
+    let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
     ss1.mergeSets(ss2);
 
@@ -186,7 +182,7 @@ describe('mergeSets', () => {
   it('merges the middle spans if they abut and leaves all others in sequence', () => {
     let s1a = span("a", 0, 5), s1b = span("a", 5, 5), s1c = span("a", 10, 5);
     let s2a = span("a", 15, 20), s2b = span("a", 35, 10), s2c = span("a", 45, 10);
-    let ss1 = spanSet(10, s1a, s1b, s1c), ss2 = spanSet(10, s2a, s2b, s2c);
+    let ss1 = spanSet(s1a, s1b, s1c), ss2 = spanSet(s2a, s2b, s2c);
 
     ss1.mergeSets(ss2);
 
@@ -196,7 +192,7 @@ describe('mergeSets', () => {
 
 describe('split', () => {
   it('returns two empty SpanSets if the original set was empty', () => {
-    let ss = spanSet(1);
+    let ss = spanSet();
 
     let result = ss.split(0);
 
@@ -206,7 +202,7 @@ describe('split', () => {
 
   it('returns an empty span and a copy of the original SpanSet if the point is zero', () => {
     let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
-    let ss = spanSet(1, s1, s2);
+    let ss = spanSet(s1, s2);
 
     let result = ss.split(0);
 
@@ -216,7 +212,7 @@ describe('split', () => {
 
   it('returns a copy of the original SpanSet then an empty span if the point is beyond the total length', () => {
     let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
-    let ss = spanSet(1, s1, s2);
+    let ss = spanSet(s1, s2);
 
     let result = ss.split(ss.concLength);
 
@@ -226,7 +222,7 @@ describe('split', () => {
 
   it('divides the spans in two if the point is exactly between them', () => {
     let s1 = span("a", 0, 5), s2 = span("a", 2, 5);
-    let ss = spanSet(1, s1, s2);
+    let ss = spanSet(s1, s2);
 
     let result = ss.split(5);
 
@@ -236,7 +232,7 @@ describe('split', () => {
 
   it('splits the span that the point lies within, with the point included in the second span', () => {
     let s1 = span("a", 0, 5), s2 = span("b", 2, 5), s3 = span("c", 10, 20);
-    let ss = spanSet(1, s1, s2, s3);
+    let ss = spanSet(s1, s2, s3);
     let splits = s2.split(3);
 
     let result = ss.split(8);

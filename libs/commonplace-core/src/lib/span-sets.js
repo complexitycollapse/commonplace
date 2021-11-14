@@ -1,7 +1,7 @@
 import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
-export function spanSet(offset, ...initialSpans) {
+export function spanSet(...initialSpans) {
   let ss = {};
   let spans = [...initialSpans];
 
@@ -49,7 +49,7 @@ export function spanSet(offset, ...initialSpans) {
 
   function split(point) {
     let iterator = iterate();
-    let first = spanSet(1), second = spanSet(1);
+    let first = spanSet(), second = spanSet();
 
     iterator.forEach((span, position) => {
       if (position >= point) {
@@ -69,7 +69,6 @@ export function spanSet(offset, ...initialSpans) {
   addMethods(ss, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
-    offset: () => offset,
     iterate,
     mergeSets,
     split
