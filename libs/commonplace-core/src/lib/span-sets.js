@@ -47,8 +47,8 @@ export function spanSet(...initialSpans) {
     iterator.forEach(append);
   }
 
-  function split(point) {
-    let iterator = iterate();
+  function splitInternal(ss, point) {
+    let iterator = ss.iterate();
     let first = spanSet(), second = spanSet();
 
     iterator.forEach((span, position) => {
@@ -64,6 +64,13 @@ export function spanSet(...initialSpans) {
     });
 
     return [first, second];
+  }
+
+  function split(point, length) {
+    let firstSplit = splitInternal(ss, point);
+    if (length === undefined) return firstSplit;
+    let secondSplit = splitInternal(firstSplit[1], length);
+    return [firstSplit[0], ...secondSplit];
   }
 
   addMethods(ss, {

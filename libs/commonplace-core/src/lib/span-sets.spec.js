@@ -237,7 +237,22 @@ describe('split', () => {
 
     let result = ss.split(8);
 
+    expect(result[0].concLength()).toEqual(8);
     expect(result[0]).hasSpans(s1, splits[0]);
     expect(result[1]).hasSpans(splits[1], s3);
+  });
+
+  it('splits the SpanSet into three span sets with the middle set starting at point and having the given length', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5), s3 = span("c", 10, 20), s4 = span("d", 44, 10);
+    let ss = spanSet(s1, s2, s3, s4);
+    let splits1 = s2.split(3), splits2 = s3.split(8);
+
+    let result = ss.split(8, 10);
+
+    expect(result[0].concLength()).toEqual(8);
+    expect(result[1].concLength()).toEqual(10);
+    expect(result[0]).hasSpans(s1, splits1[0]);
+    expect(result[1]).hasSpans(splits1[1], splits2[0]);
+    expect(result[2]).hasSpans(splits2[1], s4);
   });
 });
