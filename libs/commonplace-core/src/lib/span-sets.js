@@ -27,24 +27,28 @@ export function spanSet(...initialSpans) {
     return iterator;
   }
 
-  function mergeSets(spanSet) {
-    let iterator = spanSet.iterate();
+  function merge(toMerge) {
+    let iterator = toMerge.iterate();
     let first = iterator();
 
-    if (first === undefined) return;
+    function getInitialSpans() {
+      if (first === undefined) return spans;
 
-    if (spans.length > 0) {
-      let last = spans[spans.length - 1];
-      if (last.abuts(first)) {
-        spans[spans.length - 1] = last.merge(first);
-      } else {
-        append(first);
+      if (spans.length > 0) {
+        let last = spans[spans.length - 1];
+        if (last.abuts(first)) {
+          return spans.slice(0, -1).concat([last.merge(first)]);
+        }
       }
-    } else {
-      append(first);
+
+      return spans.concat(first);
     }
 
-    iterator.forEach(append);
+    let result = spanSet(...getInitialSpans());
+
+    iterator.forEach(result.append);
+
+    return result;
   }
 
   function splitInternal(ss, point) {
@@ -77,14 +81,12 @@ export function spanSet(...initialSpans) {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     iterate,
-    mergeSets,
+    merge,
     split,
     crop: (start, length) => split(start, length)[1],
     insert: (newSpans, point) => {
       let splits = split(point);
-      splits[0].mergeSets(newSpans);
-      splits[0].mergeSets(splits[1]);
-      return splits[0];
+      return splits[0].merge(newSpans).merge(splits[1]);
     }
   });
 

@@ -11,12 +11,14 @@ expect.extend({
     let failed = false;
 
     spans.forEach(span => {
-      let actual = iterator();
-      let singleResult = toEqualSpan(actual, span);
-      if (!singleResult.pass) {
-        failed =  {span, i, actual};
+      if (failed === false) {
+        let actual = iterator();
+        let singleResult = toEqualSpan(actual, span);
+        if (!singleResult.pass) {
+          failed = {span, i, actual};
+        }
+        ++i;
       }
-      ++i;
     });
 
     if (failed) {
@@ -27,7 +29,7 @@ expect.extend({
     }
 
     if (iterator() !== undefined) return {
-      message: () => `too many items in SpanSet, expected ${span.length}`,
+      message: () => `too many items in SpanSet, expected ${span.length}, actual ${i}`,
       pass: false
     }
 
@@ -128,55 +130,45 @@ describe('iterate', () => {
   });
 });
 
-describe('mergeSets', () => {
+describe('merge', () => {
   it('leaves an empty SpanSet unchanged if it is merged with an empty SpanSet', () => {
     let ss1 = spanSet(), ss2 = spanSet();
-    ss1.mergeSets(ss2);
-    expect(ss1.concLength()).toEqual(0);
+    expect(ss1.merge(ss2)).hasSpans();
   });
 
   it('leaves a populated SpanSet unchanged if it is merged with an empty SpanSet', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
     let ss1 = spanSet(s1, s2, s3), ss2 = spanSet();
 
-    ss1.mergeSets(ss2);
-    expect(ss1).hasSpans(s1, s2, s3);
+    expect(ss1.merge(ss2)).hasSpans(s1, s2, s3);
   });
 
   it('moves all given spans to an empty SpanSet', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
     let ss1 = spanSet(), ss2 = spanSet(s1, s2, s3);
 
-    ss1.mergeSets(ss2);
-
-    expect(ss1).hasSpans(s1, s2, s3);
+    expect(ss1.merge(ss2)).hasSpans(s1, s2, s3);
   });
 
   it('appends the given span if doesn\'t overlap or abut the existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("b", 15, 20);
     let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
-    ss1.mergeSets(ss2);
-
-    expect(ss1).hasSpans(s1, s2);
+    expect(ss1.merge(ss2)).hasSpans(s1, s2);
   });
 
   it('appends the given span if overlaps he existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 15, 20);
     let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
-    ss1.mergeSets(ss2);
-
-    expect(ss1).hasSpans(s1, s2);
+    expect(ss1.merge(ss2)).hasSpans(s1, s2);
   });
 
   it('merges the given span if it abuts the existing one', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 30, 20);
     let ss1 = spanSet(s1), ss2 = spanSet(s2);
 
-    ss1.mergeSets(ss2);
-
-    expect(ss1).hasSpans(s1.merge(s2));
+    expect(ss1.merge(ss2)).hasSpans(s1.merge(s2));
   });
 
   it('merges the middle spans if they abut and leaves all others in sequence', () => {
@@ -184,9 +176,7 @@ describe('mergeSets', () => {
     let s2a = span("a", 15, 20), s2b = span("a", 35, 10), s2c = span("a", 45, 10);
     let ss1 = spanSet(s1a, s1b, s1c), ss2 = spanSet(s2a, s2b, s2c);
 
-    ss1.mergeSets(ss2);
-
-    expect(ss1).hasSpans(s1a, s1b, s1c.merge(s2a), s2b, s2c);
+    expect(ss1.merge(ss2)).hasSpans(s1a, s1b, s1c.merge(s2a), s2b, s2c);
   });
 });
 
