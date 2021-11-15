@@ -256,3 +256,46 @@ describe('split', () => {
     expect(result[2]).hasSpans(splits2[1], s4);
   });
 });
+
+describe('crop', () => {
+  it('returns an empty set if the original had no spans', () => {
+    let ss = spanSet();
+
+    expect(ss.crop(0, 5)).hasSpans();
+  });
+
+  it('returns all spans if the crop contains all the spans', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5);
+    let ss = spanSet(s1, s2);
+
+    expect(ss.crop(0, 10)).hasSpans(s1, s2);
+  });
+
+  it('returns the first span if the second is cropped', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5);
+    let ss = spanSet(s1, s2);
+
+    expect(ss.crop(0, 5)).hasSpans(s1);
+  });
+
+  it('returns the second span if the first is cropped', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5);
+    let ss = spanSet(s1, s2);
+
+    expect(ss.crop(5, 10)).hasSpans(s2);
+  });
+
+  it('returns a section of the spans if they have their ends cropped off', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5);
+    let ss = spanSet(s1, s2);
+
+    expect(ss.crop(1, 8)).hasSpans(span("a", 1, 4), span("b", 2, 4));
+  });
+
+  it('returns a span set with the given length', () => {
+    let s1 = span("a", 0, 5), s2 = span("b", 2, 5);
+    let ss = spanSet(s1, s2);
+
+    expect(ss.crop(1, 8).concLength()).toEqual(8);
+  });
+});

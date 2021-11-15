@@ -78,7 +78,8 @@ export function spanSet(...initialSpans) {
     append,
     iterate,
     mergeSets,
-    split
+    split,
+    crop: (start, length) => split(start, length)[1]
   });
 
   return obj;
