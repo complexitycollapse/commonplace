@@ -44,6 +44,10 @@ function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
   return span(origin, start, length);
 }
 
+function sumLengths(spans) {
+  return spans.reduce((a, s) => a + s.length, 0);
+}
+
 describe('spanSet', () => {
   it('sets the spans to the given initial spans', () => {
     let s1 = span("a", 1, 2), s2 = span("b", 3, 4);
@@ -315,7 +319,7 @@ describe('insert', () => {
 
   it('inserting spans at the end of a spanSet appends them', () => {
     let existingSpans = makeSpans(5);
-    let existingSpansLength = existingSpans.reduce((a, s) => a + s.length);
+    let existingSpansLength = sumLengths(existingSpans);
     let newSpans = makeSpans(5);
     let ss = spanSet(...existingSpans);
 
@@ -330,5 +334,87 @@ describe('insert', () => {
     let ss = spanSet(existingSpan);
 
     expect(ss.insert(spanSet(...newSpans), 2)).hasSpans(...expectedSpans);
+  });
+});
+
+describe('delete', () => {
+  it('is possible to delete nothing from nothing, leaving nothing', () => {
+    expect(spanSet().delete(0, 0)).hasSpans();
+  });
+
+  it('is possible to delete nothing from something, leaving the something', () => {
+    let spans = makeSpans(5);
+
+    expect(spanSet(...spans).delete(20, 0)).hasSpans(...spans);
+  });
+
+  it('removes a span if the start and length match it', () => {
+    let spans = makeSpans(5);
+    let expectedSpans = [spans[0], ...spans.slice(2)];
+
+    expect(spanSet(...spans).delete(spans[0].next(), spans[1].length)).hasSpans(...expectedSpans);
+  });
+
+  it('removes two spans if the start and length match them', () => {
+    let spans = makeSpans(5);
+    let expectedSpans = [spans[0], ...spans.slice(3)];
+
+    expect(spanSet(...spans).delete(spans[0].next(), spans[1].length + spans[2].length)).hasSpans(...expectedSpans);
+  });
+
+  it('removes the start of a span', () => {
+    let spans = makeSpans(5);
+    let splits = spans[1].split(2);
+    let expectedSpans = [spans[0], splits[1], ...spans.slice(2)];
+
+    expect(spanSet(...spans).delete(spans[0].next(), 2)).hasSpans(...expectedSpans);
+  });
+
+  it('removes the start of the first span', () => {
+    let spans = makeSpans(5);
+    let splits = spans[0].split(3);
+    let expectedSpans = [splits[1], ...spans.slice(1)];
+    
+    expect(spanSet(...spans).delete(0, 3)).hasSpans(...expectedSpans);
+  });
+
+  it('removes the end of a span', () => {
+    let spans = makeSpans(5);
+    let splits = spans[1].split(2);
+    let expectedSpans = [spans[0], splits[0], ...spans.slice(2)];
+
+    expect(spanSet(...spans).delete(spans[0].next() + 2, 3)).hasSpans(...expectedSpans);
+  });
+
+  it('removes the end of the last span', () => {
+    let spans = makeSpans(5);
+    let splits = spans[4].split(3);
+    let expectedSpans = [...spans.slice(0, 4), splits[0]];
+    
+    expect(spanSet(...spans).delete(sumLengths(spans) - 2, 2)).hasSpans(...expectedSpans);
+  });
+
+  it('removes a section from a span', () => {
+    let spans = makeSpans(5);
+    let splits = spans[1].split(1);
+    let expectedSpans = [spans[0], splits[0], splits[1].split(3)[1], ...spans.slice(2)];
+    
+    expect(spanSet(...spans).delete(spans[0].length + 1, 3)).hasSpans(...expectedSpans);
+  });
+
+  it('removes sections from two adjacent spans', () => {
+    let spans = makeSpans(5);
+    let splits1 = spans[1].split(1), splits2 = spans[2].split(2);
+    let expectedSpans = [spans[0], splits1[0], splits2[1], ...spans.slice(3)];
+    
+    expect(spanSet(...spans).delete(spans[0].length + 1, 6)).hasSpans(...expectedSpans);
+  });
+
+  it('removes a range crossing three spans, leaving two parts with one span removed completely', () => {
+    let spans = makeSpans(5);
+    let splits1 = spans[1].split(1), splits2 = spans[3].split(2);
+    let expectedSpans = [spans[0], splits1[0], splits2[1], ...spans.slice(4)];
+    
+    expect(spanSet(...spans).delete(spans[0].length + 1, 11)).hasSpans(...expectedSpans);
   });
 });

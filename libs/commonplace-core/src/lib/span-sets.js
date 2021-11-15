@@ -87,6 +87,10 @@ export function spanSet(...initialSpans) {
     insert: (newSpans, point) => {
       let splits = split(point);
       return splits[0].merge(newSpans).merge(splits[1]);
+    },
+    delete: (start, length) =>  {
+      let splits = split(start, length);
+      return splits[0].merge(splits[2]);
     }
   });
 
