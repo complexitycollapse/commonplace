@@ -1,7 +1,7 @@
 import { describe, expect, it, test, jest} from '@jest/globals';
 import { spanSet } from './span-sets';
 import { span } from './spans';
-import { toEqualSpan } from './spans.test-helpers';
+import { toEqualSpan, makeSpans } from './spans.test-helpers';
 
 expect.extend({
   toEqualSpan,
@@ -297,5 +297,48 @@ describe('crop', () => {
     let ss = spanSet(s1, s2);
 
     expect(ss.crop(1, 8).concLength()).toEqual(8);
+  });
+});
+
+describe('insert', () => {
+  it('inserting spans into empty set produces a set with just those spans', () => {
+    let spans = makeSpans(5);
+    let ss = spanSet(...spans);
+
+    expect(spanSet().insert(ss, 0)).hasSpans(...spans);
+  });
+
+  it('inserting no spans into a spanSet produces an identical spanSet', () => {
+    let spans = makeSpans(5);
+    let ss = spanSet(...spans);
+
+    expect(ss.insert(spanSet(), 0)).hasSpans(...spans);
+  });
+
+  it('inserting spans at the beginning of a spanSet prepends them', () => {
+    let existingSpans = makeSpans(5);
+    let newSpans = makeSpans(5);
+    let ss = spanSet(...existingSpans);
+
+    expect(ss.insert(spanSet(...newSpans), 0)).hasSpans(...existingSpans.concat(newSpans));
+  });
+
+  it('inserting spans at the end of a spanSet appends them', () => {
+    let existingSpans = makeSpans(5);
+    let existingSpansLength = existingSpans.reduce((a, s) => a + s.length);
+    let newSpans = makeSpans(5);
+    let ss = spanSet(...existingSpans);
+
+    expect(ss.insert(spanSet(...newSpans), existingSpansLength)).hasSpans(...newSpans.concat(existingSpans));
+  });
+
+  it('inserting spans into a span will split the span', () => {
+    let existingSpan = makeSpans(1)[0];
+    let splits = existingSpan.split(2);
+    let newSpans = makeSpans(5);
+    let expectedSpans = [splits[0]].concat(newSpans, [splits[1]]);
+    let ss = spanSet(existingSpan);
+
+    expect(ss.insert(spanSet(...newSpans), 2)).hasSpans(...expectedSpans);
   });
 });

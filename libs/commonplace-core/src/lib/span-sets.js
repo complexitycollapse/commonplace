@@ -79,7 +79,13 @@ export function spanSet(...initialSpans) {
     iterate,
     mergeSets,
     split,
-    crop: (start, length) => split(start, length)[1]
+    crop: (start, length) => split(start, length)[1],
+    insert: (newSpans, point) => {
+      let splits = split(point);
+      splits[0].mergeSets(newSpans);
+      splits[0].mergeSets(splits[1]);
+      return splits[0];
+    }
   });
 
   return obj;
