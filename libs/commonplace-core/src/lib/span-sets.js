@@ -2,7 +2,7 @@ import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
 export function spanSet(...initialSpans) {
-  let ss = {};
+  let obj = {};
   let spans = [...initialSpans];
 
   function append(span) {
@@ -67,13 +67,13 @@ export function spanSet(...initialSpans) {
   }
 
   function split(point, length) {
-    let firstSplit = splitInternal(ss, point);
+    let firstSplit = splitInternal(obj, point);
     if (length === undefined) return firstSplit;
     let secondSplit = splitInternal(firstSplit[1], length);
     return [firstSplit[0], ...secondSplit];
   }
 
-  addMethods(ss, {
+  addMethods(obj, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     iterate,
@@ -81,5 +81,5 @@ export function spanSet(...initialSpans) {
     split
   });
 
-  return ss;
+  return obj;
 }

@@ -1,13 +1,13 @@
 import { addProperties, addMethods } from "./utils";
 
 export function span(origin, start, length) {
-  let s = {};
-  addProperties(s, { origin, start, length });
+  let obj = {};
+  addProperties(obj, { origin, start, length });
 
   function clone({
-    origin = s.origin,
-    start = s.start,
-    length = s.length } = {}) {
+    origin = obj.origin,
+    start = obj.start,
+    length = obj.length } = {}) {
     return span(origin, start, length);
   }
 
@@ -21,39 +21,39 @@ export function span(origin, start, length) {
   }
 
   function abuts(span) {
-    return equalOrigin(span) && s.next() === span.start;
+    return equalOrigin(span) && obj.next() === span.start;
   }
 
   function overlaps(span) {
-    return s.equalOrigin(span) && !(s.end() < span.start || span.end() < start);
+    return obj.equalOrigin(span) && !(obj.end() < span.start || span.end() < start);
   }
 
   function canMergeWith(span) {
-    return s.overlaps(span) || s.abuts(span) || span.abuts(s);
+    return obj.overlaps(span) || obj.abuts(span) || span.abuts(obj);
   }
 
   function merge(sp) {
       let newStart = Math.min(start, sp.start);
-      return span("o", newStart, Math.max(s.next(), sp.next()) - newStart);
+      return span("o", newStart, Math.max(obj.next(), sp.next()) - newStart);
   }
 
-  addMethods(s, {
+  addMethods(obj, {
     clone,
     next: () => start + length,
     end: () => start + length - 1,
     equalOrigin,
     startDiff: (span) => start - span.start,
-    endDiff: (span) => s.end() - span.end(),
+    endDiff: (span) => obj.end() - span.end(),
     displace: (n) => clone({ start: start + n }),
     contains,
     abuts,
     overlaps,
     canMergeWith,
     merge,
-    split: (length) => length <= 0 || length >= s.length
-        ? [s]
-        : [clone({length}), clone({start: start + length, length: s.length - length})]
+    split: (length) => length <= 0 || length >= obj.length
+        ? [obj]
+        : [clone({length}), clone({start: start + length, length: obj.length - length})]
   });
 
-  return s;
+  return obj;
 }
