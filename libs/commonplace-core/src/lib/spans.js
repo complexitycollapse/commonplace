@@ -45,6 +45,15 @@ export function span(origin, start, length) {
       length: newLength});
   }
 
+  function spanSource() {
+    let called = false;
+    return () => {
+      if (called) return undefined;
+      called = true;
+      return obj;
+    };
+  }
+
   addMethods(obj, {
     clone,
     next: () => start + length,
@@ -61,7 +70,8 @@ export function span(origin, start, length) {
     split: (length) => length <= 0 || length >= obj.length
         ? [obj]
         : [clone({length}), clone({start: start + length, length: obj.length - length})],
-    crop
+    crop,
+    spanSource
   });
 
   return obj;

@@ -370,3 +370,21 @@ describe('crop', () => {
     expect(s.crop(-1, s.length - 1)).toEqualSpan(s.clone({length: s.length - 1}));
   });
 });
+
+describe('spanSource', () => {
+  it('returns a function', () => {
+    expect(typeof make().spanSource()).toEqual('function');
+  });
+
+  it('returns the span on first call', () => {
+    let s = make();
+    expect(s.spanSource()()).toEqualSpan(s);
+  });
+
+  it('returns undefined on second call', () => {
+    let s = make();
+    let source = s.spanSource();
+    source();
+    expect(source()).toBeUndefined();
+  });
+})
