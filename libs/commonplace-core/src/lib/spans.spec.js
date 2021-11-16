@@ -333,3 +333,40 @@ describe('split', () => {
     });
   });
 });
+
+describe('crop', () => {
+  it('returns an identical span if whole span is selected', () => {
+    let s = make();
+    expect(s.crop(0, s.length)).toEqualSpan(s);
+  });
+
+  it('removes initial elements if start is greater than 0', () => {
+    let s = make();
+    expect(s.crop(2, s.length)).toEqualSpan(s.clone({start: s.start + 2, length: s.length - 2}));
+  });
+
+  it('removes final elements if length is less than the span length', () => {
+    let s = make();
+    expect(s.crop(0, s.length - 2)).toEqualSpan(s.clone({length: s.length - 2}));
+  });
+
+  it('removes initial and final elements if a narrow span is requested', () => {
+    let s = make();
+    expect(s.crop(1, s.length - 2)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 2}));
+  });
+
+  it('removes no final elements if length is not passed', () => {
+    let s = make();
+    expect(s.crop(1)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 1}));
+  });
+
+  it('removes no final elements if length is longer than the span length', () => {
+    let s = make();
+    expect(s.crop(1, s.length + 1)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 1}));
+  });
+
+  it('removes no initial elements if start is negative', () => {
+    let s = make();
+    expect(s.crop(-1, s.length - 1)).toEqualSpan(s.clone({length: s.length - 1}));
+  });
+});

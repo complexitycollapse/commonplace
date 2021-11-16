@@ -37,6 +37,14 @@ export function span(origin, start, length) {
       return span("o", newStart, Math.max(obj.next(), sp.next()) - newStart);
   }
 
+  function crop(startAdjust, newLength) {
+    startAdjust = startAdjust > 0 ? startAdjust : 0;
+    newLength = Math.min(newLength ?? length, length - startAdjust);
+    return clone({
+      start: start + startAdjust,
+      length: newLength});
+  }
+
   addMethods(obj, {
     clone,
     next: () => start + length,
@@ -52,7 +60,8 @@ export function span(origin, start, length) {
     merge,
     split: (length) => length <= 0 || length >= obj.length
         ? [obj]
-        : [clone({length}), clone({start: start + length, length: obj.length - length})]
+        : [clone({length}), clone({start: start + length, length: obj.length - length})],
+    crop
   });
 
   return obj;
