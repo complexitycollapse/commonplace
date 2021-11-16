@@ -6,7 +6,7 @@ import { toEqualSpan, makeSpans } from './spans.test-helpers';
 expect.extend({
   toEqualSpan,
   hasSpans(ss, ...spans) {
-    let iterator = ss.iterate();
+    let iterator = ss.spanSource();
     let i = 0;
     let failed = false;
 
@@ -75,9 +75,9 @@ describe('concLength', () => {
   });
 });
 
-describe('iterate', () => {
+describe('spanSource', () => {
   it('returns undefined if the array is empty', () => {
-    let iterator = spanSet().iterate();
+    let iterator = spanSet().spanSource();
     expect(iterator()).toBeUndefined();
     expect(iterator()).toBeUndefined();
     expect(iterator()).toBeUndefined();
@@ -86,7 +86,7 @@ describe('iterate', () => {
   it('returns the spans in sequence', () => {
     let s1 = span("a", 1, 10), s2 = span("b", 2, 2), s3 = span("c", 30, 300);
     let ss = spanSet(s1, s2, s3);
-    let iterator = ss.iterate();
+    let iterator = ss.spanSource();
 
     expect(iterator()).toEqualSpan(s1);
     expect(iterator()).toEqualSpan(s2);
@@ -96,13 +96,13 @@ describe('iterate', () => {
 
   describe('iterator.foreach', () => {
     it('is present on the iterator', () => {
-      expect(spanSet().iterate()).toHaveProperty("forEach");
+      expect(spanSet().spanSource()).toHaveProperty("forEach");
     });
 
     it('never calls the callback if the SpanSet is empty', () => {
       const mockCallback = jest.fn(x => x);
 
-      spanSet().iterate().forEach(mockCallback);
+      spanSet().spanSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toEqual(0);
     });
@@ -112,7 +112,7 @@ describe('iterate', () => {
       let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
       let ss = spanSet(s1, s2, s3);
 
-      ss.iterate().forEach(mockCallback);
+      ss.spanSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toEqual(3);
       expect(mockCallback.mock.calls[0][0]).toEqualSpan(s1);
@@ -125,7 +125,7 @@ describe('iterate', () => {
       let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
       let ss = spanSet(s1, s2, s3);
 
-      ss.iterate().forEach(mockCallback);
+      ss.spanSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls[0][1]).toEqual(0);
       expect(mockCallback.mock.calls[1][1]).toEqual(20);

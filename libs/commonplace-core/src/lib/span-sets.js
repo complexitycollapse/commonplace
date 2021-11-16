@@ -9,12 +9,11 @@ export function spanSet(...initialSpans) {
     spans.push(span);
   }
 
-  function iterate() {
+  function spanSource() {
     let i = 0;
     let iterator = () => {
       return spans[i++];
     };
-
 
     iterator.forEach = (fn) => {
       let position = 0;
@@ -28,7 +27,7 @@ export function spanSet(...initialSpans) {
   }
 
   function merge(toMerge) {
-    let iterator = toMerge.iterate();
+    let iterator = toMerge.spanSource();
     let first = iterator();
 
     function getInitialSpans() {
@@ -52,7 +51,7 @@ export function spanSet(...initialSpans) {
   }
 
   function splitInternal(ss, point) {
-    let iterator = ss.iterate();
+    let iterator = ss.spanSource();
     let first = spanSet(), second = spanSet();
 
     iterator.forEach((span, position) => {
@@ -80,7 +79,7 @@ export function spanSet(...initialSpans) {
   addMethods(obj, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
-    iterate,
+    spanSource,
     merge,
     split,
     crop: (start, length) => split(start, length)[1],
