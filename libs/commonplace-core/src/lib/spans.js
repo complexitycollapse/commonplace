@@ -47,11 +47,20 @@ export function span(origin, start, length) {
 
   function spanSource() {
     let called = false;
-    return () => {
+    let result = () => {
       if (called) return undefined;
       called = true;
       return obj;
     };
+
+    result.forEach = fn => {
+      if (!called) {
+        fn(obj, 0);
+        called = true;
+      }
+    };
+
+    return result;
   }
 
   addMethods(obj, {

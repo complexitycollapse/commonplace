@@ -387,4 +387,31 @@ describe('spanSource', () => {
     source();
     expect(source()).toBeUndefined();
   });
-})
+
+  describe('spanSource.forEach', () => {
+    it('is present on the iterator', () => {
+      expect(make().spanSource()).toHaveProperty("forEach");
+    });
+
+    it('calls the callback exactly once with the span and zero as arguments', () => {
+      let s = make();
+      const mockCallback = jest.fn((x, y) => x+y);
+
+      s.spanSource().forEach(mockCallback);
+
+      expect(mockCallback.mock.calls.length).toEqual(1);
+      expect(mockCallback.mock.calls[0][0]).toEqual(s);
+      expect(mockCallback.mock.calls[0][1]).toEqual(0);
+    });
+
+    it('does not call the callback if the span has already been iterated', () => {
+      let source = make().spanSource();
+      const mockCallback = jest.fn(x => x);
+
+      source();
+      source.forEach(mockCallback);
+
+      expect(mockCallback.mock.calls.length).toEqual(0);
+    });
+  })
+});
