@@ -35,7 +35,7 @@ export function span(origin, start, length) {
 
   function merge(sp) {
       let newStart = Math.min(start, sp.start);
-      return span("o", newStart, Math.max(obj.next(), sp.next()) - newStart);
+      return span(obj.origin, newStart, Math.max(obj.next(), sp.next()) - newStart);
   }
 
   function crop(startAdjust, newLength) {

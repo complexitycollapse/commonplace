@@ -2,9 +2,23 @@ import { spanIterator } from './span-iterators';
 import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
-export function spanSet(...initialSpans) {
+export function spanSet(...spanDesignators) {
   let obj = {};
-  let spans = [...initialSpans];
+  let spans = [];
+
+  {
+    let last = undefined;
+    spanDesignators.forEach(x => x.spanSource().forEach(s => {
+      if (last !== undefined) {
+        if (last.abuts(s)) {
+          spans.pop();
+          s = last.merge(s);
+        }
+      }
+      last = s;
+      spans.push(s);
+    }));
+  }
 
   function append(span) {
     spans.push(span);

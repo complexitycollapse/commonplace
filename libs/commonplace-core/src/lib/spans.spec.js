@@ -260,27 +260,33 @@ describe('merge', () => {
   });
 
   it('returns a span identical to the argument if this is contained in the argument', () => {
-    let s1 = span("o", 10, 20);
-    let s2 = span ("o", 11, 10);
+    let s1 = span("a", 10, 20);
+    let s2 = span ("a", 11, 10);
     expect(s2.merge(s1)).toEqualSpan(s1);
   });
 
   it('returns a span identical to the original if they are both equal', () => {
-    let s1 = span("o", 10, 20);
+    let s1 = span("b", 10, 20);
     let s2 = s1.clone();
     expect(s1.merge(s2)).toEqualSpan(s1);
   });
 
   it('returns a span encompassing both spans if this comes before that', () => {
-    let s1 = span("o", 10, 20);
-    let s2 = span ("o", 11, 30);
-    expect(s1.merge(s2)).toEqualSpan(span("o", 10, 31));
+    let s1 = span("c", 10, 20);
+    let s2 = span ("c", 11, 30);
+    expect(s1.merge(s2)).toEqualSpan(span("c", 10, 31));
   });
 
   it('returns a span encompassing both spans if that comes before this', () => {
-    let s1 = span("o", 10, 20);
-    let s2 = span ("o", 11, 30);
-    expect(s2.merge(s1)).toEqualSpan(span("o", 10, 31));
+    let s1 = span("d", 10, 20);
+    let s2 = span ("d", 11, 30);
+    expect(s2.merge(s1)).toEqualSpan(span("d", 10, 31));
+  });
+
+  it('uses the origin of the spans', () => {
+    let s1 = span("original", 10, 20);
+    let s2 = span ("original,", 11, 10);
+    expect(s1.merge(s2).origin).toEqualSpan("original");
   });
 });
 

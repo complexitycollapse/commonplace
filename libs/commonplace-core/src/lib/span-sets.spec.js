@@ -53,9 +53,43 @@ function sumLengths(spans) {
 }
 
 describe('spanSet', () => {
-  it('sets the spans to the given initial spans', () => {
+  it('sets the spans to the given initial spans if they do not abut', () => {
     let s1 = span("a", 1, 2), s2 = span("b", 3, 4);
     expect(spanSet(s1, s2)).hasSpans(s1, s2);
+  });
+
+  it('merges spans that abut', () => {
+    let s1 = span("a", 1, 2), s2 = span("a", s1.next(), 4);
+    expect(spanSet(s1, s2)).hasSpans(span("a", 1, 6));
+  });
+
+  it('takes all spans from a SpanSet', () => {
+    let s1 = span("a", 1, 2), s2 = span("a", 2, 4);
+    let ss = spanSet(s1, s2);
+    expect(spanSet(ss)).hasSpans(s1, s2);
+  });
+
+  it('merges middle spans from SpanSets if they abut', () => {
+    let s1a = span("a", 0, 5), s1b = span("a", 1, 5), s1c = span("a", 10, 5);
+    let s2a = span("a", 15, 20), s2b = span("a", 2, 10), s2c = span("a", 3, 10);
+    let ss1 = spanSet(s1a, s1b, s1c), ss2 = spanSet(s2a, s2b, s2c);
+
+    expect(spanSet(ss1, ss2)).hasSpans(s1a, s1b, s1c.merge(s2a), s2b, s2c);
+  });
+
+
+  it('merges all spans passed if they abut', () => {
+    let s1a = span("a", 0, 5), s1b = span("a", 5, 5), s1c = span("a", 10, 5);
+    let s2a = span("a", 15, 20), s2b = span("a", 35, 10), s2c = span("a", 45, 10);
+    let ss1 = spanSet(s1a, s1b, s1c), ss2 = spanSet(s2a, s2b, s2c);
+
+    expect(spanSet(ss1, ss2)).hasSpans(span("a", 0, 55));
+  });
+
+  it('ignores empty SpanSets', () => {
+    let s1 = span("a", 1, 2), s2 = span("a", 2, 4);
+
+    expect(spanSet(spanSet(), s1, spanSet(), s2, spanSet())).hasSpans(s1, s2);
   });
 });
 
@@ -194,14 +228,6 @@ describe('merge', () => {
 
     expect(ss1.merge(ss2)).hasSpans(s1.merge(s2));
   });
-
-  it('merges the middle spans if they abut and leaves all others in sequence', () => {
-    let s1a = span("a", 0, 5), s1b = span("a", 5, 5), s1c = span("a", 10, 5);
-    let s2a = span("a", 15, 20), s2b = span("a", 35, 10), s2c = span("a", 45, 10);
-    let ss1 = spanSet(s1a, s1b, s1c), ss2 = spanSet(s2a, s2b, s2c);
-
-    expect(ss1.merge(ss2)).hasSpans(s1a, s1b, s1c.merge(s2a), s2b, s2c);
-  });
 });
 
 describe('split', () => {
@@ -215,7 +241,7 @@ describe('split', () => {
   });
 
   it('returns an empty span and a copy of the original SpanSet if the point is zero', () => {
-    let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
+    let s1 = span("a", 0, 5), s2 = span("a", 6, 5);
     let ss = spanSet(s1, s2);
 
     let result = ss.split(0);
@@ -225,7 +251,7 @@ describe('split', () => {
   });
 
   it('returns a copy of the original SpanSet then an empty span if the point is beyond the total length', () => {
-    let s1 = span("a", 0, 5), s2 = span("a", 5, 5);
+    let s1 = span("a", 0, 5), s2 = span("a", 6, 5);
     let ss = spanSet(s1, s2);
 
     let result = ss.split(ss.concLength);
