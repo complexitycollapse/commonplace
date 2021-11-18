@@ -290,56 +290,6 @@ describe('merge', () => {
   });
 });
 
-describe('split', () => {
-  it('returns a list of the original span if length is 0', () => {
-    let s = make();
-    let result = s.split(0);
-    expect(result.length).toEqual(1);
-    expect(result[0]).toEqualSpan(s);
-  });
-
-  it('returns a list of the original span if length is greater than the span length', () => {
-    let s = make({length: 50});
-    let result = s.split(51);
-    expect(result.length).toEqual(1);
-    expect(result[0]).toEqualSpan(s);
-  });
-
-  it('returns a list of the original span if length is equal to the span length', () => {
-    let s = make({length: 50});
-    let result = s.split(50);
-    expect(result.length).toEqual(1);
-    expect(result[0]).toEqualSpan(s);
-  });
-
-  describe('if the length is less than the span length but greater than zero', () => {
-    it('returns two spans', () => {
-      let s = make({length: 50});
-      expect(s.split(1).length).toEqual(2);
-      expect(s.split(49).length).toEqual(2);
-      expect(s.split(25).length).toEqual(2);
-    });
-
-    it('returns spans whose length sums to the original span', () => {
-      let s = make({length: 50});
-      let result = s.split(20);
-      expect(result.map(s => s.length).reduce((a, b) => a + b)).toEqual(50);
-    });
-
-    it('the first span will have length equal to the given length', () => {
-      let s = make({length: 50});
-      let result = s.split(20);
-      expect(result[0].length).toEqual(20);
-    });
-
-    it('the first span will abut the second', () => {
-      let s = make({length: 50});
-      let result = s.split(20);
-      expect(result[0].abuts(result[1])).toBeTruthy();
-    });
-  });
-});
-
 describe('crop', () => {
   it('returns an identical span if whole span is selected', () => {
     let s = make();

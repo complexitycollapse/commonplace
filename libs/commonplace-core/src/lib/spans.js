@@ -63,9 +63,6 @@ export function span(origin, start, length) {
     overlaps,
     canMergeWith,
     merge,
-    split: (length) => length <= 0 || length >= obj.length
-        ? [obj]
-        : [clone({length}), clone({start: start + length, length: obj.length - length})],
     crop,
     spanSource
   });
