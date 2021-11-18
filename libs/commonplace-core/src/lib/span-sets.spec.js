@@ -28,9 +28,13 @@ expect.extend({
       };
     }
 
-    if (iterator() !== undefined) return {
-      message: () => `too many items in SpanSet, expected ${span.length}, actual ${i}`,
-      pass: false
+    if (iterator() !== undefined) {
+      let remaining = 0;
+      //iterator.forEach(_ => ++remaining);
+      return {
+        message: () => `too many items in SpanSet, expected ${spans.length}, actual ${remaining + i + 1}`,
+        pass: false
+      }
     }
 
     return {
@@ -94,7 +98,7 @@ describe('spanSource', () => {
     expect(iterator()).toBeUndefined();
   });
 
-  describe('iterator.foreach', () => {
+  describe('spanSource.foreach', () => {
     it('is present on the iterator', () => {
       expect(spanSet().spanSource()).toHaveProperty("forEach");
     });
@@ -130,6 +134,22 @@ describe('spanSource', () => {
       expect(mockCallback.mock.calls[0][1]).toEqual(0);
       expect(mockCallback.mock.calls[1][1]).toEqual(20);
       expect(mockCallback.mock.calls[2][1]).toEqual(50);
+    });
+
+    it('continues from where the iterator left off', () => {
+      const mockCallback = jest.fn(x => x);
+      let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
+      let ss = spanSet(s1, s2, s3);
+      let source = ss.spanSource();
+
+      source();
+      source.forEach(mockCallback);
+
+      expect(mockCallback.mock.calls.length).toEqual(2);
+      expect(mockCallback.mock.calls[0][0]).toEqualSpan(s2);
+      expect(mockCallback.mock.calls[0][1]).toEqual(20);
+      expect(mockCallback.mock.calls[1][0]).toEqualSpan(s3);
+      expect(mockCallback.mock.calls[1][1]).toEqual(50);
     });
   });
 });
@@ -416,5 +436,78 @@ describe('delete', () => {
     let expectedSpans = [spans[0], splits1[0], splits2[1], ...spans.slice(4)];
     
     expect(spanSet(...spans).delete(spans[0].length + 1, 11)).hasSpans(...expectedSpans);
+  });
+});
+
+describe('range', () => {
+  it('has no spans if the SpanSet was empty', () => {
+    expect(spanSet().range(0, 100)).hasSpans();
+  });
+
+  it('returns all spans if the start and length include them all', () => {
+    let spans = makeSpans(5);
+    expect(spanSet(...spans).range(0, sumLengths(spans))).hasSpans(...spans);
+  });
+
+  it('returns only the first spans if the later ones are not included', () => {
+    let spans = makeSpans(5);
+    let subset = spans.slice(0, -2);
+    expect(spanSet(...spans).range(0, sumLengths(subset))).hasSpans(...subset);
+  });
+
+  it('returns the first spans when the start point is negative', () => {
+    let spans = makeSpans(5);
+    let subset = spans.slice(0, -2);
+    expect(spanSet(...spans).range(-1, sumLengths(subset))).hasSpans(...subset);
+  });
+
+  it('returns only the last spans if the earlier ones are not included', () => {
+    let spans = makeSpans(5);
+    let subset = spans.slice(2);
+    let start = spans[0].length + spans[1].length;
+    expect(spanSet(...spans).range(start, sumLengths(subset))).hasSpans(...subset);
+  });
+
+  it('returns the last spans if the length is excessive', () => {
+    let spans = makeSpans(5);
+    let subset = spans.slice(2);
+    let start = spans[0].length + spans[1].length;
+    expect(spanSet(...spans).range(start, sumLengths(subset) + 1)).hasSpans(...subset);
+  });
+
+  it('returns only the middle spans if the ends are not included', () => {
+    let spans = makeSpans(5);
+    let subset = spans.slice(1, -1);
+    expect(spanSet(...spans).range(spans[0].length, sumLengths(subset))).hasSpans(...subset);
+  });
+
+  it('splits a span if the start point lies within it', () => {
+    let spans = makeSpans(5);
+    let subset = [spans[1].crop(2), ...spans.slice(2)];
+    expect(spanSet(...spans).range(spans[0].length + 2, sumLengths(subset))).hasSpans(...subset);
+  });
+
+  it('splits a span if the end point lies within it', () => {
+    let spans = makeSpans(5);
+    let subset = [...spans.slice(0, 3), spans[3].crop(0, 3)];
+    let length = spans[0].length + spans[1].length + spans[2].length + 3;
+    expect(spanSet(...spans).range(0, length)).hasSpans(...subset);
+  });
+
+  it('splits a span if the start and end points lie within it', () => {
+    let spans = makeSpans(5);
+    let remaining = spans[2].crop(1, spans[2].length - 2);
+    let start = spans[0].length + spans[1].length + 1;
+    expect(spanSet(...spans).range(start, spans[2].length - 2)).hasSpans(remaining);
+  });
+
+  it('returns no spans if the start is greater than or equal to the span length', () => {
+    let spans = makeSpans(5);
+    expect(spanSet(...spans).range(sumLengths(spans), 10)).hasSpans();
+  });
+
+  it('returns no spans if the length is 0', () => {
+    let spans = makeSpans(5);
+    expect(spanSet(...spans).range(11, 0)).hasSpans();
   });
 });

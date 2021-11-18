@@ -11,15 +11,20 @@ export function spanSet(...initialSpans) {
 
   function spanSource() {
     let i = 0;
+    let position = 0;
     let iterator = () => {
-      return spans[i++];
+      if (i < spans.length)
+      {
+        position += spans[i].length;
+        return spans[i++];
+      } else {
+        return undefined;
+      }
     };
 
     iterator.forEach = (fn) => {
-      let position = 0;
       for (let next = iterator(); next !== undefined; next = iterator()) {
-        fn(next, position);
-        position += next.length;
+        fn(next, position - next.length);
       }
     }
 
@@ -76,10 +81,44 @@ export function spanSet(...initialSpans) {
     return [firstSplit[0], ...secondSplit];
   }
 
+  function range(start, length) {
+    return {
+      spanSource: () => {
+        let iterator = spanSource();
+        let point = 0;
+        let next = iterator();
+        for (; point + next?.length <= start; next = iterator()) {
+          point += next.length;
+        }
+        if (next) {
+          next = next.crop(start - point, length);
+        }
+
+        return () => {
+          if (length <= 0) return undefined;
+          if (next) {
+            length -= next.length;
+            let temp = next;
+            next = undefined;
+            return temp;
+          }
+
+          if (length <= 0) return undefined;
+          let result = iterator();
+          if (result === undefined) return undefined;
+          result = result.crop(0, length);
+          length -= result.length;
+          return result;
+        };
+      }
+    };
+  }
+
   addMethods(obj, {
     concLength: () => spans.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     spanSource,
+    range,
     merge,
     split,
     crop: (start, length) => split(start, length)[1],
