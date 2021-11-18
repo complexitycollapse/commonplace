@@ -1,3 +1,4 @@
+import { spanIterator } from './span-iterators';
 import { span } from './spans';
 import { addMethods, addProperties } from './utils';
 
@@ -10,25 +11,7 @@ export function spanSet(...initialSpans) {
   }
 
   function spanSource() {
-    let i = 0;
-    let position = 0;
-    let iterator = () => {
-      if (i < spans.length)
-      {
-        position += spans[i].length;
-        return spans[i++];
-      } else {
-        return undefined;
-      }
-    };
-
-    iterator.forEach = (fn) => {
-      for (let next = iterator(); next !== undefined; next = iterator()) {
-        fn(next, position - next.length);
-      }
-    }
-
-    return iterator;
+    return spanIterator(state => [state.shift(), state], [...spans]);
   }
 
   function merge(toMerge) {
@@ -82,36 +65,30 @@ export function spanSet(...initialSpans) {
   }
 
   function range(start, length) {
-    return {
-      spanSource: () => {
-        let iterator = spanSource();
-        let point = 0;
-        let next = iterator();
-        for (; point + next?.length <= start; next = iterator()) {
-          point += next.length;
-        }
-        if (next) {
-          next = next.crop(start - point, length);
-        }
+    if (length === 0) return spanSet();
 
-        return () => {
-          if (length <= 0) return undefined;
-          if (next) {
-            length -= next.length;
-            let temp = next;
-            next = undefined;
-            return temp;
-          }
+    let rangeSpans = [];
+    let i = 0;
 
-          if (length <= 0) return undefined;
-          let result = iterator();
-          if (result === undefined) return undefined;
-          result = result.crop(0, length);
-          length -= result.length;
-          return result;
-        };
-      }
-    };
+    while(spans[i] !== undefined && start >= spans[i].length) {
+      start -= spans[i].length;
+      i += 1;
+    }
+
+    if (spans[i] === undefined) return spanSet();
+
+    let firstSpan = spans[i].crop(start, length);
+    rangeSpans.push(firstSpan);
+    length -= firstSpan.length;
+    i += 1;
+
+    while(spans[i] !== undefined && length > 0) {
+      rangeSpans.push(spans[i].crop(0, length));
+      length -= spans[i].length;
+      i += 1;
+    }
+    
+    return spanSet(...rangeSpans);
   }
 
   addMethods(obj, {

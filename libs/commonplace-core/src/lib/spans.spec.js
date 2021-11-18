@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from '@jest/globals';
+import { describe, expect, it, test, jest } from '@jest/globals';
 import { span } from './spans';
 import { toEqualSpan } from './spans.test-helpers';
 
@@ -379,6 +379,15 @@ describe('spanSource', () => {
   it('returns the span on first call', () => {
     let s = make();
     expect(s.spanSource()()).toEqualSpan(s);
+  });
+
+  it('has 0 position after first call', () => {
+    let s = make();
+    let iterator = s.spanSource();
+
+    iterator();
+
+    expect(iterator.position()).toEqual(0);
   });
 
   it('returns undefined on second call', () => {

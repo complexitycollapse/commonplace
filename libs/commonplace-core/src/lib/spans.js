@@ -1,3 +1,4 @@
+import { spanIterator } from "./span-iterators";
 import { addProperties, addMethods } from "./utils";
 
 export function span(origin, start, length) {
@@ -46,21 +47,7 @@ export function span(origin, start, length) {
   }
 
   function spanSource() {
-    let called = false;
-    let result = () => {
-      if (called) return undefined;
-      called = true;
-      return obj;
-    };
-
-    result.forEach = fn => {
-      if (!called) {
-        fn(obj, 0);
-        called = true;
-      }
-    };
-
-    return result;
+    return spanIterator(x => x, [obj]);
   }
 
   addMethods(obj, {
