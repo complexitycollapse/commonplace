@@ -30,7 +30,7 @@ expect.extend({
 
     if (iterator() !== undefined) {
       let remaining = 0;
-      //iterator.forEach(_ => ++remaining);
+      iterator.forEach(_ => ++remaining);
       return {
         message: () => `too many items in SpanSet, expected ${spans.length}, actual ${remaining + i + 1}`,
         pass: false
