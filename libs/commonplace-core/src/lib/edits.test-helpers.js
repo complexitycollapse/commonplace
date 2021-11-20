@@ -18,6 +18,22 @@ export function toEqualBox(actualBox, expectedBox) {
   });
 }
 
+export function toEqualEdit(actualEdit, expectedEdit) {
+  if (actualEdit.editType !== expectedEdit.editType) {
+    return false;
+  }
+
+  if (expectedEdit.editType == "span") {
+    return toEqualSpan(actualEdit, expectedEdit);
+  }
+
+  if (expectedEdit.editType == "box") {
+    return toEqualBox(actualEdit, expectedEdit);
+  }
+
+  throw `Edit type '${expectedEdit.editType}' not understood`;
+}
+
 function compareElements(actual, expected, testFn) {
   if (actual === undefined) return {
     message: () => `expected ${JSON.stringify(expected)} but received undefined`,
