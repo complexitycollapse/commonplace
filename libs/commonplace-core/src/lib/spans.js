@@ -3,7 +3,14 @@ import { addProperties, addMethods } from "./utils";
 
 export function span(origin, start, length) {
   let obj = {};
-  addProperties(obj, { origin, start, length, editType: "span" });
+  addProperties(obj, {
+    origin,
+    start,
+    length,
+    editType: "span",
+    next: start + length,
+    end: start + length - 1
+  });
 
   function clone({
     origin = obj.origin,
@@ -22,11 +29,11 @@ export function span(origin, start, length) {
   }
 
   function abuts(span) {
-    return equalOrigin(span) && obj.next() === span.start;
+    return equalOrigin(span) && obj.next === span.start;
   }
 
   function overlaps(span) {
-    return obj.equalOrigin(span) && !(obj.end() < span.start || span.end() < start);
+    return obj.equalOrigin(span) && !(obj.end < span.start || span.end < start);
   }
 
   function canMergeWith(span) {
@@ -35,7 +42,7 @@ export function span(origin, start, length) {
 
   function merge(sp) {
       let newStart = Math.min(start, sp.start);
-      return span(obj.origin, newStart, Math.max(obj.next(), sp.next()) - newStart);
+      return span(obj.origin, newStart, Math.max(obj.next, sp.next) - newStart);
   }
 
   function crop(startAdjust, newLength) {
@@ -52,11 +59,9 @@ export function span(origin, start, length) {
 
   addMethods(obj, {
     clone,
-    next: () => start + length,
-    end: () => start + length - 1,
     equalOrigin,
     startDiff: (span) => start - span.start,
-    endDiff: (span) => obj.end() - span.end(),
+    endDiff: (span) => obj.end - span.end,
     displace: (n) => clone({ start: start + n }),
     contains,
     abuts,

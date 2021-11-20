@@ -4,7 +4,16 @@ import { editIterator } from "./edit-iterators";
 export function box(origin, x, y, width, height)
 {
   let obj = {};
-  addProperties(obj, {origin, x, y, width, height, editType: "box"});
+  addProperties(obj, {
+    origin,
+    x,
+    y,
+    width,
+    height,
+    editType: "box",
+    nextX: x + width,
+    nextY: y + height
+  });
 
   function clone({
     origin = obj.origin,
@@ -19,14 +28,14 @@ export function box(origin, x, y, width, height)
     return obj.equalOrigin(box) &&
       y === box.y &&
       height === box.height &&
-      obj.nextX() === box.x;
+      obj.nextX === box.x;
   }
 
   function abutsVertically(box) {
     return obj.equalOrigin(box) &&
       x === box.x &&
       width === box.width &&
-      obj.nextY() === box.y;
+      obj.nextY === box.y;
   }
 
   function abuts(box) {
@@ -39,8 +48,8 @@ export function box(origin, x, y, width, height)
       obj.origin,
       newX,
       newY,
-      Math.max(obj.nextX(), b.nextX()) - newX,
-      Math.max(obj.nextY(), b.nextY()) - newY);
+      Math.max(obj.nextX, b.nextX) - newX,
+      Math.max(obj.nextY, b.nextY) - newY);
   }
 
   function crop(xAdjust, yAdjust, newWidth, newHeight) {
@@ -61,8 +70,6 @@ export function box(origin, x, y, width, height)
     abutsHorizontally,
     abutsVertically,
     abuts,
-    nextX: () => x + width,
-    nextY: () => y + height,
     merge,
     crop,
     editSource: () => editIterator(x => x, [obj])

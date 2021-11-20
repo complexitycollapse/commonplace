@@ -64,11 +64,11 @@ describe('basic box functions', () => {
   });
 
   test('nextX returns the x position exactly to the right after the end of the box', () => {
-    expect(make({x: 5, width: 100}).nextX()).toEqual(105);
+    expect(make({x: 5, width: 100}).nextX).toEqual(105);
   });
 
   test('nextY returns the y position exactly below the bottom of the box', () => {
-    expect(make({y: 5, height: 100}).nextY()).toEqual(105);
+    expect(make({y: 5, height: 100}).nextY).toEqual(105);
   });
   
   test('equalOrigin returns true if the origins are the same', () => {
@@ -83,43 +83,43 @@ describe('basic box functions', () => {
 describe('abutsHorizontally', () => {
   it('returns true when the nextX position of the 1st box is equal to the x of the 2nd and other properties (ignoring width) are equal', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX(), width: 1000 });
+    let b2 = b1.clone({ x: b1.nextX, width: 1000 });
     expect(b1.abutsHorizontally(b2)).toBeTruthy();
   });
 
   it('returns false if the boxes have different origins', () => {
     let b1 = make();
-    let b2 = b1.clone({ origin: "something else", x: b1.nextX(), width: 1000 });
+    let b2 = b1.clone({ origin: "something else", x: b1.nextX, width: 1000 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes have different y positions', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX(), width: 1000, y: b1.y + 1 });
+    let b2 = b1.clone({ x: b1.nextX, width: 1000, y: b1.y + 1 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes have different heights', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX(), width: 1000, height: b1.height + 1 });
+    let b2 = b1.clone({ x: b1.nextX, width: 1000, height: b1.height + 1 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes overlap on the x axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX() - 1, width: 1000 });
+    let b2 = b1.clone({ x: b1.nextX - 1, width: 1000 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 
   it('returns false if they abut the wrong way round', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX(), width: 1000 });
+    let b2 = b1.clone({ x: b1.nextX, width: 1000 });
     expect(b2.abutsHorizontally(b1)).toBeFalsy();
   });
 
   it('returns false if the boxes have a gap between them on the x axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX() + 1, width: 1000 });
+    let b2 = b1.clone({ x: b1.nextX + 1, width: 1000 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 });
@@ -127,43 +127,43 @@ describe('abutsHorizontally', () => {
 describe('abutsVertically', () => {
   it('returns true when the nextY position of the 1st box is equal to the y of the 2nd and other properties (ignoring height) are equal', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY(), height: 1000 });
+    let b2 = b1.clone({ y: b1.nextY, height: 1000 });
     expect(b1.abutsVertically(b2)).toBeTruthy();
   });
 
   it('returns false if the boxes have different origins', () => {
     let b1 = make();
-    let b2 = b1.clone({ origin: "something else", y: b1.nextY() });
+    let b2 = b1.clone({ origin: "something else", y: b1.nextY });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes have different y positions', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY(), x: b1.x + 1 });
+    let b2 = b1.clone({ y: b1.nextY, x: b1.x + 1 });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes have different widths', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY(), width: b1.width + 1 });
+    let b2 = b1.clone({ y: b1.nextY, width: b1.width + 1 });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 
   it('returns false if the boxes overlap on the y axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY() - 1 });
+    let b2 = b1.clone({ y: b1.nextY - 1 });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 
   it('returns false if they abut the wrong way round', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY() });
+    let b2 = b1.clone({ y: b1.nextY });
     expect(b2.abutsVertically(b1)).toBeFalsy();
   });
 
   it('returns false if the boxes have a gap between them on the y axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY() + 1 });
+    let b2 = b1.clone({ y: b1.nextY + 1 });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 });
@@ -171,19 +171,19 @@ describe('abutsVertically', () => {
 describe('abuts', () => {
   it('returns true if they abut horizontally', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX() });
+    let b2 = b1.clone({ x: b1.nextX });
     expect(b1.abuts(b2)).toBeTruthy();
   });
 
   it('returns true if they abut vertically', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY() });
+    let b2 = b1.clone({ y: b1.nextY });
     expect(b1.abuts(b2)).toBeTruthy();
   });
 
   it('returns false if they abut neither horizontally or vertically', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX() - 1, y: b1.nextY() - 1 });
+    let b2 = b1.clone({ x: b1.nextX - 1, y: b1.nextY - 1 });
     expect(b1.abuts(b2)).toBeFalsy();
   });
 });

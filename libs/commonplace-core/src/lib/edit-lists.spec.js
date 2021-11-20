@@ -59,7 +59,7 @@ describe('editList', () => {
   });
 
   it('merges spans that abut', () => {
-    let s1 = span("a", 1, 2), s2 = span("a", s1.next(), 4);
+    let s1 = span("a", 1, 2), s2 = span("a", s1.next, 4);
     expect(editList(s1, s2)).hasSpans(span("a", 1, 6));
   });
 
