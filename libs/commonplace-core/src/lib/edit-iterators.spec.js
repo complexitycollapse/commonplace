@@ -1,25 +1,25 @@
 import { describe, expect, it, jest} from '@jest/globals';
 import { span } from './spans';
 import { toEqualSpan } from './edits.test-helpers';
-import { spanIterator } from "./span-iterators";
+import { editIterator } from "./edit-iterators";
 
 expect.extend({
   toEqualSpan
 });
 
-describe('spanIterator', () => {
+describe('editIterator', () => {
   it('has an initial position of undefined', () => {
-    expect(spanIterator(state => undefined).position()).toBeUndefined();
+    expect(editIterator(state => undefined).position()).toBeUndefined();
   });
 
   it('returns the span returned by the callback when called', () => {
     let s = span("o", 1, 2);
-    expect(spanIterator(state => [s, state])()).toEqualSpan(s);
+    expect(editIterator(state => [s, state])()).toEqualSpan(s);
   });
 
   it('has position of 0 after the first call', () => {
     let s = span("o", 1, 2);
-    let iterator = spanIterator(state => [s, state]);
+    let iterator = editIterator(state => [s, state]);
 
     iterator();
 
@@ -28,7 +28,7 @@ describe('spanIterator', () => {
 
   it('increments the position by the length of the previous returned by the callback', () => {
     let s = span("o", 1, 2);
-    let iterator = spanIterator(state => [s, state]);
+    let iterator = editIterator(state => [s, state]);
 
     iterator();
     iterator();
@@ -38,7 +38,7 @@ describe('spanIterator', () => {
 
   it('does not increment the position if the callback returns no span', () => {
     let s = span("o", 1, 2);
-    let iterator = spanIterator(state => state, [s]);
+    let iterator = editIterator(state => state, [s]);
 
     iterator();
     iterator();
@@ -54,7 +54,7 @@ describe('spanIterator', () => {
     let s = span("o", 1, 2);
     let state = "initial state";
     let callback = jest.fn(x => [s, x]);
-    let iterator = spanIterator(callback, state);
+    let iterator = editIterator(callback, state);
 
     iterator();
 
@@ -65,7 +65,7 @@ describe('spanIterator', () => {
     let s = span("o", 1, 2);
     let state = "subsequent state";
     let callback = jest.fn(x => [s, state]);
-    let iterator = spanIterator(callback, state);
+    let iterator = editIterator(callback, state);
 
     iterator();
     iterator();
@@ -74,11 +74,11 @@ describe('spanIterator', () => {
   });
 });
 
-describe('spanIterator.forEach', () => {
+describe('editIterator.forEach', () => {
   it('does not call the callback if there are no spans to iterate', () => {
     let callback = jest.fn((x, y) => x + y);
 
-    spanIterator(x => x, undefined).forEach(callback);
+    editIterator(x => x, undefined).forEach(callback);
 
     expect(callback.mock.calls.length).toEqual(0);
   });
@@ -87,7 +87,7 @@ describe('spanIterator.forEach', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
     let callback = jest.fn((x, y) => x + y);
 
-    spanIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
+    editIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
 
     expect(callback.mock.calls.length).toEqual(3);
     expect(callback.mock.calls[0][0]).toEqualSpan(s1);
@@ -99,7 +99,7 @@ describe('spanIterator.forEach', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
     let callback = jest.fn((x, y) => x + y);
 
-    spanIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
+    editIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
 
     expect(callback.mock.calls[0][1]).toEqual(0);
     expect(callback.mock.calls[1][1]).toEqual(20);
@@ -109,7 +109,7 @@ describe('spanIterator.forEach', () => {
   it('continues from where the iterator left off', () => {
     let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
     let callback = jest.fn((x, y) => x + y);
-    let iterator = spanIterator(x => x, [s1, [s2, [s3]]]);
+    let iterator = editIterator(x => x, [s1, [s2, [s3]]]);
     
     iterator();
     iterator.forEach(callback);

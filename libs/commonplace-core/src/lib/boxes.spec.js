@@ -59,6 +59,10 @@ describe('clone', () => {
 });
 
 describe('basic box functions', () => {
+  test('edit type returns box', () => {
+    expect(make().editType).toEqual("box");
+  });
+
   test('nextX returns the x position exactly to the right after the end of the box', () => {
     expect(make({x: 5, width: 100}).nextX()).toEqual(105);
   });
@@ -300,19 +304,19 @@ describe('crop', () => {
   });
 });
 
-describe('spanSource', () => {
+describe('editSource', () => {
   it('returns a function', () => {
-    expect(typeof make().spanSource()).toEqual('function');
+    expect(typeof make().editSource()).toEqual('function');
   });
 
   it('returns the box on first call', () => {
     let b = make();
-    expect(b.spanSource()()).toEqualBox(b);
+    expect(b.editSource()()).toEqualBox(b);
   });
 
   it('has 0 position after first call', () => {
     let b = make();
-    let iterator = b.spanSource();
+    let iterator = b.editSource();
 
     iterator();
 
@@ -321,21 +325,21 @@ describe('spanSource', () => {
 
   it('returns undefined on second call', () => {
     let b = make();
-    let source = b.spanSource();
+    let source = b.editSource();
     source();
     expect(source()).toBeUndefined();
   });
 
-  describe('spanSource.forEach', () => {
+  describe('editSource.forEach', () => {
     it('is present on the iterator', () => {
-      expect(make().spanSource()).toHaveProperty("forEach");
+      expect(make().editSource()).toHaveProperty("forEach");
     });
 
     it('calls the callback exactly once with the box and zero as arguments', () => {
       let b = make();
       const mockCallback = jest.fn((x, y) => x+y);
 
-      b.spanSource().forEach(mockCallback);
+      b.editSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toEqual(1);
       expect(mockCallback.mock.calls[0][0]).toEqual(b);
@@ -343,7 +347,7 @@ describe('spanSource', () => {
     });
 
     it('does not call the callback if the box has already been iterated', () => {
-      let source = make().spanSource();
+      let source = make().editSource();
       const mockCallback = jest.fn(x => x);
 
       source();

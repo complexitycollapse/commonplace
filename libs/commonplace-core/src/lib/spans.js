@@ -1,9 +1,9 @@
-import { spanIterator } from "./span-iterators";
+import { editIterator } from "./edit-iterators";
 import { addProperties, addMethods } from "./utils";
 
 export function span(origin, start, length) {
   let obj = {};
-  addProperties(obj, { origin, start, length });
+  addProperties(obj, { origin, start, length, editType: "span" });
 
   function clone({
     origin = obj.origin,
@@ -46,8 +46,8 @@ export function span(origin, start, length) {
       length: newLength});
   }
 
-  function spanSource() {
-    return spanIterator(x => x, [obj]);
+  function editSource() {
+    return editIterator(x => x, [obj]);
   }
 
   addMethods(obj, {
@@ -64,7 +64,7 @@ export function span(origin, start, length) {
     canMergeWith,
     merge,
     crop,
-    spanSource
+    editSource
   });
 
   return obj;

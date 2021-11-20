@@ -1,10 +1,10 @@
 import { addProperties, addMethods } from "./utils";
-import { spanIterator } from "./span-iterators";
+import { editIterator } from "./edit-iterators";
 
 export function box(origin, x, y, width, height)
 {
   let obj = {};
-  addProperties(obj, {origin, x, y, width, height});
+  addProperties(obj, {origin, x, y, width, height, editType: "box"});
 
   function clone({
     origin = obj.origin,
@@ -65,7 +65,7 @@ export function box(origin, x, y, width, height)
     nextY: () => y + height,
     merge,
     crop,
-    spanSource: () => spanIterator(x => x, [obj])
+    editSource: () => editIterator(x => x, [obj])
   });
   
   return obj;

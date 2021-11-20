@@ -1,4 +1,4 @@
-export function spanIterator(callback, initialState) {
+export function editIterator(callback, initialState) {
   let state = initialState;
   let positionCount = undefined, nextPosition = 0;
   
@@ -11,13 +11,13 @@ export function spanIterator(callback, initialState) {
       return undefined;
     }
 
-    let [span, newState] = callbackResult;
+    let [edit, newState] = callbackResult;
 
-    if (span) {
-      nextPosition += span.length;
+    if (edit) {
+      nextPosition += edit.length;
     }
     state = newState;
-    return span;
+    return edit;
   };
 
   iterator.position = () => positionCount;
