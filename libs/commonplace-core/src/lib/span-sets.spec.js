@@ -1,7 +1,7 @@
 import { describe, expect, it, jest} from '@jest/globals';
 import { spanSet } from './span-sets';
 import { span } from './spans';
-import { toEqualSpan, makeSpans } from './spans.test-helpers';
+import { toEqualSpan, makeSpans } from './edits.test-helpers';
 
 expect.extend({
   toEqualSpan,

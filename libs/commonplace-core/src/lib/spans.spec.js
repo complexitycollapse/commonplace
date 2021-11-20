@@ -1,6 +1,6 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { span } from './spans';
-import { toEqualSpan } from './spans.test-helpers';
+import { toEqualSpan } from './edits.test-helpers';
 
 expect.extend({
   toEqualSpan
@@ -306,6 +306,11 @@ describe('crop', () => {
     expect(s.crop(0, s.length - 2)).toEqualSpan(s.clone({length: s.length - 2}));
   });
 
+  it('always returns a span of the given length, even when initial elements are removed, so long as the requested length is shorter or equal to the original', () => {
+    let s = make();
+    expect(s.crop(1, s.length - 2).length).toEqual(s.length - 2);
+  });
+
   it('removes initial and final elements if a narrow span is requested', () => {
     let s = make();
     expect(s.crop(1, s.length - 2)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 2}));
@@ -321,9 +326,9 @@ describe('crop', () => {
     expect(s.crop(1, s.length + 1)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 1}));
   });
 
-  it('removes no initial elements if start is negative', () => {
+  it('treats negative start as equivalent to 0', () => {
     let s = make();
-    expect(s.crop(-1, s.length - 1)).toEqualSpan(s.clone({length: s.length - 1}));
+    expect(s.crop(-1, s.length - 1)).toEqualSpan(s.crop(0, s.length - 1));
   });
 });
 
