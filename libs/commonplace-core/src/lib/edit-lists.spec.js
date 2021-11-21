@@ -54,8 +54,12 @@ function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
   return span(origin, start, length);
 }
 
-function sumLengths(spans) {
-  return spans.reduce((a, s) => a + s.length, 0);
+function makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 30} = {}) {
+  return box(origin, x, y, width, height);
+}
+
+function sumLengths(edits) {
+  return edits.reduce((a, s) => a + s.length, 0);
 }
 
 describe('editList', () => {
@@ -94,8 +98,8 @@ describe('editList', () => {
   });
 
   it('merges middle boxes from EditLists if they abut', () => {
-    let b1a = span("a", 0, 0, 5, 5), b1b = span("a", 1, 1, 5, 5), b1c = span("a", 10, 5);
-    let b2a = span("a", 15, 5, 20, 20), b2b = span("a", 2, 2, 10, 10), b2c = span("a", 3, 3, 10, 10);
+    let b1a = box("a", 0, 0, 5, 5), b1b = box("a", 1, 1, 5, 5), b1c = box("a", 10, 5, 5, 20);
+    let b2a = box("a", 15, 5, 20, 20), b2b = box("a", 2, 2, 10, 10), b2c = box("a", 3, 3, 10, 10);
     let el1 = editList(b1a, b1b, b1c), el2 = editList(b2a, b2b, b2c);
 
     expect(editList(el1, el2)).hasEdits(b1a, b1b, b1c.merge(b2a), b2b, b2c);
@@ -135,12 +139,18 @@ describe('concLength', () => {
     expect(el.concLength()).toEqual(100);
   });
 
-  it('returns the sum of the lengths of spans it contains', () => {
+  it('returns the length of a box when it has one box', () => {
+    let el = editList();
+    el.append(box("a", 10, 20, 30, 40));
+    expect(el.concLength()).toEqual(1);
+  });
+
+  it('returns the sum of the lengths of edits it contains', () => {
     let el = editList();
     el.append(makeSpan({length: 100}));
-    el.append(makeSpan({length: 50}));
+    el.append(makeBox());
     el.append(makeSpan({length: 3}));
-    expect(el.concLength()).toEqual(153);
+    expect(el.concLength()).toEqual(104);
   });
 });
 
@@ -189,73 +199,73 @@ describe('editSource', () => {
       expect(mockCallback.mock.calls[2][0]).toEqualEdit(e3);
     });
 
-    it('calls the callback with the sum of the lengths of the previous spans', () => {
+    it('calls the callback with the sum of the lengths of the previous edits', () => {
       const mockCallback = jest.fn((x, y) => x);
-      let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
-      let el = editList(s1, s2, s3);
+      let e1 = span("a", 1, 20), e2 = box("b", 2, 2, 10, 10), e3 = span("c", 30, 300);
+      let el = editList(e1, e2, e3);
 
       el.editSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls[0][1]).toEqual(0);
       expect(mockCallback.mock.calls[1][1]).toEqual(20);
-      expect(mockCallback.mock.calls[2][1]).toEqual(50);
+      expect(mockCallback.mock.calls[2][1]).toEqual(21);
     });
 
     it('continues from where the iterator left off', () => {
       const mockCallback = jest.fn(x => x);
-      let s1 = span("a", 10, 20), s2 = span("a", 20, 30), s3 = span("a", 30, 40);
-      let el = editList(s1, s2, s3);
-      let source = el.editSource();
+      let e1 = span("a", 1, 2), e2 = box("b", 2, 2, 10, 10), e3 = span("c", 30, 300);
+      let el = editList(e1, e2, e3);
+      let iterator = el.editSource();
 
-      source();
-      source.forEach(mockCallback);
+      iterator();
+      iterator.forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toEqual(2);
-      expect(mockCallback.mock.calls[0][0]).toEqualEdit(s2);
-      expect(mockCallback.mock.calls[0][1]).toEqual(20);
-      expect(mockCallback.mock.calls[1][0]).toEqualEdit(s3);
-      expect(mockCallback.mock.calls[1][1]).toEqual(50);
+      expect(mockCallback.mock.calls[0][0]).toEqualEdit(e2);
+      expect(mockCallback.mock.calls[0][1]).toEqual(2);
+      expect(mockCallback.mock.calls[1][0]).toEqualEdit(e3);
+      expect(mockCallback.mock.calls[1][1]).toEqual(3);
     });
   });
 });
 
 describe('range', () => {
-  it('has no spans if the EditList was empty', () => {
+  it('has no edits if the EditList was empty', () => {
     expect(editList().range(0, 100)).hasEdits();
   });
 
-  it('returns all spans if the start and length include them all', () => {
+  it('returns all edits if the start and length include them all', () => {
     let spans = makeSpans(5);
     expect(editList(...spans).range(0, sumLengths(spans))).hasEdits(...spans);
   });
 
-  it('returns only the first spans if the later ones are not included', () => {
+  it('returns only the first edits if the later ones are not included', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(0, -2);
     expect(editList(...spans).range(0, sumLengths(subset))).hasEdits(...subset);
   });
 
-  it('returns the first spans when the start point is negative', () => {
+  it('returns the first edits when the start point is negative', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(0, -2);
     expect(editList(...spans).range(-1, sumLengths(subset))).hasEdits(...subset);
   });
 
-  it('returns only the last spans if the earlier ones are not included', () => {
+  it('returns only the last edits  if the earlier ones are not included', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(2);
     let start = spans[0].length + spans[1].length;
     expect(editList(...spans).range(start, sumLengths(subset))).hasEdits(...subset);
   });
 
-  it('returns the last spans if the length is excessive', () => {
+  it('returns the last edits if the length is excessive', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(2);
     let start = spans[0].length + spans[1].length;
     expect(editList(...spans).range(start, sumLengths(subset) + 1)).hasEdits(...subset);
   });
 
-  it('returns only the middle spans if the ends are not included', () => {
+  it('returns only the middle edits if the ends are not included', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(1, -1);
     expect(editList(...spans).range(spans[0].length, sumLengths(subset))).hasEdits(...subset);
