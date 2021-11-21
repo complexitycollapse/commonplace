@@ -63,6 +63,12 @@ describe('basic box functions', () => {
     expect(make().editType).toEqual("box");
   });
 
+  test('length is always 1', () => {
+    expect(box(0, 0, 1, 1).length).toEqual(1);
+    expect(box(0, 0, 2, 2).length).toEqual(1);
+    expect(box(4, 14, 100, 27).length).toEqual(1);
+  });
+
   test('nextX returns the x position exactly to the right after the end of the box', () => {
     expect(make({x: 5, width: 100}).nextX).toEqual(105);
   });

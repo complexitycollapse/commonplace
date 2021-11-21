@@ -12,7 +12,8 @@ export function box(origin, x, y, width, height)
     height,
     editType: "box",
     nextX: x + width,
-    nextY: y + height
+    nextY: y + height,
+    length: 1
   });
 
   function clone({
