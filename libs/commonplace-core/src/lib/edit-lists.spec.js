@@ -235,8 +235,9 @@ describe('range', () => {
   });
 
   it('returns all edits if the start and length include them all', () => {
-    let spans = makeSpans(5);
-    expect(editList(...spans).range(0, sumLengths(spans))).hasEdits(...spans);
+    let edits = makeSpans(5);
+    edits.push(makeBox());
+    expect(editList(...edits).range(0, sumLengths(edits))).hasEdits(...edits);
   });
 
   it('returns only the first edits if the later ones are not included', () => {

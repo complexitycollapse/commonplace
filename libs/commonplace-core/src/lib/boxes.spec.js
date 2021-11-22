@@ -248,65 +248,65 @@ describe('merge', () => {
   });
 });
 
-describe('crop', () => {
+describe('boxCrop', () => {
   it('returns an identical box if whole box is selected', () => {
     let b = make();
-    expect(b.crop(0, 0, b.width, b.height)).toEqualBox(b);
+    expect(b.boxCrop(0, 0, b.width, b.height)).toEqualBox(b);
   });
 
   it('removes leftmost elements if xAdjust is greater than 0', () => {
     let b = make();
-    expect(b.crop(2, 0, b.width, b.height)).toEqualBox(b.clone({x: b.x + 2, width: b.width - 2}));
+    expect(b.boxCrop(2, 0, b.width, b.height)).toEqualBox(b.clone({x: b.x + 2, width: b.width - 2}));
   });
 
   it('removes topmost elements if yAdjust is greater than 0', () => {
     let b = make();
-    expect(b.crop(0, 2, b.width, b.height)).toEqualBox(b.clone({y: b.y + 2, height: b.height - 2}));
+    expect(b.boxCrop(0, 2, b.width, b.height)).toEqualBox(b.clone({y: b.y + 2, height: b.height - 2}));
   });
 
   it('removes rightmost elements if width is less than the box width', () => {
     let b = make();
-    expect(b.crop(0, 0, b.width - 2, b.height)).toEqualBox(b.clone({width: b.width - 2}));
+    expect(b.boxCrop(0, 0, b.width - 2, b.height)).toEqualBox(b.clone({width: b.width - 2}));
   });
 
   it('removes bottommost elements if height is less than the box height', () => {
     let b = make();
-    expect(b.crop(0, 0, b.width, b.height - 2)).toEqualBox(b.clone({height: b.height - 2}));
+    expect(b.boxCrop(0, 0, b.width, b.height - 2)).toEqualBox(b.clone({height: b.height - 2}));
   });
 
   it('always returns a span of the given width, even when leftmost elements are removed, so long as the requested width is shorter or equal to the original', () => {
     let b = make();
-    expect(b.crop(1, 0, b.width - 2, b.height).width).toEqual(b.width - 2);
+    expect(b.boxCrop(1, 0, b.width - 2, b.height).width).toEqual(b.width - 2);
   });
 
   it('always returns a span of the given height, even when leftmost elements are removed, so long as the requested height is shorter or equal to the original', () => {
     let b = make();
-    expect(b.crop(1, 0, b.width, b.height - 2).height).toEqual(b.height - 2);
+    expect(b.boxCrop(1, 0, b.width, b.height - 2).height).toEqual(b.height - 2);
   });
 
   it('removes leftmost and rightmost elements if a narrow box is requested', () => {
     let b = make();
-    expect(b.crop(1, 0, b.width - 2, b.height)).toEqualBox(b.clone({x: b.x + 1, width: b.width - 2}));
+    expect(b.boxCrop(1, 0, b.width - 2, b.height)).toEqualBox(b.clone({x: b.x + 1, width: b.width - 2}));
   });
 
   it('removes topmost and bottommost elements if a short box is requested', () => {
     let b = make();
-    expect(b.crop(0, 1, b.width, b.height - 2)).toEqualBox(b.clone({y: b.y + 1, height: b.height - 2}));
+    expect(b.boxCrop(0, 1, b.width, b.height - 2)).toEqualBox(b.clone({y: b.y + 1, height: b.height - 2}));
   });
 
   it('removes no rightmost or bottommost elements if width and height are not passed', () => {
     let b = make();
-    expect(b.crop(1, 1)).toEqualBox(b.clone({x: b.x + 1, y: b.y + 1, width: b.width - 1, height: b.height - 1}));
+    expect(b.boxCrop(1, 1)).toEqualBox(b.clone({x: b.x + 1, y: b.y + 1, width: b.width - 1, height: b.height - 1}));
   });
 
   it('removes no rightmost or bottommost elements if width or height are greater than the box dimensions', () => {
     let b = make();
-    expect(b.crop(1, 1, b.width + 1, b.height)).toEqualBox(b.clone({x: b.x + 1, y: b.y + 1, width: b.width - 1, height: b.height -1}));
+    expect(b.boxCrop(1, 1, b.width + 1, b.height)).toEqualBox(b.clone({x: b.x + 1, y: b.y + 1, width: b.width - 1, height: b.height -1}));
   });
 
   it('treats negative xAdjust or yAdjust as equivalent to 0', () => {
     let b = make();
-    expect(b.crop(-1, -1, b.width - 1, b.height - 1)).toEqualBox(b.crop(0, 0, b.width - 1, b.height - 1));
+    expect(b.boxCrop(-1, -1, b.width - 1, b.height - 1)).toEqualBox(b.boxCrop(0, 0, b.width - 1, b.height - 1));
   });
 });
 

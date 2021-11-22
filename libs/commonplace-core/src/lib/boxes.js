@@ -53,7 +53,7 @@ export function box(origin, x, y, width, height)
       Math.max(obj.nextY, b.nextY) - newY);
   }
 
-  function crop(xAdjust, yAdjust, newWidth, newHeight) {
+  function boxCrop(xAdjust, yAdjust, newWidth, newHeight) {
     xAdjust = xAdjust > 0 ? xAdjust : 0;
     yAdjust = yAdjust > 0 ? yAdjust : 0;
     newWidth = Math.min(newWidth ?? width, width - xAdjust);
@@ -72,8 +72,9 @@ export function box(origin, x, y, width, height)
     abutsVertically,
     abuts,
     merge,
-    crop,
-    editSource: () => editIterator(x => x, [obj])
+    boxCrop,
+    editSource: () => editIterator(x => x, [obj]),
+    crop: () => obj
   });
   
   return obj;
