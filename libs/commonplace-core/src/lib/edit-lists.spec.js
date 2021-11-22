@@ -2,52 +2,11 @@ import { describe, expect, it, jest} from '@jest/globals';
 import { editList } from './edit-lists';
 import { span } from './spans';
 import { box } from './boxes';
-import { toEqualEdit, makeSpans } from './edits.test-helpers';
+import { toEqualEdit, makeSpans, hasEdits } from './edits.test-helpers';
 
 expect.extend({
   toEqualEdit,
-  hasEdits(el, ...edits) {
-    let iterator = el.editSource();
-    let i = 0;
-    let failed = false;
-
-    try {
-      edits.forEach(edit => {
-        if (failed === false) {
-          let actual = iterator();
-          let singleResult = toEqualEdit(actual, edit);
-          if (!singleResult.pass) {
-            failed = {edit, i, actual};
-            throw "test failed";
-          }
-          ++i;
-        }
-      });
-    } catch (ex) {
-      if (ex !== "test failed") throw ex;
-    }
-
-    if (failed) {
-      return {
-        message: () => `expected ${JSON.stringify(failed.edit)} at position ${failed.i}, received ${JSON.stringify(failed.actual)}`,
-        pass: false
-      };
-    }
-
-    if (iterator() !== undefined) {
-      let remaining = 0;
-      iterator.forEach(_ => ++remaining);
-      return {
-        message: () => `too many items in EditList, expected ${edits.length}, actual ${remaining + i + 1}`,
-        pass: false
-      }
-    }
-
-    return {
-      message: () => 'expected EditLists to not contain the given edits',
-      pass: true
-    };
-  }
+  hasEdits
 });
 
 function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
