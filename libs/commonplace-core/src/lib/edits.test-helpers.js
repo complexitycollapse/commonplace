@@ -1,4 +1,5 @@
 import { span } from "./spans";
+import { box } from "./boxes";
 
 export function toEqualSpan(actualSpan, expectedSpan) {
   return compareElements(actualSpan, expectedSpan, (actual, expected) => {
@@ -117,4 +118,12 @@ export function hasEdits(el, ...edits) {
     message: () => 'expected EditLists to not contain the given edits',
     pass: true
   };
+}
+
+export function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
+  return span(origin, start, length);
+}
+
+export function makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 30} = {}) {
+  return box(origin, x, y, width, height);
 }

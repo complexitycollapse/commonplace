@@ -2,20 +2,12 @@ import { describe, expect, it, jest} from '@jest/globals';
 import { editList } from './edit-lists';
 import { span } from './spans';
 import { box } from './boxes';
-import { toEqualEdit, makeSpans, hasEdits } from './edits.test-helpers';
+import { toEqualEdit, makeSpans, hasEdits, makeSpan, makeBox } from './edits.test-helpers';
 
 expect.extend({
   toEqualEdit,
   hasEdits
 });
-
-function makeSpan({origin = "origin", start = 10, length = 20} = {}) {
-  return span(origin, start, length);
-}
-
-function makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 30} = {}) {
-  return box(origin, x, y, width, height);
-}
 
 function sumLengths(edits) {
   return edits.reduce((a, s) => a + s.length, 0);
