@@ -9,9 +9,9 @@ export function commonplaceCore(repository) {
     repository
   });
 
-  function ensureContent(content) {
+  function ensureContent(content, isPinned) {
     if (!repository.getContent(content)) {
-      repository.addContent("Name", content);
+      repository.addContent("Name", content, isPinned);
     }
     
     return "Name";
@@ -24,7 +24,7 @@ export function commonplaceCore(repository) {
 
     let existingBinding = repository.resolveLocalName(name);
 
-    if (existingBinding && existingBinding !== newBlobIdentifier) {
+    if (existingBinding && existingBinding[2] !== newBlobIdentifier) {
       throw "Name already in use";
     }
 
@@ -32,7 +32,7 @@ export function commonplaceCore(repository) {
   }
 
   function addContentWithLocalName(name, isScroll, content) {
-    let blobIdentifier = ensureContent(content);
+    let blobIdentifier = ensureContent(content, true);
     name = checkName();
     return repository.createLocalName(name, isScroll, blobIdentifier);
   }
@@ -41,13 +41,20 @@ export function commonplaceCore(repository) {
     return addContentWithLocalName(name, true, content);
   }
 
-  function newDoc(name) {
-    return addContentWithLocalName(name, false, doc([], []));
+  function newDoc(name, newDoc) {
+    let d = newDoc ?? doc([], []);
+    return [d, addContentWithLocalName(name, false, d)];
+  }
+
+  function updateDoc(name, updatedDoc) {
+    let blobIdentifier = ensureContent(updatedDoc, true);
+    repository.rebindLocalName(name, blobIdentifier);
   }
 
   addMethods(obj, {
     importContent,
-    newDoc
+    newDoc,
+    updateDoc
   });
 
   return obj;

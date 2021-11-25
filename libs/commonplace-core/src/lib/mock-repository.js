@@ -14,9 +14,9 @@ export function mockRepository() {
     return obj.names.find(b => b.name === name);
   }
 
-  function addContent(identifier, content) {
-    obj.calls.push({ method: "addContent", identifier, content });
-    obj.content.push([identifier, content]);
+  function addContent(identifier, content, isPinned) {
+    obj.calls.push({ method: "addContent", identifier, content, isPinned });
+    obj.content.push([identifier, content, isPinned]);
   }
 
   function getContent(identifier) {
@@ -45,9 +45,18 @@ export function mockRepository() {
     }
   }
 
+  function unbindLocalName(name) {
+    obj.calls.push({ method: "unbindLocalName", name});
+    let binding = resolveLocalNameInternal(name);
+    let index = obj.names.indexOf(binding);
+    if (index >= 0) {
+      obj.names.splice(index, 1);
+    }
+  }
+
   function resolveLocalName(name) {
     obj.calls.push({ method: "resolveLocalName", name});
-    return resolveLocalNameInternal(name)?.newBlobIdentifier;
+    return resolveLocalNameInternal(name);
   }
 
   function generateUniqueName() {
@@ -69,7 +78,8 @@ export function mockRepository() {
     createLocalName,
     rebindLocalName,
     resolveLocalName,
-    generateUniqueName
+    generateUniqueName,
+    unbindLocalName
   });
 
   clearCalls();
