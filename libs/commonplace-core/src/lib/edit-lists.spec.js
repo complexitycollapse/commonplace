@@ -253,3 +253,29 @@ describe('range', () => {
     expect(editList(...spans).range(11, 0)).hasEdits();
   });
 });
+
+describe('leafData', () => {
+  it('returns an empty array if there are no edits', () => {
+    expect(editList().leafData()).toHaveLength(0);
+  });
+
+  it('returns span serializer data if it contains a span', () => {
+    expect(editList(span("a", 101, 505)).leafData()[0]).toEqual({
+      typ: "span",
+      ori: "a",
+      st: 101,
+      ln: 505
+    });
+  });
+
+  it('returns box serializer data if it contains a box', () => {
+    expect(editList(box("a", 101, 505, 22, 33)).leafData()[0]).toEqual({
+      typ: "box",
+      ori: "a",
+      x: 101,
+      y: 505,
+      wd: 22,
+      hg: 33
+    });
+  });
+});

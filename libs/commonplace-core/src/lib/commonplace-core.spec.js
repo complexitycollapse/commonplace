@@ -1,10 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { commonplaceCore } from './commonplace-core';
 describe('commonplaceCore', () => {
-  it('is an object', () => {
-    expect(commonplaceCore()).toEqual(expect.objectContaining({}));
-  });
-
   describe('importContent', () => {
     it('exists on the core object', () => {
       expect(typeof commonplaceCore().importContent).toEqual('function');

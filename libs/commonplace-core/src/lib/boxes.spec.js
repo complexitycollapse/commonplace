@@ -363,3 +363,16 @@ describe('editSource', () => {
     });
   })
 });
+
+describe('leafData', () => {
+  it('has the editType, origin, x, y, width and height properties', () => {
+    expect(box("a", 101, 505, 22, 33).leafData()).toEqual({
+      typ: "box",
+      ori: "a",
+      x: 101,
+      y: 505,
+      wd: 22,
+      hg: 33
+    });
+  });
+});

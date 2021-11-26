@@ -57,6 +57,10 @@ export function span(origin, start, length) {
     return editIterator(x => x, [obj]);
   }
 
+  function leafData() {
+    return { typ: obj.editType, ori: origin, st: start, ln: length };
+  }
+
   addMethods(obj, {
     clone,
     equalOrigin,
@@ -69,7 +73,8 @@ export function span(origin, start, length) {
     canMergeWith,
     merge,
     crop,
-    editSource
+    editSource,
+    leafData
   });
 
   return obj;

@@ -62,3 +62,14 @@ describe('concLength', () => {
     expect(d.concLength()).toEqual(104);
   });
 });
+
+describe('leafData', () => {
+  it('has the edits and links properties', () => {
+    let spans = makeSpans(5);
+    let links = [link("1"), link("2"), link("3")];
+    expect(doc(spans, links).leafData()).toEqual({
+      edits: expect.arrayContaining(spans.map(s => s.leafData())),
+      links: expect.arrayContaining(links.map(l => l.leafData())),
+    });
+  });
+});

@@ -11,8 +11,17 @@ export function doc(edits, links) {
     links
   });
 
+  function leafData() {
+    return {
+      edits: edits.leafData(),
+      links: links.map(l => l.leafData())
+    };
+  }
+
   addMethods(obj, {
-    concLength: () => edits.concLength()
+    concLength: () => edits.concLength(),
+    leafData,
+    convertToLeaf: () => JSON.stringify(leafData())
   });
 
   return obj;

@@ -65,6 +65,10 @@ export function box(origin, x, y, width, height)
       height: newHeight});
   }
 
+  function leafData() {
+    return {typ: obj.editType, ori: origin, x, y, wd: width, hg: height };
+  }
+
   addMethods(obj, {
     clone,
     equalOrigin: box => box.origin == origin,
@@ -74,7 +78,8 @@ export function box(origin, x, y, width, height)
     merge,
     boxCrop,
     editSource: () => editIterator(x => x, [obj]),
-    crop: () => obj
+    crop: () => obj,
+    leafData
   });
   
   return obj;

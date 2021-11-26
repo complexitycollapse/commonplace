@@ -389,3 +389,14 @@ describe('editSource', () => {
     });
   })
 });
+
+describe('leafData', () => {
+  it('has the editType, origin, start and length properties', () => {
+    expect(span("a", 101, 505).leafData()).toEqual({
+      typ: "span",
+      ori: "a",
+      st: 101,
+      ln: 505
+    });
+  });
+});

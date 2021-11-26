@@ -54,11 +54,16 @@ export function editList(...editDesignators) {
     return editList(...rangeSpans);
   }
 
+  function leafData() {
+    return edits.map(e => e.leafData());
+  }
+
   addMethods(obj, {
     concLength: () => edits.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     editSource,
-    range
+    range,
+    leafData
   });
 
   return obj;

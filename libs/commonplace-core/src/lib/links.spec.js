@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect, test, describe, it } from '@jest/globals';
 import { hasEdits } from "./edits.test-helpers";
 import { endset } from './endsets';
 import { link } from './links';
@@ -20,4 +20,22 @@ test('endsets is set on the link', () => {
   expect(lk.endsets[0].name).toEqual("foo");
   expect(lk.endsets[1].name).toEqual("bar");
   expect(lk.endsets[2].name).toEqual("baz");
+});
+
+describe('leafData', () => {
+  it('has the type and endsets properties', () => {
+    expect(link("type").leafData()).toEqual({
+      typ: "type",
+      es: []
+    });
+  });
+
+  it('has no own properties other than type and endset', () => {
+    expect(Object.getOwnPropertyNames(link("type").leafData())).toHaveLength(2);
+  });
+
+  it('converts the endsets to their serialized form', () => {
+    let es = endset("Name", []);
+    expect(link("type", es).leafData().es[0]).toEqual(es.leafData());
+  });
 });
