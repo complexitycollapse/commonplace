@@ -1,45 +1,45 @@
 {
   "version": 2,
   "projects": {
-    "commonplace-core": {
-      "root": "libs/commonplace-core",
-      "sourceRoot": "libs/commonplace-core/src",
+    "core": {
+      "root": "libs/core",
+      "sourceRoot": "libs/core/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/commonplace-core/**/*.js"]
+            "lintFilePatterns": ["libs/core/**/*.js"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/commonplace-core"],
+          "outputs": ["coverage/libs/core"],
           "options": {
-            "jestConfig": "libs/commonplace-core/jest.config.js",
+            "jestConfig": "libs/core/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "commonplace-html": {
-      "root": "libs/commonplace-html",
-      "sourceRoot": "libs/commonplace-html/src",
+    "html": {
+      "root": "libs/html",
+      "sourceRoot": "libs/html/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/commonplace-html/**/*.js"]
+            "lintFilePatterns": ["libs/html/**/*.js"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/commonplace-html"],
+          "outputs": ["coverage/libs/html"],
           "options": {
-            "jestConfig": "libs/commonplace-html/jest.config.js",
+            "jestConfig": "libs/html/jest.config.js",
             "passWithNoTests": true
           }
         }

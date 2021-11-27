@@ -27,10 +27,10 @@
     ]
   },
   "projects": {
-    "commonplace-core": {
+    "core": {
       "tags": []
     },
-    "commonplace-html": {
+    "html": {
       "tags": []
     }
   }

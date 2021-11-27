@@ -1,3 +1,3 @@
 export function commonplaceHtml() {
-  return 'commonplace-html';
+  return 'html';
 }

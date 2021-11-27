@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'commonplace-html',
+  displayName: 'html',
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/commonplace-html',
+  coverageDirectory: '../../coverage/libs/html',
 };
