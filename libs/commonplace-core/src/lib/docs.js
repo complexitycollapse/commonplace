@@ -1,5 +1,6 @@
 import { addProperties, addMethods } from "./utils";
-import { editList } from "./edit-lists";
+import { editList, leafDataToEdit } from "./edit-lists";
+import { leafDataToLink } from "./links";
 
 export function doc(edits, links) {
   let obj = {};
@@ -25,4 +26,8 @@ export function doc(edits, links) {
   });
 
   return obj;
+}
+
+export function leafDataToDoc(leafData) {
+  return doc(leafData.edits.map(leafDataToEdit), leafData.links.map(leafDataToLink));
 }

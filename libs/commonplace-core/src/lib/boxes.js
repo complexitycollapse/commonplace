@@ -84,3 +84,7 @@ export function box(origin, x, y, width, height)
   
   return obj;
 }
+
+export function leafDataToBox(leafData) {
+  return box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.hg);
+}

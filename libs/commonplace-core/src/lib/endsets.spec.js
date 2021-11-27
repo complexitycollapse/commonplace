@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { endset } from './endsets';
+import { endset, leafDataToEndset } from './endsets';
 import { span } from "./spans";
 import { box } from "./boxes";
 import { makeSpans } from "./edits.test-helpers";
@@ -47,5 +47,23 @@ describe('leafData', () => {
 
   it('returns original string for set if it is a string', () => {
     expect(endset("foo", "some string").leafData()[1]).toBe("some string");
+  });
+});
+
+describe('leafDataToEndset is inverse of leafData', () => {
+  test('edits case', () => {
+    let edits = [...makeSpans(5), box("o", 1, 4, 5, 7)];
+
+    let actual = leafDataToEndset(endset("the name", edits).leafData());
+
+    expect(actual.name).toBe("the name");
+    expect(actual.set).toEqual(edits);
+  });
+
+  test('string case', () => {
+    let actual = leafDataToEndset(endset("the name", "the string").leafData());
+
+    expect(actual.name).toBe("the name");
+    expect(actual.set).toEqual("the string");
   });
 });

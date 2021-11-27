@@ -1,5 +1,5 @@
-import { describe, expect, it, jest} from '@jest/globals';
-import { editList } from './edit-lists';
+import { describe, expect, it, jest, test} from '@jest/globals';
+import { editList, leafDataToEditList } from './edit-lists';
 import { span } from './spans';
 import { box } from './boxes';
 import { toEqualEdit, makeSpans, hasEdits, makeSpan, makeBox } from './edits.test-helpers';
@@ -278,4 +278,10 @@ describe('leafData', () => {
       hg: 33
     });
   });
+});
+
+test('leafDataToEditList is inverse of leafData', () => {
+  let edits = [span("orig1", 12, 34), box("orig2", 123, 234, 345, 456)];
+  let el = editList(...edits);
+  expect(leafDataToEditList(el.leafData())).hasEdits(...edits);
 });

@@ -1,4 +1,6 @@
+import { leafDataToBox } from './boxes';
 import { editIterator } from './edit-iterators';
+import { leafDataToSpan } from './spans';
 import { addMethods } from './utils';
 
 export function editList(...editDesignators) {
@@ -67,4 +69,18 @@ export function editList(...editDesignators) {
   });
 
   return obj;
+}
+
+export function leafDataToEditList(leafData) {
+  return editList(...leafData.map(leafDataToEdit));
+}
+
+export function leafDataToEdit(leafData) {
+  if (leafData.typ === "span") {
+    return leafDataToSpan(leafData);
+  } else if (leafData.typ === "box") {
+    return leafDataToBox(leafData);
+  } else {
+    throw `leafDataToEdit does not understand '${leafData}'`;
+  }
 }

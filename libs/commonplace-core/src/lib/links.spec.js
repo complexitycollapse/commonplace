@@ -1,7 +1,8 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasEdits } from "./edits.test-helpers";
+import { hasEdits, makeSpan } from "./edits.test-helpers";
 import { endset } from './endsets';
-import { link } from './links';
+import { link, leafDataToLink } from './links';
+import { box } from './boxes';
 
 expect.extend({
   hasEdits
@@ -38,4 +39,9 @@ describe('leafData', () => {
     let es = endset("Name", []);
     expect(link("type", es).leafData().es[0]).toEqual(es.leafData());
   });
+});
+
+test('leafDataToLink is inverse of leafData', () => {
+  let l = link("my type", endset("name1", "foo"), endset("name2", [makeSpan(), box("orig", 1, 2, 3, 4)]));
+  expect(leafDataToLink(l.leafData())).toEqual(l);
 });

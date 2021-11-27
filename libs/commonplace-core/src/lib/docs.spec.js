@@ -1,8 +1,9 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasEdits, makeSpans, toEqualSpan, makeSpan, makeBox } from "./edits.test-helpers";
 import { link } from './links';
-import { doc } from './docs';
+import { doc, leafDataToDoc } from './docs';
 import { box } from './boxes';
+import { endset } from './endsets';
 
 expect.extend({
   hasEdits,
@@ -72,4 +73,12 @@ describe('leafData', () => {
       links: expect.arrayContaining(links.map(l => l.leafData())),
     });
   });
+});
+
+test('leafDataToDoc is inverse of leafData', () => {
+  let l1 = link("type1", endset("name1", "foo"), endset("name2", [makeSpan(), box("orig1", 1, 2, 3, 4)]));
+  let l2 = link("type2", endset("name3", "blah"), endset("name4", [makeSpan(), box("orig2", 10, 20, 30, 40)]));
+  let edits = [...makeSpans(10), box("orig3", 11, 22, 33, 44)];
+  let d = doc(edits, [l1, l2]);
+  expect(leafDataToDoc(d.leafData())).toEqual(d);
 });

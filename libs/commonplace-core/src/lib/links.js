@@ -1,4 +1,5 @@
 import { addProperties, addMethods } from "./utils";
+import { leafDataToEndset } from "./endsets";
 
 export function link(type, ...endsets) {
   let obj = {};
@@ -20,4 +21,9 @@ export function link(type, ...endsets) {
   });
 
   return obj;
+}
+
+export function leafDataToLink(leafData) {
+  let es = leafData.es.map(leafDataToEndset);
+  return link(leafData.typ, ...es);
 }

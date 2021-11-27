@@ -1,5 +1,5 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { box } from "./boxes";
+import { box, leafDataToBox } from "./boxes";
 import { toEqualBox } from './edits.test-helpers';
 
 expect.extend({
@@ -375,4 +375,9 @@ describe('leafData', () => {
       hg: 33
     });
   });
+});
+
+test('leafDataToBox is inverse of leafData', () => {
+  let b = box("orig", 1, 2, 101, 202);
+  expect(leafDataToBox(b.leafData())).toEqualBox(b);
 });

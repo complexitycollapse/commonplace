@@ -79,3 +79,7 @@ export function span(origin, start, length) {
 
   return obj;
 }
+
+export function leafDataToSpan(leafData) {
+  return span(leafData.ori, leafData.st, leafData.ln);
+}
