@@ -14,8 +14,8 @@ export function doc(edits, links) {
 
   function leafData() {
     return {
-      edits: edits.leafData(),
-      links: links.map(l => l.leafData())
+      edl: edits.leafData(),
+      odl: links.map(l => l.leafData())
     };
   }
 
@@ -29,5 +29,5 @@ export function doc(edits, links) {
 }
 
 export function leafDataToDoc(leafData) {
-  return doc(leafData.edits.map(leafDataToEdit), leafData.links.map(leafDataToLink));
+  return doc(leafData.edl.map(leafDataToEdit), leafData.odl.map(leafDataToLink));
 }

@@ -69,8 +69,8 @@ describe('leafData', () => {
     let spans = makeSpans(5);
     let links = [link("1"), link("2"), link("3")];
     expect(doc(spans, links).leafData()).toEqual({
-      edits: expect.arrayContaining(spans.map(s => s.leafData())),
-      links: expect.arrayContaining(links.map(l => l.leafData())),
+      edl: expect.arrayContaining(spans.map(s => s.leafData())),
+      odl: expect.arrayContaining(links.map(l => l.leafData())),
     });
   });
 });
