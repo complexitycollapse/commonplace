@@ -81,19 +81,19 @@ describe('editList', () => {
 
 describe('concLength', () => {
   it('returns 0 for empty set', () => {
-    expect(editList().concLength()).toEqual(0);
+    expect(editList().concLength()).toBe(0);
   });
 
   it('returns the length of a span when it has one span', () => {
     let el = editList();
     el.append(makeSpan({length: 100}));
-    expect(el.concLength()).toEqual(100);
+    expect(el.concLength()).toBe(100);
   });
 
   it('returns the length of a box when it has one box', () => {
     let el = editList();
     el.append(box("a", 10, 20, 30, 40));
-    expect(el.concLength()).toEqual(1);
+    expect(el.concLength()).toBe(1);
   });
 
   it('returns the sum of the lengths of edits it contains', () => {
@@ -101,7 +101,7 @@ describe('concLength', () => {
     el.append(makeSpan({length: 100}));
     el.append(makeBox());
     el.append(makeSpan({length: 3}));
-    expect(el.concLength()).toEqual(104);
+    expect(el.concLength()).toBe(104);
   });
 });
 
@@ -134,7 +134,7 @@ describe('editSource', () => {
 
       editList().editSource().forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(0);
+      expect(mockCallback.mock.calls.length).toBe(0);
     });
 
     it('calls the callback with all the present edits in order', () => {
@@ -144,7 +144,7 @@ describe('editSource', () => {
 
       el.editSource().forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(3);
+      expect(mockCallback.mock.calls.length).toBe(3);
       expect(mockCallback.mock.calls[0][0]).toEqualEdit(e1);
       expect(mockCallback.mock.calls[1][0]).toEqualEdit(e2);
       expect(mockCallback.mock.calls[2][0]).toEqualEdit(e3);
@@ -157,9 +157,9 @@ describe('editSource', () => {
 
       el.editSource().forEach(mockCallback);
 
-      expect(mockCallback.mock.calls[0][1]).toEqual(0);
-      expect(mockCallback.mock.calls[1][1]).toEqual(20);
-      expect(mockCallback.mock.calls[2][1]).toEqual(21);
+      expect(mockCallback.mock.calls[0][1]).toBe(0);
+      expect(mockCallback.mock.calls[1][1]).toBe(20);
+      expect(mockCallback.mock.calls[2][1]).toBe(21);
     });
 
     it('continues from where the iterator left off', () => {
@@ -171,11 +171,11 @@ describe('editSource', () => {
       iterator();
       iterator.forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(2);
+      expect(mockCallback.mock.calls.length).toBe(2);
       expect(mockCallback.mock.calls[0][0]).toEqualEdit(e2);
-      expect(mockCallback.mock.calls[0][1]).toEqual(2);
+      expect(mockCallback.mock.calls[0][1]).toBe(2);
       expect(mockCallback.mock.calls[1][0]).toEqualEdit(e3);
-      expect(mockCallback.mock.calls[1][1]).toEqual(3);
+      expect(mockCallback.mock.calls[1][1]).toBe(3);
     });
   });
 });

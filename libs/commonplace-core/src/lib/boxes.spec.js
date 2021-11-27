@@ -13,11 +13,11 @@ function make({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {})
 describe('box', () => {
   it('has origin, x, y, width and height', () => {
     let actual = box('origin', 1, 100, 200, 250);
-    expect(actual.origin).toEqual('origin');
-    expect(actual.x).toEqual(1);
-    expect(actual.y).toEqual(100);
-    expect(actual.width).toEqual(200);
-    expect(actual.height).toEqual(250);
+    expect(actual.origin).toBe('origin');
+    expect(actual.x).toBe(1);
+    expect(actual.y).toBe(100);
+    expect(actual.width).toBe(200);
+    expect(actual.height).toBe(250);
   });
 });
 
@@ -60,21 +60,21 @@ describe('clone', () => {
 
 describe('basic box functions', () => {
   test('edit type returns box', () => {
-    expect(make().editType).toEqual("box");
+    expect(make().editType).toBe("box");
   });
 
   test('length is always 1', () => {
-    expect(box(0, 0, 1, 1).length).toEqual(1);
-    expect(box(0, 0, 2, 2).length).toEqual(1);
-    expect(box(4, 14, 100, 27).length).toEqual(1);
+    expect(box(0, 0, 1, 1).length).toBe(1);
+    expect(box(0, 0, 2, 2).length).toBe(1);
+    expect(box(4, 14, 100, 27).length).toBe(1);
   });
 
   test('nextX returns the x position exactly to the right after the end of the box', () => {
-    expect(make({x: 5, width: 100}).nextX).toEqual(105);
+    expect(make({x: 5, width: 100}).nextX).toBe(105);
   });
 
   test('nextY returns the y position exactly below the bottom of the box', () => {
-    expect(make({y: 5, height: 100}).nextY).toEqual(105);
+    expect(make({y: 5, height: 100}).nextY).toBe(105);
   });
   
   test('equalOrigin returns true if the origins are the same', () => {
@@ -276,12 +276,12 @@ describe('boxCrop', () => {
 
   it('always returns a span of the given width, even when leftmost elements are removed, so long as the requested width is shorter or equal to the original', () => {
     let b = make();
-    expect(b.boxCrop(1, 0, b.width - 2, b.height).width).toEqual(b.width - 2);
+    expect(b.boxCrop(1, 0, b.width - 2, b.height).width).toBe(b.width - 2);
   });
 
   it('always returns a span of the given height, even when leftmost elements are removed, so long as the requested height is shorter or equal to the original', () => {
     let b = make();
-    expect(b.boxCrop(1, 0, b.width, b.height - 2).height).toEqual(b.height - 2);
+    expect(b.boxCrop(1, 0, b.width, b.height - 2).height).toBe(b.height - 2);
   });
 
   it('removes leftmost and rightmost elements if a narrow box is requested', () => {
@@ -312,7 +312,7 @@ describe('boxCrop', () => {
 
 describe('editSource', () => {
   it('returns a function', () => {
-    expect(typeof make().editSource()).toEqual('function');
+    expect(typeof make().editSource()).toBe('function');
   });
 
   it('returns the box on first call', () => {
@@ -326,7 +326,7 @@ describe('editSource', () => {
 
     iterator();
 
-    expect(iterator.position()).toEqual(0);
+    expect(iterator.position()).toBe(0);
   });
 
   it('returns undefined on second call', () => {
@@ -347,9 +347,9 @@ describe('editSource', () => {
 
       b.editSource().forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(1);
-      expect(mockCallback.mock.calls[0][0]).toEqual(b);
-      expect(mockCallback.mock.calls[0][1]).toEqual(0);
+      expect(mockCallback.mock.calls.length).toBe(1);
+      expect(mockCallback.mock.calls[0][0]).toBe(b);
+      expect(mockCallback.mock.calls[0][1]).toBe(0);
     });
 
     it('does not call the callback if the box has already been iterated', () => {
@@ -359,7 +359,7 @@ describe('editSource', () => {
       source();
       source.forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(0);
+      expect(mockCallback.mock.calls.length).toBe(0);
     });
   })
 });

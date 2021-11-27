@@ -13,9 +13,9 @@ function make({origin = "origin", start = 10, length = 20} = {}) {
 describe('span', () => {
   it('has origin, start and length', () => {
     let actual = span('origin', 1, 100);
-    expect(actual.origin).toEqual('origin');
-    expect(actual.start).toEqual(1);
-    expect(actual.length).toEqual(100);
+    expect(actual.origin).toBe('origin');
+    expect(actual.start).toBe(1);
+    expect(actual.length).toBe(100);
   });
 });
 
@@ -45,15 +45,15 @@ describe('clone', () => {
 
 describe('basic span functions', () => {
   test('edit type returns span', () => {
-    expect(make().editType).toEqual("span");
+    expect(make().editType).toBe("span");
   });
 
   test('next returns the position exactly after the end of the span', () => {
-    expect(make().next).toEqual(30);
+    expect(make().next).toBe(30);
   });
 
   test('end returns the last position occupied by the span', () => {
-    expect(make().end).toEqual(29);
+    expect(make().end).toBe(29);
   });
 
   test('equalOrigin returns true if the origins are the same', () => {
@@ -65,11 +65,11 @@ describe('basic span functions', () => {
   });
 
   test('startDiff returns the difference between the start points or two spans', () => {
-    expect(make().startDiff(span('abc', 15, 20))).toEqual(-5);
+    expect(make().startDiff(span('abc', 15, 20))).toBe(-5);
   });
 
   test('endDiff returns the difference between the start points or two spans', () => {
-    expect(make().endDiff(span('abc', 10, 15))).toEqual(5);
+    expect(make().endDiff(span('abc', 10, 15))).toBe(5);
   });
 
   test('displace returns a span whose start has been moved by the given amount', () => {
@@ -312,7 +312,7 @@ describe('crop', () => {
 
   it('always returns a span of the given length, even when initial elements are removed, so long as the requested length is shorter or equal to the original', () => {
     let s = make();
-    expect(s.crop(1, s.length - 2).length).toEqual(s.length - 2);
+    expect(s.crop(1, s.length - 2).length).toBe(s.length - 2);
   });
 
   it('removes initial and final elements if a narrow span is requested', () => {
@@ -338,7 +338,7 @@ describe('crop', () => {
 
 describe('editSource', () => {
   it('returns a function', () => {
-    expect(typeof make().editSource()).toEqual('function');
+    expect(typeof make().editSource()).toBe('function');
   });
 
   it('returns the span on first call', () => {
@@ -352,7 +352,7 @@ describe('editSource', () => {
 
     iterator();
 
-    expect(iterator.position()).toEqual(0);
+    expect(iterator.position()).toBe(0);
   });
 
   it('returns undefined on second call', () => {
@@ -373,9 +373,9 @@ describe('editSource', () => {
 
       s.editSource().forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(1);
-      expect(mockCallback.mock.calls[0][0]).toEqual(s);
-      expect(mockCallback.mock.calls[0][1]).toEqual(0);
+      expect(mockCallback.mock.calls.length).toBe(1);
+      expect(mockCallback.mock.calls[0][0]).toBe(s);
+      expect(mockCallback.mock.calls[0][1]).toBe(0);
     });
 
     it('does not call the callback if the span has already been iterated', () => {
@@ -385,7 +385,7 @@ describe('editSource', () => {
       source();
       source.forEach(mockCallback);
 
-      expect(mockCallback.mock.calls.length).toEqual(0);
+      expect(mockCallback.mock.calls.length).toBe(0);
     });
   })
 });

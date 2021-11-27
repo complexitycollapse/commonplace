@@ -3,11 +3,11 @@ import { commonplaceCore } from './commonplace-core';
 describe('commonplaceCore', () => {
   describe('importContent', () => {
     it('exists on the core object', () => {
-      expect(typeof commonplaceCore().importContent).toEqual('function');
+      expect(typeof commonplaceCore().importContent).toBe('function');
     });
 
     it('returns a string name for the passed object', () => {
-      expect(typeof commonplaceCore().importContent("Some text")).toEqual('string');
+      expect(typeof commonplaceCore().importContent("Some text")).toBe('string');
     });
 
     it('inserts the content into the repository', () => {
@@ -16,7 +16,7 @@ describe('commonplaceCore', () => {
       core.importContent("Some text");
       
       let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toEqual(1);
+      expect(calls.length).toBe(1);
     });
 
     it('inserts different content into the repository', () => {
@@ -26,7 +26,7 @@ describe('commonplaceCore', () => {
       core.importContent("Some more text");
       
       let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toEqual(2);
+      expect(calls.length).toBe(2);
     });
 
     it('does not insert the same content twice', () => {
@@ -37,7 +37,7 @@ describe('commonplaceCore', () => {
       core.importContent("Some text");
 
       let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toEqual(1);
+      expect(calls.length).toBe(1);
     });
   });
 });

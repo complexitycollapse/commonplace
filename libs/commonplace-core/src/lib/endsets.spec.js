@@ -14,7 +14,7 @@ test('the passed string becomes the set property', () => {
 
 describe('leafData', () => {
   it('returns array with endset name as first item', () => {
-    expect(endset("foo", "bar").leafData()[0]).toEqual("foo");
+    expect(endset("foo", "bar").leafData()[0]).toBe("foo");
   });
 
   it('returns array of length 2 when set is a string', () => {

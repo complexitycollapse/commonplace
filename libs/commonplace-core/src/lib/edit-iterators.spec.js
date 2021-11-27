@@ -23,7 +23,7 @@ describe('editIterator', () => {
 
     iterator();
 
-    expect(iterator.position()).toEqual(0);
+    expect(iterator.position()).toBe(0);
   });
 
   it('increments the position by the length of the previous returned by the callback', () => {
@@ -33,7 +33,7 @@ describe('editIterator', () => {
     iterator();
     iterator();
 
-    expect(iterator.position()).toEqual(2);
+    expect(iterator.position()).toBe(2);
   });
 
   it('does not increment the position if the callback returns no span', () => {
@@ -44,10 +44,10 @@ describe('editIterator', () => {
     iterator();
 
     iterator();
-    expect(iterator.position()).toEqual(2);
+    expect(iterator.position()).toBe(2);
 
     iterator();
-    expect(iterator.position()).toEqual(2);
+    expect(iterator.position()).toBe(2);
   });
 
   it('passes the initial state to the callback on the first invocation', () => {
@@ -58,7 +58,7 @@ describe('editIterator', () => {
 
     iterator();
 
-    expect(callback.mock.calls[0][0]).toEqual(state);
+    expect(callback.mock.calls[0][0]).toBe(state);
   });
 
   it('passes the state returned by the callback to the next invocation', () => {
@@ -70,7 +70,7 @@ describe('editIterator', () => {
     iterator();
     iterator();
 
-    expect(callback.mock.calls[1][0]).toEqual(state);
+    expect(callback.mock.calls[1][0]).toBe(state);
   });
 });
 
@@ -80,7 +80,7 @@ describe('editIterator.forEach', () => {
 
     editIterator(x => x, undefined).forEach(callback);
 
-    expect(callback.mock.calls.length).toEqual(0);
+    expect(callback.mock.calls.length).toBe(0);
   });
 
   it('calls the callback with the spans in sequence if there are any', () => {
@@ -89,7 +89,7 @@ describe('editIterator.forEach', () => {
 
     editIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
 
-    expect(callback.mock.calls.length).toEqual(3);
+    expect(callback.mock.calls.length).toBe(3);
     expect(callback.mock.calls[0][0]).toEqualSpan(s1);
     expect(callback.mock.calls[1][0]).toEqualSpan(s2);
     expect(callback.mock.calls[2][0]).toEqualSpan(s3);
@@ -101,9 +101,9 @@ describe('editIterator.forEach', () => {
 
     editIterator(x => x, [s1, [s2, [s3]]]).forEach(callback);
 
-    expect(callback.mock.calls[0][1]).toEqual(0);
-    expect(callback.mock.calls[1][1]).toEqual(20);
-    expect(callback.mock.calls[2][1]).toEqual(50);
+    expect(callback.mock.calls[0][1]).toBe(0);
+    expect(callback.mock.calls[1][1]).toBe(20);
+    expect(callback.mock.calls[2][1]).toBe(50);
   });
 
   it('continues from where the iterator left off', () => {
@@ -114,10 +114,10 @@ describe('editIterator.forEach', () => {
     iterator();
     iterator.forEach(callback);
 
-    expect(callback.mock.calls.length).toEqual(2);
+    expect(callback.mock.calls.length).toBe(2);
     expect(callback.mock.calls[0][0]).toEqualSpan(s2);
-    expect(callback.mock.calls[0][1]).toEqual(20);
+    expect(callback.mock.calls[0][1]).toBe(20);
     expect(callback.mock.calls[1][0]).toEqualSpan(s3);
-    expect(callback.mock.calls[1][1]).toEqual(50);
+    expect(callback.mock.calls[1][1]).toBe(50);
   });
 });
