@@ -44,6 +44,10 @@ describe('clone', () => {
 });
 
 describe('basic span functions', () => {
+  test('isEdit returns true', () => {
+    expect(make().isEdit).toBeTruthy();
+  });
+  
   test('edit type returns span', () => {
     expect(make().editType).toBe("span");
   });

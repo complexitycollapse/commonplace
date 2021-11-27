@@ -10,6 +10,7 @@ export function box(origin, x, y, width, height)
     y,
     width,
     height,
+    isEdit: true,
     editType: "box",
     nextX: x + width,
     nextY: y + height,

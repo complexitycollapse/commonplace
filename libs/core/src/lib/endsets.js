@@ -4,7 +4,11 @@ import { addProperties, addMethods } from "./utils";
 export function endset(name, set) {
   let obj = {};
 
-  addProperties(obj, { name, set });
+  addProperties(obj, { 
+    name,
+    set,
+    hasEdits: typeof set === "object" && set[0]?.isEdit
+  });
 
   function leafData() {
     if (typeof set === "string") {

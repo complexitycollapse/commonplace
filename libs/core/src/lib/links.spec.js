@@ -13,14 +13,14 @@ test('type is set on the link', () => {
 });
 
 test('endsets is set on the link', () => {
-  let endsets = [endset("foo"), endset("bar"), endset("baz")];
+  let endsets = [endset("foo", "1"), endset("bar", "2"), endset("baz", "3")];
 
   let lk = link("my type", ...endsets);
 
   expect(lk.endsets.length).toBe(3);
-  expect(lk.endsets[0].name).toBe("foo");
-  expect(lk.endsets[1].name).toBe("bar");
-  expect(lk.endsets[2].name).toBe("baz");
+  expect(lk.endsets[0]).toEqual(endsets[0]);
+  expect(lk.endsets[1]).toEqual(endsets[1]);
+  expect(lk.endsets[2]).toEqual(endsets[2]);
 });
 
 describe('leafData', () => {

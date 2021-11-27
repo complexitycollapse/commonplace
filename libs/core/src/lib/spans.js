@@ -7,6 +7,7 @@ export function span(origin, start, length) {
     origin,
     start,
     length,
+    isEdit: true,
     editType: "span",
     next: start + length,
     end: start + length - 1

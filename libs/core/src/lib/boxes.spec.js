@@ -59,6 +59,10 @@ describe('clone', () => {
 });
 
 describe('basic box functions', () => {
+  test('isEdit returns true', () => {
+    expect(make().isEdit).toBeTruthy();
+  });
+
   test('edit type returns box', () => {
     expect(make().editType).toBe("box");
   });

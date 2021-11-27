@@ -3,9 +3,10 @@ import { endset, leafDataToEndset } from './endsets';
 import { span } from "./spans";
 import { box } from "./boxes";
 import { makeSpans } from "./edits.test-helpers";
+import { executionAsyncId } from 'async_hooks';
 
 test('the passed name becomes the name property', () => {
-  expect(endset("a name").name).toBe("a name");
+  expect(endset("a name", "string").name).toBe("a name");
 });
 
 test('the passed string becomes the set property', () => {
@@ -65,5 +66,15 @@ describe('leafDataToEndset is inverse of leafData', () => {
 
     expect(actual.name).toBe("the name");
     expect(actual.set).toEqual("the string");
+  });
+});
+
+describe('hasEdits', () => {
+  it('returns true if the endset contains edits', () => {
+    expect(endset("name", makeSpans(3)).hasEdits).toBeTruthy();
+  });
+
+  it('returns false if the endset contains a string', () => {
+    expect(endset("name", "some string").hasEdits).toBeFalsy();
   });
 });
