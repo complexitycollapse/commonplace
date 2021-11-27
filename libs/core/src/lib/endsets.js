@@ -11,10 +11,10 @@ export function endset(name, set) {
   });
 
   function leafData() {
-    if (typeof set === "string") {
-      return [name, set];
-    } else {
+    if (obj.hasEdits) {
       return [name, ...set.map(e => e.leafData())];
+    } else {
+      return [name, set];
     }
   }
 
