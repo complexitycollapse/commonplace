@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@commonplace/commonplace-core": ["libs/commonplace-core/src/index.js"]
+      "@commonplace/commonplace-core": ["libs/commonplace-core/src/index.js"],
+      "@commonplace/commonplace-html": ["libs/commonplace-html/src/index.js"]
     }
   },
   "exclude": ["node_modules", "tmp"]

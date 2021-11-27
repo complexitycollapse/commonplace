@@ -29,6 +29,9 @@
   "projects": {
     "commonplace-core": {
       "tags": []
+    },
+    "commonplace-html": {
+      "tags": []
     }
   }
 }
