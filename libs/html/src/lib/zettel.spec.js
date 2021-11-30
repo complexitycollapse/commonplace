@@ -47,4 +47,50 @@ describe('addLink', () => {
     expect(e1).not.toHaveProperty("link");
     expect(e2).not.toHaveProperty("link");
   });
+
+  it('adds the endset index property to copies of the endsets', () => {
+    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
+    let l1 = link("type1", e1, e2);
+  
+    let z = make();
+    z.addEndset(e1, l1);
+    z.addEndset(e2, l1);
+  
+    expect(z.endsets[0].index).toBe(0);
+    expect(z.endsets[1].index).toBe(1);
+  });
+  
+  it('does not add index property to the original endsets', () => {
+    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
+    let l1 = link("type1", e1, e2);
+  
+    let z = make();
+    z.addEndset(e1, l1);
+    z.addEndset(e2, l1);
+  
+    expect(e1).not.toHaveProperty("index");
+    expect(e2).not.toHaveProperty("index");
+  });
+  
+  it('will only add an endset once', () => {
+    let e1 = endset("name1", "set1");
+    let l1 = link("type1", e1);
+  
+    let z = make();
+    z.addEndset(e1, l1);
+    z.addEndset(e1, l1);
+  
+    expect(z.endsets.length).toBe(1);
+  });
+
+  it('will add a link twice if it is under different endsets', () => {
+    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
+    let l1 = link("type1", e1, e2);
+  
+    let z = make();
+    z.addEndset(e1, l1);
+    z.addEndset(e2, l1);
+  
+    expect(z.endsets.length).toBe(2);
+  });
 });
