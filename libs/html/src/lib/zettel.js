@@ -1,17 +1,25 @@
-import { addProperties, endset } from '@commonplace/core';
+import { addProperties, addMethods, endset } from '@commonplace/core';
 
-export function zettel(edit, endsets) {
+export function zettel(edit) {
   let obj = {};
 
-  function makeModifiedEndset(pair) {
-    let newEndset = endset(pair.endset.name, pair.endset.set);
-    newEndset.link = pair.link;
+  function makeModifiedEndset(es, link) {
+    let newEndset = endset(es.name, es.set);
+    newEndset.link = link;
     return newEndset;
+  }
+
+  function addEndset(endset, link) {
+    obj.endsets.push(makeModifiedEndset(endset, link));
   }
 
   addProperties(obj, {
     edit,
-    endsets: endsets.map(makeModifiedEndset),
+    endsets: [],
+  });
+
+  addMethods(obj, {
+    addEndset
   });
 
   return obj;
