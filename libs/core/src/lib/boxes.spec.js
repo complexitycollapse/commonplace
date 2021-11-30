@@ -1,14 +1,11 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { box, leafDataToBox } from "./boxes";
-import { toEqualBox } from './edits.test-helpers';
+import { box, leafDataToBox, boxTesting } from "./boxes";
 
 expect.extend({
-  toEqualBox
+  toEqualBox: boxTesting.toEqualBox
 });
 
-function make({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {}) {
-  return box(origin, x, y, width, height);
-}
+let make = boxTesting.makeBox;
 
 describe('box', () => {
   it('has origin, x, y, width and height', () => {

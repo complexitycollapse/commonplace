@@ -5,3 +5,4 @@ export { box } from './lib/boxes';
 export { doc } from './lib/docs';
 export { link } from './lib/links';
 export { endset } from './lib/endsets';
+export * as testing from './testing';

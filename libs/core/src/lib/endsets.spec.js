@@ -1,9 +1,9 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { endset, leafDataToEndset } from './endsets';
-import { span } from "./spans";
+import { span, spanTesting } from "./spans";
 import { box } from "./boxes";
-import { makeSpans } from "./edits.test-helpers";
-import { executionAsyncId } from 'async_hooks';
+
+let makeSpans = spanTesting.makeSpans;
 
 test('the passed name becomes the name property', () => {
   expect(endset("a name", "string").name).toBe("a name");

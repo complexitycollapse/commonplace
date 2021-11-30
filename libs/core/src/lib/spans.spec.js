@@ -1,14 +1,11 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { span, leafDataToSpan } from './spans';
-import { makeSpan, toEqualSpan } from './edits.test-helpers';
+import { span, leafDataToSpan, spanTesting } from './spans';
 
 expect.extend({
-  toEqualSpan
+  toEqualSpan: spanTesting.toEqualSpan
 });
 
-function make({origin = "origin", start = 10, length = 20} = {}) {
-  return span(origin, start, length);
-}
+let make = spanTesting.makeSpan;
 
 describe('span', () => {
   it('has origin, start and length', () => {
@@ -406,6 +403,6 @@ describe('leafData', () => {
 });
 
 test('leafDataToSpan is inverse of leafData', () => {
-  let s = makeSpan();
+  let s = make();
   expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
 });

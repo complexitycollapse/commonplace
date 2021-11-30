@@ -1,5 +1,6 @@
 import { addProperties, addMethods } from "./utils";
 import { editIterator } from "./edit-iterators";
+import { spanTesting } from "./spans";
 
 export function box(origin, x, y, width, height)
 {
@@ -88,4 +89,20 @@ export function box(origin, x, y, width, height)
 
 export function leafDataToBox(leafData) {
   return box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.hg);
+}
+
+export let boxTesting = {
+  makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {}) {
+    return box(origin, x, y, width, height);
+  },
+
+  toEqualBox(actualBox, expectedBox) {
+    return spanTesting.compareElements(actualBox, expectedBox, (actual, expected) => {
+      return actual.origin === expected.origin &&
+        actual.x === expected.x &&
+        actual.y === expected.y &&
+        actual.height === expected.height &&
+        actual.width === expected.width;
+    });
+  }
 }

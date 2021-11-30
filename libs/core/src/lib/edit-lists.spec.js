@@ -1,13 +1,16 @@
 import { describe, expect, it, jest, test} from '@jest/globals';
 import { editList, leafDataToEditList } from './edit-lists';
-import { span } from './spans';
-import { box } from './boxes';
-import { toEqualEdit, makeSpans, hasEdits, makeSpan, makeBox } from './edits.test-helpers';
+import { span, spanTesting } from './spans';
+import { box, boxTesting } from './boxes';
+import { toEqualEdit, hasEdits } from './edits.test-helpers';
 
 expect.extend({
   toEqualEdit,
   hasEdits
 });
+
+let makeSpan = spanTesting.makeSpan, makeBox = boxTesting.makeBox;
+let makeSpans = spanTesting.makeSpans;
 
 function sumLengths(edits) {
   return edits.reduce((a, s) => a + s.length, 0);

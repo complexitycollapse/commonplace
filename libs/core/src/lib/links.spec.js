@@ -1,12 +1,15 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasEdits, makeSpan } from "./edits.test-helpers";
+import { hasEdits } from "./edits.test-helpers";
 import { endset } from './endsets';
 import { link, leafDataToLink } from './links';
 import { box } from './boxes';
+import { spanTesting } from './spans';
 
 expect.extend({
   hasEdits
 });
+
+let makeSpan = spanTesting.makeSpan;
 
 test('type is set on the link', () => {
   expect(link("my type").type).toBe("my type");

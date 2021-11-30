@@ -1,14 +1,18 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasEdits, makeSpans, toEqualSpan, makeSpan, makeBox } from "./edits.test-helpers";
+import { hasEdits } from "./edits.test-helpers";
 import { link } from './links';
 import { doc, leafDataToDoc } from './docs';
-import { box } from './boxes';
+import { box, boxTesting } from './boxes';
 import { endset } from './endsets';
+import { spanTesting } from './spans';
 
 expect.extend({
   hasEdits,
-  toEqualSpan
+  toEqualSpan: spanTesting.toEqualSpan
 });
+
+let makeSpan = spanTesting.makeSpan, makeBox = boxTesting.makeBox;
+let makeSpans = spanTesting.makeSpans;
 
 test('edits is set on the doc', () => {
   let spans = makeSpans(3);
