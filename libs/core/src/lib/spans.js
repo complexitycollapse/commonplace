@@ -54,6 +54,14 @@ export function span(origin, start, length) {
       length: newLength});
   }
 
+  function intersect(s) {
+    let newStart = Math.max(s.start, start);
+    return span(
+      origin,
+      newStart,
+      Math.min(s.next, obj.next) - newStart);
+  }
+
   function editSource() {
     return editIterator(x => x, [obj]);
   }
@@ -75,7 +83,8 @@ export function span(origin, start, length) {
     merge,
     crop,
     editSource,
-    leafData
+    leafData,
+    intersect
   });
 
   return obj;

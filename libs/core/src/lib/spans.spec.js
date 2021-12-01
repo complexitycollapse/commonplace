@@ -406,3 +406,78 @@ test('leafDataToSpan is inverse of leafData', () => {
   let s = make();
   expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
 });
+
+describe('intersect', () => {
+
+  it('returns the original span if the second is equal to it', () => {
+    let s1 = make();
+    let s2 = s1.clone();
+
+    expect(s1.intersect(s2)).toEqualSpan(s1);
+  });
+
+  it('returns the original dimensions if the second span encompasses it', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
+
+    expect(s1.intersect(s2)).toEqualSpan(s1);
+  });
+
+  it('returns the original dimensions if the second span is equal to it', () => {
+    let s1 = make();
+    let s2 = s1.clone();
+
+    expect(s1.intersect(s2)).toEqualSpan(s1);
+  });
+
+  it('returns the dimensions of the second span if we encompass it', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
+
+    expect(s2.intersect(s1)).toEqualSpan(s1);
+  });
+
+  it('has the start of the other span if that is later', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start + 1});
+
+    expect(s1.intersect(s2).start).toBe(s2.start);
+  });
+
+  it('has the start of this span if that is later', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start + 1});
+
+    expect(s2.intersect(s1).start).toBe(s2.start);
+  });
+
+  it('has the end of the other span if that is earlier', () => {
+    let s1 = make();
+    let s2 = s1.clone({ length: s1.length - 1});
+
+    expect(s1.intersect(s2).end).toBe(s2.end);
+  });
+
+  it('has the end of this span if that is earlier', () => {
+    let s1 = make();
+    let s2 = s1.clone({ length: s1.length - 1});
+
+    expect(s2.intersect(s1).end).toBe(s2.end);
+  });
+
+  it('is equal to the overlapping section if this is earlier than the other', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
+
+    expect(s1.intersect(s2).start).toBe(s2.start);
+    expect(s1.intersect(s2).end).toBe(s1.end);
+  });
+
+  it('is equal to the overlapping section if this is later than the other', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
+
+    expect(s2.intersect(s1).start).toBe(s2.start);
+    expect(s2.intersect(s1).end).toBe(s1.end);
+  });
+});
