@@ -45,6 +45,14 @@ export function box(origin, x, y, width, height)
     return abutsHorizontally(box) || abutsVertically(box);
   }
 
+  function overlaps(box) {
+    return (origin === box.origin
+      && x < box.x + box.width
+      && box.x < x + width
+      && y < box.y + box.height
+      && box.y < y + height);
+  }
+
   function merge(b) {
     let newX = Math.min(x, b.x), newY = Math.min(y, b.y);
     return box(
@@ -81,7 +89,8 @@ export function box(origin, x, y, width, height)
     boxCrop,
     editSource: () => editIterator(x => x, [obj]),
     crop: () => obj,
-    leafData
+    leafData,
+    overlaps
   });
   
   return obj;

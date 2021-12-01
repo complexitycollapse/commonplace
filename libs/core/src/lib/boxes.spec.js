@@ -382,3 +382,58 @@ test('leafDataToBox is inverse of leafData', () => {
   let b = box("orig", 1, 2, 101, 202);
   expect(leafDataToBox(b.leafData())).toEqualBox(b);
 });
+
+describe('overlaps', () => {
+  it('returns true when the two boxes are the same box', () => {
+    let b1 = make();
+
+    expect(b1.overlaps(b1)).toBeTruthy();
+  });
+
+  it('returns true when the two boxes are identical', () => {
+    let b1 = make(), b2 = make();
+
+    expect(b1.overlaps(b2)).toBeTruthy();
+  });
+
+  it('returns true if one box is contained in the other', () => {
+    let b1 = make({x: 0, width: 10, y: 0, height: 10}), b2 = make({x: 1, width: 8, y: 1, height: 8});
+
+    expect(b1.overlaps(b2)).toBeTruthy();
+    expect(b2.overlaps(b1)).toBeTruthy();
+  });
+
+  it('returns false if they have different origins', () => {
+    let b1 = make({origin: "1"}), b2 = make({origin: "2"});
+
+    expect(b1.overlaps(b2)).toBeFalsy();
+  });
+
+  it('returns false if they do not overlap on the x axis', () => {
+    let b1 = make({x: 0, width: 10}), b2 = make({x: 10});
+
+    expect(b1.overlaps(b2)).toBeFalsy();
+    expect(b2.overlaps(b1)).toBeFalsy();
+  });
+
+  it('returns false if they do not overlap on the y axis', () => {
+    let b1 = make({y: 0, height: 10}), b2 = make({y: 10});
+
+    expect(b1.overlaps(b2)).toBeFalsy();
+    expect(b2.overlaps(b1)).toBeFalsy();
+  });
+
+  it('returns false if they do not overlap on the x or y axis', () => {
+    let b1 = make({x: 0, width: 10, y: 0, height: 10}), b2 = make({x: 10, y: 10});
+
+    expect(b1.overlaps(b2)).toBeFalsy();
+    expect(b2.overlaps(b1)).toBeFalsy();
+  });
+
+  it('returns true if they overlap on the x and y axis', () => {
+    let b1 = make({x: 0, width: 10, y: 0, height: 10}), b2 = make({x: 1, width: 20, y: 1, height: 20});
+
+    expect(b1.overlaps(b2)).toBeTruthy();
+    expect(b2.overlaps(b1)).toBeTruthy();
+  });
+});
