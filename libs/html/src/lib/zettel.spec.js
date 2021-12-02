@@ -1,20 +1,20 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
-import { span, link, endset } from '@commonplace/core';
+import { Span, Link, Endset } from '@commonplace/core';
 
-function make(edit = span("origin", 1, 10)) {
+function make(edit = Span("origin", 1, 10)) {
   return Zettel(edit);
 }
 
 test('edit returns the passed edit', () => {
-  let s = span("a", 1, 2);
+  let s = Span("a", 1, 2);
   expect(make(s).edit).toEqual(s);
 });
 
 describe('addLink', () => {
   it('adds the given endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1), l2 = link("type2", e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -25,8 +25,8 @@ describe('addLink', () => {
   });
   
   it('adds the links as properties to copies of the endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1), l2 = link("type2", e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -37,8 +37,8 @@ describe('addLink', () => {
   });
   
   it('does not add link properties to the original endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1), l2 = link("type2", e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -49,8 +49,8 @@ describe('addLink', () => {
   });
 
   it('adds the endset index property to copies of the endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1, e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1, e2);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -61,8 +61,8 @@ describe('addLink', () => {
   });
   
   it('does not add index property to the original endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1, e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1, e2);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -73,8 +73,8 @@ describe('addLink', () => {
   });
   
   it('will only add an endset once', () => {
-    let e1 = endset("name1", "set1");
-    let l1 = link("type1", e1);
+    let e1 = Endset("name1", "set1");
+    let l1 = Link("type1", e1);
   
     let z = make();
     z.addEndset(e1, l1);
@@ -84,8 +84,8 @@ describe('addLink', () => {
   });
 
   it('will add a link twice if it is under different endsets', () => {
-    let e1 = endset("name1", "set1"), e2 = endset("name2", "set2");
-    let l1 = link("type1", e1, e2);
+    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let l1 = Link("type1", e1, e2);
   
     let z = make();
     z.addEndset(e1, l1);

@@ -1,7 +1,7 @@
 import { leafDataToEdit } from "./edit-lists";
 import { addProperties, addMethods } from "./utils";
 
-export function endset(name, set) {
+export function Endset(name, set) {
   let obj = {};
 
   addProperties(obj, { 
@@ -27,8 +27,8 @@ export function endset(name, set) {
 
 export function leafDataToEndset(leafData) {
   if (leafData.length === 2 && typeof leafData[1] === "string") {
-    return endset(leafData[0], leafData[1]);
+    return Endset(leafData[0], leafData[1]);
   } else {
-    return endset(leafData[0], leafData.slice(1).map(s => leafDataToEdit(s)));
+    return Endset(leafData[0], leafData.slice(1).map(s => leafDataToEdit(s)));
   }
 }

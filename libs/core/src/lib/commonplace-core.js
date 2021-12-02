@@ -1,10 +1,10 @@
-import { mockRepository } from "./mock-repository";
+import { MockRepository } from "./mock-repository";
 import { addMethods, addProperties } from "./utils";
-import { doc } from "./docs";
+import { Doc } from "./docs";
 
-export function commonplaceCore(repository) {
+export function CommonplaceCore(repository) {
   let obj = {};
-  repository = repository ?? mockRepository();
+  repository = repository ?? MockRepository();
   addProperties(obj, {
     repository
   });
@@ -42,7 +42,7 @@ export function commonplaceCore(repository) {
   }
 
   function newDoc(name, newDoc) {
-    let d = newDoc ?? doc([], []);
+    let d = newDoc ?? Doc([], []);
     return [d, addContentWithLocalName(name, false, d)];
   }
 

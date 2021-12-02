@@ -1,17 +1,17 @@
 import { describe, expect, it } from '@jest/globals';
-import { commonplaceCore } from './commonplace-core';
+import { CommonplaceCore } from './commonplace-core';
 describe('commonplaceCore', () => {
   describe('importContent', () => {
     it('exists on the core object', () => {
-      expect(typeof commonplaceCore().importContent).toBe('function');
+      expect(typeof CommonplaceCore().importContent).toBe('function');
     });
 
     it('returns a string name for the passed object', () => {
-      expect(typeof commonplaceCore().importContent("Some text")).toBe('string');
+      expect(typeof CommonplaceCore().importContent("Some text")).toBe('string');
     });
 
     it('inserts the content into the repository', () => {
-      let core = commonplaceCore();
+      let core = CommonplaceCore();
       
       core.importContent("Some text");
       
@@ -20,7 +20,7 @@ describe('commonplaceCore', () => {
     });
 
     it('inserts different content into the repository', () => {
-      let core = commonplaceCore();
+      let core = CommonplaceCore();
       
       core.importContent("Some text");
       core.importContent("Some more text");
@@ -30,7 +30,7 @@ describe('commonplaceCore', () => {
     });
 
     it('does not insert the same content twice', () => {
-      let core = commonplaceCore();
+      let core = CommonplaceCore();
       core.importContent("Some text");
       core.repository.clearCalls();
 

@@ -1,8 +1,8 @@
 import { addProperties, addMethods } from "./utils";
-import { editIterator } from "./edit-iterators";
+import { EditIterator } from "./edit-iterators";
 import { spanTesting } from "./spans";
 
-export function box(origin, x, y, width, height)
+export function Box(origin, x, y, width, height)
 {
   let obj = {};
   addProperties(obj, {
@@ -24,7 +24,7 @@ export function box(origin, x, y, width, height)
     y = obj.y,
     height = obj.height,
     width = obj.width } = {}) {
-    return box(origin, x, y, width, height);
+    return Box(origin, x, y, width, height);
   }
 
   function abutsHorizontally(box) {
@@ -55,7 +55,7 @@ export function box(origin, x, y, width, height)
 
   function merge(b) {
     let newX = Math.min(x, b.x), newY = Math.min(y, b.y);
-    return box(
+    return Box(
       obj.origin,
       newX,
       newY,
@@ -87,7 +87,7 @@ export function box(origin, x, y, width, height)
     abuts,
     merge,
     boxCrop,
-    editSource: () => editIterator(x => x, [obj]),
+    editSource: () => EditIterator(x => x, [obj]),
     crop: () => obj,
     leafData,
     overlaps
@@ -97,12 +97,12 @@ export function box(origin, x, y, width, height)
 }
 
 export function leafDataToBox(leafData) {
-  return box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.hg);
+  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.hg);
 }
 
 export let boxTesting = {
   makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {}) {
-    return box(origin, x, y, width, height);
+    return Box(origin, x, y, width, height);
   },
 
   toEqualBox(actualBox, expectedBox) {

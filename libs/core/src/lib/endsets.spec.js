@@ -1,33 +1,33 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { endset, leafDataToEndset } from './endsets';
-import { span, spanTesting } from "./spans";
-import { box } from "./boxes";
+import { Endset, leafDataToEndset } from './endsets';
+import { Span, spanTesting } from "./spans";
+import { Box } from "./boxes";
 
 let makeSpans = spanTesting.makeSpans;
 
 test('the passed name becomes the name property', () => {
-  expect(endset("a name", "string").name).toBe("a name");
+  expect(Endset("a name", "string").name).toBe("a name");
 });
 
 test('the passed string becomes the set property', () => {
-  expect(endset("name", "string value").set).toBe("string value");
+  expect(Endset("name", "string value").set).toBe("string value");
 });
 
 describe('leafData', () => {
   it('returns array with endset name as first item', () => {
-    expect(endset("foo", "bar").leafData()[0]).toBe("foo");
+    expect(Endset("foo", "bar").leafData()[0]).toBe("foo");
   });
 
   it('returns array of length 2 when set is a string', () => {
-    expect(endset("foo", "some set").leafData()).toHaveLength(2);
+    expect(Endset("foo", "some set").leafData()).toHaveLength(2);
   });
 
   it('returns array of length n + 1 when set is an array of length n', () => {
-    expect(endset("foo", makeSpans(5)).leafData()).toHaveLength(6);
+    expect(Endset("foo", makeSpans(5)).leafData()).toHaveLength(6);
   });
 
   it('returns span serializer data for set if it contains a span', () => {
-    expect(endset("foo", [span("a", 101, 505)]).leafData()[1]).toEqual({
+    expect(Endset("foo", [Span("a", 101, 505)]).leafData()[1]).toEqual({
       typ: "span",
       ori: "a",
       st: 101,
@@ -36,7 +36,7 @@ describe('leafData', () => {
   });
 
   it('returns box serializer data for set if it contains a box', () => {
-    expect(endset("foo", [box("a", 101, 505, 22, 33)]).leafData()[1]).toEqual({
+    expect(Endset("foo", [Box("a", 101, 505, 22, 33)]).leafData()[1]).toEqual({
       typ: "box",
       ori: "a",
       x: 101,
@@ -47,22 +47,22 @@ describe('leafData', () => {
   });
 
   it('returns original string for set if it is a string', () => {
-    expect(endset("foo", "some string").leafData()[1]).toBe("some string");
+    expect(Endset("foo", "some string").leafData()[1]).toBe("some string");
   });
 });
 
 describe('leafDataToEndset is inverse of leafData', () => {
   test('edits case', () => {
-    let edits = [...makeSpans(5), box("o", 1, 4, 5, 7)];
+    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7)];
 
-    let actual = leafDataToEndset(endset("the name", edits).leafData());
+    let actual = leafDataToEndset(Endset("the name", edits).leafData());
 
     expect(actual.name).toBe("the name");
     expect(actual.set).toEqual(edits);
   });
 
   test('string case', () => {
-    let actual = leafDataToEndset(endset("the name", "the string").leafData());
+    let actual = leafDataToEndset(Endset("the name", "the string").leafData());
 
     expect(actual.name).toBe("the name");
     expect(actual.set).toEqual("the string");
@@ -71,10 +71,10 @@ describe('leafDataToEndset is inverse of leafData', () => {
 
 describe('hasEdits', () => {
   it('returns true if the endset contains edits', () => {
-    expect(endset("name", makeSpans(3)).hasEdits).toBeTruthy();
+    expect(Endset("name", makeSpans(3)).hasEdits).toBeTruthy();
   });
 
   it('returns false if the endset contains a string', () => {
-    expect(endset("name", "some string").hasEdits).toBeFalsy();
+    expect(Endset("name", "some string").hasEdits).toBeFalsy();
   });
 });

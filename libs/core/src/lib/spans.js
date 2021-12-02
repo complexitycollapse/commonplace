@@ -1,7 +1,7 @@
-import { editIterator } from "./edit-iterators";
+import { EditIterator } from "./edit-iterators";
 import { addProperties, addMethods } from "./utils";
 
-export function span(origin, start, length) {
+export function Span(origin, start, length) {
   let obj = {};
   addProperties(obj, {
     origin,
@@ -17,7 +17,7 @@ export function span(origin, start, length) {
     origin = obj.origin,
     start = obj.start,
     length = obj.length } = {}) {
-    return span(origin, start, length);
+    return Span(origin, start, length);
   }
 
   function equalOrigin(span) {
@@ -43,7 +43,7 @@ export function span(origin, start, length) {
 
   function merge(sp) {
       let newStart = Math.min(start, sp.start);
-      return span(obj.origin, newStart, Math.max(obj.next, sp.next) - newStart);
+      return Span(obj.origin, newStart, Math.max(obj.next, sp.next) - newStart);
   }
 
   function crop(startAdjust, newLength) {
@@ -56,14 +56,14 @@ export function span(origin, start, length) {
 
   function intersect(s) {
     let newStart = Math.max(s.start, start);
-    return span(
+    return Span(
       origin,
       newStart,
       Math.min(s.next, obj.next) - newStart);
   }
 
   function editSource() {
-    return editIterator(x => x, [obj]);
+    return EditIterator(x => x, [obj]);
   }
 
   function leafData() {
@@ -91,19 +91,19 @@ export function span(origin, start, length) {
 }
 
 export function leafDataToSpan(leafData) {
-  return span(leafData.ori, leafData.st, leafData.ln);
+  return Span(leafData.ori, leafData.st, leafData.ln);
 }
 
 export let spanTesting = {
 
   makeSpan({origin = "origin", start = 10, length = 20} = {}) {
-    return span(origin, start, length);
+    return Span(origin, start, length);
   },
 
   makeSpans(qty) {
     let result = [];
     for (let i = 0; i < qty; i++) {
-      result.push(span(i.toString(), i, 5));
+      result.push(Span(i.toString(), i, 5));
     }
   
     return result;

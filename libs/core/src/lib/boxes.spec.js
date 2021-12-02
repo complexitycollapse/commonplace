@@ -1,5 +1,5 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { box, leafDataToBox, boxTesting } from "./boxes";
+import { Box, leafDataToBox, boxTesting } from "./boxes";
 
 expect.extend({
   toEqualBox: boxTesting.toEqualBox
@@ -9,7 +9,7 @@ let make = boxTesting.makeBox;
 
 describe('box', () => {
   it('has origin, x, y, width and height', () => {
-    let actual = box('origin', 1, 100, 200, 250);
+    let actual = Box('origin', 1, 100, 200, 250);
     expect(actual.origin).toBe('origin');
     expect(actual.x).toBe(1);
     expect(actual.y).toBe(100);
@@ -31,27 +31,27 @@ describe('clone', () => {
 
   it('replaces only origin when that is passed as a parameter', () => {
     let b = make();
-    expect(b.clone({ origin: 'other' })).toEqualBox(box('other', b.x, b.y, b.width, b.height));
+    expect(b.clone({ origin: 'other' })).toEqualBox(Box('other', b.x, b.y, b.width, b.height));
   });
 
   it('replaces only x when that is passed as a parameter', () => {
     let b = make();
-    expect(make().clone({ x: 99 })).toEqualBox(box(b.origin, 99, b.y, b.width, b.height));
+    expect(make().clone({ x: 99 })).toEqualBox(Box(b.origin, 99, b.y, b.width, b.height));
   });
 
   it('replaces only y when that is passed as a parameter', () => {
     let b = make();
-    expect(make().clone({ y: 99 })).toEqualBox(box(b.origin, b.x, 99, b.width, b.height));
+    expect(make().clone({ y: 99 })).toEqualBox(Box(b.origin, b.x, 99, b.width, b.height));
   });
 
   it('replaces only width when that is passed as a parameter', () => {
     let b = make();
-    expect(make().clone({ width: 99 })).toEqualBox(box(b.origin, b.x, b.y, 99, b.height));
+    expect(make().clone({ width: 99 })).toEqualBox(Box(b.origin, b.x, b.y, 99, b.height));
   });
 
   it('replaces only height when that is passed as a parameter', () => {
     let b = make();
-    expect(make().clone({ height: 99 })).toEqualBox(box(b.origin, b.x, b.y, b.width, 99));
+    expect(make().clone({ height: 99 })).toEqualBox(Box(b.origin, b.x, b.y, b.width, 99));
   });
 });
 
@@ -65,9 +65,9 @@ describe('basic box functions', () => {
   });
 
   test('length is always 1', () => {
-    expect(box(0, 0, 1, 1).length).toBe(1);
-    expect(box(0, 0, 2, 2).length).toBe(1);
-    expect(box(4, 14, 100, 27).length).toBe(1);
+    expect(Box(0, 0, 1, 1).length).toBe(1);
+    expect(Box(0, 0, 2, 2).length).toBe(1);
+    expect(Box(4, 14, 100, 27).length).toBe(1);
   });
 
   test('nextX returns the x position exactly to the right after the end of the box', () => {
@@ -79,11 +79,11 @@ describe('basic box functions', () => {
   });
   
   test('equalOrigin returns true if the origins are the same', () => {
-    expect(box('origin1', 10, 20, 30, 40).equalOrigin(box('origin1', 15, 25, 35, 45)));
+    expect(Box('origin1', 10, 20, 30, 40).equalOrigin(Box('origin1', 15, 25, 35, 45)));
   });
 
   test('equalOrigin returns false if the origins are different', () => {
-    expect(box('origin1', 10, 20, 30, 40).equalOrigin(box('origin2', 10, 20, 30, 40)));
+    expect(Box('origin1', 10, 20, 30, 40).equalOrigin(Box('origin2', 10, 20, 30, 40)));
   });
 });
 
@@ -197,54 +197,54 @@ describe('abuts', () => {
 
 describe('merge', () => {
   it('returns an identical box if the argument is contained in this', () => {
-    let b1 = box("o", 10, 10, 20, 20);
-    let b2 = box ("o", 11, 11, 10, 10);
+    let b1 = Box("o", 10, 10, 20, 20);
+    let b2 = Box ("o", 11, 11, 10, 10);
     expect(b1.merge(b2)).toEqualBox(b1);
   });
 
   it('returns a box identical to the argument if this is contained in the argument', () => {
-    let b1 = box("o", 10, 10, 20, 20);
-    let b2 = box ("o", 11, 11, 10, 10);
+    let b1 = Box("o", 10, 10, 20, 20);
+    let b2 = Box ("o", 11, 11, 10, 10);
     expect(b2.merge(b1)).toEqualBox(b1);
   });
 
   it('returns a box identical to the original if they are both equal', () => {
-    let b1 = box("o", 10, 10, 20, 20);
-    let b2 = box("o", 10, 10, 20, 20);
+    let b1 = Box("o", 10, 10, 20, 20);
+    let b2 = Box("o", 10, 10, 20, 20);
     expect(b1.merge(b2)).toEqualBox(b1);
   });
 
   it('uses the origin from the boxes', () => {
-    let b1 = box("original", 10, 10, 20, 20);
-    let b2 = box("original", 10, 10, 20, 20);
+    let b1 = Box("original", 10, 10, 20, 20);
+    let b2 = Box("original", 10, 10, 20, 20);
     expect(b1.merge(b2).origin).toEqualBox("original");
   });
 
   describe('when they abut horizontally', () => { 
     it('returns a box encompassing both boxes if this is to the left of that', () => {
-      let b1 = box("c", 10, 10, 20, 20);
-      let b2 = box("c", 11, 10, 30, 20);
-      expect(b1.merge(b2)).toEqualBox(box("c", 10, 10, 31, 20));
+      let b1 = Box("c", 10, 10, 20, 20);
+      let b2 = Box("c", 11, 10, 30, 20);
+      expect(b1.merge(b2)).toEqualBox(Box("c", 10, 10, 31, 20));
     });
   
     it('returns a box encompassing both boxes if that is to the left of this', () => {
-      let b1 = box("d", 10, 10, 20, 20);
-      let b2 = box("d", 11, 10, 30, 20);
-      expect(b2.merge(b1)).toEqualBox(box("d", 10, 10, 31, 20));
+      let b1 = Box("d", 10, 10, 20, 20);
+      let b2 = Box("d", 11, 10, 30, 20);
+      expect(b2.merge(b1)).toEqualBox(Box("d", 10, 10, 31, 20));
     });
   });
 
   describe('when they abut vertically', () => { 
     it('returns a box encompassing both boxes if this is to the left of that', () => {
-      let b1 = box("e", 10, 10, 20, 20);
-      let b2 = box("e", 10, 11, 20, 30);
-      expect(b1.merge(b2)).toEqualBox(box("e", 10, 10, 20, 31));
+      let b1 = Box("e", 10, 10, 20, 20);
+      let b2 = Box("e", 10, 11, 20, 30);
+      expect(b1.merge(b2)).toEqualBox(Box("e", 10, 10, 20, 31));
     });
   
     it('returns a box encompassing both boxes if that is to the left of this', () => {
-      let b1 = box("f", 10, 10, 20, 20);
-      let b2 = box("f", 10, 11, 20, 30);
-      expect(b2.merge(b1)).toEqualBox(box("f", 10, 10, 20, 31));
+      let b1 = Box("f", 10, 10, 20, 20);
+      let b2 = Box("f", 10, 11, 20, 30);
+      expect(b2.merge(b1)).toEqualBox(Box("f", 10, 10, 20, 31));
     });
   });
 });
@@ -367,7 +367,7 @@ describe('editSource', () => {
 
 describe('leafData', () => {
   it('has the editType, origin, x, y, width and height properties', () => {
-    expect(box("a", 101, 505, 22, 33).leafData()).toEqual({
+    expect(Box("a", 101, 505, 22, 33).leafData()).toEqual({
       typ: "box",
       ori: "a",
       x: 101,
@@ -379,7 +379,7 @@ describe('leafData', () => {
 });
 
 test('leafDataToBox is inverse of leafData', () => {
-  let b = box("orig", 1, 2, 101, 202);
+  let b = Box("orig", 1, 2, 101, 202);
   expect(leafDataToBox(b.leafData())).toEqualBox(b);
 });
 

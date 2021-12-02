@@ -1,6 +1,6 @@
 import { addMethods } from "./utils";
 
-export function mockRepository() {
+export function MockRepository() {
   let uniqueKey = 0;
 
   let obj = {

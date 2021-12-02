@@ -1,5 +1,5 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { span, leafDataToSpan, spanTesting } from './spans';
+import { Span, leafDataToSpan, spanTesting } from './spans';
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan
@@ -9,7 +9,7 @@ let make = spanTesting.makeSpan;
 
 describe('span', () => {
   it('has origin, start and length', () => {
-    let actual = span('origin', 1, 100);
+    let actual = Span('origin', 1, 100);
     expect(actual.origin).toBe('origin');
     expect(actual.start).toBe(1);
     expect(actual.length).toBe(100);
@@ -28,15 +28,15 @@ describe('clone', () => {
   });
 
   it('replaces only origin when that is passed as a parameter', () => {
-    expect(make().clone({ origin: 'other' })).toEqualSpan(span('other', 10, 20 ));
+    expect(make().clone({ origin: 'other' })).toEqualSpan(Span('other', 10, 20 ));
   });
 
   it('replaces only start when that is passed as a parameter', () => {
-    expect(make().clone({ start: 99 })).toEqualSpan(span('origin', 99, 20));
+    expect(make().clone({ start: 99 })).toEqualSpan(Span('origin', 99, 20));
   });
 
   it('replaces only length when that is passed as a parameter', () => {
-    expect(make().clone({ length: 99 })).toEqualSpan(span('origin', 10, 99));
+    expect(make().clone({ length: 99 })).toEqualSpan(Span('origin', 10, 99));
   });
 });
 
@@ -58,25 +58,25 @@ describe('basic span functions', () => {
   });
 
   test('equalOrigin returns true if the origins are the same', () => {
-    expect(span('origin1', 10, 20).equalOrigin(span('origin1', 15, 25)));
+    expect(Span('origin1', 10, 20).equalOrigin(Span('origin1', 15, 25)));
   });
 
   test('equalOrigin returns false if the origins are different', () => {
-    expect(span('origin1', 10, 20).equalOrigin(span('origin2', 10, 20)));
+    expect(Span('origin1', 10, 20).equalOrigin(Span('origin2', 10, 20)));
   });
 
   test('startDiff returns the difference between the start points or two spans', () => {
-    expect(make().startDiff(span('abc', 15, 20))).toBe(-5);
+    expect(make().startDiff(Span('abc', 15, 20))).toBe(-5);
   });
 
   test('endDiff returns the difference between the start points or two spans', () => {
-    expect(make().endDiff(span('abc', 10, 15))).toBe(5);
+    expect(make().endDiff(Span('abc', 10, 15))).toBe(5);
   });
 
   test('displace returns a span whose start has been moved by the given amount', () => {
     let original = make();
     expect(original.displace(22)).toEqualSpan(
-      span(original.origin, original.start + 22, original.length)
+      Span(original.origin, original.start + 22, original.length)
     );
   });
 });
@@ -108,7 +108,7 @@ describe('contains', () => {
   });
 
   it('is true if the span is one point long and the point equals it', () => {
-    let s = span('origin', 100, 1);
+    let s = Span('origin', 100, 1);
     expect(s.contains(s.start)).toBeTruthy();
   });
 });
@@ -259,38 +259,38 @@ describe('canMergeWith', () => {
 
 describe('merge', () => {
   it('returns an identical span if the argument is contained in this', () => {
-    let s1 = span("o", 10, 20);
-    let s2 = span ("o", 11, 10);
+    let s1 = Span("o", 10, 20);
+    let s2 = Span ("o", 11, 10);
     expect(s1.merge(s2)).toEqualSpan(s1);
   });
 
   it('returns a span identical to the argument if this is contained in the argument', () => {
-    let s1 = span("a", 10, 20);
-    let s2 = span ("a", 11, 10);
+    let s1 = Span("a", 10, 20);
+    let s2 = Span ("a", 11, 10);
     expect(s2.merge(s1)).toEqualSpan(s1);
   });
 
   it('returns a span identical to the original if they are both equal', () => {
-    let s1 = span("b", 10, 20);
+    let s1 = Span("b", 10, 20);
     let s2 = s1.clone();
     expect(s1.merge(s2)).toEqualSpan(s1);
   });
 
   it('returns a span encompassing both spans if this comes before that', () => {
-    let s1 = span("c", 10, 20);
-    let s2 = span ("c", 11, 30);
-    expect(s1.merge(s2)).toEqualSpan(span("c", 10, 31));
+    let s1 = Span("c", 10, 20);
+    let s2 = Span ("c", 11, 30);
+    expect(s1.merge(s2)).toEqualSpan(Span("c", 10, 31));
   });
 
   it('returns a span encompassing both spans if that comes before this', () => {
-    let s1 = span("d", 10, 20);
-    let s2 = span ("d", 11, 30);
-    expect(s2.merge(s1)).toEqualSpan(span("d", 10, 31));
+    let s1 = Span("d", 10, 20);
+    let s2 = Span ("d", 11, 30);
+    expect(s2.merge(s1)).toEqualSpan(Span("d", 10, 31));
   });
 
   it('uses the origin of the spans', () => {
-    let s1 = span("original", 10, 20);
-    let s2 = span ("original,", 11, 10);
+    let s1 = Span("original", 10, 20);
+    let s2 = Span ("original,", 11, 10);
     expect(s1.merge(s2).origin).toEqualSpan("original");
   });
 });
@@ -393,7 +393,7 @@ describe('editSource', () => {
 
 describe('leafData', () => {
   it('has the editType, origin, start and length properties', () => {
-    expect(span("a", 101, 505).leafData()).toEqual({
+    expect(Span("a", 101, 505).leafData()).toEqual({
       typ: "span",
       ori: "a",
       st: 101,

@@ -1,9 +1,9 @@
 import { leafDataToBox } from './boxes';
-import { editIterator } from './edit-iterators';
+import { EditIterator } from './edit-iterators';
 import { leafDataToSpan } from './spans';
 import { addMethods } from './utils';
 
-export function editList(...editDesignators) {
+export function EditList(...editDesignators) {
   let obj = {};
   let edits = [];
 
@@ -26,11 +26,11 @@ export function editList(...editDesignators) {
   }
 
   function editSource() {
-    return editIterator(state => [state.shift(), state], [...edits]);
+    return EditIterator(state => [state.shift(), state], [...edits]);
   }
 
   function range(start, length) {
-    if (length === 0) return editList();
+    if (length === 0) return EditList();
 
     let rangeSpans = [];
     let i = 0;
@@ -40,7 +40,7 @@ export function editList(...editDesignators) {
       i += 1;
     }
 
-    if (edits[i] === undefined) return editList();
+    if (edits[i] === undefined) return EditList();
 
     let firstSpan = edits[i].crop(start, length);
     rangeSpans.push(firstSpan);
@@ -53,7 +53,7 @@ export function editList(...editDesignators) {
       i += 1;
     }
     
-    return editList(...rangeSpans);
+    return EditList(...rangeSpans);
   }
 
   function leafData() {
@@ -72,7 +72,7 @@ export function editList(...editDesignators) {
 }
 
 export function leafDataToEditList(leafData) {
-  return editList(...leafData.map(leafDataToEdit));
+  return EditList(...leafData.map(leafDataToEdit));
 }
 
 export function leafDataToEdit(leafData) {

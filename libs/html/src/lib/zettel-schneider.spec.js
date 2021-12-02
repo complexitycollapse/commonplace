@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { ZettelSchneider } from './zettel-schneider';
-import { doc, link, endset, span, box } from '@commonplace/core';
+import { Doc, Link, Endset, Span, Box } from '@commonplace/core';
 import { testing } from "@commonplace/core";
 
 let toEqualEdit = testing.edits.toEqualEdit;
@@ -92,84 +92,84 @@ expect.extend({
 function makeSpanLink({ type = "typeA", editLists } = {}) {
   if (editLists === undefined) {
     editLists = [
-      [span("origin", 0, 10), span("origin", 20, 15)],
-      [span("origin", 40, 5), span("origin", 50, 20)]
+      [Span("origin", 0, 10), Span("origin", 20, 15)],
+      [Span("origin", 40, 5), Span("origin", 50, 20)]
     ];
   }
 
   let endsets = [], i = 0;
 
   editLists.forEach(ss => {
-    endsets.push(endset("name" + i.toString(), ss));
+    endsets.push(Endset("name" + i.toString(), ss));
     i += 1;
   });
 
-  return link(type ?? "typeA", ...endsets);
+  return Link(type ?? "typeA", ...endsets);
 }
 
 describe('zettel', () => {
   it('returns an empty list for an empty doc', () => {
-    expect(new ZettelSchneider(doc([], [])).zettel()).toHaveLength(0);
+    expect(new ZettelSchneider(Doc([], [])).zettel()).toHaveLength(0);
   });
 
   it('returns an empty list if there are no edits, even if there are links', () => {
-    expect(new ZettelSchneider(doc([], [makeSpanLink()])).zettel()).toHaveLength(0);
+    expect(new ZettelSchneider(Doc([], [makeSpanLink()])).zettel()).toHaveLength(0);
   });
 
   it('returns a list of the same length as the edit list if the edits are boxes', () => {
-    let b1 = box("origin", 0, 0, 10, 10), b2 = box("origin", 100, 100, 10, 10);
-    let l = makeSpanLink({ editLists: [[box("origin", 5, 5, 20, 20)]] });
+    let b1 = Box("origin", 0, 0, 10, 10), b2 = Box("origin", 100, 100, 10, 10);
+    let l = makeSpanLink({ editLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    expect(new ZettelSchneider(doc([b1, b2], [l])).zettel()).toHaveLength(2);
+    expect(new ZettelSchneider(Doc([b1, b2], [l])).zettel()).toHaveLength(2);
   });
 
   it('returns a list of the same length as the edit list if the edits are spans and there are no links', () => {
-    let s1 = span("origin", 0, 10), s2 = span("origin", 100, 10);
+    let s1 = Span("origin", 0, 10), s2 = Span("origin", 100, 10);
 
-    expect(new ZettelSchneider(doc([s1, s2], [])).zettel()).toHaveLength(2);
+    expect(new ZettelSchneider(Doc([s1, s2], [])).zettel()).toHaveLength(2);
   });
 
   it('attaches an endset to any box that overlaps with it', () => {
-    let b1 = box("origin", 0, 0, 10, 10), b2 = box("origin", 100, 100, 10, 10);
-    let l = makeSpanLink({ editLists: [[box("origin", 5, 5, 20, 20)]] });
+    let b1 = Box("origin", 0, 0, 10, 10), b2 = Box("origin", 100, 100, 10, 10);
+    let l = makeSpanLink({ editLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    let zettel = new ZettelSchneider(doc([b1, b2], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([b1, b2], [l])).zettel();
 
     expect(zettel[0]).hasEndset(l, 0);
   });
 
   it('does not attach an endset to a box that does not overlap with it', () => {
-    let b1 = box("origin", 0, 0, 10, 10), b2 = box("origin", 100, 100, 10, 10);
-    let l = makeSpanLink({ editLists: [[box("origin", 5, 5, 20, 20)]] });
+    let b1 = Box("origin", 0, 0, 10, 10), b2 = Box("origin", 100, 100, 10, 10);
+    let l = makeSpanLink({ editLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    let zettel = new ZettelSchneider(doc([b1, b2], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([b1, b2], [l])).zettel();
 
     expect(zettel[1]).not.hasEndset(l, 0);
   });
 
   it('attaches an endset to any span that overlaps with it', () => {
-    let s1 = span("origin", 0, 10), s2 = span("origin", 100, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 0, 20)]] });
+    let s1 = Span("origin", 0, 10), s2 = Span("origin", 100, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 0, 20)]] });
 
-    let zettel = new ZettelSchneider(doc([s1, s2], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s1, s2], [l])).zettel();
 
     expect(zettel[0]).hasEndset(l, 0);
   });
 
   it('does not attach an endset to a span that does not overlap with it', () => {
-    let s1 = span("origin", 0, 10), s2 = span("origin", 100, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 0, 20)]] });
+    let s1 = Span("origin", 0, 10), s2 = Span("origin", 100, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 0, 20)]] });
 
-    let zettel = new ZettelSchneider(doc([s1, s2], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s1, s2], [l])).zettel();
 
     expect(zettel[1]).not.hasEndset(l, 0);
   });
 
   it('splits a span if only the end is covered by a link', () => {
-    let s = span("origin", 0, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 5, 5)]] });
+    let s = Span("origin", 0, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 5, 5)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).not.hasEndset(l, 0);
@@ -177,23 +177,23 @@ describe('zettel', () => {
   });
 
   it('splits a span at link start if only the end is covered by a link', () => {
-    let s = span("origin", 1, 10);
-    let endsetSpan = span("origin", 6, 20);
+    let s = Span("origin", 1, 10);
+    let endsetSpan = Span("origin", 6, 20);
     let l = makeSpanLink({ editLists: [[endsetSpan]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].edit).toEqualEdit(span(s.origin, s.start, 5));
-    expect(zettel[1].edit).toEqualEdit(span(s.origin, endsetSpan.start, 5));
+    expect(zettel[0].edit).toEqualEdit(Span(s.origin, s.start, 5));
+    expect(zettel[1].edit).toEqualEdit(Span(s.origin, endsetSpan.start, 5));
     expect(zettel.reduce((n, z) => n + z.edit.length, 0)).toBe(s.length);
   });
 
   it('splits a span if only the start is covered by a link', () => {
-    let s = span("origin", 0, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 0, 5)]] });
+    let s = Span("origin", 0, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 0, 5)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).hasEndset(l, 0);
@@ -201,23 +201,23 @@ describe('zettel', () => {
   });
 
   it('splits a span at span start if only the end is covered by a link', () => {
-    let s = span("origin", 1, 10);
-    let endsetSpan = span("origin", 0, 6);
+    let s = Span("origin", 1, 10);
+    let endsetSpan = Span("origin", 0, 6);
     let l = makeSpanLink({ editLists: [[endsetSpan]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].edit).toEqualEdit(span(s.origin, s.start, 5));
-    expect(zettel[1].edit).toEqualEdit(span(s.origin, 6, 5));
+    expect(zettel[0].edit).toEqualEdit(Span(s.origin, s.start, 5));
+    expect(zettel[1].edit).toEqualEdit(Span(s.origin, 6, 5));
     expect(zettel.reduce((n, z) => n + z.edit.length, 0)).toBe(s.length);
   });
 
   it('splits a span twice if the link is fully contained in the span', () => {
-    let s = span("origin", 0, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 1, 8)]] });
+    let s = Span("origin", 0, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 1, 8)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).not.hasEndset(l, 0);
@@ -226,24 +226,24 @@ describe('zettel', () => {
   });
 
   it('splits a span at the link points if the link is contained in the span', () => {
-    let s = span("origin", 1, 10);
-    let endsetSpan = span("origin", 2, 8);
+    let s = Span("origin", 1, 10);
+    let endsetSpan = Span("origin", 2, 8);
     let l = makeSpanLink({ editLists: [[endsetSpan]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(3);
-    expect(zettel[0].edit).toEqualEdit(span(s.origin, s.start, 1));
-    expect(zettel[1].edit).toEqualEdit(span(s.origin, endsetSpan.start, endsetSpan.length));
-    expect(zettel[2].edit).toEqualEdit(span(s.origin, endsetSpan.next, 1));
+    expect(zettel[0].edit).toEqualEdit(Span(s.origin, s.start, 1));
+    expect(zettel[1].edit).toEqualEdit(Span(s.origin, endsetSpan.start, endsetSpan.length));
+    expect(zettel[2].edit).toEqualEdit(Span(s.origin, endsetSpan.next, 1));
     expect(zettel.reduce((n, z) => n + z.edit.length, 0)).toBe(s.length);
   });
 
   it('assigns all endsets that overlap the zettel', () => {
-    let s = span("origin", 0, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 0, 10)], [span("origin", 0, 10)]] });
+    let s = Span("origin", 0, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 0, 10)], [Span("origin", 0, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l, 0);
@@ -251,11 +251,11 @@ describe('zettel', () => {
   });
 
   it('assigns all links that overlap the zettel', () => {
-    let s = span("origin", 0, 10);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 0, 10)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 0, 10)]] });
+    let s = Span("origin", 0, 10);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 0, 10)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 0, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l1, 0);
@@ -263,20 +263,20 @@ describe('zettel', () => {
   });
 
   it('assigns a link once even if there are multiple overlapping spans', () => {
-    let s = span("origin", 0, 10);
-    let l = makeSpanLink({ editLists: [[span("origin", 0, 10), span("origin", 0, 10)]] });
+    let s = Span("origin", 0, 10);
+    let l = makeSpanLink({ editLists: [[Span("origin", 0, 10), Span("origin", 0, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l])).zettel();
 
     expect(zettel[0].endsets).toHaveLength(1);
   });
 
   it('assigns links only to the spans that overlap them', () => {
-    let s1 = span("origin", 1, 10), s2 = span("origin", 20, 10);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 1, 10)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 20, 10)]] });
+    let s1 = Span("origin", 1, 10), s2 = Span("origin", 20, 10);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 10)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 20, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s1, s2], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s1, s2], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).hasEndset(l1, 0);
@@ -284,11 +284,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two different abutting links', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 1, 10)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 11, 10)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 10)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -296,11 +296,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two different non-overlapping, non-abutting links', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 1, 10)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 12, 10)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 10)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 12, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -309,11 +309,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two overlapping links', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 1, 15)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 11, 10)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 15)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 10)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -322,11 +322,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two overlapping links with space on either side of the links', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 2, 15)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 11, 9)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 2, 15)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 9)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(5);
     expect(zettel[0]).hasZettelProperties(1, 1);
@@ -337,11 +337,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two links when one is contained in the other', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 1, 20)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 11, 5)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 20)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 5)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -350,11 +350,11 @@ describe('zettel', () => {
   });
 
   it('will split a span by two links when one link is contained in the other with space on either side', () => {
-    let s = span("origin", 1, 20);
-    let l1 = makeSpanLink({ editLists: [[span("origin", 2, 18)]] });
-    let l2 = makeSpanLink({ editLists: [[span("origin", 11, 4)]] });
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 2, 18)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 4)]] });
 
-    let zettel = new ZettelSchneider(doc([s], [l1, l2])).zettel();
+    let zettel = new ZettelSchneider(Doc([s], [l1, l2])).zettel();
 
     expect(zettel).toHaveLength(5);
     expect(zettel[0]).hasZettelProperties(1, 1);

@@ -1,4 +1,4 @@
-export function editIterator(callback, initialState) {
+export function EditIterator(callback, initialState) {
   let state = initialState;
   let positionCount = undefined, nextPosition = 0;
   

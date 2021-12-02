@@ -1,7 +1,7 @@
 import { describe, it, expect } from '@jest/globals';
-import { commonplaceHtml } from './commonplace-html';
-describe('commonplaceHtml', () => {
+import { CommonplaceHtml } from './commonplace-html';
+describe('CommonplaceHtml', () => {
   it('should work', () => {
-    expect(commonplaceHtml()).toEqual('html');
+    expect(CommonplaceHtml()).toEqual('html');
   });
 });
