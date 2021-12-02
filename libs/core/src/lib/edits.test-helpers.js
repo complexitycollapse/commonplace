@@ -4,7 +4,10 @@ import { boxTesting } from "./boxes";
 
 export function toEqualEdit(actualEdit, expectedEdit) {
   if (actualEdit.editType !== expectedEdit.editType) {
-    return false;
+    return {
+      message: () => `Expected '${JSON.stringify(expectedEdit)}', received '${JSON.stringify(actualEdit)}'`,
+      pass: false
+    };
   }
 
   if (expectedEdit.editType == "span") {
@@ -15,7 +18,10 @@ export function toEqualEdit(actualEdit, expectedEdit) {
     return boxTesting.toEqualBox(actualEdit, expectedEdit);
   }
 
-  throw `Edit type '${expectedEdit.editType}' not understood`;
+  return {
+    message: () => `Edit type '${expectedEdit.editType}' not understood`,
+    pass: false
+  };
 }
 
 export function hasEdits(el, ...edits) {
