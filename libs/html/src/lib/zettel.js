@@ -1,6 +1,6 @@
 import { addProperties, addMethods, endset } from '@commonplace/core';
 
-export function zettel(edit) {
+export function Zettel(edit) {
   let obj = {};
 
   function makeModifiedEndset(es, link, index) {

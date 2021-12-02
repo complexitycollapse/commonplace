@@ -1,9 +1,9 @@
 import { describe, it, expect, test } from '@jest/globals';
-import { zettel } from './zettel';
+import { Zettel } from './zettel';
 import { span, link, endset } from '@commonplace/core';
 
 function make(edit = span("origin", 1, 10)) {
-  return zettel(edit);
+  return Zettel(edit);
 }
 
 test('edit returns the passed edit', () => {
