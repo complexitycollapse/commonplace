@@ -5,7 +5,7 @@ export function ZettelSchneider(edit, links = []) {
   let obj = {};
 
   function zettel() {
-    let hash = buildEndsetHash();
+    let hash = EndsetHash(links).build();
 
     let overlappingEntries = (hash[edit.origin] ?? []).filter(s => s.edit.overlaps(edit));
 
@@ -59,7 +59,16 @@ export function ZettelSchneider(edit, links = []) {
     return zettel;
   }
 
-  function buildEndsetHash() {
+  addMethods(obj, {
+    zettel
+  });
+
+  return obj;
+}
+
+function EndsetHash(links) {
+
+  function build() {
     let hash = {};
 
     links.forEach(l => {
@@ -77,15 +86,11 @@ export function ZettelSchneider(edit, links = []) {
     });
   }
 
-  function pushAdd(hash, edit, endset, link) {
-    let entry = { edit, endset, link }, list = hash[edit.origin];
-    if (list) { list.push(entry); }
-    else { hash[edit.origin] = [entry]; }
-  }
+  return { build };
+}
 
-  addMethods(obj, {
-    zettel
-  });
-
-  return obj;
+function pushAdd(hash, edit, endset, link) {
+  let entry = { edit, endset, link }, list = hash[edit.origin];
+  if (list) { list.push(entry); }
+  else { hash[edit.origin] = [entry]; }
 }
