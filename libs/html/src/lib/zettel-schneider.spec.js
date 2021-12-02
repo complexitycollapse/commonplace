@@ -1,9 +1,10 @@
 import { describe, it, expect } from '@jest/globals';
 import { ZettelSchneider } from './zettel-schneider';
-import { Link, Endset, Span, Box } from '@commonplace/core';
+import { Span, Box } from '@commonplace/core';
 import { testing } from "@commonplace/core";
 
 let toEqualEdit = testing.edits.toEqualEdit;
+let makeSpanLink = testing.links.makeSpanLink;
 
 function editArraysEqual(actual, expected) {
   if (actual.length !== expected.length) { return false; }
@@ -88,24 +89,6 @@ expect.extend({
     };
   }
 });
-
-function makeSpanLink({ type = "typeA", editLists } = {}) {
-  if (editLists === undefined) {
-    editLists = [
-      [Span("origin", 0, 10), Span("origin", 20, 15)],
-      [Span("origin", 40, 5), Span("origin", 50, 20)]
-    ];
-  }
-
-  let endsets = [], i = 0;
-
-  editLists.forEach(ss => {
-    endsets.push(Endset("name" + i.toString(), ss));
-    i += 1;
-  });
-
-  return Link(type ?? "typeA", ...endsets);
-}
 
 describe('zettel', () => {
   it('returns an empty list for an empty doc', () => {

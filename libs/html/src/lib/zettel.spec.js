@@ -1,6 +1,12 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
-import { Span, Link, Endset } from '@commonplace/core';
+import { Span, Link, Endset, testing } from '@commonplace/core';
+
+let toEqualSpan = testing.spans.toEqualSpan;
+
+expect.extend({
+  toEqualSpan
+});
 
 function make(edit = Span("origin", 1, 10)) {
   return Zettel(edit);
@@ -11,7 +17,7 @@ test('edit returns the passed edit', () => {
   expect(make(s).edit).toEqual(s);
 });
 
-describe('addLink', () => {
+describe('addEndset', () => {
   it('adds the given endsets', () => {
     let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
     let l1 = Link("type1", e1), l2 = Link("type2", e2);
@@ -92,5 +98,45 @@ describe('addLink', () => {
     z.addEndset(e2, l1);
   
     expect(z.endsets.length).toBe(2);
+  });
+});
+
+describe('addLink', () => {
+  it('creates a new zettel with the new link added', () => {
+    let s = Span("origin", 1, 10);
+    let e1 = Endset("name1", [s]);
+    let l1 = Link("type1", e1);
+    let l2 = Link("type2", Endset("name2", [s]));
+    let zettel = make();
+    zettel.addEndset(e1, l1);
+
+    let newZettel = zettel.addLink(l2);
+
+    expect(newZettel).toHaveLength(1);
+    expect(newZettel[0].endsets).toHaveLength(2);
+    expect(newZettel[0].endsets[0].link).toBe(l2);
+    expect(newZettel[0].endsets[1].link).toBe(l1);
+  });
+
+  it('will split the zettel according to the link spans', () => {
+    let s = Span("origin", 1, 10);
+    let e1 = Endset("name1", [s]);
+    let l1 = Link("type1", e1);
+    let l2 = Link("type2", Endset("name2", [s.crop(1)]));
+    let zettel = make();
+    zettel.addEndset(e1, l1);
+
+    let newZettel = zettel.addLink(l2);
+
+    expect(newZettel).toHaveLength(2);
+
+    expect(newZettel[0].endsets).toHaveLength(1);
+    expect(newZettel[0].endsets[0].link).toBe(l1);
+    expect(newZettel[0].edit).toEqualSpan(s.crop(0, 1));
+
+    expect(newZettel[1].endsets).toHaveLength(2);
+    expect(newZettel[1].endsets[0].link).toBe(l2);
+    expect(newZettel[1].endsets[1].link).toBe(l1);
+    expect(newZettel[1].edit).toEqualSpan(s.crop(1, 9));
   });
 });
