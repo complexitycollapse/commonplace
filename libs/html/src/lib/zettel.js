@@ -20,7 +20,7 @@ export function Zettel(edit) {
   }
 
   function addLink(link) {
-    let parts = ZettelSchneider([edit], [link]).zettel();
+    let parts = ZettelSchneider(edit, [link]).zettel();
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {
