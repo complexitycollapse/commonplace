@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { ZettelSchneider } from './zettel-schneider';
-import { Doc, Link, Endset, Span, Box } from '@commonplace/core';
+import { Link, Endset, Span, Box } from '@commonplace/core';
 import { testing } from "@commonplace/core";
 
 let toEqualEdit = testing.edits.toEqualEdit;

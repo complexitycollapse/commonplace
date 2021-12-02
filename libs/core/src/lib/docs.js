@@ -1,21 +1,20 @@
 import { addProperties, addMethods } from "./utils";
 import { EditList, leafDataToEdit } from "./edit-lists";
-import { leafDataToLink } from "./links";
 
-export function Doc(edits, links) {
+export function Doc(edits, overlay) {
   let obj = {};
   edits = EditList(...(edits ?? []));
-  links = links ?? [];
+  overlay = overlay ?? [];
 
   addProperties(obj, {
     edits,
-    links
+    overlay
   });
 
   function leafData() {
     return {
       edl: edits.leafData(),
-      odl: links.map(l => l.leafData())
+      odl: overlay
     };
   }
 
@@ -29,5 +28,5 @@ export function Doc(edits, links) {
 }
 
 export function leafDataToDoc(leafData) {
-  return Doc(leafData.edl.map(leafDataToEdit), leafData.odl.map(leafDataToLink));
+  return Doc(leafData.edl.map(leafDataToEdit), leafData.odl);
 }

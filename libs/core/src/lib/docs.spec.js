@@ -1,9 +1,7 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasEdits } from "./edits.test-helpers";
-import { Link } from './links';
 import { Doc, leafDataToDoc } from './docs';
 import { Box, boxTesting } from './boxes';
-import { Endset } from './endsets';
 import { spanTesting } from './spans';
 
 expect.extend({
@@ -22,15 +20,12 @@ test('edits is set on the doc', () => {
   expect(d.edits).hasEdits(...spans);
 });
 
-test('links is set on the doc', () => {
-  let links = [Link("1"), Link("2"), Link("3")];
+test('overlay is set on the doc', () => {
+  let overlay = ["link1", "link2"];
 
-  let d = Doc([], links);
+  let d = Doc([], overlay);
 
-  expect(d.links.length).toBe(3);
-  expect(d.links[0]).toBe(links[0]);
-  expect(d.links[1]).toBe(links[1]);
-  expect(d.links[2]).toBe(links[2]);
+  expect(d.overlay).toEqual(overlay);
 });
 
 test('can pass no edits argument and get an empty spanSet', () => {
@@ -40,10 +35,10 @@ test('can pass no edits argument and get an empty spanSet', () => {
   expect(d.edits).hasEdits();
 });
 
-test('can pass no links argument and get an empty links array', () => {
+test('can pass no overlay argument and get an empty overlay array', () => {
   let d = Doc();
 
-  expect(d.links.length).toBe(0);
+  expect(d.overlay.length).toBe(0);
 });
 
 
@@ -69,20 +64,18 @@ describe('concLength', () => {
 });
 
 describe('leafData', () => {
-  it('has the edits and links properties', () => {
+  it('has the edits and overlay properties', () => {
     let spans = makeSpans(5);
-    let links = [Link("1"), Link("2"), Link("3")];
-    expect(Doc(spans, links).leafData()).toEqual({
+    let overlay = ["link1", "link2", "link3"];
+    expect(Doc(spans, overlay).leafData()).toEqual({
       edl: expect.arrayContaining(spans.map(s => s.leafData())),
-      odl: expect.arrayContaining(links.map(l => l.leafData())),
+      odl: expect.arrayContaining(overlay),
     });
   });
 });
 
 test('leafDataToDoc is inverse of leafData', () => {
-  let l1 = Link("type1", Endset("name1", "foo"), Endset("name2", [makeSpan(), Box("orig1", 1, 2, 3, 4)]));
-  let l2 = Link("type2", Endset("name3", "blah"), Endset("name4", [makeSpan(), Box("orig2", 10, 20, 30, 40)]));
   let edits = [...makeSpans(10), Box("orig3", 11, 22, 33, 44)];
-  let d = Doc(edits, [l1, l2]);
+  let d = Doc(edits, ["link1", "link2", "link3"]);
   expect(leafDataToDoc(d.leafData())).toEqual(d);
 });
