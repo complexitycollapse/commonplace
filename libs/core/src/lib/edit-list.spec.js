@@ -1,8 +1,8 @@
 import { describe, expect, it, jest, test} from '@jest/globals';
-import { EditList, leafDataToEditList } from './edit-lists';
-import { Span, spanTesting } from './spans';
-import { Box, boxTesting } from './boxes';
-import { toEqualEdit, hasEdits } from './edits.test-helpers';
+import { EditList, leafDataToEditList } from './edit-list';
+import { Span, spanTesting } from './span';
+import { Box, boxTesting } from './box';
+import { toEqualEdit, hasEdits } from './edit.test-helpers';
 
 expect.extend({
   toEqualEdit,

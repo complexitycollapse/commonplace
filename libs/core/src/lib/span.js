@@ -1,4 +1,4 @@
-import { EditIterator } from "./edit-iterators";
+import { EditIterator } from "./edit-iterator";
 import { addProperties, addMethods } from "./utils";
 
 export function Span(origin, start, length) {

@@ -1,6 +1,6 @@
 import { addProperties, addMethods } from "./utils";
-import { EditIterator } from "./edit-iterators";
-import { spanTesting } from "./spans";
+import { EditIterator } from "./edit-iterator";
+import { spanTesting } from "./span";
 
 export function Box(origin, x, y, width, height)
 {

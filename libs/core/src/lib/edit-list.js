@@ -1,6 +1,6 @@
-import { leafDataToBox } from './boxes';
-import { EditIterator } from './edit-iterators';
-import { leafDataToSpan } from './spans';
+import { leafDataToBox } from './box';
+import { EditIterator } from './edit-iterator';
+import { leafDataToSpan } from './span';
 import { addMethods } from './utils';
 
 export function EditList(...editDesignators) {

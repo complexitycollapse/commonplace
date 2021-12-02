@@ -1,5 +1,5 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { Box, leafDataToBox, boxTesting } from "./boxes";
+import { Box, leafDataToBox, boxTesting } from "./box";
 
 expect.extend({
   toEqualBox: boxTesting.toEqualBox

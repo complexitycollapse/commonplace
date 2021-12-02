@@ -1,5 +1,5 @@
-import { spanTesting } from "./spans";
-import { boxTesting } from "./boxes";
+import { spanTesting } from "./span";
+import { boxTesting } from "./box";
 
 
 export function toEqualEdit(actualEdit, expectedEdit) {

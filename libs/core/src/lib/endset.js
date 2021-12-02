@@ -1,4 +1,4 @@
-import { leafDataToEdit } from "./edit-lists";
+import { leafDataToEdit } from "./edit-list";
 import { addProperties, addMethods } from "./utils";
 
 export function Endset(name, set) {

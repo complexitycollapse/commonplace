@@ -1,5 +1,5 @@
 import { addProperties, addMethods } from "./utils";
-import { EditList, leafDataToEdit } from "./edit-lists";
+import { EditList, leafDataToEdit } from "./edit-list";
 
 export function Doc(edits, overlay) {
   let obj = {};

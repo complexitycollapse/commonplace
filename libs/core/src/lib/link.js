@@ -1,6 +1,6 @@
 import { addProperties, addMethods } from "./utils";
-import { Endset, leafDataToEndset } from "./endsets";
-import { Span } from "./spans";
+import { Endset, leafDataToEndset } from "./endset";
+import { Span } from "./span";
 
 export function Link(type, ...endsets) {
   let obj = {};

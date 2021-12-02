@@ -1,5 +1,5 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
-import { Span, leafDataToSpan, spanTesting } from './spans';
+import { Span, leafDataToSpan, spanTesting } from './span';
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan

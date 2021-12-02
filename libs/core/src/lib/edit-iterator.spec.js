@@ -1,6 +1,6 @@
 import { describe, expect, it, jest} from '@jest/globals';
-import { Span, spanTesting } from './spans';
-import { EditIterator } from "./edit-iterators";
+import { Span, spanTesting } from './span';
+import { EditIterator } from "./edit-iterator";
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan

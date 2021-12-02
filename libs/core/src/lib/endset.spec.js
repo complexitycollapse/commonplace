@@ -1,7 +1,7 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { Endset, leafDataToEndset } from './endsets';
-import { Span, spanTesting } from "./spans";
-import { Box } from "./boxes";
+import { Endset, leafDataToEndset } from './endset';
+import { Span, spanTesting } from "./span";
+import { Box } from "./box";
 
 let makeSpans = spanTesting.makeSpans;
 

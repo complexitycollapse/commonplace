@@ -1,9 +1,9 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasEdits } from "./edits.test-helpers";
-import { Endset } from './endsets';
-import { Link, leafDataToLink } from './links';
-import { Box } from './boxes';
-import { spanTesting } from './spans';
+import { hasEdits } from "./edit.test-helpers";
+import { Endset } from './endset';
+import { Link, leafDataToLink } from './link';
+import { Box } from './box';
+import { spanTesting } from './span';
 
 expect.extend({
   hasEdits

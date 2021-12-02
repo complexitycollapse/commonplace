@@ -1,6 +1,6 @@
 import { MockRepository } from "./mock-repository";
 import { addMethods, addProperties } from "./utils";
-import { Doc } from "./docs";
+import { Doc } from "./doc";
 
 export function CommonplaceCore(repository) {
   let obj = {};
