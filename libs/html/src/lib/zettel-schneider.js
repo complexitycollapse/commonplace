@@ -1,7 +1,7 @@
 import { addMethods } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(edits, links) {
+export function ZettelSchneider(edits, links = []) {
   let obj = {};
 
   function zettel() {
