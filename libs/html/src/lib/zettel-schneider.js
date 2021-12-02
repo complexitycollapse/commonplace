@@ -1,7 +1,7 @@
 import { addMethods } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(doc) {
+export function ZettelSchneider(edits, links) {
   let obj = {};
 
   function zettel() {
@@ -21,7 +21,7 @@ export function ZettelSchneider(doc) {
 
     let result = [];
 
-    doc.edits.editSource().forEach(e => {
+    edits.forEach(e => {
       let zettel = splitEdit(e);
       result = result.concat(zettel);
     });
@@ -73,7 +73,7 @@ export function ZettelSchneider(doc) {
   function buildEndsetHash() {
     let hash = {};
 
-    doc.links.forEach(l => {
+    links.forEach(l => {
       l.endsets.forEach(e => {
         if (e.hasEdits) { pushEditEndset(l, e, hash); }
       });
