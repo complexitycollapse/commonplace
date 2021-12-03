@@ -7,37 +7,41 @@ describe('commonplaceCore', () => {
     });
 
     it('returns a string name for the passed object', () => {
-      expect(typeof CommonplaceCore().importContent("Some text")).toBe('string');
+      CommonplaceCore().importContent(name => {
+        expect(typeof name).toBe('string');
+      },"Some text");
     });
 
     it('inserts the content into the repository', () => {
       let core = CommonplaceCore();
       
-      core.importContent("Some text");
-      
-      let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toBe(1);
+      core.importContent(() => {
+        let calls = core.repository.calls.forMethod("addContent");
+        expect(calls.length).toBe(1);
+      }, "Some text");
     });
 
     it('inserts different content into the repository', () => {
       let core = CommonplaceCore();
       
-      core.importContent("Some text");
-      core.importContent("Some more text");
-      
-      let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toBe(2);
+      core.importContent(() => {
+        core.importContent(() => {
+          let calls = core.repository.calls.forMethod("addContent");
+          expect(calls.length).toBe(2);
+        }, "Some more text");
+      }, "Some text");
     });
 
     it('does not insert the same content twice', () => {
       let core = CommonplaceCore();
-      core.importContent("Some text");
-      core.repository.clearCalls();
 
-      core.importContent("Some text");
-
-      let calls = core.repository.calls.forMethod("addContent");
-      expect(calls.length).toBe(1);
+      core.importContent(() => {
+        core.repository.clearCalls();
+        core.importContent(() => {
+          let calls = core.repository.calls.forMethod("addContent");
+          expect(calls.length).toBe(1);
+        }, "Some text");
+      }, "Some text");
     });
   });
 });

@@ -10,58 +10,63 @@ export function MockRepository() {
     names: []
   };
 
-  function resolveLocalNameInternal(name) {
-    return obj.names.find(b => b.name === name);
+  function resolveLocalNameInternal(callback, name) {
+    callback(obj.names.find(b => b.name === name));
   }
 
-  function addContent(identifier, content, isPinned) {
+  function addContent(callback, identifier, content, isPinned) {
     obj.calls.push({ method: "addContent", identifier, content, isPinned });
-    obj.content.push([identifier, content, isPinned]);
+    obj.content.push({ identifier, content, isPinned });
+    callback();
   }
 
-  function getContent(identifier) {
+  function getContent(callback, identifier) {
     obj.calls.push({ method: "getContent", identifier });
     obj.content.forEach(c => {
-      if (c === identifier) return c;
+      if (c.identifier === identifier) {
+        callback(c.content);
+        return;
+      }
     });
 
-    return undefined;
+    callback(undefined);
   }
 
-  function createLocalName(name, scroll, blobIdentifier) {
+  function createLocalName(callback, name, scroll, blobIdentifier) {
     obj.calls.push({ method: "createLocalName", name, scroll, blobIdentifier });
     obj.names.push([name, scroll, blobIdentifier]);
-    return name;
+    callback(name);
   }
 
-  function rebindLocalName(name, newBlobIdentifier) {
+  function rebindLocalName(callback, name, newBlobIdentifier) {
     obj.calls.push({ method: "createLocalName", name, newBlobIdentifier});
     let binding = resolveLocalNameInternal(name);
     if (binding) {
       binding[2] = newBlobIdentifier;
-      return name;
+      callback(name);
     } else {
-      return undefined;
+      callback(undefined);
     }
   }
 
-  function unbindLocalName(name) {
+  function unbindLocalName(callback, name) {
     obj.calls.push({ method: "unbindLocalName", name});
     let binding = resolveLocalNameInternal(name);
     let index = obj.names.indexOf(binding);
     if (index >= 0) {
       obj.names.splice(index, 1);
     }
+    callback();
   }
 
-  function resolveLocalName(name) {
+  function resolveLocalName(callback, name) {
     obj.calls.push({ method: "resolveLocalName", name});
-    return resolveLocalNameInternal(name);
+    callback(resolveLocalNameInternal(name));
   }
 
-  function generateUniqueName() {
+  function generateUniqueName(callback) {
     uniqueKey += 1;
-    return "Name" + uniqueKey.toString();
+    callback("Name" + uniqueKey.toString());
   }
 
   function clearCalls() {
@@ -83,5 +88,6 @@ export function MockRepository() {
   });
 
   clearCalls();
+  
   return obj;
 }

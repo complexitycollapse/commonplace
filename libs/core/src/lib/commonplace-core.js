@@ -9,52 +9,69 @@ export function CommonplaceCore(repository) {
     repository
   });
 
-  function ensureContent(content, isPinned) {
-    if (!repository.getContent(content)) {
-      repository.addContent("Name", content, isPinned);
-    }
-    
-    return "Name";
+  function ensureContent(callback, content, isPinned) {
+    repository.getContent(repoContent => {
+      if (!repoContent) {
+        repository.addContent(callback, "Name", content, isPinned);
+      } else {
+        callback("Name");
+      }
+    }, content);
   }
 
-  function checkName(name, newBlobIdentifier) {
+  function checkName(callback, name, newBlobIdentifier) {
     if (name === undefined) {
-      return repository.generateUniqueName();
+      repository.generateUniqueName(callback);
+      return;
     }
 
-    let existingBinding = repository.resolveLocalName(name);
-
-    if (existingBinding && existingBinding[2] !== newBlobIdentifier) {
-      throw "Name already in use";
-    }
-
-    return name;
+    repository.resolveLocalName(existingBinding => {
+      if (existingBinding && existingBinding[2] !== newBlobIdentifier) {
+        throw "Name already in use";
+      }
+      callback(name);
+    }, name);
   }
 
-  function addContentWithLocalName(name, isScroll, content) {
-    let blobIdentifier = ensureContent(content, true);
-    name = checkName();
-    return repository.createLocalName(name, isScroll, blobIdentifier);
+  function addContentWithLocalName(callback, name, isScroll, content) {
+    let createName = (realNameToUse, blobIdentifier) => {
+      repository.createLocalName(callback, realNameToUse, isScroll, blobIdentifier)
+    };
+
+    ensureContent(blobIdentifier => {
+      if (name) {
+        createName(name, blobIdentifier);
+      } else {
+        checkName(generatedName => createName(generatedName, blobIdentifier));
+      }
+    }, content, true);
   }
 
-  function importContent(name, content) {
-    return addContentWithLocalName(name, true, content);
+  function importContent(callback, name, content) {
+    addContentWithLocalName(callback, name, true, content);
   }
 
-  function newDoc(name, newDoc) {
+  function newDoc(callback, name, newDoc) {
     let d = newDoc ?? Doc([], []);
-    return [d, addContentWithLocalName(name, false, d)];
+    addContentWithLocalName(c => callback([d, c]), name, false, d);
   }
 
-  function updateDoc(name, updatedDoc) {
-    let blobIdentifier = ensureContent(updatedDoc, true);
-    repository.rebindLocalName(name, blobIdentifier);
+  function updateDoc(callback, name, updatedDoc) {
+    ensureContent(blobIdentifier => {
+      repository.rebindLocalName(callback, name, blobIdentifier);
+    }, updatedDoc, true);
+    
+  }
+
+  function getContent(callback, name) {
+    repository.getContent(callback, name);
   }
 
   addMethods(obj, {
     importContent,
     newDoc,
-    updateDoc
+    updateDoc,
+    getContent
   });
 
   return obj;
