@@ -139,4 +139,20 @@ describe('addLink', () => {
     expect(newZettel[1].endsets[1].link).toBe(l1);
     expect(newZettel[1].edit).toEqualSpan(s.crop(1, 9));
   });
+
+  it('will copy the zettel content to all the new zettel', () => {
+    let s = Span("origin", 1, 10);
+    let e1 = Endset("name1", [s]);
+    let l1 = Link("type1", e1);
+    let l2 = Link("type2", Endset("name2", [s.crop(1)]));
+    let zettel = make();
+    zettel.addEndset(e1, l1);
+    zettel.content = "This is some content";
+
+    let newZettel = zettel.addLink(l2);
+
+    newZettel.forEach(z => {
+      expect(z.content).toBe(zettel.content);
+    });
+  });
 });

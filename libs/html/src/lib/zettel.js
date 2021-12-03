@@ -2,7 +2,9 @@ import { addProperties, addMethods, Endset } from '@commonplace/core';
 import { ZettelSchneider } from './zettel-schneider';
 
 export function Zettel(edit) {
-  let obj = {};
+  let obj = {
+    content: undefined
+  };
 
   function makeModifiedEndset(es, link, index) {
     let newEndset = Endset(es.name, es.set);
@@ -27,6 +29,7 @@ export function Zettel(edit) {
         if (!alreadyHasEndset(z, e.link, e.index)) {
           z.endsets.push(e);
         }
+        z.content = obj.content;
       });
     });
 
