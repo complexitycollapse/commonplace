@@ -2,46 +2,42 @@ import { describe, expect, it } from '@jest/globals';
 import { CommonplaceCore } from './commonplace-core';
 describe('commonplaceCore', () => {
   describe('importContent', () => {
-    it('exists on the core object', () => {
-      expect(typeof CommonplaceCore().importContent).toBe('function');
+    it('exists on the core object', async () => {
+      expect(typeof await CommonplaceCore().importContent).toBe('function');
     });
 
-    it('returns a string name for the passed object', () => {
-      CommonplaceCore().importContent(name => {
-        expect(typeof name).toBe('string');
-      },"Some text");
+    it('returns a string name for the passed object', async () => {
+      expect(typeof await CommonplaceCore().importContent("Some text")).toBe('string');
     });
 
-    it('inserts the content into the repository', () => {
+    it('inserts the content into the repository', async () => {
       let core = CommonplaceCore();
       
-      core.importContent(() => {
-        let calls = core.repository.calls.forMethod("addContent");
-        expect(calls.length).toBe(1);
-      }, "Some text");
+      await core.importContent("Some text");
+      
+      let calls = core.repository.calls.forMethod("addContent");
+      expect(calls.length).toBe(1);
     });
 
-    it('inserts different content into the repository', () => {
+    it('inserts different content into the repository', async () => {
       let core = CommonplaceCore();
       
-      core.importContent(() => {
-        core.importContent(() => {
-          let calls = core.repository.calls.forMethod("addContent");
-          expect(calls.length).toBe(2);
-        }, "Some more text");
-      }, "Some text");
+      await core.importContent("Some text");
+      await core.importContent("Some more text");
+      
+      let calls = core.repository.calls.forMethod("addContent");
+      expect(calls.length).toBe(2);
     });
 
-    it('does not insert the same content twice', () => {
+    it('does not insert the same content twice', async () => {
       let core = CommonplaceCore();
+      await core.importContent("Some text");
+      core.repository.clearCalls();
 
-      core.importContent(() => {
-        core.repository.clearCalls();
-        core.importContent(() => {
-          let calls = core.repository.calls.forMethod("addContent");
-          expect(calls.length).toBe(1);
-        }, "Some text");
-      }, "Some text");
+      await core.importContent("Some text");
+
+      let calls = core.repository.calls.forMethod("addContent");
+      expect(calls.length).toBe(1);
     });
   });
 });
