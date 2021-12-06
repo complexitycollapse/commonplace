@@ -1,6 +1,5 @@
 import { MockRepository } from "./mock-repository";
 import { addMethods, addProperties } from "./utils";
-import { Doc } from "./doc";
 
 export function CommonplaceCore(repository) {
   let obj = {};
@@ -31,30 +30,30 @@ export function CommonplaceCore(repository) {
     return name;
   }
 
-  async function addContentWithLocalName(name, isScroll, content) {
+  async function addContentWithLocalName(name, content) {
     let blobIdentifier = await ensureContent(content, true);
     name = await checkName();
-    return await repository.createLocalName(name, isScroll, blobIdentifier);
+    return await repository.createLocalName(name, true, blobIdentifier);
   }
 
-  function importContent(name, content) {
-    return addContentWithLocalName(name, true, content);
+  function addContent(content) {
+    return ensureContent(content, true);
   }
 
-  async function newDoc(name, newDoc) {
-    let d = newDoc ?? Doc([], []);
-    return [d, await addContentWithLocalName(name, false, d)];
+  function getContent(callback, name) {
+    // TODO: should be doing a local name resolution if necessary
+    repository.getContent(callback, name);
   }
 
-  async function updateDoc(name, updatedDoc) {
-    let blobIdentifier = await ensureContent(updatedDoc, true);
-    await repository.rebindLocalName(name, blobIdentifier);
+  function rebindLocalName(name, blobIdentifier) {
+    repository.rebindLocalName(name, blobIdentifier);
   }
 
   addMethods(obj, {
-    importContent,
-    newDoc,
-    updateDoc
+    addContent,
+    addContentWithLocalName,
+    getContent,
+    rebindLocalName
   });
 
   return obj;

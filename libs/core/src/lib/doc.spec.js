@@ -28,14 +28,14 @@ test('overlay is set on the doc', () => {
   expect(d.overlay).toEqual(overlay);
 });
 
-test('can pass no edits argument and get an empty spanSet', () => {
+test('can pass no arguments and get an empty spanSet', () => {
   let d = Doc();
 
   expect(d.edits).toBeTruthy();
   expect(d.edits).hasEdits();
 });
 
-test('can pass no overlay argument and get an empty overlay array', () => {
+test('can pass no arguments and get an empty overlay array', () => {
   let d = Doc();
 
   expect(d.overlay.length).toBe(0);
