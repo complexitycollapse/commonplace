@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@commonplace/components": ["libs/components/src/index.js"],
       "@commonplace/core": ["libs/core/src/index.js"],
       "@commonplace/html": ["libs/html/src/index.js"]
     }
