@@ -6,6 +6,11 @@ export function Zettel(edit) {
     content: undefined
   };
 
+  addProperties(obj, {
+    edit,
+    endsets: [],
+  });
+
   function makeModifiedEndset(es, link, index) {
     let newEndset = Endset(es.name, es.set);
     newEndset.link = link;
@@ -36,14 +41,28 @@ export function Zettel(edit) {
     return parts;
   }
 
-  addProperties(obj, {
-    edit,
-    endsets: [],
-  });
+  function endsetsNotInOther(otherZettel) {
+    function isFound(ourEndset) {
+      if (otherZettel.endsets.find(theirs => 
+        ourEndset.link === theirs.link && ourEndset.index === theirs.index)) {
+          return true;
+        }
+      return false;
+    }
+  
+    let openings = [];
+  
+    obj.endsets.forEach(ourEndset => {
+      if (!isFound(ourEndset)) { openings.push(ourEndset); }
+    });
+  
+    return openings;
+  }
 
   addMethods(obj, {
     addEndset,
-    addLink
+    addLink,
+    endsetsNotInOther
   });
 
   return obj;

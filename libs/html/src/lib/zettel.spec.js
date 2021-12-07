@@ -156,3 +156,51 @@ describe('addLink', () => {
     });
   });
 });
+
+describe('endsetsNotInOther', () => {
+  it('returns an empty array if neither Zettel has any links', () => {
+    expect(make().endsetsNotInOther(make())).toHaveLength(0);
+  });
+
+  it('returns an empty array if both Zettel have the same endsets', () => {
+    let endset = Endset("bar", "baz");
+    let link = Link("foo", endset);
+    let z1 = make(), z2 = make();
+    z1.addEndset(endset, link);
+    z2.addEndset(endset, link);
+
+    expect(z1.endsetsNotInOther(z2)).toHaveLength(0);
+  });
+
+  it('returns an endset if it is in this but not that', () => {
+    let endset = Endset("bar", "baz");
+    let link = Link("foo", endset);
+    let z1 = make(), z2 = make();
+    z1.addEndset(endset, link);
+    
+    expect(z1.endsetsNotInOther(z2)).toHaveLength(1);
+    expect(z1.endsetsNotInOther(z2)[0]).toEqual(expect.objectContaining({ link: link, index: 0 }));
+  });
+
+  it('does not return an endset if it is in that but not this', () => {
+    let endset = Endset("bar", "baz");
+    let link = Link("foo", endset);
+    let z1 = make(), z2 = make();
+    z2.addEndset(endset, link);
+    
+    expect(z1.endsetsNotInOther(z2)).toHaveLength(0);
+  });
+
+  it('returns endset even if the link (but not the endset) is shared by both Zettel', () => {
+    let endset1 = Endset("bar1", "baz1"), endset2 = Endset("bar2", "baz2");
+    let link = Link("foo", endset1, endset2);
+    let z1 = make(), z2 = make();
+    z1.addEndset(endset1, link);
+    z2.addEndset(endset1, link);
+
+    z1.addEndset(endset2, link);
+    
+    expect(z1.endsetsNotInOther(z2)).toHaveLength(1);
+    expect(z1.endsetsNotInOther(z2)[0].name).toBe("bar2");
+  });
+});
