@@ -158,6 +158,16 @@ describe('addLink', () => {
 });
 
 describe('endsetsNotInOther', () => {
+  it('returns all the endsets if the other is undefined', () => {
+    let endset1 = Endset("bar1", "baz1"), endset2 = Endset("bar2", "baz2");
+    let link = Link("foo", endset1, endset2);
+    let zettel = make();
+    zettel.addEndset(endset1, link);
+    zettel.addEndset(endset2, link);
+
+    expect(zettel.endsetsNotInOther(undefined)).toHaveLength(2);
+  });
+
   it('returns an empty array if neither Zettel has any links', () => {
     expect(make().endsetsNotInOther(make())).toHaveLength(0);
   });

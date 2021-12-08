@@ -49,6 +49,10 @@ export function Zettel(edit) {
         }
       return false;
     }
+
+    if (otherZettel === undefined) {
+      return [...obj.endsets];
+    }
   
     let openings = [];
   
