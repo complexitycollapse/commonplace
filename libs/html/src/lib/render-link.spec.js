@@ -15,3 +15,9 @@ test('if the type has a fragmentTag then this is set on the RenderLink', () => {
 
   expect(link.fragmentTag).toBe("p");
 });
+
+test('if the type has a style then this is set on the RenderLink', () => {
+  let link = RenderLink(Link("bold"));
+
+  expect(link.style).toEqual({fontWeight: "bold"});
+});
