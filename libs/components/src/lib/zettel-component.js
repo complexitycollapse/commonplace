@@ -1,25 +1,9 @@
-import { Fragment } from "react";
+import { BoxComponent } from "./box-component";
+import { SpanComponent } from "./span-component";
 
-export function ZettelComponent({ zettel }) {
+export function ZettelComponent(props) {
+  let editType = props.zettel.edit.editType;
 
-  let style = {};
-  let SurroundingTag = Fragment;
-
-  zettel.endsets.forEach(endset => {
-    let link = endset.link;
-    
-    let thisStyle = link.style;
-    if (thisStyle) {
-      Object.getOwnPropertyNames(thisStyle).forEach(propName => {
-        style[propName] = thisStyle[propName];
-      });
-    }
-
-    let innerTag = link.innerTag;
-    if (innerTag) { SurroundingTag = innerTag };
-  });
-
-  return (
-    <SurroundingTag><span style={style}>{zettel.content}</span></SurroundingTag>
-  );
+  if (editType === "span") { return SpanComponent(props); }
+  if (editType === "box") { return BoxComponent(props); }
 }
