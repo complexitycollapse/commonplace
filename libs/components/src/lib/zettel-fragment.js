@@ -5,7 +5,7 @@ export function ZettelFragment({ fragment }) {
     ? (<ZettelFragment key={f.key} fragment={f}/>)
     : <ZettelComponent key={f.zettel.key} zettel={f.zettel}/>);
 
-  let Tag = fragment.link?.type === "paragraph" ? "p" : "React.Fragment";
+  let Tag = fragment.link?.fragmentTag ?? "React.Fragment";
 
   return (<Tag>{childComponents}</Tag>);
 }
