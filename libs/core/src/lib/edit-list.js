@@ -1,7 +1,7 @@
 import { leafDataToBox } from './box';
 import { EditIterator } from './edit-iterator';
 import { leafDataToSpan } from './span';
-import { addMethods } from './utils';
+import { addMethods, addProperties } from './utils';
 
 export function EditList(...editDesignators) {
   let obj = {};
@@ -20,6 +20,10 @@ export function EditList(...editDesignators) {
       edits.push(s);
     }));
   }
+
+  addProperties(obj, {
+    edits
+  });
 
   function append(edit) {
     edits.push(edit);

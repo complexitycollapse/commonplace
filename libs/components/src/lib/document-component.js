@@ -5,13 +5,7 @@ const StyledComponents = styled.div`
   color: pink;
 `;
 export function DocumentComponent({ doc }) {
-  let zettelLists = [];
-  
-  doc.edits.editSource().forEach(e => {
-    zettelLists.push(ZettelSchneider(e).zettel());
-  });
-
-  let zettel = zettelLists.flat();
+  let zettel = doc.edits.edits.map(ZettelSchneider).flat();
 
   // Hack in some hard-coded content
   zettel[0].content = "This is Hypertext";

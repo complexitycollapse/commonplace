@@ -22,12 +22,22 @@ describe('editList', () => {
     expect(EditList(s1, s2)).hasEdits(s1, s2);
   });
 
+  it('sets the edit property to the given initial spans if they do not abut', () => {
+    let s1 = Span("a", 1, 2), s2 = Span("b", 3, 4);
+    expect(EditList(s1, s2).edits).toEqual([s1, s2]);
+  });
+
   it('sets the edits to the given initial boxes if they do not abut', () => {
     let b1 = Box("a", 1, 2, 3, 4), b2 = Box("b", 3, 4, 5, 6);
     expect(EditList(b1, b2)).hasEdits(b1, b2);
   });
 
   it('merges spans that abut', () => {
+    let s1 = Span("a", 1, 2), s2 = Span("a", s1.next, 4);
+    expect(EditList(s1, s2).edits).toEqual([Span("a", 1, 6)]);
+  });
+
+  it('merges spans that abut and sets the edit property to the merged list', () => {
     let s1 = Span("a", 1, 2), s2 = Span("a", s1.next, 4);
     expect(EditList(s1, s2)).hasEdits(Span("a", 1, 6));
   });
@@ -206,7 +216,7 @@ describe('range', () => {
     expect(EditList(...spans).range(-1, sumLengths(subset))).hasEdits(...subset);
   });
 
-  it('returns only the last edits  if the earlier ones are not included', () => {
+  it('returns only the last edits if the earlier ones are not included', () => {
     let spans = makeSpans(5);
     let subset = spans.slice(2);
     let start = spans[0].length + spans[1].length;
