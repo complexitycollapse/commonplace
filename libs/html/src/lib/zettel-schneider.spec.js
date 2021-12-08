@@ -98,6 +98,20 @@ describe('zettel', () => {
     expect(new ZettelSchneider(box, [l]).zettel()).toHaveLength(1);
   });
 
+  it('assigns a key to the returned zettel if a keyPrefix is passed', () => {
+    let box = Box("origin", 0, 0, 10, 10);
+    let l = makeSpanLink({ editLists: [[Box("origin", 5, 5, 20, 20)]] });
+
+    expect(new ZettelSchneider(box, [l], "abc").zettel()[0].key).toBe("abc.0");
+  });
+
+  it('does not assign a key to the returned zettel if no keyPrefix is passed', () => {
+    let box = Box("origin", 0, 0, 10, 10);
+    let l = makeSpanLink({ editLists: [[Box("origin", 5, 5, 20, 20)]] });
+
+    expect(new ZettelSchneider(box, [l], undefined).zettel()[0].key).toBe(undefined);
+  });
+
   it('returns a single zettel if the edit is a span and there are no links', () => {
     let s = Span("origin", 0, 10);
 
@@ -293,6 +307,18 @@ describe('zettel', () => {
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
     expect(zettel[1]).hasZettelProperties(11, 5, [l1, 0], [l2, 0]);
     expect(zettel[2]).hasZettelProperties(16, 5, [l2, 0]);
+  });
+
+  it('will assign consecutive sub-keys to all created zettel', () => {
+    let s = Span("origin", 1, 20);
+    let l1 = makeSpanLink({ editLists: [[Span("origin", 1, 15)]] });
+    let l2 = makeSpanLink({ editLists: [[Span("origin", 11, 10)]] });
+
+    let zettel = new ZettelSchneider(s, [l1, l2], "1").zettel();
+
+    expect(zettel[0].key).toBe("1.0");
+    expect(zettel[1].key).toBe("1.1");
+    expect(zettel[2].key).toBe("1.2");
   });
 
   it('will split a span by two overlapping links with space on either side of the links', () => {

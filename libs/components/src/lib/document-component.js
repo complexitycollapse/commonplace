@@ -1,14 +1,9 @@
 import { ZettelFragment } from './zettel-fragment';
 import { ZettelSchneider } from '@commonplace/html';
-import styled from '@emotion/styled';
-import { ZettelComponent } from './zettel-component';
 import { leafDataToLink } from '@commonplace/core';
-const StyledComponents = styled.div`
-  color: pink;
-`;
+
 export function DocumentComponent({ doc }) {
-  let zettel = doc.edits.edits.map(e => ZettelSchneider(e).zettel()).flat();
-  
+  let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, [], index.toString()).zettel()).flat();
 
   // Hack in some hard-coded content
   zettel[0].content = "This is Hypertext";
@@ -16,7 +11,6 @@ export function DocumentComponent({ doc }) {
   "similar things. It will hopefully be long enough to wrap across several lines when it's rendered but you never know as high def" + 
   " screens are quite wide.";
   zettel[2].content = "Here is a second paragraph. This one doesn't have to be quite as long.";
-
   let testLink = leafDataToLink({typ: "paragraph", es: [["", {typ: "span", ori: "origin", st: 100, ln: 1000}]]});
   zettel[1].addEndset(testLink.endsets[0], testLink);
 
@@ -24,7 +18,7 @@ export function DocumentComponent({ doc }) {
 
   return (
     <div>
-      <ZettelFragment fragment={fragment}/>
+      <ZettelFragment key="froot" fragment={fragment}/>
     </div>
   );
 }
@@ -45,13 +39,13 @@ function fragmentize(zettel) {
       if (nextEndset) {
         list.push(doFragment(nextEndset));
       } else {
-        list.push({frag: false, zettel: zettel[i]});
+        list.push({frag: false, zettel: zettel[i], key: zettel.key});
       previous = zettel[i];
       ++i;
       }
     }
   
-    return {frag: true, children: list, link: endset?.link };    
+    return {frag: true, children: list, link: endset?.link, key: "f" + i.toString() };    
   }
 
   return doFragment(undefined);

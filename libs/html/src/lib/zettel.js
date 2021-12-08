@@ -3,7 +3,8 @@ import { ZettelSchneider } from './zettel-schneider';
 
 export function Zettel(edit) {
   let obj = {
-    content: undefined
+    content: undefined,
+    key: undefined
   };
 
   addProperties(obj, {
@@ -28,7 +29,7 @@ export function Zettel(edit) {
   }
 
   function addLink(link) {
-    let parts = ZettelSchneider(edit, [link]).zettel();
+    let parts = ZettelSchneider(edit, [link], obj.key).zettel();
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {

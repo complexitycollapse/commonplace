@@ -155,6 +155,35 @@ describe('addLink', () => {
       expect(z.content).toBe(zettel.content);
     });
   });
+
+  it('will assign keys to the new zettel if the original has a key', () => {
+    let s = Span("origin", 1, 10);
+    let e1 = Endset("name1", [s]);
+    let l1 = Link("type1", e1);
+    let l2 = Link("type2", Endset("name2", [s.crop(1)]));
+    let zettel = make();
+    zettel.addEndset(e1, l1);
+    zettel.key = "xyz";
+
+    let newZettel = zettel.addLink(l2);
+
+    expect(newZettel[0].key).toBe("xyz.0");
+    expect(newZettel[1].key).toBe("xyz.1");
+  });
+
+  it('will not assign keys to the new zettel if the original does not have a key', () => {
+    let s = Span("origin", 1, 10);
+    let e1 = Endset("name1", [s]);
+    let l1 = Link("type1", e1);
+    let l2 = Link("type2", Endset("name2", [s.crop(1)]));
+    let zettel = make();
+    zettel.addEndset(e1, l1);
+
+    let newZettel = zettel.addLink(l2);
+
+    expect(newZettel[0].key).toBe(undefined);
+    expect(newZettel[0].key).toBe(undefined);
+  });
 });
 
 describe('endsetsNotInOther', () => {
