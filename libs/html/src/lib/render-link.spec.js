@@ -21,3 +21,9 @@ test('if the type has a style then this is set on the RenderLink', () => {
 
   expect(link.style).toEqual({fontWeight: "bold"});
 });
+
+test('if the type has an innerTag then this is set on the RenderLink', () => {
+  let link = RenderLink(Link("title"));
+
+  expect(link.innerTag).toBe("h1");
+});
