@@ -20,40 +20,39 @@ export function DocumentComponent({ doc }) {
   let testLink = leafDataToLink({typ: "paragraph", es: [["", {typ: "span", ori: "origin", st: 100, ln: 1000}]]});
   zettel[1].addEndset(testLink.endsets[0], testLink);
 
-  let fragments = fragmentize(zettel);
+  let fragment = fragmentize(zettel);
 
   return (
     <div>
-      {fragments.map(f => f?.frag ? (<ZettelFragment children={f.children} link={f.link}/>) : <ZettelComponent zettel = {f}/>)}
+      <ZettelFragment fragment={fragment}/>
     </div>
   );
 }
+
 export default Document;
 
 function fragmentize(zettel) {
   let i = 0;
+  let previous = undefined;
+
   function doFragment(endset) {
     let list = [];
 
-    while(zettel[i].hasModifiedEndset(endset)) {
-      list.push(zettel[i]);
+    while(i < zettel.length
+      && (endset === undefined || zettel[i].hasModifiedEndset(endset))) {
+      let newEndsets = zettel[i].endsetsNotInOther(previous);
+      let nextEndset = newEndsets.find(e => e !== endset && e.link.type === "paragraph");
+      if (nextEndset) {
+        list.push(doFragment(nextEndset));
+      } else {
+        list.push({frag: false, zettel: zettel[i]});
+      previous = zettel[i];
       ++i;
+      }
     }
   
-    return list;    
+    return {frag: true, children: list, link: endset?.link };    
   }
 
-  let list = [];
-
-  while(i < zettel.length) {
-    let endset = zettel[i].endsets.find(e => e.link.type === "paragraph");
-    if (endset) {
-      list.push({frag: true, children: doFragment(endset), link: endset.link });
-    } else {
-      list.push(zettel[i]);
-      ++i;
-    }
-  }
-  
-  return list;
+  return doFragment(undefined);
 }
