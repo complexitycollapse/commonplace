@@ -20,10 +20,11 @@ export function Zettel(edit) {
 
   function addEndset(endset, link) {
     let index = link.endsets.indexOf(endset);
-    if (alreadyHasEndset(obj, link, index)) {
+    let newEndset = makeModifiedEndset(endset, link, index);
+    if (hasModifiedEndset(newEndset)) {
       return;
     }
-    obj.endsets.push(makeModifiedEndset(endset, link, index));
+    obj.endsets.push(newEndset);
   }
 
   function addLink(link) {
@@ -31,7 +32,7 @@ export function Zettel(edit) {
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {
-        if (!alreadyHasEndset(z, e.link, e.index)) {
+        if (!z.hasModifiedEndset(e)) {
           z.endsets.push(e);
         }
         z.content = obj.content;
@@ -43,8 +44,7 @@ export function Zettel(edit) {
 
   function endsetsNotInOther(otherZettel) {
     function isFound(ourEndset) {
-      if (otherZettel.endsets.find(theirs => 
-        ourEndset.link === theirs.link && ourEndset.index === theirs.index)) {
+      if (otherZettel.hasModifiedEndset(ourEndset)) {
           return true;
         }
       return false;
@@ -59,15 +59,17 @@ export function Zettel(edit) {
     return openings;
   }
 
+  function hasModifiedEndset(endset) {
+    return obj.endsets.find(ours => 
+      endset.link === ours.link && endset.index === ours.index);
+  }
+
   addMethods(obj, {
     addEndset,
     addLink,
-    endsetsNotInOther
+    endsetsNotInOther,
+    hasModifiedEndset
   });
 
   return obj;
-}
-
-function alreadyHasEndset(zettel, link, index) {
-  return zettel.endsets.find(e => e.link === link && e.index === index);
 }
