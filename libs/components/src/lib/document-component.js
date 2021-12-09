@@ -11,13 +11,13 @@ export function DocumentComponent({ doc }) {
   "similar things. It will hopefully be long enough to wrap across several lines when it's rendered but you never know as high def" + 
   " screens are quite wide.";
   zettel[2].content = "Here is a second paragraph. This one doesn't have to be quite as long.";
-  let titleLink = RenderLink(leafDataToLink({typ: "title", es: [["", {typ: "span", ori: "origin", st: 0, ln: 10}]]}));
+  let titleLink = RenderLink(leafDataToLink({typ: "title", es: [{ptr: [{typ: "span", ori: "origin", st: 0, ln: 10}]}]}));
   zettel[0].addEndset(titleLink.endsets[0], titleLink);
-  let testLink = RenderLink(leafDataToLink({typ: "paragraph", es: [["", {typ: "span", ori: "origin", st: 100, ln: 1000}]]}));
+  let testLink = RenderLink(leafDataToLink({typ: "paragraph", es: [{ptr: [{typ: "span", ori: "origin", st: 100, ln: 1000}]}]}));
   zettel[1].addEndset(testLink.endsets[0], testLink);
-  let italics = RenderLink(leafDataToLink({typ: "italics", es: [["", {typ: "span", ori:"origin", st: 2100, ln: 50}]]}));
+  let italics = RenderLink(leafDataToLink({typ: "italics", es: [{ptr: [{typ: "span", ori:"origin", st: 2100, ln: 50}]}]}));
   zettel[2].addEndset(italics.endsets[0], italics);
-  let bold = RenderLink(leafDataToLink({typ: "bold", es: [["", {typ: "span", ori:"origin", st: 2100, ln: 50}]]}));
+  let bold = RenderLink(leafDataToLink({typ: "bold", es: [{ptr: [{typ: "span", ori:"origin", st: 2100, ln: 50}]}]}));
   zettel[2].addEndset(bold.endsets[0], bold);
 
   let fragment = fragmentize(zettel);

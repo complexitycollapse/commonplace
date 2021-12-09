@@ -14,20 +14,20 @@ test('the passed string becomes the set property', () => {
 });
 
 describe('leafData', () => {
-  it('returns array with endset name as first item', () => {
-    expect(Endset("foo", "bar").leafData()[0]).toBe("foo");
+  it('returns object with endset name', () => {
+    expect(Endset("foo", "bar").leafData().name).toBe("foo");
   });
 
-  it('returns array of length 2 when set is a string', () => {
-    expect(Endset("foo", "some set").leafData()).toHaveLength(2);
+  it('has not name property if the endset has no name', () => {
+    expect(Endset(undefined, "bar").leafData()).not.toHaveProperty("name");
   });
 
-  it('returns array of length n + 1 when set is an array of length n', () => {
-    expect(Endset("foo", makeSpans(5)).leafData()).toHaveLength(6);
+  it('returns ptr array of length n when set is an array of length n', () => {
+    expect(Endset("foo", makeSpans(5)).leafData().ptr).toHaveLength(5);
   });
 
   it('returns span serializer data for set if it contains a span', () => {
-    expect(Endset("foo", [Span("a", 101, 505)]).leafData()[1]).toEqual({
+    expect(Endset("foo", [Span("a", 101, 505)]).leafData().ptr[0]).toEqual({
       typ: "span",
       ori: "a",
       st: 101,
@@ -35,8 +35,8 @@ describe('leafData', () => {
     });
   });
 
-  it('returns box serializer data for set if it contains a box', () => {
-    expect(Endset("foo", [Box("a", 101, 505, 22, 33)]).leafData()[1]).toEqual({
+  it('returns box serializer data for ptr if it contains a box', () => {
+    expect(Endset("foo", [Box("a", 101, 505, 22, 33)]).leafData().ptr[0]).toEqual({
       typ: "box",
       ori: "a",
       x: 101,
@@ -46,8 +46,8 @@ describe('leafData', () => {
     });
   });
 
-  it('returns original string for set if it is a string', () => {
-    expect(Endset("foo", "some string").leafData()[1]).toBe("some string");
+  it('returns original string for ptr if it is a string', () => {
+    expect(Endset("foo", "some string").leafData().ptr).toBe("some string");
   });
 });
 
@@ -65,6 +65,13 @@ describe('leafDataToEndset is inverse of leafData', () => {
     let actual = leafDataToEndset(Endset("the name", "the string").leafData());
 
     expect(actual.name).toBe("the name");
+    expect(actual.set).toEqual("the string");
+  });
+
+  test('no name case', () => {
+    let actual = leafDataToEndset(Endset(undefined, "the string").leafData());
+
+    expect(actual.name).toBeFalsy();
     expect(actual.set).toEqual("the string");
   });
 });

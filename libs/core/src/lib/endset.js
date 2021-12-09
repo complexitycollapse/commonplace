@@ -11,11 +11,13 @@ export function Endset(name, set) {
   });
 
   function leafData() {
+    let data = name ? { name } : {};
     if (obj.hasEdits) {
-      return [name, ...set.map(e => e.leafData())];
+      data.ptr = set.map(e => e.leafData());
     } else {
-      return [name, set];
+      data.ptr = set;
     }
+    return data;
   }
 
   addMethods(obj, {
@@ -26,9 +28,8 @@ export function Endset(name, set) {
 }
 
 export function leafDataToEndset(leafData) {
-  if (leafData.length === 2 && typeof leafData[1] === "string") {
-    return Endset(leafData[0], leafData[1]);
-  } else {
-    return Endset(leafData[0], leafData.slice(1).map(s => leafDataToEdit(s)));
-  }
+  let ptr = leafData.ptr;
+  let pointer = typeof ptr === "string" ? ptr : ptr.map(leafDataToEdit);
+  
+  return Endset(leafData?.name, pointer);
 }
