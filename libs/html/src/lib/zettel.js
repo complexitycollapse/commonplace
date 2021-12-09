@@ -13,7 +13,7 @@ export function Zettel(edit) {
   });
 
   function makeModifiedEndset(es, link, index) {
-    let newEndset = Endset(es.name, es.set);
+    let newEndset = Endset(es.name, es.pointer);
     newEndset.link = link;
     newEndset.index = index;
     return newEndset;

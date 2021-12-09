@@ -9,8 +9,8 @@ test('the passed name becomes the name property', () => {
   expect(Endset("a name", "string").name).toBe("a name");
 });
 
-test('the passed string becomes the set property', () => {
-  expect(Endset("name", "string value").set).toBe("string value");
+test('the passed string becomes the pointer property', () => {
+  expect(Endset("name", "string value").pointer).toBe("string value");
 });
 
 describe('leafData', () => {
@@ -22,11 +22,11 @@ describe('leafData', () => {
     expect(Endset(undefined, "bar").leafData()).not.toHaveProperty("name");
   });
 
-  it('returns ptr array of length n when set is an array of length n', () => {
+  it('returns ptr array of length n when pointer is an array of length n', () => {
     expect(Endset("foo", makeSpans(5)).leafData().ptr).toHaveLength(5);
   });
 
-  it('returns span serializer data for set if it contains a span', () => {
+  it('returns span serializer data for pointer if it contains a span', () => {
     expect(Endset("foo", [Span("a", 101, 505)]).leafData().ptr[0]).toEqual({
       typ: "span",
       ori: "a",
@@ -58,21 +58,21 @@ describe('leafDataToEndset is inverse of leafData', () => {
     let actual = leafDataToEndset(Endset("the name", edits).leafData());
 
     expect(actual.name).toBe("the name");
-    expect(actual.set).toEqual(edits);
+    expect(actual.pointer).toEqual(edits);
   });
 
   test('string case', () => {
     let actual = leafDataToEndset(Endset("the name", "the string").leafData());
 
     expect(actual.name).toBe("the name");
-    expect(actual.set).toEqual("the string");
+    expect(actual.pointer).toEqual("the string");
   });
 
   test('no name case', () => {
     let actual = leafDataToEndset(Endset(undefined, "the string").leafData());
 
     expect(actual.name).toBeFalsy();
-    expect(actual.set).toEqual("the string");
+    expect(actual.pointer).toEqual("the string");
   });
 });
 

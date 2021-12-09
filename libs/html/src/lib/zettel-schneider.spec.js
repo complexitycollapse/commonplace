@@ -29,14 +29,14 @@ function hasEndset(zettel, link, index = 0) {
         && candidate.index === index
         && candidate.link.type === link.type) {
       if (expectedEndset.hasEdits) {
-        if (editArraysEqual(candidate.set, expectedEndset.set)) {
+        if (editArraysEqual(candidate.pointer, expectedEndset.pointer)) {
           return {
             message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
             pass: true
           };
         }
       }
-      else if (candidate.set === expectedEndset.set) {
+      else if (candidate.pointer === expectedEndset.pointer) {
         return {
           message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
           pass: true

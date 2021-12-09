@@ -26,8 +26,8 @@ describe('addEndset', () => {
     z.addEndset(e1, l1);
     z.addEndset(e2, l2);
   
-    expect(z.endsets[0]).toEqual(expect.objectContaining({name: e1.name, set: e1.set}));
-    expect(z.endsets[1]).toEqual(expect.objectContaining({name: e2.name, set: e2.set}));
+    expect(z.endsets[0]).toEqual(expect.objectContaining({name: e1.name, pointer: e1.pointer}));
+    expect(z.endsets[1]).toEqual(expect.objectContaining({name: e2.name, pointer: e2.pointer}));
   });
   
   it('adds the links as properties to copies of the endsets', () => {

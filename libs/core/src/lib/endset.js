@@ -1,21 +1,21 @@
 import { leafDataToEdit } from "./edit-list";
 import { addProperties, addMethods } from "./utils";
 
-export function Endset(name, set) {
+export function Endset(name, pointer) {
   let obj = {};
 
   addProperties(obj, { 
     name,
-    set,
-    hasEdits: typeof set === "object" && set[0]?.isEdit
+    pointer,
+    hasEdits: typeof pointer === "object" && pointer[0]?.isEdit
   });
 
   function leafData() {
     let data = name ? { name } : {};
     if (obj.hasEdits) {
-      data.ptr = set.map(e => e.leafData());
+      data.ptr = pointer.map(e => e.leafData());
     } else {
-      data.ptr = set;
+      data.ptr = pointer;
     }
     return data;
   }

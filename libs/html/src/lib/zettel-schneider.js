@@ -88,7 +88,7 @@ function EndsetHash(links) {
   }
 
   function pushEditEndset(link, endset, hash) {
-    endset.set.forEach(e => {
+    endset.pointer.forEach(e => {
       pushAdd(hash, e, endset, link);
     });
   }
