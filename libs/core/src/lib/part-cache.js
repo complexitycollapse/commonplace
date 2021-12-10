@@ -4,15 +4,23 @@ export function PartCache() {
   let obj = {};
   let cache = {};
 
-  function getPart(name) {
-    if(Object.prototype.hasOwnProperty.call(cache, name)) {
-      return cache[name];
+  function getPart(edit) {
+    if(exists(edit.origin)) {
+      return cache[edit.origin].find(p => p.engulfs(edit));
     }
     return undefined;
   }
 
-  function addPart(name, part) {
-    cache[name] = part;
+  function addPart(part) {
+    if (exists(part.origin)) {
+      cache[part.origin].push(part);
+    } else {
+      cache[part.origin] = [part];
+    }
+  }
+
+  function exists(name) {
+    return Object.prototype.hasOwnProperty.call(cache, name);
   }
   
   addMethods(obj, {
