@@ -1,31 +1,34 @@
-import { addMethods } from './utils';
+import { addMethods, listTable, hashTable } from './utils';
 
 export function PartCache() {
   let obj = {};
-  let cache = {};
+  let partCache = listTable();
+  let objectCache = hashTable();
 
   function getPart(edit) {
-    if(exists(edit.origin)) {
-      return cache[edit.origin].find(p => p.engulfs(edit));
+    if(partCache.hasKey(edit.origin)) {
+      return partCache.get(edit.origin).find(p => p.engulfs(edit));
     }
     return undefined;
   }
 
   function addPart(part) {
-    if (exists(part.origin)) {
-      cache[part.origin].push(part);
-    } else {
-      cache[part.origin] = [part];
-    }
+    partCache.push(part.origin, part);
   }
 
-  function exists(name) {
-    return Object.prototype.hasOwnProperty.call(cache, name);
+  function addObject(name, object) {
+    objectCache.add(name, object);
+  }
+
+  function getObject(name) {
+    return objectCache.get(name);
   }
   
   addMethods(obj, {
     getPart,
-    addPart
+    addPart,
+    addObject,
+    getObject
   });
 
   return obj;
