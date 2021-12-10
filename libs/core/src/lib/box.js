@@ -79,6 +79,15 @@ export function Box(origin, x, y, width, height)
     return {typ: obj.editType, ori: origin, x, y, wd: width, hg: height };
   }
 
+  function contains(pointX, pointY) {
+    let offset = pointX - x;
+    if (offset >= 0 && offset < width) {
+      offset = pointY - y;
+    return offset >= 0 && offset < height;
+    }
+    return false;
+  }
+
   addMethods(obj, {
     clone,
     equalOrigin: box => box.origin == origin,
@@ -90,7 +99,8 @@ export function Box(origin, x, y, width, height)
     editSource: () => EditIterator(x => x, [obj]),
     crop: () => obj,
     leafData,
-    overlaps
+    overlaps,
+    contains
   });
   
   return obj;

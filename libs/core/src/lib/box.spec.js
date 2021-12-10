@@ -437,3 +437,65 @@ describe('overlaps', () => {
     expect(b2.overlaps(b1)).toBeTruthy();
   });
 });
+
+describe('contains', () => {
+  it('is false if the point is to the left of the box', () => {
+    let box = make({x: 10});
+    expect(box.contains(9, box.y)).toBeFalsy();
+  });
+
+  it('is false if the point is to the right of the box', () => {
+    let box = make({x: 10, width: 10});
+    expect(box.contains(20, box.y)).toBeFalsy();
+  });
+
+  it('is true if the point is at the left edge of the box', () => {
+    let box = make();
+    expect(box.contains(box.x, box.y)).toBeTruthy();
+  });
+
+  it('is true if the point is at the right edge of the box', () => {
+    let box = make();
+    expect(box.contains(box.x + box.width - 1, box.y)).toBeTruthy();
+  });
+
+  it('is true if the point is within the box', () => {
+    let box = make({x: 10, width: 10});
+    expect(box.contains(15, box.y)).toBeTruthy();
+  });
+
+  it('is true if the box is one point wide and the point equals it', () => {
+    let box = make({width:1});
+    expect(box.contains(box.x, box.y)).toBeTruthy();
+  });
+
+  it('is false if the point is above the box', () => {
+    let box = make({y: 10});
+    expect(box.contains(box.x, 9)).toBeFalsy();
+  });
+
+  it('is false if the point is below the box', () => {
+    let box = make({y: 10, height: 10});
+    expect(box.contains(box.x, 20)).toBeFalsy();
+  });
+
+  it('is true if the point is at the top edge of the box', () => {
+    let box = make();
+    expect(box.contains(box.x, box.y)).toBeTruthy();
+  });
+
+  it('is true if the point is at the bottom edge of the box', () => {
+    let box = make();
+    expect(box.contains(box.x, box.y + box.height - 1)).toBeTruthy();
+  });
+
+  it('is true if the point is within the box', () => {
+    let box = make({y: 10, height: 10});
+    expect(box.contains(box.x, 15)).toBeTruthy();
+  });
+
+  it('is true if the box is one point high and the point equals it', () => {
+    let box = make({height:1});
+    expect(box.contains(box.x, box.y)).toBeTruthy();
+  });
+});
