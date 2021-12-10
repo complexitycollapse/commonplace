@@ -29,6 +29,10 @@ export function Span(origin, start, length) {
     return offset >= 0 && offset < length;
   }
 
+  function engulfs(span) {
+    return equalOrigin(span) && contains(span.start) && contains(span.end);
+  }
+
   function abuts(span) {
     return equalOrigin(span) && obj.next === span.start;
   }
@@ -77,6 +81,7 @@ export function Span(origin, start, length) {
     endDiff: (span) => obj.end - span.end,
     displace: (n) => clone({ start: start + n }),
     contains,
+    engulfs,
     abuts,
     overlaps,
     canMergeWith,

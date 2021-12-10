@@ -283,12 +283,12 @@ describe('boxCrop', () => {
     expect(b.boxCrop(0, 0, b.width, b.height - 2)).toEqualBox(b.clone({height: b.height - 2}));
   });
 
-  it('always returns a span of the given width, even when leftmost elements are removed, so long as the requested width is shorter or equal to the original', () => {
+  it('always returns a box of the given width, even when leftmost elements are removed, so long as the requested width is shorter or equal to the original', () => {
     let b = make();
     expect(b.boxCrop(1, 0, b.width - 2, b.height).width).toBe(b.width - 2);
   });
 
-  it('always returns a span of the given height, even when leftmost elements are removed, so long as the requested height is shorter or equal to the original', () => {
+  it('always returns a box of the given height, even when leftmost elements are removed, so long as the requested height is shorter or equal to the original', () => {
     let b = make();
     expect(b.boxCrop(1, 0, b.width, b.height - 2).height).toBe(b.height - 2);
   });
@@ -505,5 +505,47 @@ describe('contains', () => {
   it('is true if the box is one point high and the point equals it', () => {
     let box = make({height:1});
     expect(box.contains(box.x, box.y)).toBeTruthy();
+  });
+});
+
+describe('engulfs', () => {
+  it('returns true if the boxes are equal', () => {
+    let box = make();
+    expect(box.engulfs(box.clone())).toBeTruthy();
+  });
+
+  it('returns true if one box contains the other', () => {
+    let box = make({x: 10, y: 12, width: 5, height: 15});
+    expect(box.engulfs(box.clone({x: 11, y: 13, width: 3, height: 13}))).toBeTruthy();
+  });
+
+  it('returns false if the boxes have different origins', () => {
+    let box = make();
+    expect(box.engulfs(box.clone({origin: "something else"}))).toBeFalsy();
+  });
+
+  it('returns false if that starts to the left of this', () => {
+    let box = make();
+    expect(box.engulfs(box.clone({x: box.x - 1}))).toBeFalsy();
+  });
+
+  it('returns false if that ends after this', () => {
+    let box = make();
+    expect(box.engulfs(box.clone({width: box.width + 1}))).toBeFalsy();
+  });
+
+  it('returns false if that starts above this', () => {
+    let box = make();
+    expect(box.engulfs(box.clone({y: box.y - 1}))).toBeFalsy();
+  });
+
+  it('returns false if that ends below this', () => {
+    let box = make();
+    expect(box.engulfs(box.clone({height: box.height + 1}))).toBeFalsy();
+  });
+
+  it('returns false if they do not overlap at all', () => {
+    let box = make({x: 10, y: 12, width: 5, height: 15});
+    expect(box.engulfs(box.clone({x: 100, y: 120, width: 100, height: 20}))).toBeFalsy();
   });
 });

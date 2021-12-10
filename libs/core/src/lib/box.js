@@ -91,6 +91,12 @@ export function Box(origin, x, y, width, height)
     return false;
   }
 
+  function engulfs(box) {
+    return origin === box.origin 
+      && contains(box.x, box.y)
+      && contains(box.rightEdge, box.bottomEdge);
+  }
+
   addMethods(obj, {
     clone,
     equalOrigin: box => box.origin == origin,
@@ -103,7 +109,8 @@ export function Box(origin, x, y, width, height)
     crop: () => obj,
     leafData,
     overlaps,
-    contains
+    contains,
+    engulfs
   });
   
   return obj;

@@ -481,3 +481,35 @@ describe('intersect', () => {
     expect(s2.intersect(s1).end).toBe(s1.end);
   });
 });
+
+describe('engulfs', () => {
+  it('returns true if the spans are equal', () => {
+    let span = make();
+    expect(span.engulfs(span.clone())).toBeTruthy();
+  });
+
+  it('returns true if one span contains the other', () => {
+    let span = make({start: 10, length: 5});
+    expect(span.engulfs(span.clone({start: 11, length: 3}))).toBeTruthy();
+  });
+
+  it('returns false if the spans have different origins', () => {
+    let span = make();
+    expect(span.engulfs(span.clone({origin: "something else"}))).toBeFalsy();
+  });
+
+  it('returns false if that starts before this', () => {
+    let span = make();
+    expect(span.engulfs(span.clone({start: span.start - 1}))).toBeFalsy();
+  });
+
+  it('returns false if that ends after this', () => {
+    let span = make();
+    expect(span.engulfs(span.clone({length: span.length + 1}))).toBeFalsy();
+  });
+
+  it('returns false if they do not overlap at all', () => {
+    let span = make({start: 10, length: 10});
+    expect(span.engulfs(span.clone({start: 20, length: 10}))).toBeFalsy();
+  });
+});
