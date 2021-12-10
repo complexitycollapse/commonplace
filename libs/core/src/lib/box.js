@@ -5,6 +5,7 @@ import { spanTesting } from "./span";
 export function Box(origin, x, y, width, height)
 {
   let obj = {};
+  let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     origin,
     x,
@@ -13,8 +14,10 @@ export function Box(origin, x, y, width, height)
     height,
     isEdit: true,
     editType: "box",
-    nextX: x + width,
-    nextY: y + height,
+    nextX,
+    nextY,
+    rightEdge: nextX - 1,
+    bottomEdge: nextY - 1,
     length: 1
   });
 

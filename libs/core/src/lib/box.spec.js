@@ -75,7 +75,15 @@ describe('basic box functions', () => {
   });
 
   test('nextY returns the y position exactly below the bottom of the box', () => {
-    expect(make({y: 5, height: 100}).nextY).toBe(105);
+    expect(make({y: 10, height: 50}).nextY).toBe(60);
+  });
+
+  test('rightEdge returns the x position of the rightmost point within the box', () => {
+    expect(make({x: 5, width: 100}).rightEdge).toBe(104);
+  });
+
+  test('bottonEdge returns the y position of the lowest point within the box', () => {
+    expect(make({y: 10, height: 50}).bottomEdge).toBe(59);
   });
   
   test('equalOrigin returns true if the origins are the same', () => {
@@ -114,7 +122,7 @@ describe('abutsHorizontally', () => {
 
   it('returns false if the boxes overlap on the x axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX - 1, width: 1000 });
+    let b2 = b1.clone({ x: b1.rightEdge, width: 1000 });
     expect(b1.abutsHorizontally(b2)).toBeFalsy();
   });
 
@@ -158,7 +166,7 @@ describe('abutsVertically', () => {
 
   it('returns false if the boxes overlap on the y axis', () => {
     let b1 = make();
-    let b2 = b1.clone({ y: b1.nextY - 1 });
+    let b2 = b1.clone({ y: b1.bottomEdge });
     expect(b1.abutsVertically(b2)).toBeFalsy();
   });
 
@@ -190,7 +198,7 @@ describe('abuts', () => {
 
   it('returns false if they abut neither horizontally or vertically', () => {
     let b1 = make();
-    let b2 = b1.clone({ x: b1.nextX - 1, y: b1.nextY - 1 });
+    let b2 = b1.clone({ x: b1.rightEdge, y: b1.bottomEdge });
     expect(b1.abuts(b2)).toBeFalsy();
   });
 });
@@ -456,7 +464,7 @@ describe('contains', () => {
 
   it('is true if the point is at the right edge of the box', () => {
     let box = make();
-    expect(box.contains(box.x + box.width - 1, box.y)).toBeTruthy();
+    expect(box.contains(box.rightEdge, box.y)).toBeTruthy();
   });
 
   it('is true if the point is within the box', () => {
@@ -486,7 +494,7 @@ describe('contains', () => {
 
   it('is true if the point is at the bottom edge of the box', () => {
     let box = make();
-    expect(box.contains(box.x, box.y + box.height - 1)).toBeTruthy();
+    expect(box.contains(box.x, box.bottomEdge)).toBeTruthy();
   });
 
   it('is true if the point is within the box', () => {
