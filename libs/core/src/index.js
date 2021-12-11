@@ -5,4 +5,6 @@ export { Box } from './lib/box';
 export { Doc, leafDataToDoc } from './lib/doc';
 export { Link, leafDataToLink } from './lib/link';
 export { Endset } from './lib/endset';
+export { Part } from './lib/part';
+export { PartCache } from './lib/part-cache';
 export * as testing from './testing';
