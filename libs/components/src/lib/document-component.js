@@ -19,7 +19,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
       setLoaded(true);
       
       async function loadContent(edit) {
-        let content = cache.getObject(edit);
+        let content = cache.getPart(edit);
         let part = content
           ? [true, Part(edit, Promise.resolve(content))]
           : [false, Part(edit, await fetcher.getPart(edit))];
