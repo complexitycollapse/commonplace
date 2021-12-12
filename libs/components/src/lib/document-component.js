@@ -6,13 +6,17 @@ import { useState, useEffect } from 'react';
 export function DocumentComponent({ docName, cache, fetcher }) {
 
   let [fragmentState, setFragmentState] = useState(fragmentize([]));
+  let [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     async function loadDoc() {
+      if (loaded) { return; }
+
       console.log(docName);
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, [], index.toString()).zettel()).flat();
       let fragment = fragmentize(zettel);
+      setLoaded(true);
       
       async function loadContent(edit) {
         let content = cache.getObject(edit);
