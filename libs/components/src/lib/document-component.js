@@ -10,33 +10,37 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
   useEffect(() => {
     async function loadDoc() {
-      if (loaded) { return; }
-
-      console.log(docName);
-      let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
-      let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, [], index.toString()).zettel()).flat();
-      let fragment = fragmentize(zettel);
-      setLoaded(true);
-      
-      async function loadContent(edit) {
-        let content = cache.getPart(edit);
-        let part = content
-          ? [true, Part(edit, Promise.resolve(content))]
-          : [false, Part(edit, await fetcher.getPart(edit))];
-
-        return part;
+      async function loadContent(edit, isObject) {
+        let content = isObject ? cache.getObject(edit) : cache.getPart(edit);
+        if (content) {
+          return [true, Part(edit, Promise.resolve(content))];
+        } else {
+        return isObject ? [false, leafDataToLink(await fetcher.getObject(edit))] : [false, Part(edit, await fetcher.getPart(edit))];
+        }
       }
 
-      let results = await Promise.all(doc.edits.edits.map(loadContent));
-      results.forEach(r => {
-        if (!r[0]) { cache.addPart(r[1]); }
-      });
+      async function loadAll(iterable, areObjects) {
+        let results = await Promise.all(iterable.map(item => loadContent(item, areObjects)));
+        results.forEach(r => {
+          if (!r[0]) { areObjects? cache.addObject(r[1]) : cache.addPart(r[1]); }
+        });
 
-      let parts = results.map(r => r[1]);
+        return results.map(r => r[1]);
+      }
+
+      if (loaded) { return; }
+
+      let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
+      let links = (await loadAll(doc.overlay, true)).map(RenderLink);
+      let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, links, index.toString()).zettel()).flat();
+      let fragment = fragmentize(zettel);
+      setLoaded(true);
+
+      let parts = await loadAll(doc.edits.edits, false);
 
       parts.forEach(part => {
         zettel.forEach(z => {
-          if (part.engulfs(z.edit)) { z.content = part.content; }
+          if (part.engulfs(z.edit)) { z.content = part.content.substring(z.edit.start, z.edit.next); }
         });
       });
 
@@ -52,7 +56,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
   // "similar things. It will hopefully be long enough to wrap across several lines when it's rendered but you never know as high def" + 
   // " screens are quite wide.";
   // zettel[2].content = "Here is a second paragraph. This one doesn't have to be quite as long.";
-  // let titleLink = RenderLink(leafDataToLink({typ: "title", es: [{ptr: [{typ: "span", ori: "origin", st: 0, ln: 10}]}]}));
+  // let titleLink = RenderLink(leafDataToLink());
   // zettel[0].addEndset(titleLink.endsets[0], titleLink);
   // let testLink = RenderLink(leafDataToLink({typ: "paragraph", es: [{ptr: [{typ: "span", ori: "origin", st: 100, ln: 1000}]}]}));
   // zettel[1].addEndset(testLink.endsets[0], testLink);

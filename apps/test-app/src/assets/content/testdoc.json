@@ -1,10 +1,9 @@
 {
   "edl": [
     {"typ": "span", "ori": "origin", "st": 0, "ln": 18},
-    {"typ": "span", "ori": "origin", "st": 20, "ln": 50},
-    {"typ": "span", "ori": "origin", "st": 100, "ln": 10},
+    {"typ": "span", "ori": "origin", "st": 20, "ln": 256},
+    {"typ": "span", "ori": "origin", "st": 281, "ln": 28},
     {"typ": "box", "ori": "some image", "x": 0, "y": 0, "width": 100, "height": 100}
   ],
-  "odl": [],
-  "odl2": ["titleLink", "testLink", "italicsLink", "boldLink"]
+  "odl": ["titleLink.json", "paragraphLink.json", "italicsLink.json", "boldLink.json"]
 }
