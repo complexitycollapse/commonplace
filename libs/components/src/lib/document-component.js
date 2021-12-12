@@ -1,19 +1,18 @@
 import { ZettelFragment } from './zettel-fragment';
 import { ZettelSchneider, RenderLink } from '@commonplace/html';
-import { leafDataToLink, Doc, Part, leafDataToDoc } from '@commonplace/core';
+import { leafDataToLink, Part, leafDataToDoc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docName, cache, fetcher }) {
 
   let [fragmentState, setFragmentState] = useState(fragmentize([]));
-  let [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     async function loadDoc() {
       async function loadContent(edit, isObject) {
         let content = isObject ? cache.getObject(edit) : cache.getPart(edit);
         if (content) {
-          return [true, Part(edit, Promise.resolve(content))];
+          return [true, isObject ? content : content];
         } else {
         return isObject ? [false, leafDataToLink(await fetcher.getObject(edit))] : [false, Part(edit, await fetcher.getPart(edit))];
         }
@@ -28,13 +27,10 @@ export function DocumentComponent({ docName, cache, fetcher }) {
         return results.map(r => r[1]);
       }
 
-      if (loaded) { return; }
-
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let links = (await loadAll(doc.overlay, true)).map(RenderLink);
       let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, links, index.toString()).zettel()).flat();
       let fragment = fragmentize(zettel);
-      setLoaded(true);
 
       let parts = await loadAll(doc.edits.edits, false);
 
@@ -48,7 +44,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
     }
 
     loadDoc();
-  });
+  }, []);
 
   // Hack in some hard-coded content
   // zettel[0].content = "This is Hypertext";
