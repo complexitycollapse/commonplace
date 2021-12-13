@@ -1,6 +1,6 @@
 import { spanTesting } from "./span";
 import { boxTesting } from "./box";
-
+import { EditIterator } from "./edit-iterator";
 
 export function toEqualEdit(actualEdit, expectedEdit) {
   if (actualEdit.editType !== expectedEdit.editType) {
@@ -25,7 +25,7 @@ export function toEqualEdit(actualEdit, expectedEdit) {
 }
 
 export function hasEdits(el, ...edits) {
-  let iterator = el.editSource();
+  let iterator = Array.isArray(el) ? EditIterator(state => [state.shift(), state], [...el]) : el.editSource();
   let i = 0;
   let failed = false;
 

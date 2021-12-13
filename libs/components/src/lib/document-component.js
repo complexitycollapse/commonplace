@@ -29,10 +29,10 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let links = (await loadAll(doc.overlay, true)).map(RenderLink);
-      let zettel = doc.edits.edits.map((e, index) => ZettelSchneider(e, links, index.toString()).zettel()).flat();
+      let zettel = doc.edits.map((e, index) => ZettelSchneider(e, links, index.toString()).zettel()).flat();
       let fragment = fragmentize(zettel);
 
-      let parts = await loadAll(doc.edits.edits, false);
+      let parts = await loadAll(doc.edits, false);
 
       parts.forEach(part => {
         zettel.forEach(z => {

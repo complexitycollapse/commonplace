@@ -3,7 +3,8 @@ import { EditList, leafDataToEdit } from "./edit-list";
 
 export function Doc(edits, overlay) {
   let obj = {};
-  edits = EditList(...(edits ?? []));
+  let editList = EditList(...(edits ?? []));
+  edits = editList.edits;
   overlay = overlay ?? [];
 
   addProperties(obj, {
@@ -13,13 +14,13 @@ export function Doc(edits, overlay) {
 
   function leafData() {
     return {
-      edl: edits.leafData(),
+      edl: editList.leafData(),
       odl: overlay
     };
   }
 
   addMethods(obj, {
-    concLength: () => edits.concLength(),
+    concLength: () => editList.concLength(),
     leafData,
     convertToLeaf: () => JSON.stringify(leafData())
   });
