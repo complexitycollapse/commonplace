@@ -1,20 +1,30 @@
+export function finalObject(obj, methods) {
+  addMethods(obj, methods);
+  Object.freeze(obj);
+  return obj;
+}
+
 export function addProperties(obj, props) {
-  for (const key in props) {
-    if (Object.hasOwnProperty.call(props, key)) {
-      Object.defineProperty(obj, key, {
-        value: props[key],
-        enumerable: true,
-      });
-    }
-  }
+  forAllOwnProperties(props, key => {
+    Object.defineProperty(obj, key, {
+      value: props[key],
+      enumerable: true,
+    })
+  });
 }
 
 export function addMethods(obj, props) {
-  for (const key in props) {
-    if (Object.hasOwnProperty.call(props, key)) {
-      Object.defineProperty(obj, key, {
-        value: props[key],
-      });
+  forAllOwnProperties(props, key => {
+    Object.defineProperty(obj, key, {
+      value: props[key]
+    })
+  });
+}
+
+export function forAllOwnProperties(obj, callback) {
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      callback(key);
     }
   }
 }
@@ -36,13 +46,11 @@ export function hashTable() {
     return Object.prototype.hasOwnProperty.call(table, name);
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     add,
     get,
     hasKey
   });
-
-  return obj;
 }
  
 export function listTable() {
@@ -57,11 +65,9 @@ export function listTable() {
     }
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     push,
     get: table.get,
     hasKey: table.hasKey
   });
-
-  return obj;
 }

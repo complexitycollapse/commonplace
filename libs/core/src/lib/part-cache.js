@@ -1,4 +1,4 @@
-import { addMethods, listTable, hashTable } from './utils';
+import { finalObject, listTable, hashTable } from './utils';
 
 export function PartCache() {
   let obj = {};
@@ -24,12 +24,10 @@ export function PartCache() {
     return objectCache.get(name);
   }
   
-  addMethods(obj, {
+  return finalObject(obj, {
     getPart,
     addPart,
     addObject,
     getObject
   });
-
-  return obj;
 }

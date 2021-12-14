@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from "./utils";
+import { addProperties, finalObject } from "./utils";
 import { Endset, leafDataToEndset } from "./endset";
 import { Span } from "./span";
 
@@ -17,11 +17,9 @@ export function Link(type, ...endsets) {
     };
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     leafData
   });
-
-  return obj;
 }
 
 export function leafDataToLink(leafData) {

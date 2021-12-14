@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from "./utils";
+import { addProperties, finalObject } from "./utils";
 import { EditList, leafDataToEdit } from "./edit-list";
 
 export function Doc(edits, overlay) {
@@ -19,13 +19,11 @@ export function Doc(edits, overlay) {
     };
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     concLength: () => editList.concLength(),
     leafData,
     convertToLeaf: () => JSON.stringify(leafData())
   });
-
-  return obj;
 }
 
 export function leafDataToDoc(leafData) {

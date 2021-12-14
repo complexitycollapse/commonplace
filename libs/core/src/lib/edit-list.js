@@ -1,7 +1,7 @@
 import { leafDataToBox } from './box';
 import { EditIterator } from './edit-iterator';
 import { leafDataToSpan } from './span';
-import { addMethods, addProperties } from './utils';
+import { finalObject, addProperties } from './utils';
 
 export function EditList(...editDesignators) {
   let obj = {};
@@ -64,15 +64,13 @@ export function EditList(...editDesignators) {
     return edits.map(e => e.leafData());
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     concLength: () => edits.map(s => s.length).reduce((a, b) => a + b, 0),
     append,
     editSource,
     range,
     leafData
   });
-
-  return obj;
 }
 
 export function leafDataToEditList(leafData) {

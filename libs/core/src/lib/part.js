@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from './utils';
+import { addProperties, finalObject } from './utils';
 
 export function Part(edit, content) {
   let obj = Object.create(edit);
@@ -11,9 +11,7 @@ export function Part(edit, content) {
     content
   });
 
-  addMethods(obj, {
+  return finalObject(obj, {
     clone
   });
-
-  return obj;
 }

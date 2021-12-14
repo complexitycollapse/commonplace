@@ -1,4 +1,4 @@
-import { addMethods } from '@commonplace/core';
+import { finalObject } from '@commonplace/core';
 
 export function StaticPartFetcher(origin) {
   let obj = {};
@@ -25,10 +25,8 @@ export function StaticPartFetcher(origin) {
     return object;
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     getPart,
     getObject
   });
-
-  return obj;
 }

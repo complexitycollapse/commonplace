@@ -1,5 +1,5 @@
 import { MockRepository } from "./mock-repository";
-import { addMethods, addProperties } from "./utils";
+import { finalObject, addProperties } from "./utils";
 
 export function CommonplaceCore(repository) {
   let obj = {};
@@ -49,12 +49,10 @@ export function CommonplaceCore(repository) {
     repository.rebindLocalName(name, blobIdentifier);
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     addContent,
     addContentWithLocalName,
     getContent,
     rebindLocalName
   });
-
-  return obj;
 }

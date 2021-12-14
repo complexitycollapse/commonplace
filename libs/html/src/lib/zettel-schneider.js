@@ -1,4 +1,4 @@
-import { addMethods } from "@commonplace/core";
+import { finalObject } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
 export function ZettelSchneider(edit, links = [], keyPrefix) {
@@ -66,11 +66,9 @@ export function ZettelSchneider(edit, links = [], keyPrefix) {
     return zettel;
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     zettel
   });
-
-  return obj;
 }
 
 function EndsetHash(links) {

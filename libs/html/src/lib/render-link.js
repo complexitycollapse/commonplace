@@ -1,4 +1,4 @@
-import { addProperties } from "@commonplace/core";
+import { addProperties, finalObject } from "@commonplace/core";
 
 let typeMap = {
   paragraph: [null, null, "p"],
@@ -17,5 +17,5 @@ export function RenderLink(link) {
     fragmentTag
   });
 
-  return renderLink;
+  return finalObject(renderLink);
 }

@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from "./utils";
+import { addProperties, finalObject } from "./utils";
 import { EditIterator } from "./edit-iterator";
 import { spanTesting } from "./span";
 
@@ -97,7 +97,7 @@ export function Box(origin, x, y, width, height)
       && contains(box.rightEdge, box.bottomEdge);
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     clone,
     equalOrigin: box => box.origin == origin,
     abutsHorizontally,
@@ -112,8 +112,6 @@ export function Box(origin, x, y, width, height)
     contains,
     engulfs
   });
-  
-  return obj;
 }
 
 export function leafDataToBox(leafData) {

@@ -1,5 +1,5 @@
 import { EditIterator } from "./edit-iterator";
-import { addProperties, addMethods } from "./utils";
+import { addProperties, finalObject } from "./utils";
 
 export function Span(origin, start, length) {
   let obj = {};
@@ -74,7 +74,7 @@ export function Span(origin, start, length) {
     return { typ: obj.editType, ori: origin, st: start, ln: length };
   }
 
-  addMethods(obj, {
+  return finalObject(obj, {
     clone,
     equalOrigin,
     startDiff: (span) => start - span.start,
@@ -91,8 +91,6 @@ export function Span(origin, start, length) {
     leafData,
     intersect
   });
-
-  return obj;
 }
 
 export function leafDataToSpan(leafData) {
