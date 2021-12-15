@@ -1,19 +1,16 @@
 import { addProperties, finalObject } from "./utils";
-import { EditIterator } from "./edit-iterator";
 import { spanTesting } from "./span";
+import { Edit } from "./edit";
 
 export function Box(origin, x, y, width, height)
 {
-  let obj = {};
+  let obj = Edit("box", origin);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
-    origin,
     x,
     y,
     width,
     height,
-    isEdit: true,
-    editType: "box",
     nextX,
     nextY,
     rightEdge: nextX - 1,
@@ -99,13 +96,11 @@ export function Box(origin, x, y, width, height)
 
   return finalObject(obj, {
     clone,
-    equalOrigin: box => box.origin == origin,
     abutsHorizontally,
     abutsVertically,
     abuts,
     merge,
     boxCrop,
-    editSource: () => EditIterator(x => x, [obj]),
     crop: () => obj,
     leafData,
     overlaps,

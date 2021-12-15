@@ -1,14 +1,11 @@
-import { EditIterator } from "./edit-iterator";
 import { addProperties, finalObject } from "./utils";
+import { Edit } from "./edit";
 
 export function Span(origin, start, length) {
-  let obj = {};
+  let obj = Edit("span", origin);
   addProperties(obj, {
-    origin,
     start,
     length,
-    isEdit: true,
-    editType: "span",
     next: start + length,
     end: start + length - 1
   });
@@ -20,21 +17,17 @@ export function Span(origin, start, length) {
     return Span(origin, start, length);
   }
 
-  function equalOrigin(span) {
-    return span.origin == origin;
-  }
-
   function contains(point) {
     let offset = point - start;
     return offset >= 0 && offset < length;
   }
 
   function engulfs(span) {
-    return equalOrigin(span) && contains(span.start) && contains(span.end);
+    return obj.equalOrigin(span) && contains(span.start) && contains(span.end);
   }
 
   function abuts(span) {
-    return equalOrigin(span) && obj.next === span.start;
+    return obj.equalOrigin(span) && obj.next === span.start;
   }
 
   function overlaps(span) {
@@ -66,17 +59,12 @@ export function Span(origin, start, length) {
       Math.min(s.next, obj.next) - newStart);
   }
 
-  function editSource() {
-    return EditIterator(x => x, [obj]);
-  }
-
   function leafData() {
     return { typ: obj.editType, ori: origin, st: start, ln: length };
   }
 
   return finalObject(obj, {
     clone,
-    equalOrigin,
     startDiff: (span) => start - span.start,
     endDiff: (span) => obj.end - span.end,
     displace: (n) => clone({ start: start + n }),
@@ -87,7 +75,6 @@ export function Span(origin, start, length) {
     canMergeWith,
     merge,
     crop,
-    editSource,
     leafData,
     intersect
   });
