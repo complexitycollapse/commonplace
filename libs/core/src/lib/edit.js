@@ -3,10 +3,9 @@ import { addProperties, addMethods } from "./utils";
 import { Pointer } from "./pointer";
 
 export function Edit(editType, origin) {
-  let obj = Pointer("edit");
+  let obj = Pointer("edit", true);
 
   addProperties(obj, {
-    isEdit: true,
     editType,
     origin
   });

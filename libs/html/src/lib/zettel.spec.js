@@ -1,8 +1,9 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
-import { Span, Link, Endset, testing } from '@commonplace/core';
+import { Span, Link, Endset, testing, LinkPointer } from '@commonplace/core';
 
 let toEqualSpan = testing.spans.toEqualSpan;
+let makeLinkPointer = () => LinkPointer("foo");
 
 expect.extend({
   toEqualSpan
@@ -19,19 +20,19 @@ test('edit returns the passed edit', () => {
 
 describe('addEndset', () => {
   it('adds the given endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
     z.addEndset(e1, l1);
     z.addEndset(e2, l2);
   
-    expect(z.endsets[0]).toEqual(expect.objectContaining({name: e1.name, pointer: e1.pointer}));
-    expect(z.endsets[1]).toEqual(expect.objectContaining({name: e2.name, pointer: e2.pointer}));
+    expect(z.endsets[0]).toEqual(expect.objectContaining({name: e1.name, pointers: e1.pointers}));
+    expect(z.endsets[1]).toEqual(expect.objectContaining({name: e2.name, pointers: e2.pointers}));
   });
   
   it('adds the links as properties to copies of the endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
@@ -43,7 +44,7 @@ describe('addEndset', () => {
   });
   
   it('does not add link properties to the original endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1), l2 = Link("type2", e2);
   
     let z = make();
@@ -55,7 +56,7 @@ describe('addEndset', () => {
   });
 
   it('adds the endset index property to copies of the endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1, e2);
   
     let z = make();
@@ -67,7 +68,7 @@ describe('addEndset', () => {
   });
   
   it('does not add index property to the original endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1, e2);
   
     let z = make();
@@ -79,7 +80,7 @@ describe('addEndset', () => {
   });
   
   it('will only add an endset once', () => {
-    let e1 = Endset("name1", "set1");
+    let e1 = Endset("name1", [makeLinkPointer()]);
     let l1 = Link("type1", e1);
   
     let z = make();
@@ -90,7 +91,7 @@ describe('addEndset', () => {
   });
 
   it('will add a link twice if it is under different endsets', () => {
-    let e1 = Endset("name1", "set1"), e2 = Endset("name2", "set2");
+    let e1 = Endset("name1", [makeLinkPointer()]), e2 = Endset("name2", [makeLinkPointer()]);
     let l1 = Link("type1", e1, e2);
   
     let z = make();
@@ -188,7 +189,7 @@ describe('addLink', () => {
 
 describe('endsetsNotInOther', () => {
   it('returns all the endsets if the other is undefined', () => {
-    let endset1 = Endset("bar1", "baz1"), endset2 = Endset("bar2", "baz2");
+    let endset1 = Endset("bar1", [makeLinkPointer()]), endset2 = Endset("bar2", [makeLinkPointer()]);
     let link = Link("foo", endset1, endset2);
     let zettel = make();
     zettel.addEndset(endset1, link);
@@ -202,7 +203,7 @@ describe('endsetsNotInOther', () => {
   });
 
   it('returns an empty array if both Zettel have the same endsets', () => {
-    let endset = Endset("bar", "baz");
+    let endset = Endset("bar", [makeLinkPointer()]);
     let link = Link("foo", endset);
     let z1 = make(), z2 = make();
     z1.addEndset(endset, link);
@@ -212,7 +213,7 @@ describe('endsetsNotInOther', () => {
   });
 
   it('returns an endset if it is in this but not that', () => {
-    let endset = Endset("bar", "baz");
+    let endset = Endset("bar", [makeLinkPointer()]);
     let link = Link("foo", endset);
     let z1 = make(), z2 = make();
     z1.addEndset(endset, link);
@@ -222,7 +223,7 @@ describe('endsetsNotInOther', () => {
   });
 
   it('does not return an endset if it is in that but not this', () => {
-    let endset = Endset("bar", "baz");
+    let endset = Endset("bar", [makeLinkPointer()]);
     let link = Link("foo", endset);
     let z1 = make(), z2 = make();
     z2.addEndset(endset, link);
@@ -231,7 +232,7 @@ describe('endsetsNotInOther', () => {
   });
 
   it('returns endset even if the link (but not the endset) is shared by both Zettel', () => {
-    let endset1 = Endset("bar1", "baz1"), endset2 = Endset("bar2", "baz2");
+    let endset1 = Endset("bar1", [makeLinkPointer()]), endset2 = Endset("bar2", [makeLinkPointer()]);
     let link = Link("foo", endset1, endset2);
     let z1 = make(), z2 = make();
     z1.addEndset(endset1, link);

@@ -1,22 +1,21 @@
-import { leafDataToEdit } from "./edit-list";
+import { leafDataToPointer } from "./leaf-data-to-pointer";
 import { addProperties, addMethods } from "./utils";
 
-export function Endset(name, pointer) {
+export function Endset(name, pointers) {
   let obj = {};
+
+  if (!Array.isArray(pointers)) {
+    throw "Pointers argument to Endset must be an array";
+  }
 
   addProperties(obj, { 
     name,
-    pointer,
-    hasEdits: typeof pointer === "object" && pointer[0]?.isEdit
+    pointers
   });
 
   function leafData() {
     let data = name ? { name } : {};
-    if (obj.hasEdits) {
-      data.ptr = pointer.map(e => e.leafData());
-    } else {
-      data.ptr = pointer;
-    }
+    data.ptr = pointers.map(e => e.leafData());
     return data;
   }
 
@@ -29,7 +28,7 @@ export function Endset(name, pointer) {
 
 export function leafDataToEndset(leafData) {
   let ptr = leafData.ptr;
-  let pointer = typeof ptr === "string" ? ptr : ptr.map(leafDataToEdit);
+  let pointers = ptr.map(leafDataToPointer);
   
-  return Endset(leafData?.name, pointer);
+  return Endset(leafData?.name, pointers);
 }

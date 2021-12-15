@@ -7,6 +7,7 @@ let toEqualEdit = testing.edits.toEqualEdit;
 let makeSpanLink = testing.links.makeSpanLink;
 
 function editArraysEqual(actual, expected) {
+  if (actual === undefined || expected === undefined) { return false; }
   if (actual.length !== expected.length) { return false; }
 
   for (let j = 0; j < actual.length; ++j) {
@@ -25,18 +26,9 @@ function hasEndset(zettel, link, index = 0) {
   for(let i = 0; i < actualEndsets.length; ++i) {
     let candidate = actualEndsets[i];
     if (candidate.name === expectedEndset.name
-        && candidate.hasEdits === expectedEndset.hasEdits
         && candidate.index === index
         && candidate.link.type === link.type) {
-      if (expectedEndset.hasEdits) {
-        if (editArraysEqual(candidate.pointer, expectedEndset.pointer)) {
-          return {
-            message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
-            pass: true
-          };
-        }
-      }
-      else if (candidate.pointer === expectedEndset.pointer) {
+      if (editArraysEqual(candidate.pointers, expectedEndset.pointers)) {
         return {
           message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
           pass: true

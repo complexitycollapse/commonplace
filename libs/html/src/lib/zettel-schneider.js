@@ -78,16 +78,16 @@ function EndsetHash(links) {
 
     links.forEach(l => {
       l.endsets.forEach(e => {
-        if (e.hasEdits) { pushEditEndset(l, e, hash); }
+        pushEndset(l, e, hash);
       });
     });
 
     return hash;
   }
 
-  function pushEditEndset(link, endset, hash) {
-    endset.pointer.forEach(e => {
-      pushAdd(hash, e, endset, link);
+  function pushEndset(link, endset, hash) {
+    endset.pointers.forEach(p => {
+      if (p.isEdit) { pushAdd(hash, p, endset, link); }
     });
   }
 

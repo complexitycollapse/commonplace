@@ -13,7 +13,7 @@ export function Zettel(edit) {
   });
 
   function makeModifiedEndset(es, link, index) {
-    let newEndset = Endset(es.name, es.pointer);
+    let newEndset = Endset(es.name, es.pointers);
     newEndset.link = link;
     newEndset.index = index;
     return newEndset;
@@ -44,13 +44,6 @@ export function Zettel(edit) {
   }
 
   function endsetsNotInOther(otherZettel) {
-    function isFound(ourEndset) {
-      if (otherZettel.hasModifiedEndset(ourEndset)) {
-          return true;
-        }
-      return false;
-    }
-
     if (otherZettel === undefined) {
       return [...obj.endsets];
     }
@@ -58,7 +51,9 @@ export function Zettel(edit) {
     let openings = [];
   
     obj.endsets.forEach(ourEndset => {
-      if (!isFound(ourEndset)) { openings.push(ourEndset); }
+      if (!otherZettel.hasModifiedEndset(ourEndset)) {
+        openings.push(ourEndset);
+      }
     });
   
     return openings;

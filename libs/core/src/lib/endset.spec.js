@@ -2,24 +2,26 @@ import { expect, test, describe, it } from '@jest/globals';
 import { Endset, leafDataToEndset } from './endset';
 import { Span, spanTesting } from "./span";
 import { Box } from "./box";
+import { LinkPointer, DocPointer } from "./pointer";
 
 let makeSpans = spanTesting.makeSpans;
 
 test('the passed name becomes the name property', () => {
-  expect(Endset("a name", "string").name).toBe("a name");
+  expect(Endset("a name", [LinkPointer("string")]).name).toBe("a name");
 });
 
-test('the passed string becomes the pointer property', () => {
-  expect(Endset("name", "string value").pointer).toBe("string value");
+test('the passed pointers becomes the pointers property', () => {
+  let pointers = [LinkPointer("string value")];
+  expect(Endset("name", pointers).pointers).toBe(pointers);
 });
 
 describe('leafData', () => {
   it('returns object with endset name', () => {
-    expect(Endset("foo", "bar").leafData().name).toBe("foo");
+    expect(Endset("foo", makeSpans(5)).leafData().name).toBe("foo");
   });
 
-  it('has not name property if the endset has no name', () => {
-    expect(Endset(undefined, "bar").leafData()).not.toHaveProperty("name");
+  it('has no name property if the endset has no name', () => {
+    expect(Endset(undefined, makeSpans(5)).leafData()).not.toHaveProperty("name");
   });
 
   it('returns ptr array of length n when pointer is an array of length n', () => {
@@ -46,42 +48,37 @@ describe('leafData', () => {
     });
   });
 
-  it('returns original string for ptr if it is a string', () => {
-    expect(Endset("foo", "some string").leafData().ptr).toBe("some string");
+  it('returns link pointer serializer data for ptr if it contains a link pointer', () => {
+    expect(Endset("foo", [LinkPointer("some string")]).leafData().ptr).toEqual([{
+      typ: "link",
+      name: "some string"
+    }]);
+  });
+
+  it('returns doc pointer serializer data for ptr if it contains a doc pointer', () => {
+    expect(Endset("foo", [DocPointer("some string")]).leafData().ptr).toEqual([{
+      typ: "doc",
+      name: "some string"
+    }]);
   });
 });
 
 describe('leafDataToEndset is inverse of leafData', () => {
-  test('edits case', () => {
-    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7)];
+  test('named case', () => {
+    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
 
     let actual = leafDataToEndset(Endset("the name", edits).leafData());
 
     expect(actual.name).toBe("the name");
-    expect(actual.pointer).toEqual(edits);
-  });
-
-  test('string case', () => {
-    let actual = leafDataToEndset(Endset("the name", "the string").leafData());
-
-    expect(actual.name).toBe("the name");
-    expect(actual.pointer).toEqual("the string");
+    expect(actual.pointers).toEqual(edits);
   });
 
   test('no name case', () => {
-    let actual = leafDataToEndset(Endset(undefined, "the string").leafData());
+    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
+
+    let actual = leafDataToEndset(Endset(undefined, edits).leafData());
 
     expect(actual.name).toBeFalsy();
-    expect(actual.pointer).toEqual("the string");
-  });
-});
-
-describe('hasEdits', () => {
-  it('returns true if the endset contains edits', () => {
-    expect(Endset("name", makeSpans(3)).hasEdits).toBeTruthy();
-  });
-
-  it('returns false if the endset contains a string', () => {
-    expect(Endset("name", "some string").hasEdits).toBeFalsy();
+    expect(actual.pointers).toEqual(edits);
   });
 });

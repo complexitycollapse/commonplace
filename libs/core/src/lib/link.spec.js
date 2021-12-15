@@ -2,21 +2,23 @@ import { expect, test, describe, it } from '@jest/globals';
 import { hasEdits } from "./edit.test-helpers";
 import { Endset } from './endset';
 import { Link, leafDataToLink } from './link';
-import { Box } from './box';
+import { boxTesting } from './box';
 import { spanTesting } from './span';
+import { LinkPointer, DocPointer } from './pointer';
 
 expect.extend({
   hasEdits
 });
 
 let makeSpan = spanTesting.makeSpan;
+let makeBox = boxTesting.makeBox;
 
 test('type is set on the link', () => {
   expect(Link("my type").type).toBe("my type");
 });
 
 test('endsets is set on the link', () => {
-  let endsets = [Endset("foo", "1"), Endset("bar", "2"), Endset("baz", "3")];
+  let endsets = [Endset("foo", [makeSpan()]), Endset("bar", [makeBox()]), Endset(undefined, [LinkPointer("foo"), DocPointer("bar")])];
 
   let lk = Link("my type", ...endsets);
 
@@ -45,6 +47,6 @@ describe('leafData', () => {
 });
 
 test('leafDataToLink is inverse of leafData', () => {
-  let l = Link("my type", Endset("name1", "foo"), Endset("name2", [makeSpan(), Box("orig", 1, 2, 3, 4)]));
+  let l = Link("my type", Endset("name1", [makeSpan()]), Endset("name2", [makeBox(), makeSpan()]));
   expect(leafDataToLink(l.leafData())).toEqual(l);
 });

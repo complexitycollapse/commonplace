@@ -7,4 +7,5 @@ export { Link, leafDataToLink } from './lib/link';
 export { Endset } from './lib/endset';
 export { Part } from './lib/part';
 export { PartCache } from './lib/part-cache';
+export { LinkPointer, DocPointer } from './lib/pointer';
 export * as testing from './testing';
