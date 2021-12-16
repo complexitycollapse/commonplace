@@ -1,5 +1,6 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Span, leafDataToSpan, spanTesting } from './span';
+import { boxTesting, boxTexting } from './box';
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan
@@ -47,6 +48,14 @@ describe('basic span functions', () => {
   
   test('edit type returns span', () => {
     expect(make().editType).toBe("span");
+  });
+
+  test('same type returns true for another span', () => {
+    expect(make().sameType(make())).toBeTruthy();
+  });
+
+  test('same type returns false for a box', () => {
+    expect(make().sameType(boxTesting.makeBox())).toBeFalsy();
   });
 
   test('next returns the position exactly after the end of the span', () => {
@@ -114,6 +123,10 @@ describe('contains', () => {
 });
 
 describe('abuts', () => {
+  it('is false for a box', () => {
+    expect(make().abuts(boxTesting.makeBox())).toBeFalsy();
+  });
+
   it('returns true when the next position of the 1st span is equal to the start of the 2nd', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.next });
@@ -146,6 +159,10 @@ describe('abuts', () => {
 });
 
 describe('overlaps', () => {
+  it('is false for a box', () => {
+    expect(make().overlaps(boxTesting.makeBox())).toBeFalsy();
+  });
+
   it('returns false if the span has a different origin', () => {
     let s1 = make();
     let s2 = s1.clone({ origin: 'different' });
@@ -196,6 +213,10 @@ describe('overlaps', () => {
 });
 
 describe('canMergeWith', () => {
+  it('is false for a box', () => {
+    expect(make().canMergeWith(boxTesting.makeBox())).toBeFalsy();
+  });
+
   it('is false if the spans have different origins', () => {
     let s1 = make();
     let s2 = s1.clone({ origin: 'different' });
@@ -408,7 +429,6 @@ test('leafDataToSpan is inverse of leafData', () => {
 });
 
 describe('intersect', () => {
-
   it('returns the original span if the second is equal to it', () => {
     let s1 = make();
     let s2 = s1.clone();
@@ -483,6 +503,10 @@ describe('intersect', () => {
 });
 
 describe('engulfs', () => {
+  it('is false for a box', () => {
+    expect(make().engulfs(boxTesting.makeBox())).toBeFalsy();
+  });
+
   it('returns true if the spans are equal', () => {
     let span = make();
     expect(span.engulfs(span.clone())).toBeTruthy();
@@ -511,5 +535,37 @@ describe('engulfs', () => {
   it('returns false if they do not overlap at all', () => {
     let span = make({start: 10, length: 10});
     expect(span.engulfs(span.clone({start: 20, length: 10}))).toBeFalsy();
+  });
+});
+
+describe('equals', () => {
+  it('returns true if the spans have the same origin, start and length', () => {
+    let span = make();
+
+    expect(span.equals(span.clone())).toBeTruthy();
+  });
+
+  it('returns false if the spans have different origin', () => {
+    let span = make();
+
+    expect(span.equals(span.clone({origin: "other"}))).toBeFalsy();
+  });
+
+  it('returns false if the spans have different start', () => {
+    let span = make();
+
+    expect(span.equals(span.clone({start: span.start + 1}))).toBeFalsy();
+  });
+
+  it('returns false if the spans have different length', () => {
+    let span = make();
+
+    expect(span.equals(span.clone({length: span.length + 1}))).toBeFalsy();
+  });
+
+  it('returns false if the other is a box', () => {
+    let span = make();
+
+    expect(span.equals(boxTesting.makeBox())).toBeFalsy();
   });
 });

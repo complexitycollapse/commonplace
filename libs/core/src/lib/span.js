@@ -17,25 +17,29 @@ export function Span(origin, start, length) {
     return Span(origin, start, length);
   }
 
+  function equals(span) {
+    return obj.sameType(span) && obj.equalOrigin(span) && start === span.start && length  === span.length;
+  }
+
   function contains(point) {
     let offset = point - start;
     return offset >= 0 && offset < length;
   }
 
   function engulfs(span) {
-    return obj.equalOrigin(span) && contains(span.start) && contains(span.end);
+    return  obj.sameType(span) && obj.equalOrigin(span) && contains(span.start) && contains(span.end);
   }
 
   function abuts(span) {
-    return obj.equalOrigin(span) && obj.next === span.start;
+    return obj.sameType(span) && obj.equalOrigin(span) && obj.next === span.start;
   }
 
   function overlaps(span) {
-    return obj.equalOrigin(span) && !(obj.end < span.start || span.end < start);
+    return obj.sameType(span) && obj.equalOrigin(span) && !(obj.end < span.start || span.end < start);
   }
 
   function canMergeWith(span) {
-    return obj.overlaps(span) || obj.abuts(span) || span.abuts(obj);
+    return obj.sameType(span) && (obj.overlaps(span) || obj.abuts(span) || span.abuts(obj));
   }
 
   function merge(sp) {
@@ -69,6 +73,7 @@ export function Span(origin, start, length) {
     endDiff: (span) => obj.end - span.end,
     displace: (n) => clone({ start: start + n }),
     contains,
+    equals,
     engulfs,
     abuts,
     overlaps,

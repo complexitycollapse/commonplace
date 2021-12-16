@@ -1,5 +1,6 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Box, leafDataToBox, boxTesting } from "./box";
+import { spanTesting } from './span';
 
 expect.extend({
   toEqualBox: boxTesting.toEqualBox
@@ -62,6 +63,14 @@ describe('basic box functions', () => {
 
   test('edit type returns box', () => {
     expect(make().editType).toBe("box");
+  });
+
+  test('same type returns true for another box', () => {
+    expect(make().sameType(make())).toBeTruthy();
+  });
+
+  test('same type returns false for a span', () => {
+    expect(make().sameType(spanTesting.makeSpan())).toBeFalsy();
   });
 
   test('length is always 1', () => {

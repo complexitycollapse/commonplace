@@ -12,7 +12,8 @@ export function Edit(editType, origin) {
 
   addMethods(obj, {
     equalOrigin: edit => edit.origin == origin,
-    editSource: () => EditIterator(x => x, [obj])
+    editSource: () => EditIterator(x => x, [obj]),
+    sameType: edit => edit.editType === editType
   });
 
   return obj;
