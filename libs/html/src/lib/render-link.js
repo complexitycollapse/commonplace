@@ -1,4 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/core";
+import { Fragment } from "./fragment";
 
 let typeMap = {
   paragraph: [null, null, "p"],
@@ -17,5 +18,23 @@ export function RenderLink(link) {
     fragmentTag
   });
 
-  return finalObject(renderLink);
+  function fragments() {
+  let fragments = [];
+
+  if (fragmentTag) {
+    link.endsets.forEach(e => {
+      e.pointers.forEach(p => {
+        if (p.isEdit) {
+          fragments.push(Fragment(p, e, renderLink));
+        }
+      });
+    });
+  }
+
+  return fragments;
+  }
+
+  return finalObject(renderLink, {
+    fragments
+  });
 }
