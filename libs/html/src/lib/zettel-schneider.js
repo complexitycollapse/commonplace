@@ -1,11 +1,11 @@
 import { finalObject } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(edit, links = [], keyPrefix) {
+export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
   let obj = {};
 
   function zettel() {
-    let hash = EndsetHash(links).build();
+    let hash = EndsetHash(renderLinks).build();
 
     let overlappingEntries = (hash[edit.origin] ?? []).filter(s => s.edit.overlaps(edit));
     let result = undefined;
@@ -59,7 +59,7 @@ export function ZettelSchneider(edit, links = [], keyPrefix) {
   function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans) {
     var zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.edit.overlaps(span)));
 
-    if (coveringSpan) { 
+    if (coveringSpan) {
       zettel.forEach(z => z.addEndset(coveringSpan.endset, coveringSpan.link));
     }
 

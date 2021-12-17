@@ -2,9 +2,11 @@ import { describe, it, expect } from '@jest/globals';
 import { ZettelSchneider } from './zettel-schneider';
 import { Span, Box } from '@commonplace/core';
 import { testing } from "@commonplace/core";
+import { RenderLink } from './render-link';
 
 let toEqualEdit = testing.edits.toEqualEdit;
-let makeSpanLink = testing.links.makeSpanLink;
+let makeSpanLink = (...args) =>
+  RenderLink(testing.links.makeSpanLink.call(null, ...args));
 
 function editArraysEqual(actual, expected) {
   if (actual === undefined || expected === undefined) { return false; }
