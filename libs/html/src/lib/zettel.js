@@ -1,4 +1,4 @@
-import { addProperties, addMethods, Endset } from '@commonplace/core';
+import { addProperties, addMethods, Endset, testing } from '@commonplace/core';
 import { ZettelSchneider } from './zettel-schneider';
 
 export function Zettel(edit) {
@@ -73,3 +73,44 @@ export function Zettel(edit) {
 
   return obj;
 }
+
+let toEqualEdit = testing.edits.toEqualEdit;
+
+function editArraysEqual(actual, expected) {
+  if (actual === undefined || expected === undefined) { return false; }
+  if (actual.length !== expected.length) { return false; }
+
+  for (let j = 0; j < actual.length; ++j) {
+    if (!toEqualEdit(actual[j], expected[j]).pass) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export let zettelTesting = {
+  hasEndset(zettel, link, index = 0) {
+    let expectedEndset = link.endsets[index];
+    let actualEndsets = zettel.endsets;
+
+    for(let i = 0; i < actualEndsets.length; ++i) {
+      let candidate = actualEndsets[i];
+      if (candidate.name === expectedEndset.name
+          && candidate.index === index
+          && candidate.link.type === link.type) {
+        if (editArraysEqual(candidate.pointers, expectedEndset.pointers)) {
+          return {
+            message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
+            pass: true
+          };
+        }
+      }
+    }
+
+    return {
+      message: () => `did not find endset ${JSON.stringify(expectedEndset)}`,
+      pass: false
+    };
+  }
+};
