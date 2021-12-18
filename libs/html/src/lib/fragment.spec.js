@@ -17,11 +17,11 @@ function mock(tryAddResult, edit) {
   let obj = {
     edit,
     children: [],
-    tryAdd(frag) { 
+    tryAdd(frag) {
       if (tryAddResult === "engulfs") {
         obj.children.push(frag);
       }
-      return tryAddResult; 
+      return tryAddResult;
     }
   };
 
@@ -85,37 +85,37 @@ describe('tryAdd', () => {
     it('adds the fragment as a child to the RootFragment', () => {
       let us = RootFragment();
       let that = make(makeSpan());
-  
+
       us.tryAdd(that);
-  
+
       expect(us.children).toEqual([that]);
       expect(us.children[0]).toBe(that);
     });
-  
+
     it('does not add the fragment as a child if this is engulfed by it', () => {
       let that = make(makeSpan());
       let us = make(that.edit.clone({length: 1}));
-  
+
       us.tryAdd(that);
-  
+
       expect(us.children).toEqual([]);
     });
-  
+
     it('does not add the fragment as a child if this is separate from it', () => {
       let that = make(makeSpan());
       let us = make(that.edit.clone({start: that.edit.next}));
-  
+
       us.tryAdd(that);
-  
+
       expect(us.children).toEqual([]);
     });
-  
+
     it('does not add the fragment as a child if this overlaps it', () => {
       let that = make(makeSpan());
       let us = make(that.edit.clone({start: that.edit.start + 1}));
-  
+
       us.tryAdd(that);
-  
+
       expect(us.children).toEqual([]);
     });
   });
@@ -166,7 +166,7 @@ describe('tryAdd', () => {
       parent.children.push(engulfedChild2);
 
       let result = parent.tryAdd(that);
-      
+
       expect(result).toBe("engulfs");
       expect(parent.children).not.toContain(engulfedChild1);
       expect(parent.children).not.toContain(engulfedChild2);
@@ -183,7 +183,7 @@ describe('tryAdd', () => {
       parent.children.push(nonEngulfedChild);
 
       let result = parent.tryAdd(that);
-      
+
       expect(result).toBe("engulfs");
       expect(parent.children).toContain(nonEngulfedChild);
       expect(that.children).not.toContain(nonEngulfedChild);
@@ -198,7 +198,7 @@ describe('tryAdd', () => {
       parent.children.push(overlappingChild);
 
       let result = parent.tryAdd(that);
-      
+
       expect(result).toBe("overlapping");
       expect(parent.children).not.toContain(that);
     });
