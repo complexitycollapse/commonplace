@@ -8,4 +8,5 @@ export { Endset } from './lib/endset';
 export { Part } from './lib/part';
 export { PartCache } from './lib/part-cache';
 export { LinkPointer, DocPointer } from './lib/pointer';
+export { OriginHash } from './lib/origin-hash';
 export * as testing from './testing';

@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/core";
+import { finalObject, OriginHash } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
 export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
@@ -7,7 +7,7 @@ export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
   function zettel() {
     let hash = EndsetHash(renderLinks).build();
 
-    let overlappingEntries = (hash[edit.origin] ?? []).filter(s => s.edit.overlaps(edit));
+    let overlappingEntries = (hash.get([edit.origin])).filter(s => s.edit.overlaps(edit));
     let result = undefined;
 
     if (edit.editType === "span") {
@@ -74,7 +74,7 @@ export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
 function EndsetHash(links) {
 
   function build() {
-    let hash = {};
+    let hash = OriginHash();
 
     links.forEach(l => {
       l.endsets.forEach(e => {
@@ -87,15 +87,9 @@ function EndsetHash(links) {
 
   function pushEndset(link, endset, hash) {
     endset.pointers.forEach(p => {
-      if (p.isEdit) { pushAdd(hash, p, endset, link); }
+      if (p.isEdit) { hash.add(p.origin, { edit: p, endset, link }); }
     });
   }
 
   return { build };
-}
-
-function pushAdd(hash, edit, endset, link) {
-  let entry = { edit, endset, link }, list = hash[edit.origin];
-  if (list) { list.push(entry); }
-  else { hash[edit.origin] = [entry]; }
 }
