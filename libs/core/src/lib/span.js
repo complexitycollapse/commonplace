@@ -38,8 +38,12 @@ export function Span(origin, start, length) {
     return obj.sameType(span) && obj.equalOrigin(span) && !(obj.end < span.start || span.end < start);
   }
 
+  function overlapingButNotEngulfing(span) {
+    return obj.overlaps(span) && !obj.engulfs(span) && !span.engulfs(obj);
+  }
+
   function canMergeWith(span) {
-    return obj.sameType(span) && (obj.overlaps(span) || obj.abuts(span) || span.abuts(obj));
+    return obj.overlaps(span) || obj.abuts(span) || span.abuts(obj);
   }
 
   function merge(sp) {
@@ -81,7 +85,8 @@ export function Span(origin, start, length) {
     merge,
     crop,
     leafData,
-    intersect
+    intersect,
+    overlapingButNotEngulfing
   });
 }
 
