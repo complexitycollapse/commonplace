@@ -19,10 +19,15 @@ export function OriginHash() {
     return hash[origin] ?? [];
   }
 
+  function keys() {
+    return Object.getOwnPropertyNames(hash);
+  }
+
   addMethods(obj, {
     add,
     addEdit,
-    get
+    get,
+    keys
   });
 
   return obj;

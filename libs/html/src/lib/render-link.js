@@ -15,7 +15,9 @@ export function RenderLink(link) {
   addProperties(renderLink, {
     innerTag,
     style,
-    fragmentTag
+    fragmentTag,
+    link,
+    isStructural: fragmentTag ? true : false
   });
 
   function fragments() {

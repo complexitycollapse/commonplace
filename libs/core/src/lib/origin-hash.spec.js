@@ -36,3 +36,14 @@ describe('addEdit', () => {
     expect(hash.get(edit.origin)).toEqual([edit]);
   });
 });
+
+describe('keys', () => {
+  it('returns the origins of all added items', () => {
+    let hash = OriginHash();
+    hash.add("a", 1);
+    hash.add("b", 2);
+    hash.addEdit(Span("c", 1, 2));
+
+    expect(hash.keys()).toEqual(["a", "b", "c"]);
+  });
+});
