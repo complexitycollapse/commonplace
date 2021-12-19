@@ -9,7 +9,7 @@ let typeMap = {
 };
 
 export function RenderLink(link) {
-  let renderLink = {};
+  let renderLink = { modifiers: [] };
   let [innerTag, style, fragmentTag] = typeMap[link.type] ?? [null, null, null];
 
   addProperties(renderLink, {

@@ -1,7 +1,7 @@
 import { addProperties, addMethods, listTable } from '@commonplace/core';
 import { ZettelSchneider } from '..';
 import { RootFragment } from './fragment';
-import { RenderLink } from './render-link';
+import { RenderLinkFactory } from './render-link-factory';
 
 export function DocumentRenderElements(doc, links) {
   let renderLinksCache = undefined;
@@ -42,7 +42,7 @@ export function DocumentRenderElements(doc, links) {
 
   function ensureRenderLinks() {
     if (!renderLinksCache) {
-      renderLinksCache = links.map(l => RenderLink(l));
+      renderLinksCache = RenderLinkFactory(doc, links).renderLinks();
     }
     return renderLinksCache;
   }
