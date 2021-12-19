@@ -9,7 +9,7 @@ let typeMap = {
 };
 
 export function RenderLink(link) {
-  let renderLink = Object.create(link);
+  let renderLink = {};
   let [innerTag, style, fragmentTag] = typeMap[link.type] ?? [null, null, null];
 
   addProperties(renderLink, {
@@ -17,6 +17,8 @@ export function RenderLink(link) {
     style,
     fragmentTag,
     link,
+    endsets: link.endsets,
+    type: link.type,
     isStructural: fragmentTag ? true : false
   });
 
