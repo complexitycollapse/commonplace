@@ -1,4 +1,4 @@
-import { addProperties, addMethods, OriginHash } from '@commonplace/core';
+import { addProperties, addMethods, listTable } from '@commonplace/core';
 import { ZettelSchneider } from '..';
 import { RootFragment } from './fragment';
 import { RenderLink } from './render-link';
@@ -60,8 +60,8 @@ export function DocumentRenderElements(doc, links) {
     let fragments = links.map(l => l.fragments().filter(inDoc)).flat();
     overlappingLinksCache = [];
 
-    let hash = OriginHash();
-    fragments.forEach(f => hash.add(f.edit.origin, f));
+    let hash = listTable();
+    fragments.forEach(f => hash.push(f.edit.origin, f));
 
     for(let key of hash.keys()) {
       let frags = hash.get(key);

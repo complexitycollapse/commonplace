@@ -1,4 +1,4 @@
-import { finalObject, OriginHash } from "@commonplace/core";
+import { finalObject, listTable } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
 export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
@@ -74,7 +74,7 @@ export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
 function EndsetHash(links) {
 
   function build() {
-    let hash = OriginHash();
+    let hash = listTable();
 
     links.forEach(l => {
       l.endsets.forEach(e => {
@@ -87,7 +87,7 @@ function EndsetHash(links) {
 
   function pushEndset(link, endset, hash) {
     endset.pointers.forEach(p => {
-      if (p.isEdit) { hash.add(p.origin, { edit: p, endset, link }); }
+      if (p.isEdit) { hash.push(p.origin, { edit: p, endset, link }); }
     });
   }
 

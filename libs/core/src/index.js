@@ -1,5 +1,5 @@
 export * from './lib/commonplace-core';
-export { addMethods, addProperties, finalObject } from './lib/utils';
+export { addMethods, addProperties, finalObject, listTable } from './lib/utils';
 export { Span } from './lib/span';
 export { Box } from './lib/box';
 export { Doc, leafDataToDoc } from './lib/doc';
@@ -8,5 +8,4 @@ export { Endset } from './lib/endset';
 export { Part } from './lib/part';
 export { PartCache } from './lib/part-cache';
 export { LinkPointer, DocPointer } from './lib/pointer';
-export { OriginHash } from './lib/origin-hash';
 export * as testing from './testing';

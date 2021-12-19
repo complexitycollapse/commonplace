@@ -39,17 +39,22 @@ export function hashTable() {
 
   function get(key) {
     if (hasKey(key)) { return table[key]; }
-    else { return undefined; }
+    else { return []; }
   }
 
   function hasKey(name) {
     return Object.prototype.hasOwnProperty.call(table, name);
   }
 
+  function keys() {
+    return Object.getOwnPropertyNames(table);
+  }
+
   return finalObject(obj, {
     add,
     get,
-    hasKey
+    hasKey,
+    keys
   });
 }
  
@@ -68,6 +73,7 @@ export function listTable() {
   return finalObject(obj, {
     push,
     get: table.get,
-    hasKey: table.hasKey
+    hasKey: table.hasKey,
+    keys: table.keys
   });
 }
