@@ -42,12 +42,12 @@ describe('clone', () => {
 });
 
 describe('basic span functions', () => {
-  test('isEdit returns true', () => {
-    expect(make().isEdit).toBeTruthy();
+  test('isClip returns true', () => {
+    expect(make().isClip).toBeTruthy();
   });
   
-  test('edit type returns span', () => {
-    expect(make().editType).toBe("span");
+  test('clip type returns span', () => {
+    expect(make().clipType).toBe("span");
   });
 
   test('same type returns true for another span', () => {
@@ -358,19 +358,19 @@ describe('crop', () => {
   });
 });
 
-describe('editSource', () => {
+describe('clipSource', () => {
   it('returns a function', () => {
-    expect(typeof make().editSource()).toBe('function');
+    expect(typeof make().clipSource()).toBe('function');
   });
 
   it('returns the span on first call', () => {
     let s = make();
-    expect(s.editSource()()).toEqualSpan(s);
+    expect(s.clipSource()()).toEqualSpan(s);
   });
 
   it('has 0 position after first call', () => {
     let s = make();
-    let iterator = s.editSource();
+    let iterator = s.clipSource();
 
     iterator();
 
@@ -379,21 +379,21 @@ describe('editSource', () => {
 
   it('returns undefined on second call', () => {
     let s = make();
-    let source = s.editSource();
+    let source = s.clipSource();
     source();
     expect(source()).toBeUndefined();
   });
 
-  describe('editSource.forEach', () => {
+  describe('clipSource.forEach', () => {
     it('is present on the iterator', () => {
-      expect(make().editSource()).toHaveProperty("forEach");
+      expect(make().clipSource()).toHaveProperty("forEach");
     });
 
     it('calls the callback exactly once with the span and zero as arguments', () => {
       let s = make();
       const mockCallback = jest.fn((x, y) => x+y);
 
-      s.editSource().forEach(mockCallback);
+      s.clipSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toBe(1);
       expect(mockCallback.mock.calls[0][0]).toBe(s);
@@ -401,7 +401,7 @@ describe('editSource', () => {
     });
 
     it('does not call the callback if the span has already been iterated', () => {
-      let source = make().editSource();
+      let source = make().clipSource();
       const mockCallback = jest.fn(x => x);
 
       source();
@@ -413,7 +413,7 @@ describe('editSource', () => {
 });
 
 describe('leafData', () => {
-  it('has the editType, origin, start and length properties', () => {
+  it('has the clipType, origin, start and length properties', () => {
     expect(Span("a", 101, 505).leafData()).toEqual({
       typ: "span",
       ori: "a",
@@ -603,7 +603,7 @@ describe('overlapingButNotEngulfing', () => {
     expect(Span("x", 29, 10).overlapingButNotEngulfing(Span("y", 20, 10))).toBeFalsy();
   });
 
-  it('returns false if they have different edit types', () => {
+  it('returns false if they have different clip types', () => {
     expect(Span("x", 29, 10).overlapingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
   });
 });

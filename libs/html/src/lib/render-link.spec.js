@@ -49,19 +49,19 @@ describe('fragments', () => {
     expect(makeParagraphLink().fragments("link", "doc")).toEqual([]);
   });
 
-  it('returns a fragment for each edit pointer', () => {
+  it('returns a fragment for each clip pointer', () => {
     let link = makeParagraphLink(Span("x", 1, 2), Span("y", 1, 2), Span("z", 1, 2));
 
     expect(link.fragments()).toHaveLength(3);
   });
 
-  it('returns a only fragments for edit pointers', () => {
+  it('returns a only fragments for clip pointers', () => {
     let link = makeParagraphLink(Span("x", 1, 2), "link", "doc");
 
     let actual = link.fragments();
 
     expect(actual).toHaveLength(1);
-    expect(actual[0].edit).toEqual(link.endsets[0].pointers[0]);
+    expect(actual[0].clip).toEqual(link.endsets[0].pointers[0]);
   });
 
   it('returns no fragments if the RenderLink has no fragment tag', () => {
@@ -77,7 +77,7 @@ describe('fragments', () => {
 
     let actual = link.fragments()[0];
 
-    expect(actual.edit).toEqual(span);
+    expect(actual.clip).toEqual(span);
     expect(actual.endset).toEqual(endset);
     expect(actual.renderLink).toEqual(link);
   });

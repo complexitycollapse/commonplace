@@ -24,18 +24,18 @@ export function DocumentRenderElements(doc, links) {
   }
 
   function inDoc(fragment) {
-    return doc.edits.find(e => e.overlaps(fragment.edit));
+    return doc.clips.find(c => c.overlaps(fragment.clip));
   }
 
   function zettel() {
     if (!zettelCache) {
       let renderLinks = ensureRenderLinks();
 
-      let editToZettel = (edit, index) =>
-        ZettelSchneider(edit, renderLinks, index.toString())
+      let clipToZettel = (clip, index) =>
+        ZettelSchneider(clip, renderLinks, index.toString())
           .zettel();
 
-      zettelCache = doc.edits.map(editToZettel).flat();
+      zettelCache = doc.clips.map(clipToZettel).flat();
     }
     return zettelCache;
   }
@@ -61,14 +61,14 @@ export function DocumentRenderElements(doc, links) {
     overlappingLinksCache = [];
 
     let hash = listTable();
-    fragments.forEach(f => hash.push(f.edit.origin, f));
+    fragments.forEach(f => hash.push(f.clip.origin, f));
 
     for(let key of hash.keys()) {
       let frags = hash.get(key);
       for(let i = 0; i < frags.length; ++i) {
         let overlapping = false;
         for(let j = 0; j < frags.length; ++j) {
-          if (j !== i && frags[i].edit.overlapingButNotEngulfing(frags[j].edit)){
+          if (j !== i && frags[i].clip.overlapingButNotEngulfing(frags[j].clip)){
             overlappingLinksCache.push(frags[i]);
             overlapping = true;
             break;

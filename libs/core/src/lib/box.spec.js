@@ -57,12 +57,12 @@ describe('clone', () => {
 });
 
 describe('basic box functions', () => {
-  test('isEdit returns true', () => {
-    expect(make().isEdit).toBeTruthy();
+  test('isClip returns true', () => {
+    expect(make().isClip).toBeTruthy();
   });
 
-  test('edit type returns box', () => {
-    expect(make().editType).toBe("box");
+  test('clip type returns box', () => {
+    expect(make().clipType).toBe("box");
   });
 
   test('same type returns true for another box', () => {
@@ -328,19 +328,19 @@ describe('boxCrop', () => {
   });
 });
 
-describe('editSource', () => {
+describe('clipSource', () => {
   it('returns a function', () => {
-    expect(typeof make().editSource()).toBe('function');
+    expect(typeof make().clipSource()).toBe('function');
   });
 
   it('returns the box on first call', () => {
     let b = make();
-    expect(b.editSource()()).toEqualBox(b);
+    expect(b.clipSource()()).toEqualBox(b);
   });
 
   it('has 0 position after first call', () => {
     let b = make();
-    let iterator = b.editSource();
+    let iterator = b.clipSource();
 
     iterator();
 
@@ -349,21 +349,21 @@ describe('editSource', () => {
 
   it('returns undefined on second call', () => {
     let b = make();
-    let source = b.editSource();
+    let source = b.clipSource();
     source();
     expect(source()).toBeUndefined();
   });
 
-  describe('editSource.forEach', () => {
+  describe('clipSource.forEach', () => {
     it('is present on the iterator', () => {
-      expect(make().editSource()).toHaveProperty("forEach");
+      expect(make().clipSource()).toHaveProperty("forEach");
     });
 
     it('calls the callback exactly once with the box and zero as arguments', () => {
       let b = make();
       const mockCallback = jest.fn((x, y) => x+y);
 
-      b.editSource().forEach(mockCallback);
+      b.clipSource().forEach(mockCallback);
 
       expect(mockCallback.mock.calls.length).toBe(1);
       expect(mockCallback.mock.calls[0][0]).toBe(b);
@@ -371,7 +371,7 @@ describe('editSource', () => {
     });
 
     it('does not call the callback if the box has already been iterated', () => {
-      let source = make().editSource();
+      let source = make().clipSource();
       const mockCallback = jest.fn(x => x);
 
       source();
@@ -383,7 +383,7 @@ describe('editSource', () => {
 });
 
 describe('leafData', () => {
-  it('has the editType, origin, x, y, width and height properties', () => {
+  it('has the clipType, origin, x, y, width and height properties', () => {
     expect(Box("a", 101, 505, 22, 33).leafData()).toEqual({
       typ: "box",
       ori: "a",

@@ -1,31 +1,31 @@
 import { addProperties, finalObject } from "./utils";
-import { EditList, leafDataToEdit } from "./edit-list";
+import { ClipList, leafDataToClip } from "./clip-list";
 
-export function Doc(edits, overlay) {
+export function Doc(clips, overlay) {
   let obj = {};
-  let editList = EditList(...(edits ?? []));
-  edits = editList.edits;
+  let clipList = ClipList(...(clips ?? []));
+  clips = clipList.clips;
   overlay = overlay ?? [];
 
   addProperties(obj, {
-    edits,
+    clips,
     overlay
   });
 
   function leafData() {
     return {
-      edl: editList.leafData(),
+      edl: clipList.leafData(),
       odl: overlay
     };
   }
 
   return finalObject(obj, {
-    concLength: () => editList.concLength(),
+    concLength: () => clipList.concLength(),
     leafData,
     convertToLeaf: () => JSON.stringify(leafData())
   });
 }
 
 export function leafDataToDoc(leafData) {
-  return Doc(leafData.edl.map(leafDataToEdit), leafData.odl);
+  return Doc(leafData.edl.map(leafDataToClip), leafData.odl);
 }

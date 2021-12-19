@@ -22,7 +22,7 @@ describe('clone', () => {
     expect(part.clone({content: undefined}).content).toBe(undefined);
   });
 
-  it('changes the properties inherited from edit, if provided', () => {
+  it('changes the properties inherited from clip, if provided', () => {
     let part = make();
 
     let clone = part.clone({origin:"new", start: 555, length: 999});

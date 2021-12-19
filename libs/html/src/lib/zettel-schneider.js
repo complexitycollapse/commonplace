@@ -1,20 +1,20 @@
 import { finalObject, listTable } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
+export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
   let obj = {};
 
   function zettel() {
     let hash = EndsetHash(renderLinks).build();
 
-    let overlappingEntries = (hash.get([edit.origin])).filter(s => s.edit.overlaps(edit));
+    let overlappingEntries = (hash.get([clip.origin])).filter(s => s.clip.overlaps(clip));
     let result = undefined;
 
-    if (edit.editType === "span") {
-      result = mapSpanToZettel(edit, overlappingEntries);
+    if (clip.clipType === "span") {
+      result = mapSpanToZettel(clip, overlappingEntries);
     } else {
-      let singleZettel = Zettel(edit);
-      overlappingEntries.forEach(e => singleZettel.addEndset(e.endset, e.link));
+      let singleZettel = Zettel(clip);
+      overlappingEntries.forEach(c => singleZettel.addEndset(c.endset, c.link));
       result = [singleZettel];
     }
 
@@ -28,14 +28,14 @@ export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
   function mapSpanToZettel(span, overlappingEntries) {
     if (overlappingEntries.length == 0) { return [Zettel(span, [])]; }
 
-    let overlappingEdit = overlappingEntries[0].edit;
+    let overlappingClip = overlappingEntries[0].clip;
     let remainingEntries = overlappingEntries.slice(1);
-    let cropped = span.intersect(overlappingEdit);
+    let cropped = span.intersect(overlappingClip);
     let subResults = [];
 
     if (cropped.start > span.start){
       subResults.push(mapSplitSpanToZettel(
-        span.clone({ length: overlappingEdit.start - span.start }),
+        span.clone({ length: overlappingClip.start - span.start }),
         undefined,
         remainingEntries));
     }
@@ -57,7 +57,7 @@ export function ZettelSchneider(edit, renderLinks = [], keyPrefix) {
   }
 
   function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans) {
-    var zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.edit.overlaps(span)));
+    var zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.clip.overlaps(span)));
 
     if (coveringSpan) {
       zettel.forEach(z => z.addEndset(coveringSpan.endset, coveringSpan.link));
@@ -87,7 +87,7 @@ function EndsetHash(links) {
 
   function pushEndset(link, endset, hash) {
     endset.pointers.forEach(p => {
-      if (p.isEdit) { hash.push(p.origin, { edit: p, endset, link }); }
+      if (p.isClip) { hash.push(p.origin, { clip: p, endset, link }); }
     });
   }
 

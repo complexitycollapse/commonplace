@@ -1,9 +1,9 @@
 import { addMethods } from "..";
 import { addProperties } from "./utils";
 
-export function Pointer(pointerType, isEdit, properties, methods) {
+export function Pointer(pointerType, isClip, properties, methods) {
   let obj = {};
-  addProperties(obj, { pointerType, isEdit });
+  addProperties(obj, { pointerType, isClip });
   addProperties(obj, properties);
   addMethods(obj, methods);
   return obj;

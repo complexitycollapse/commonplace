@@ -28,9 +28,9 @@ export function leafDataToLink(leafData) {
 }
 
 export let linkTesting = {
-  makeSpanLink({ type = "typeA", editLists } = {}) {
-    if (editLists === undefined) {
-      editLists = [
+  makeSpanLink({ type = "typeA", clipLists } = {}) {
+    if (clipLists === undefined) {
+      clipLists = [
         [Span("origin", 0, 10), Span("origin", 20, 15)],
         [Span("origin", 40, 5), Span("origin", 50, 20)]
       ];
@@ -38,7 +38,7 @@ export let linkTesting = {
   
     let endsets = [], i = 0;
   
-    editLists.forEach(ss => {
+    clipLists.forEach(ss => {
       endsets.push(Endset("name" + i.toString(), ss));
       i += 1;
     });

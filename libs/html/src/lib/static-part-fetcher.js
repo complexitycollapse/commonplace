@@ -3,19 +3,19 @@ import { finalObject } from '@commonplace/core';
 export function StaticPartFetcher(origin) {
   let obj = {};
 
-  async function getPart(edit) {
-    let result = await fetchPart(edit);
+  async function getPart(clip) {
+    let result = await fetchPart(clip);
     return result;
   }
 
-  async function fetchPart(edit) {
-    let response = await fetch(origin + edit.origin);
-    if (edit.editType === "span") {
+  async function fetchPart(clip) {
+    let response = await fetch(origin + clip.origin);
+    if (clip.clipType === "span") {
       return await response.text();
-    } else if (edit.editType === "box") {
+    } else if (clip.clipType === "box") {
       return await response.blob();
     } else {
-      throw `StaticPartFetcher.getPart did not understand edit type ${edit.editType}`;
+      throw `StaticPartFetcher.getPart did not understand clip type ${clip.clipType}`;
     }
   }
 

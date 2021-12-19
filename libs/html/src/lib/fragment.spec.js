@@ -4,18 +4,18 @@ import { Fragment, RootFragment } from './fragment';
 
 let makeSpan = testing.spans.makeSpan;
 
-function make(edit) {
-  let endset = Endset(undefined, [edit]);
-  return Fragment(edit, endset, Link("test", endset));
+function make(clip) {
+  let endset = Endset(undefined, [clip]);
+  return Fragment(clip, endset, Link("test", endset));
 }
 
 function engulfedFragment(f) {
-  return Fragment(f.edit.clone({length: f.edit.length - 1}));
+  return Fragment(f.clip.clone({length: f.clip.length - 1}));
 }
 
-function mock(tryAddResult, edit) {
+function mock(tryAddResult, clip) {
   let obj = {
-    edit,
+    clip,
     children: [],
     tryAdd(frag) {
       if (tryAddResult === "engulfs") {
@@ -31,7 +31,7 @@ function mock(tryAddResult, edit) {
 describe('tryAdd', () => {
   it('returns "engulfs" if this engulfs that', () => {
     let us = make(makeSpan());
-    let that = make(us.edit.clone({length: 1}));
+    let that = make(us.clip.clone({length: 1}));
 
     expect(us.tryAdd(that)).toBe("engulfs");
   });
@@ -45,7 +45,7 @@ describe('tryAdd', () => {
 
   it('returns "engulfedBy" if this engulfs that', () => {
     let that = make(makeSpan());
-    let us = make(that.edit.clone({length: 1}));
+    let us = make(that.clip.clone({length: 1}));
 
     expect(us.tryAdd(that)).toBe("engulfedBy");
   });
@@ -59,21 +59,21 @@ describe('tryAdd', () => {
 
   it('returns "overlapping" if this overlaps that', () => {
     let that = make(makeSpan());
-    let us = make(that.edit.clone({start: that.edit.start + 1}));
+    let us = make(that.clip.clone({start: that.clip.start + 1}));
 
     expect(us.tryAdd(that)).toBe("overlapping");
   });
 
   it('returns "separate" if the fragments do not overlap', () => {
     let that = make(makeSpan());
-    let us = make(that.edit.clone({start: that.edit.next}));
+    let us = make(that.clip.clone({start: that.clip.next}));
 
     expect(us.tryAdd(that)).toBe("separate");
   });
 
   it('adds the fragment as a child if this engulfs it', () => {
     let us = make(makeSpan());
-    let that = make(us.edit.clone({length: 1}));
+    let that = make(us.clip.clone({length: 1}));
 
     us.tryAdd(that);
 
@@ -94,7 +94,7 @@ describe('tryAdd', () => {
 
     it('does not add the fragment as a child if this is engulfed by it', () => {
       let that = make(makeSpan());
-      let us = make(that.edit.clone({length: 1}));
+      let us = make(that.clip.clone({length: 1}));
 
       us.tryAdd(that);
 
@@ -103,7 +103,7 @@ describe('tryAdd', () => {
 
     it('does not add the fragment as a child if this is separate from it', () => {
       let that = make(makeSpan());
-      let us = make(that.edit.clone({start: that.edit.next}));
+      let us = make(that.clip.clone({start: that.clip.next}));
 
       us.tryAdd(that);
 
@@ -112,7 +112,7 @@ describe('tryAdd', () => {
 
     it('does not add the fragment as a child if this overlaps it', () => {
       let that = make(makeSpan());
-      let us = make(that.edit.clone({start: that.edit.start + 1}));
+      let us = make(that.clip.clone({start: that.clip.start + 1}));
 
       us.tryAdd(that);
 
@@ -147,7 +147,7 @@ describe('tryAdd', () => {
     it('interposes the new fragment if it engulfs a child', () => {
       let parent = Fragment(makeSpan());
       let that = engulfedFragment(parent);
-      let child = mock("engulfedBy", that.edit.clone({length: 1}));
+      let child = mock("engulfedBy", that.clip.clone({length: 1}));
       parent.children.push(child);
 
       let result = parent.tryAdd(that);
@@ -159,9 +159,9 @@ describe('tryAdd', () => {
 
     it('interposes all children that it engulfs', () => {
       let parent = Fragment(makeSpan({length: 100}));
-      let that = Fragment(parent.edit.clone({length: 50}));
-      let engulfedChild1 = Fragment(parent.edit.clone({length: 20}));
-      let engulfedChild2 = Fragment(parent.edit.clone({start: engulfedChild1.edit.next, length: 20}));
+      let that = Fragment(parent.clip.clone({length: 50}));
+      let engulfedChild1 = Fragment(parent.clip.clone({length: 20}));
+      let engulfedChild2 = Fragment(parent.clip.clone({start: engulfedChild1.clip.next, length: 20}));
       parent.children.push(engulfedChild1);
       parent.children.push(engulfedChild2);
 
@@ -176,9 +176,9 @@ describe('tryAdd', () => {
 
     it('only interposes children it engulfs', () => {
       let parent = Fragment(makeSpan({length: 100}));
-      let that = Fragment(parent.edit.clone({length: 50}));
-      let engulfedChild = Fragment(parent.edit.clone({length: 20}));
-      let nonEngulfedChild = Fragment(parent.edit.clone({start: that.edit.next, length: 20}));
+      let that = Fragment(parent.clip.clone({length: 50}));
+      let engulfedChild = Fragment(parent.clip.clone({length: 20}));
+      let nonEngulfedChild = Fragment(parent.clip.clone({start: that.clip.next, length: 20}));
       parent.children.push(engulfedChild);
       parent.children.push(nonEngulfedChild);
 
@@ -191,9 +191,9 @@ describe('tryAdd', () => {
 
     it('does not add engulfing fragment if it overlaps a different child', () => {
       let parent = Fragment(makeSpan({length: 100}));
-      let that = Fragment(parent.edit.clone({length: 50}));
-      let engulfedChild = Fragment(parent.edit.clone({length: 20}));
-      let overlappingChild = Fragment(parent.edit.clone({start: that.edit.next - 1, length: 50}));
+      let that = Fragment(parent.clip.clone({length: 50}));
+      let engulfedChild = Fragment(parent.clip.clone({length: 20}));
+      let overlappingChild = Fragment(parent.clip.clone({start: that.clip.next - 1, length: 50}));
       parent.children.push(engulfedChild);
       parent.children.push(overlappingChild);
 

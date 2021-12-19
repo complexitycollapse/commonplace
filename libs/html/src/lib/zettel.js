@@ -1,14 +1,14 @@
 import { addProperties, addMethods, Endset, testing } from '@commonplace/core';
 import { ZettelSchneider } from './zettel-schneider';
 
-export function Zettel(edit) {
+export function Zettel(clip) {
   let obj = {
     content: undefined,
     key: undefined
   };
 
   addProperties(obj, {
-    edit,
+    clip,
     endsets: [],
   });
 
@@ -29,7 +29,7 @@ export function Zettel(edit) {
   }
 
   function addLink(link) {
-    let parts = ZettelSchneider(edit, [link], obj.key).zettel();
+    let parts = ZettelSchneider(clip, [link], obj.key).zettel();
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {
@@ -74,14 +74,14 @@ export function Zettel(edit) {
   return obj;
 }
 
-let toEqualEdit = testing.edits.toEqualEdit;
+let toEqualClip = testing.clips.toEqualClip;
 
-function editArraysEqual(actual, expected) {
+function clipArraysEqual(actual, expected) {
   if (actual === undefined || expected === undefined) { return false; }
   if (actual.length !== expected.length) { return false; }
 
   for (let j = 0; j < actual.length; ++j) {
-    if (!toEqualEdit(actual[j], expected[j]).pass) {
+    if (!toEqualClip(actual[j], expected[j]).pass) {
       return false;
     }
   }
@@ -99,7 +99,7 @@ export let zettelTesting = {
       if (candidate.name === expectedEndset.name
           && candidate.index === index
           && candidate.link.type === link.type) {
-        if (editArraysEqual(candidate.pointers, expectedEndset.pointers)) {
+        if (clipArraysEqual(candidate.pointers, expectedEndset.pointers)) {
           return {
             message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
             pass: true

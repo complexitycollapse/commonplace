@@ -1,4 +1,4 @@
-export function EditIterator(callback, initialState) {
+export function ClipIterator(callback, initialState) {
   let state = initialState;
   let positionCount = undefined, nextPosition = 0;
   
@@ -11,13 +11,13 @@ export function EditIterator(callback, initialState) {
       return undefined;
     }
 
-    let [edit, newState] = callbackResult;
+    let [clip, newState] = callbackResult;
 
-    if (edit) {
-      nextPosition += edit.length;
+    if (clip) {
+      nextPosition += clip.length;
     }
     state = newState;
-    return edit;
+    return clip;
   };
 
   iterator.position = () => positionCount;

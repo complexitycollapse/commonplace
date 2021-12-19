@@ -1,18 +1,18 @@
 import { addMethods, addProperties } from "@commonplace/core";
 
-export function Fragment(edit, endset, renderLink) {
+export function Fragment(clip, endset, renderLink) {
   let obj = {
     children: []
   };
 
   addProperties(obj, {
-    edit,
+    clip,
     endset,
     renderLink
   });
 
   function tryAdd(frag) {
-    let engulfResult = engulfs(frag.edit);
+    let engulfResult = engulfs(frag.clip);
 
     if (engulfResult === "engulfs") {
       return tryAddNewDescendent(frag);
@@ -22,12 +22,12 @@ export function Fragment(edit, endset, renderLink) {
     }
   }
 
-  function engulfs(otherEdit) {
-    if (!edit) { return "engulfs"; }
-    if (!otherEdit) { return "engulfedBy"; }
-    if (edit.engulfs(otherEdit)) { return "engulfs" }
-    if (otherEdit.engulfs(edit)) { return "engulfedBy" }
-    if (edit.overlaps(otherEdit)) { return "overlapping"; }
+  function engulfs(otherClip) {
+    if (!clip) { return "engulfs"; }
+    if (!otherClip) { return "engulfedBy"; }
+    if (clip.engulfs(otherClip)) { return "engulfs" }
+    if (otherClip.engulfs(clip)) { return "engulfedBy" }
+    if (clip.overlaps(otherClip)) { return "overlapping"; }
     return "separate";
   }
 

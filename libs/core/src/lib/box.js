@@ -1,10 +1,10 @@
 import { addProperties, finalObject } from "./utils";
 import { spanTesting } from "./span";
-import { Edit } from "./edit";
+import { Clip } from "./clip";
 
 export function Box(origin, x, y, width, height)
 {
-  let obj = Edit("box", origin);
+  let obj = Clip("box", origin);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     x,
@@ -76,7 +76,7 @@ export function Box(origin, x, y, width, height)
   }
 
   function leafData() {
-    return {typ: obj.editType, ori: origin, x, y, wd: width, hg: height };
+    return {typ: obj.clipType, ori: origin, x, y, wd: width, hg: height };
   }
 
   function contains(pointX, pointY) {

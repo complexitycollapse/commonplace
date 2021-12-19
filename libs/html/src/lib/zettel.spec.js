@@ -9,17 +9,17 @@ expect.extend({
   toEqualSpan
 });
 
-function make(edit = Span("origin", 1, 10)) {
-  return Zettel(edit);
+function make(clip = Span("origin", 1, 10)) {
+  return Zettel(clip);
 }
 
 function makeLink(type, ...endsets) {
   return Link(type, ...endsets);
 }
 
-test('edit returns the passed edit', () => {
+test('clip returns the passed clip', () => {
   let s = Span("a", 1, 2);
-  expect(make(s).edit).toEqual(s);
+  expect(make(s).clip).toEqual(s);
 });
 
 describe('addEndset', () => {
@@ -137,12 +137,12 @@ describe('addLink', () => {
 
     expect(newZettel[0].endsets).toHaveLength(1);
     expect(newZettel[0].endsets[0].link).toBe(l1);
-    expect(newZettel[0].edit).toEqualSpan(s.crop(0, 1));
+    expect(newZettel[0].clip).toEqualSpan(s.crop(0, 1));
 
     expect(newZettel[1].endsets).toHaveLength(2);
     expect(newZettel[1].endsets[0].link).toBe(l2);
     expect(newZettel[1].endsets[1].link).toBe(l1);
-    expect(newZettel[1].edit).toEqualSpan(s.crop(1, 9));
+    expect(newZettel[1].clip).toEqualSpan(s.crop(1, 9));
   });
 
   it('will copy the zettel content to all the new zettel', () => {

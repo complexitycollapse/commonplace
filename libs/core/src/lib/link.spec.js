@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasEdits } from "./edit.test-helpers";
+import { hasClips } from "./clip.test-helpers";
 import { Endset } from './endset';
 import { Link, leafDataToLink } from './link';
 import { boxTesting } from './box';
@@ -7,7 +7,7 @@ import { spanTesting } from './span';
 import { LinkPointer, DocPointer } from './pointer';
 
 expect.extend({
-  hasEdits
+  hasClips
 });
 
 let makeSpan = spanTesting.makeSpan;

@@ -5,9 +5,9 @@ export function PartCache() {
   let partCache = listTable();
   let objectCache = hashTable();
 
-  function getPart(edit) {
-    if(partCache.hasKey(edit.origin)) {
-      return partCache.get(edit.origin).find(p => p.engulfs(edit));
+  function getPart(clip) {
+    if(partCache.hasKey(clip.origin)) {
+      return partCache.get(clip.origin).find(p => p.engulfs(clip));
     }
     return undefined;
   }

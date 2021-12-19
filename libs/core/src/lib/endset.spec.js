@@ -65,20 +65,20 @@ describe('leafData', () => {
 
 describe('leafDataToEndset is inverse of leafData', () => {
   test('named case', () => {
-    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
+    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
 
-    let actual = leafDataToEndset(Endset("the name", edits).leafData());
+    let actual = leafDataToEndset(Endset("the name", clips).leafData());
 
     expect(actual.name).toBe("the name");
-    expect(actual.pointers).toEqual(edits);
+    expect(actual.pointers).toEqual(clips);
   });
 
   test('no name case', () => {
-    let edits = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
+    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), DocPointer("doc name")];
 
-    let actual = leafDataToEndset(Endset(undefined, edits).leafData());
+    let actual = leafDataToEndset(Endset(undefined, clips).leafData());
 
     expect(actual.name).toBeFalsy();
-    expect(actual.pointers).toEqual(edits);
+    expect(actual.pointers).toEqual(clips);
   });
 });

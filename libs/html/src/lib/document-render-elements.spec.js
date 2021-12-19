@@ -12,8 +12,8 @@ expect.extend({
 describe('zettel', () => {
   it('assigns all links that overlap the zettel', () => {
     let s = Span("origin", 0, 10);
-    let l1 = makeSpanLink({ editLists: [[Span("origin", 0, 10)]] });
-    let l2 = makeSpanLink({ editLists: [[Span("origin", 0, 10)]] });
+    let l1 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
+    let l2 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
     let doc = Doc([s], ["a", "b"]);
 
     let zettel = DocumentRenderElements(doc, [l1, l2]).zettel();
@@ -66,6 +66,6 @@ describe('fragmentTree', () => {
 
     let actual = DocumentRenderElements(doc, [link1, link2]).overlappingLinks();
 
-    expect(actual.map(f => f.edit)).toEqual([span1, span2]);
+    expect(actual.map(f => f.clip)).toEqual([span1, span2]);
   });
 });

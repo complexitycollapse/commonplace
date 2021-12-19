@@ -1,4 +1,4 @@
-import { leafDataToEdit } from "./edit-list";
+import { leafDataToClip } from "./clip-list";
 import { leafDataToLinkPointer, leafDataToDocPointer } from "./pointer";
 
 export function leafDataToPointer(data) {
@@ -6,5 +6,5 @@ export function leafDataToPointer(data) {
 
   if (type === "link") { return leafDataToLinkPointer(data); }
   else if (type === "doc") { return leafDataToDocPointer(data); }
-  else { return leafDataToEdit(data); }
+  else { return leafDataToClip(data); }
 }

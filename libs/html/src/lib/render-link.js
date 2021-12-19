@@ -28,7 +28,7 @@ export function RenderLink(link) {
   if (fragmentTag) {
     link.endsets.forEach(e => {
       e.pointers.forEach(p => {
-        if (p.isEdit) {
+        if (p.isClip) {
           fragments.push(Fragment(p, e, renderLink));
         }
       });

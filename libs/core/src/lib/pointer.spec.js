@@ -13,30 +13,30 @@ describe('pointerType', () => {
     expect(DocPointer("name").pointerType).toBe("doc");
   });
 
-  it('equals "edit" for Span', () => {
-    expect(Span("or", 1, 2).pointerType).toBe("edit");
+  it('equals "clip" for Span', () => {
+    expect(Span("or", 1, 2).pointerType).toBe("clip");
   });
 
-  it('equals "edit" for Box', () => {
-    expect(Box("or", 1, 2, 3, 4).pointerType).toBe("edit");
+  it('equals "clip" for Box', () => {
+    expect(Box("or", 1, 2, 3, 4).pointerType).toBe("clip");
   });
 });
 
-describe('isEdit', () => {
+describe('isClip', () => {
   it('returns false for a LinkPointer', () => {
-    expect(LinkPointer("link").isEdit).toBeFalsy();
+    expect(LinkPointer("link").isClip).toBeFalsy();
   });
 
   it('returns false for a DocPointer', () => {
-    expect(DocPointer("doc").isEdit).toBeFalsy();
+    expect(DocPointer("doc").isClip).toBeFalsy();
   });
 
   it('returns true for a Span', () => {
-    expect(Span("ori", 10, 20).isEdit).toBeTruthy();
+    expect(Span("ori", 10, 20).isClip).toBeTruthy();
   });
 
   it('returns true for a Box', () => {
-    expect(Box("ori", 1, 2, 3, 4).isEdit).toBeTruthy();
+    expect(Box("ori", 1, 2, 3, 4).isClip).toBeTruthy();
   });
 });
 

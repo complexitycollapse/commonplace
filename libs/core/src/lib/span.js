@@ -1,8 +1,8 @@
 import { addProperties, finalObject } from "./utils";
-import { Edit } from "./edit";
+import { Clip } from "./clip";
 
 export function Span(origin, start, length) {
-  let obj = Edit("span", origin);
+  let obj = Clip("span", origin);
   addProperties(obj, {
     start,
     length,
@@ -68,7 +68,7 @@ export function Span(origin, start, length) {
   }
 
   function leafData() {
-    return { typ: obj.editType, ori: origin, st: start, ln: length };
+    return { typ: obj.clipType, ori: origin, st: start, ln: length };
   }
 
   return finalObject(obj, {

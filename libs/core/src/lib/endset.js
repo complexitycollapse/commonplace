@@ -15,7 +15,7 @@ export function Endset(name, pointers) {
 
   function leafData() {
     let data = name ? { name } : {};
-    data.ptr = pointers.map(e => e.leafData());
+    data.ptr = pointers.map(p => p.leafData());
     return data;
   }
 

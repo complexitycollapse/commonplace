@@ -9,12 +9,12 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
   useEffect(() => {
     async function loadDoc() {
-      async function loadContent(edit, isObject) {
-        let content = isObject ? cache.getObject(edit) : cache.getPart(edit);
+      async function loadContent(clip, isObject) {
+        let content = isObject ? cache.getObject(clip) : cache.getPart(clip);
         if (content) {
           return [true, isObject ? content : content];
         } else {
-        return isObject ? [false, leafDataToLink(await fetcher.getObject(edit))] : [false, Part(edit, await fetcher.getPart(edit))];
+        return isObject ? [false, leafDataToLink(await fetcher.getObject(clip))] : [false, Part(clip, await fetcher.getPart(clip))];
         }
       }
 
@@ -29,14 +29,14 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let links = (await loadAll(doc.overlay, true)).map(RenderLink);
-      let zettel = doc.edits.map((e, index) => ZettelSchneider(e, links, index.toString()).zettel()).flat();
+      let zettel = doc.clips.map((c, index) => ZettelSchneider(c, links, index.toString()).zettel()).flat();
       let fragment = fragmentize(zettel);
 
-      let parts = await loadAll(doc.edits, false);
+      let parts = await loadAll(doc.clips, false);
 
       parts.forEach(part => {
         zettel.forEach(z => {
-          if (part.engulfs(z.edit)) { z.content = part.content.substring(z.edit.start, z.edit.next); }
+          if (part.engulfs(z.clip)) { z.content = part.content.substring(z.clip.start, z.clip.next); }
         });
       });
 

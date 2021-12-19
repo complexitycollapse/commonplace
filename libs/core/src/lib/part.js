@@ -1,10 +1,10 @@
 import { addProperties, finalObject } from './utils';
 
-export function Part(edit, content) {
-  let obj = Object.create(edit);
+export function Part(clip, content) {
+  let obj = Object.create(clip);
 
   function clone(props = {}) {
-    return Part(edit.clone(props), "content" in props ? props.content : content);
+    return Part(clip.clone(props), "content" in props ? props.content : content);
   }
 
   addProperties(obj, {
