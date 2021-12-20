@@ -1,13 +1,35 @@
 import { finalObject, listTable } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
+export function ManyZettelSchneider(clips, renderLinks = []) {
+  return finalObject({}, {
+    zettel() {
+      let hash = makeEndsetHash(renderLinks);
+
+      let clipToZettel = (clip, index) => {
+        return ZettelSchneider(clip, hash.get(clip.origin), index.toString())
+          .zettel();
+      }
+    
+      let zettel = clips.map(clipToZettel).flat();
+      return zettel;
+    }
+  });
+}
+
+export function SingleZettelSchneider(clip, renderLinks = [], keyPrefix) {
+  return finalObject({}, {
+    zettel() {
+      return ZettelSchneider(clip, buildClipEndsetLinks(renderLinks), keyPrefix).zettel();
+    }
+  });
+}
+
+export function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
   let obj = {};
 
   function zettel() {
-    let hash = EndsetHash(renderLinks).build();
-
-    let overlappingEntries = (hash.get([clip.origin])).filter(s => s.clip.overlaps(clip));
+    let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps(clip));
     let result = undefined;
 
     if (clip.clipType === "span") {
@@ -71,25 +93,34 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
   });
 }
 
-function EndsetHash(links) {
+function makeEndsetHash(links) {
+  let hash = listTable();
+  forEachClipPointer(links, (p, e, l) => {
+    if (p.isClip) { hash.push(p.origin, buildClipEndsetLink(p, e, l)); }
+  });
+  return hash;
+}
 
-  function build() {
-    let hash = listTable();
+function buildClipEndsetLinks(links) {
+  let list = [];
+  forEachClipPointer(links, (p, e, l) => {
+    if (p.isClip) { list.push(buildClipEndsetLink(p, e, l)) };
+  });
+  return list;
+}
 
-    links.forEach(l => {
-      l.endsets.forEach(e => {
-        pushEndset(l, e, hash);
+function buildClipEndsetLink(clip, endset, link) {
+  return { clip, endset, link };
+}
+
+function forEachClipPointer(links, callback) {
+  links.forEach(link => {
+    link.endsets.forEach(endset => {
+      endset.pointers.forEach(pointer => {
+        if (pointer.isClip) {
+          callback(pointer, endset, link);
+        }
       });
     });
-
-    return hash;
-  }
-
-  function pushEndset(link, endset, hash) {
-    endset.pointers.forEach(p => {
-      if (p.isClip) { hash.push(p.origin, { clip: p, endset, link }); }
-    });
-  }
-
-  return { build };
+  });
 }

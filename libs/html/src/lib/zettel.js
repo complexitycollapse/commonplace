@@ -1,5 +1,5 @@
 import { addProperties, addMethods, Endset, testing } from '@commonplace/core';
-import { ZettelSchneider } from './zettel-schneider';
+import { SingleZettelSchneider } from './zettel-schneider';
 
 export function Zettel(clip) {
   let obj = {
@@ -29,7 +29,7 @@ export function Zettel(clip) {
   }
 
   function addLink(link) {
-    let parts = ZettelSchneider(clip, [link], obj.key).zettel();
+    let parts = SingleZettelSchneider(clip, [link], obj.key).zettel();
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {

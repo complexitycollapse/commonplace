@@ -1,5 +1,5 @@
 import { ZettelFragment } from './zettel-fragment';
-import { ZettelSchneider, RenderLink } from '@commonplace/html';
+import { ManyZettelSchneider, RenderLink } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToDoc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
@@ -29,7 +29,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let links = (await loadAll(doc.overlay, true)).map(RenderLink);
-      let zettel = doc.clips.map((c, index) => ZettelSchneider(c, links, index.toString()).zettel()).flat();
+      let zettel = ManyZettelSchneider(doc.clips, links).zettel();
       let fragment = fragmentize(zettel);
 
       let parts = await loadAll(doc.clips, false);

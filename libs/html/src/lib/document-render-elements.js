@@ -1,5 +1,5 @@
 import { addProperties, addMethods, listTable } from '@commonplace/core';
-import { ZettelSchneider } from '..';
+import { ManyZettelSchneider } from '..';
 import { RootFragment } from './fragment';
 import { RenderLinkFactory } from './render-link-factory';
 
@@ -30,12 +30,7 @@ export function DocumentRenderElements(doc, links) {
   function zettel() {
     if (!zettelCache) {
       let renderLinks = ensureRenderLinks();
-
-      let clipToZettel = (clip, index) =>
-        ZettelSchneider(clip, renderLinks, index.toString())
-          .zettel();
-
-      zettelCache = doc.clips.map(clipToZettel).flat();
+      zettelCache = ManyZettelSchneider(doc.clips, renderLinks).zettel();
     }
     return zettelCache;
   }
