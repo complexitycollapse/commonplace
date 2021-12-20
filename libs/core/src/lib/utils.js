@@ -39,7 +39,7 @@ export function hashTable() {
 
   function get(key) {
     if (hasKey(key)) { return table[key]; }
-    else { return []; }
+    else { return undefined; }
   }
 
   function hasKey(name) {
@@ -72,7 +72,7 @@ export function listTable() {
 
   return finalObject(obj, {
     push,
-    get: table.get,
+    get: key => table.get(key) ?? [],
     hasKey: table.hasKey,
     keys: table.keys
   });

@@ -63,9 +63,9 @@ describe('getObject/addObject', () => {
     expect(cache.getObject("object name")).toBe(object);
   });
 
-  test('get object returns empty array for a missing object', () => {
+  test('getObject returns undefined for a missing object', () => {
     let cache = PartCache();
 
-    expect(cache.getObject("object name")).toEqual([]);
+    expect(cache.getObject("object name")).toBe(undefined);
   });
 });
