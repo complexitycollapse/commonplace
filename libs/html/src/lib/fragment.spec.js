@@ -17,7 +17,7 @@ function mock(tryAddResult, clip) {
   let obj = {
     clip,
     children: [],
-    tryAdd(frag) {
+    tryAddFragment(frag) {
       if (tryAddResult === "engulfs") {
         obj.children.push(frag);
       }
@@ -28,54 +28,54 @@ function mock(tryAddResult, clip) {
   return obj;
 }
 
-describe('tryAdd', () => {
+describe('tryAddFragment', () => {
   it('returns "engulfs" if this engulfs that', () => {
     let us = make(makeSpan());
     let that = make(us.clip.clone({length: 1}));
 
-    expect(us.tryAdd(that)).toBe("engulfs");
+    expect(us.tryAddFragment(that)).toBe("engulfs");
   });
 
   it('returns "engulfs" if the fragment is the RootFragment', () => {
     let us = RootFragment();
     let that = make(makeSpan());
 
-    expect(us.tryAdd(that)).toBe("engulfs");
+    expect(us.tryAddFragment(that)).toBe("engulfs");
   });
 
   it('returns "engulfedBy" if this engulfs that', () => {
     let that = make(makeSpan());
     let us = make(that.clip.clone({length: 1}));
 
-    expect(us.tryAdd(that)).toBe("engulfedBy");
+    expect(us.tryAddFragment(that)).toBe("engulfedBy");
   });
 
   it('returns "engulfedBy" if that is the root fragment', () => {
     let us = make(makeSpan());
     let that = RootFragment();
 
-    expect(us.tryAdd(that)).toBe("engulfedBy");
+    expect(us.tryAddFragment(that)).toBe("engulfedBy");
   });
 
   it('returns "overlapping" if this overlaps that', () => {
     let that = make(makeSpan());
     let us = make(that.clip.clone({start: that.clip.start + 1}));
 
-    expect(us.tryAdd(that)).toBe("overlapping");
+    expect(us.tryAddFragment(that)).toBe("overlapping");
   });
 
   it('returns "separate" if the fragments do not overlap', () => {
     let that = make(makeSpan());
     let us = make(that.clip.clone({start: that.clip.next}));
 
-    expect(us.tryAdd(that)).toBe("separate");
+    expect(us.tryAddFragment(that)).toBe("separate");
   });
 
   it('adds the fragment as a child if this engulfs it', () => {
     let us = make(makeSpan());
     let that = make(us.clip.clone({length: 1}));
 
-    us.tryAdd(that);
+    us.tryAddFragment(that);
 
     expect(us.children).toEqual([that]);
     expect(us.children[0]).toBe(that);
@@ -86,7 +86,7 @@ describe('tryAdd', () => {
       let us = RootFragment();
       let that = make(makeSpan());
 
-      us.tryAdd(that);
+      us.tryAddFragment(that);
 
       expect(us.children).toEqual([that]);
       expect(us.children[0]).toBe(that);
@@ -96,7 +96,7 @@ describe('tryAdd', () => {
       let that = make(makeSpan());
       let us = make(that.clip.clone({length: 1}));
 
-      us.tryAdd(that);
+      us.tryAddFragment(that);
 
       expect(us.children).toEqual([]);
     });
@@ -105,7 +105,7 @@ describe('tryAdd', () => {
       let that = make(makeSpan());
       let us = make(that.clip.clone({start: that.clip.next}));
 
-      us.tryAdd(that);
+      us.tryAddFragment(that);
 
       expect(us.children).toEqual([]);
     });
@@ -114,7 +114,7 @@ describe('tryAdd', () => {
       let that = make(makeSpan());
       let us = make(that.clip.clone({start: that.clip.start + 1}));
 
-      us.tryAdd(that);
+      us.tryAddFragment(that);
 
       expect(us.children).toEqual([]);
     });
@@ -126,7 +126,7 @@ describe('tryAdd', () => {
       parent.children.push(mock("separate"));
       let that = engulfedFragment(parent);
 
-      parent.tryAdd(that);
+      parent.tryAddFragment(that);
 
       expect(parent.children).toContain(that);
     });
@@ -137,7 +137,7 @@ describe('tryAdd', () => {
       parent.children.push(child);
       let that = engulfedFragment(parent);
 
-      let result = parent.tryAdd(that);
+      let result = parent.tryAddFragment(that);
 
       expect(result).toBe("engulfs");
       expect(parent.children).not.toContain(that);
@@ -150,7 +150,7 @@ describe('tryAdd', () => {
       let child = mock("engulfedBy", that.clip.clone({length: 1}));
       parent.children.push(child);
 
-      let result = parent.tryAdd(that);
+      let result = parent.tryAddFragment(that);
 
       expect(result).toBe("engulfs");
       expect(parent.children).toContain(that);
@@ -165,7 +165,7 @@ describe('tryAdd', () => {
       parent.children.push(engulfedChild1);
       parent.children.push(engulfedChild2);
 
-      let result = parent.tryAdd(that);
+      let result = parent.tryAddFragment(that);
 
       expect(result).toBe("engulfs");
       expect(parent.children).not.toContain(engulfedChild1);
@@ -182,7 +182,7 @@ describe('tryAdd', () => {
       parent.children.push(engulfedChild);
       parent.children.push(nonEngulfedChild);
 
-      let result = parent.tryAdd(that);
+      let result = parent.tryAddFragment(that);
 
       expect(result).toBe("engulfs");
       expect(parent.children).toContain(nonEngulfedChild);
@@ -197,7 +197,7 @@ describe('tryAdd', () => {
       parent.children.push(engulfedChild);
       parent.children.push(overlappingChild);
 
-      let result = parent.tryAdd(that);
+      let result = parent.tryAddFragment(that);
 
       expect(result).toBe("overlapping");
       expect(parent.children).not.toContain(that);

@@ -11,7 +11,7 @@ export function Fragment(clip, endset, renderLink) {
     renderLink
   });
 
-  function tryAdd(frag) {
+  function tryAddFragment(frag) {
     let engulfResult = engulfs(frag.clip);
 
     if (engulfResult === "engulfs") {
@@ -51,7 +51,7 @@ export function Fragment(clip, endset, renderLink) {
     let interposing = false;
 
     for(let existingChild of obj.children) {
-      let addResult = existingChild.tryAdd(possibleGrandchild);
+      let addResult = existingChild.tryAddFragment(possibleGrandchild);
       
       if (addResult === "engulfs") {
         return "addedGrandchild";
@@ -77,11 +77,11 @@ export function Fragment(clip, endset, renderLink) {
     let backup = [...obj.children];
     obj.children.splice(0, obj.children.length);
     obj.children.push(newChild);
-    backup.forEach(tryAdd);
+    backup.forEach(tryAddFragment);
   }
 
   addMethods(obj, {
-    tryAdd
+    tryAddFragment
   });
 
   return obj;

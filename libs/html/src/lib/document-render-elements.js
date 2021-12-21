@@ -69,7 +69,7 @@ export function DocumentRenderElements(doc, links) {
             break;
           }
         }
-        if (!overlapping) { fragmentTreeCache.tryAdd(frags[i]); }
+        if (!overlapping) { fragmentTreeCache.tryAddFragment(frags[i]); }
       }
     }
   }
