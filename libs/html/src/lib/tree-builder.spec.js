@@ -16,8 +16,14 @@ describe('build', () => {
     let zettel = makeZettelArray(1, 10, 20, 10, 30, 10);
     let copy = [...zettel];
 
-    TreeBuilder(zettel).build();
+    TreeBuilder(zettel, []).build();
 
     expect(zettel).toEqual(copy);
+  });
+
+  it('returns an empty node when there are no Zettel', () => {
+    let actual = TreeBuilder([], []).build();
+
+    expect(actual.children).toEqual([]);
   });
 });

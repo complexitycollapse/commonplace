@@ -22,7 +22,7 @@ export function Zettel(clip) {
   function addEndset(endset, link) {
     let index = link.endsets.indexOf(endset);
     let newEndset = makeModifiedEndset(endset, link, index);
-    if (hasModifiedEndset(newEndset)) {
+    if (obj.hasModifiedEndset(newEndset)) {
       return;
     }
     obj.endsets.push(newEndset);
@@ -43,32 +43,18 @@ export function Zettel(clip) {
     return parts;
   }
 
-  function endsetsNotInOther(otherZettel) {
-    if (otherZettel === undefined) {
+  function endsetsNotInOther(other) {
+    if (other === undefined) {
       return [...obj.endsets];
     }
-  
-    let openings = [];
-  
-    obj.endsets.forEach(ourEndset => {
-      if (!otherZettel.hasModifiedEndset(ourEndset)) {
-        openings.push(ourEndset);
-      }
-    });
-  
-    return openings;
-  }
-
-  function hasModifiedEndset(endset) {
-    return obj.endsets.find(ours => 
-      endset.link === ours.link && endset.index === ours.index);
+    return endsetsInObjButNotInOther(obj, other);
   }
 
   addMethods(obj, {
     addEndset,
     addLink,
     endsetsNotInOther,
-    hasModifiedEndset
+    hasModifiedEndset: e => objHasModifiedEndset(obj, e)
   });
 
   return obj;
@@ -114,3 +100,20 @@ export let zettelTesting = {
     };
   }
 };
+
+export function endsetsInObjButNotInOther(obj, other) {
+  let openings = [];
+
+  obj.endsets.forEach(ourEndset => {
+    if (!other.hasModifiedEndset(ourEndset)) {
+      openings.push(ourEndset);
+    }
+  });
+
+  return openings;
+}
+
+export function objHasModifiedEndset(obj, endset) {
+  return obj.endsets.find(ours => 
+    endset.link === ours.link && endset.index === ours.index);
+}
