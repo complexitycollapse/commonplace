@@ -8,7 +8,11 @@ function makeZettel(start, length) {
 }
 
 function makeZettelArray(...array) {
-  return array.map(x => makeZettel(x[0], x[1]));
+  let result = [];
+  while(array.length > 0) {
+    result.push(makeZettel(array.shift(), array.shift()));
+  }
+  return result;
 }
 
 describe('build', () => {
@@ -26,4 +30,11 @@ describe('build', () => {
 
     expect(actual.children).toEqual([]);
   });
+
+  it('returns a node with the passed singleton Zettel as child', () => {
+    let zettel = makeZettel(10, 10);
+    let actual = TreeBuilder([zettel], []).build();
+
+    expect(actual.children).toEqual([zettel]);
+  })
 });
