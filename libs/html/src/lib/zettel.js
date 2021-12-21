@@ -54,7 +54,8 @@ export function Zettel(clip) {
     addEndset,
     addLink,
     endsetsNotInOther,
-    hasModifiedEndset: e => objHasModifiedEndset(obj, e)
+    hasModifiedEndset: e => objHasModifiedEndset(obj, e),
+    sharedEndsets: z => sharedEndsets(obj, z)
   });
 
   return obj;
@@ -111,6 +112,18 @@ export function endsetsInObjButNotInOther(obj, other) {
   });
 
   return openings;
+}
+
+export function sharedEndsets(obj1, obj2) {
+  let common = [];
+
+  obj1.endsets.forEach(ourEndset => {
+    if (obj2.hasModifiedEndset(ourEndset)) {
+      common.push(ourEndset);
+    }
+  });
+
+  return common;
 }
 
 export function objHasModifiedEndset(obj, endset) {

@@ -248,3 +248,21 @@ describe('endsetsNotInOther', () => {
     expect(z1.endsetsNotInOther(z2)[0].name).toBe("bar2");
   });
 });
+
+describe('sharedEndsets', () => {
+  it('returns endsets that the two zettel have in common', () => {
+    let endset1 = Endset("bar1", []), endset2 = Endset("bar2", []), endset3 = Endset("bar3", []), endset4 = Endset("bar4", []);
+    let link = makeLink("foo", endset1, endset2, endset3);
+    let z1 = make(), z2 = make();
+    z1.addEndset(endset1, link);
+    z1.addEndset(endset2, link);
+    z1.addEndset(endset3, link);
+
+    z2.addEndset(endset2, link);
+    z2.addEndset(endset3, link);
+    z2.addEndset(endset4, link);
+
+    expect(z1.sharedEndsets(z2)).toHaveLength(2);
+    expect(z1.sharedEndsets(z2).map(e => e.name)).toEqual(["bar2", "bar3"]);
+  });
+});
