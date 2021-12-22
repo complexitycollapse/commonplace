@@ -1,15 +1,16 @@
 import { addProperties, addMethods, Endset, testing } from '@commonplace/core';
 import { SingleZettelSchneider } from './zettel-schneider';
+import { StructureElement } from './structure-element';
 
 export function Zettel(clip) {
-  let obj = {
-    content: undefined,
-    key: undefined
-  };
+  let base = StructureElement([]);
+
+  let obj = Object.create(base);
+  obj.content = undefined;
+  obj.key = undefined;
 
   addProperties(obj, {
-    clip,
-    endsets: [],
+    clip
   });
 
   function makeModifiedEndset(es, link, index) {
@@ -47,15 +48,13 @@ export function Zettel(clip) {
     if (other === undefined) {
       return [...obj.endsets];
     }
-    return endsetsInObjButNotInOther(obj, other);
+    return base.endsetsNotInOther(other);
   }
 
   addMethods(obj, {
     addEndset,
     addLink,
-    endsetsNotInOther,
-    hasModifiedEndset: e => objHasModifiedEndset(obj, e),
-    sharedEndsets: z => sharedEndsets(obj, z)
+    endsetsNotInOther
   });
 
   return obj;
@@ -101,32 +100,3 @@ export let zettelTesting = {
     };
   }
 };
-
-export function endsetsInObjButNotInOther(obj, other) {
-  let openings = [];
-
-  obj.endsets.forEach(ourEndset => {
-    if (!other.hasModifiedEndset(ourEndset)) {
-      openings.push(ourEndset);
-    }
-  });
-
-  return openings;
-}
-
-export function sharedEndsets(obj1, obj2) {
-  let common = [];
-
-  obj1.endsets.forEach(ourEndset => {
-    if (obj2.hasModifiedEndset(ourEndset)) {
-      common.push(ourEndset);
-    }
-  });
-
-  return common;
-}
-
-export function objHasModifiedEndset(obj, endset) {
-  return obj.endsets.find(ours => 
-    endset.link === ours.link && endset.index === ours.index);
-}

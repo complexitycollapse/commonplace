@@ -1,18 +1,7 @@
-import { addMethods, addProperties } from "@commonplace/core";
-import { objHasModifiedEndset, endsetsInObjButNotInOther, sharedEndsets } from "./zettel";
+import { StructureElement } from "./structure-element";
 
 export function Node(endsets) {
-  let obj = { children: [] };
-
-  addProperties(obj, {
-    endsets
-  });
-
-  addMethods(obj, {
-    hasModifiedEndset: e => objHasModifiedEndset(obj, e),
-    endsetsNotInOther: other => endsetsInObjButNotInOther(obj, other),
-    sharedEndsets: n => sharedEndsets(obj, n)
-  });
-
+  let obj = Object.create(StructureElement(endsets));
+  obj.children = [];
   return obj;
 }

@@ -1,4 +1,4 @@
-import { finalObject, addMethods } from "@commonplace/core";
+import { finalObject } from "@commonplace/core";
 import { Node } from "./node";
 
 export function TreeBuilder(zettel) {
@@ -40,6 +40,7 @@ export function TreeBuilder(zettel) {
       if (next.endsetsNotInOther(node).length > 0) {
         node.children.push(descend(node));
       } else {
+        // The next zettel should be added to this node
         node.children.push(next);
         remaining.shift();
       }
