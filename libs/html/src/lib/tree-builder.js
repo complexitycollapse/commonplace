@@ -1,7 +1,7 @@
 import { finalObject, addMethods } from "@commonplace/core";
 import { Node } from "./node";
 
-export function TreeBuilder(zettel, renderLinks) {
+export function TreeBuilder(zettel) {
   let remaining = [...zettel];
 
   let obj = {};
