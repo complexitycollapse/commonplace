@@ -17,7 +17,8 @@ export function TreeBuilder(zettel, renderLinks) {
   }
 
   function ascend(child, limits) {
-    let node = Node([...(remaining[0])]);
+    let nodeEndsets = child.sharedEndsets(remaining[0]);
+    let node = Node(nodeEndsets);
     node.children.push(child);
     return gobble(limits, node);
   }
