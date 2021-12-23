@@ -1,9 +1,12 @@
 import { describe, it, expect, test } from '@jest/globals';
-import { Zettel } from './zettel';
+import { Zettel, zettelTesting } from './zettel';
 import { Span, Link, Endset, testing, LinkPointer } from '@commonplace/core';
 
 let toEqualSpan = testing.spans.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
+let addEndsets = zettelTesting.addEndsets;
+let addEndset = zettelTesting.addEndset;
+let addExistingEndsets = zettelTesting.addExistingEndsets;
 
 expect.extend({
   toEqualSpan
@@ -264,5 +267,37 @@ describe('sharedEndsets', () => {
 
     expect(z1.sharedEndsets(z2)).toHaveLength(2);
     expect(z1.sharedEndsets(z2).map(e => e.name)).toEqual(["bar2", "bar3"]);
+  });
+});
+
+describe('sameEndsets', () => {
+  it('returns true if they both have no endsets', () => {
+    expect(make().sameEndsets(make())).toBeTruthy();
+  });
+
+  it('returns false if this has an endset and that doesnt', () => {
+    let ths = make();
+    addEndset(ths, "foo");
+    expect(ths.sameEndsets(make())).toBeFalsy();
+  });
+
+  it('returns false if that has an endset and this doesnt', () => {
+    let that = make();
+    addEndset(that, "foo");
+    expect(make().sameEndsets(that)).toBeFalsy();
+  });
+
+  it('returns true if they both have the same endset', () => {
+    let ths = make(), that = make();
+    let endset = addEndset(ths, "foo");
+    addExistingEndsets(that, [endset]);
+    expect(ths.sameEndsets(that)).toBeTruthy();
+  });
+
+  it('returns true if they both have the same endsets', () => {
+    let ths = make(), that = make();
+    let endsets = addEndsets(ths, "foo", "bar", "baz");
+    addExistingEndsets(that, endsets);
+    expect(ths.sameEndsets(that)).toBeTruthy();
   });
 });

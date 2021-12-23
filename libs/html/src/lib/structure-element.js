@@ -30,6 +30,11 @@ export function StructureElement(endsets) {
   
     return common;
   }
+
+  function sameEndsets(other) {
+    let length = obj.endsets.length;
+    return other.endsets.length === length && obj.sharedEndsets(other).length === length;
+  }
   
   function hasModifiedEndset(endset) {
     return obj.endsets.find(ours => 
@@ -39,7 +44,8 @@ export function StructureElement(endsets) {
   addMethods(obj, {
     hasModifiedEndset,
     endsetsNotInOther,
-    sharedEndsets
+    sharedEndsets,
+    sameEndsets
   });
 
   return obj;

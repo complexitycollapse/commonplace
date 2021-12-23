@@ -1,4 +1,4 @@
-import { addProperties, addMethods, Endset, testing } from '@commonplace/core';
+import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonplace/core';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 
@@ -98,5 +98,32 @@ export let zettelTesting = {
       message: () => `did not find endset ${JSON.stringify(expectedEndset)}`,
       pass: false
     };
+  },
+
+  makeZettel(start, length) {
+    return Zettel(Span("origin", start, length));
+  },
+  
+  makeZettelArray(...array) {
+    let result = [];
+    while(array.length > 0) {
+      result.push(zettelTesting.makeZettel(array.shift(), array.shift()));
+    }
+    return result;
+  },
+  
+  addEndsets(zettel, ...endsetNames) {
+    return endsetNames.map(name => zettelTesting.addEndset(zettel, name));
+  },
+  
+  addEndset(zettel, endsetName) {
+    let endset = Endset(endsetName, []);
+    let link = Link("paragraph", endset);
+    zettel.addEndset(endset, link);
+    return [endset, link];
+  },
+
+  addExistingEndsets(zettel, endsetsAndLinks){
+    endsetsAndLinks.forEach(el => zettel.addEndset(el[0], el[1]));
   }
 };
