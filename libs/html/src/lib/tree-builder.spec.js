@@ -1,34 +1,12 @@
-import { test, expect, describe, it } from '@jest/globals';
-import { Zettel } from './zettel';
-import { Span, Endset, Link } from '@commonplace/core';
+import { expect, describe, it } from '@jest/globals';
+import { zettelTesting } from './zettel';
 import { TreeBuilder } from './tree-builder';
 
-function makeZettel(start, length) {
-  return Zettel(Span("origin", start, length));
-}
-
-function makeZettelArray(...array) {
-  let result = [];
-  while(array.length > 0) {
-    result.push(makeZettel(array.shift(), array.shift()));
-  }
-  return result;
-}
-
-function addEndsets(zettel, ...endsetNames) {
-  return endsetNames.map(name => addEndset(zettel, name));
-}
-
-function addEndset(zettel, endsetName) {
-  let endset = Endset(endsetName, []);
-  let link = Link("paragraph", endset);
-  zettel.addEndset(endset, link);
-  return [endset, link];
-}
-
-function addExistingEndsets(zettel, endsetsAndLinks){
-  endsetsAndLinks.forEach(el => zettel.addEndset(el[0], el[1]));
-}
+let addExistingEndsets = zettelTesting.addExistingEndsets;
+let makeZettelArray = zettelTesting.makeZettelArray;
+let makeZettel = zettelTesting.makeZettel;
+let addEndsets = zettelTesting.addEndsets;
+let addEndset = zettelTesting.addEndset;
 
 describe('build', () => {
   it('does not change the passed zettel array', () => {
@@ -107,5 +85,75 @@ describe('build', () => {
 
     expect(actual.children[0].children[0]).toEqual(zettel1);
     expect(actual.children[1].children[0]).toEqual(zettel2);
+  });
+
+  it("parses a tree with multiple levels", () => {
+    let zettel1 = makeZettel(10, 10);
+    let endsets = addEndsets(zettel1, "foo", "bar");
+
+    let zettel2 = makeZettel(20, 10);
+    addExistingEndsets(zettel2, [endsets[0]]);
+
+    let zettel3 = makeZettel(30, 10);
+    addExistingEndsets(zettel3, [endsets[0]]);
+    let zettel3ExtraEndset = addEndset(zettel3, "baz");
+    
+    let zettel4 = makeZettel(40, 10);
+    addExistingEndsets(zettel4, [endsets[0], zettel3ExtraEndset]);
+
+    let zettel5 = makeZettel(50, 10);
+    
+    let actual = TreeBuilder([zettel1, zettel2, zettel3, zettel4, zettel5]).build();
+
+    expect(actual.children[0].children[0].children[0]).toEqual(zettel1);
+    expect(actual.children[0].children[1]).toEqual(zettel2);
+    expect(actual.children[0].children[2].children[0]).toEqual(zettel3);
+    expect(actual.children[0].children[2].children[1]).toEqual(zettel4);
+    expect(actual.children[1]).toEqual(zettel5);
+  });
+
+  it("parses a tree that requires a limited ascent after a descend, with two-level limit violation", () => {
+    let zettel1 = makeZettel(10, 10);
+    let foo = addEndset(zettel1, "foo");
+
+    let zettel2 = makeZettel(20, 10);
+    addExistingEndsets(zettel2, [foo]);
+    let bar = addEndset(zettel2, "bar");
+    addEndset(zettel2, "baz");
+
+    let zettel3 = makeZettel(30, 10);
+    addExistingEndsets(zettel3, [foo, bar]);
+    
+    let zettel4 = makeZettel(40, 10);
+
+    let actual = TreeBuilder([zettel1, zettel2, zettel3, zettel4]).build();
+
+    expect(actual.children[0].children[0]).toEqual(zettel1);
+    expect(actual.children[0].children[1].children[0].children[0]).toEqual(zettel2);
+    expect(actual.children[0].children[1].children[1]).toEqual(zettel3);
+    expect(actual.children[1]).toEqual(zettel4);
+  });
+
+  it("parses a tree that requires a limited ascent after a descend, with one-level limit violation", () => {
+    let zettel1 = makeZettel(10, 10);
+    let foo = addEndset(zettel1, "foo");
+
+    let zettel2 = makeZettel(20, 10);
+    addExistingEndsets(zettel2, [foo]);
+    let bar = addEndset(zettel2, "bar");
+    addEndset(zettel2, "baz");
+
+    let zettel3 = makeZettel(30, 10);
+    addExistingEndsets(zettel3, [foo, bar]);
+    
+    let zettel4 = makeZettel(40, 10);
+    addExistingEndsets(zettel4, [foo]);
+
+    let actual = TreeBuilder([zettel1, zettel2, zettel3, zettel4]).build();
+
+    expect(actual.children[0]).toEqual(zettel1);
+    expect(actual.children[1].children[0].children[0]).toEqual(zettel2);
+    expect(actual.children[1].children[1]).toEqual(zettel3);
+    expect(actual.children[2]).toEqual(zettel4);
   });
 });

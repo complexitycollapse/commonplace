@@ -8,7 +8,7 @@ export function TreeBuilder(zettel) {
 
   function build() {
     if (remaining.length === 0) { return Node(); }
-    return descend(Node([]));
+    return descend(undefined);
   }
 
   function descend(limits) {
@@ -27,8 +27,11 @@ export function TreeBuilder(zettel) {
     for (let next = remaining[0]; remaining.length !== 0; next = remaining[0]) {
       
       // The next zettel breaks the limits of this one
-      if (limits.endsetsNotInOther(next).length > 0) {
-        return node;
+      if (limits) {
+        if (limits.endsetsNotInOther(next).length > 0 || 
+        limits.sameEndsets(next)) {
+          return node;
+        }
       }
 
       // The next zettel needs to belong to the parent node
