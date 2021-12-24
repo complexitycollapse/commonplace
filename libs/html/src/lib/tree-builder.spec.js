@@ -24,6 +24,12 @@ describe('build', () => {
     expect(actual.children).toEqual([]);
   });
 
+  it('returns a node with no links when there are no Zettel', () => {
+    let actual = TreeBuilder([]).build();
+
+    expect(actual.endsets).toEqual([]);
+  });
+
   it('returns a node with the passed singleton Zettel as child', () => {
     let zettel = makeZettel(10, 10);
     let actual = TreeBuilder([zettel]).build();

@@ -1,6 +1,7 @@
 import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonplace/core';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
+import { RenderLink } from './render-link';
 
 export function Zettel(clip) {
   let base = StructureElement([]);
@@ -10,7 +11,8 @@ export function Zettel(clip) {
   obj.key = undefined;
 
   addProperties(obj, {
-    clip
+    clip,
+    isNode: false
   });
 
   function makeModifiedEndset(es, link, index) {
@@ -27,6 +29,7 @@ export function Zettel(clip) {
       return;
     }
     obj.endsets.push(newEndset);
+    if (link.isStructural) { obj.structuralEndsets.push(newEndset) };
   }
 
   function addLink(link) {
@@ -36,6 +39,7 @@ export function Zettel(clip) {
       obj.endsets.forEach(e => {
         if (!z.hasModifiedEndset(e)) {
           z.endsets.push(e);
+          if (link.isStructural) { obj.structuralEndsets.push(e) };
         }
         z.content = obj.content;
       });
@@ -44,11 +48,11 @@ export function Zettel(clip) {
     return parts;
   }
 
-  function endsetsNotInOther(other) {
+  function endsetsNotInOther(other, onlyStructural) {
     if (other === undefined) {
       return [...obj.endsets];
     }
-    return base.endsetsNotInOther(other);
+    return base.endsetsNotInOther(other, onlyStructural);
   }
 
   addMethods(obj, {
@@ -118,7 +122,7 @@ export let zettelTesting = {
   
   addEndset(zettel, endsetName) {
     let endset = Endset(endsetName, []);
-    let link = Link("paragraph", endset);
+    let link = RenderLink(Link("paragraph", endset));
     zettel.addEndset(endset, link);
     return [endset, link];
   },

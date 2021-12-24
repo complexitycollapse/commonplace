@@ -5,13 +5,19 @@ export function StructureElement(endsets) {
   
   addProperties(obj, {
     endsets,
+    structuralEndsets: endsets.filter(e => e.link.isStructural)
   });
 
-  function endsetsNotInOther(other) {
+  function pickEndsets(onlyStructural) {
+    return onlyStructural ? obj.structuralEndsets : endsets;
+  }
+
+  function endsetsNotInOther(other, onlyStructural) {
     let openings = [];
+    let objEndsets = obj.pickEndsets(onlyStructural);
   
-    obj.endsets.forEach(ourEndset => {
-      if (!other.hasModifiedEndset(ourEndset)) {
+    objEndsets.forEach(ourEndset => {
+      if (!other.hasModifiedEndset(ourEndset, onlyStructural)) {
         openings.push(ourEndset);
       }
     });
@@ -19,11 +25,12 @@ export function StructureElement(endsets) {
     return openings;
   }
   
-  function sharedEndsets(other) {
+  function sharedEndsets(other, onlyStructural) {
     let common = [];
+    let objEndsets = obj.pickEndsets(onlyStructural);
   
-    obj.endsets.forEach(ourEndset => {
-      if (other.hasModifiedEndset(ourEndset)) {
+    objEndsets.forEach(ourEndset => {
+      if (other.hasModifiedEndset(ourEndset, onlyStructural)) {
         common.push(ourEndset);
       }
     });
@@ -31,13 +38,15 @@ export function StructureElement(endsets) {
     return common;
   }
 
-  function sameEndsets(other) {
-    let length = obj.endsets.length;
-    return other.endsets.length === length && obj.sharedEndsets(other).length === length;
+  function sameEndsets(other, onlyStructural) {
+    let otherEndsets = other.pickEndsets(onlyStructural);
+    let length = obj.pickEndsets(onlyStructural).length;
+    return otherEndsets.length === length && obj.sharedEndsets(other, onlyStructural).length === length;
   }
   
-  function hasModifiedEndset(endset) {
-    return obj.endsets.find(ours => 
+  function hasModifiedEndset(endset, onlyStructural) {
+    let objEndsets = obj.pickEndsets(onlyStructural);
+    return objEndsets.find(ours => 
       endset.link === ours.link && endset.index === ours.index);
   }
 
@@ -45,7 +54,8 @@ export function StructureElement(endsets) {
     hasModifiedEndset,
     endsetsNotInOther,
     sharedEndsets,
-    sameEndsets
+    sameEndsets,
+    pickEndsets
   });
 
   return obj;

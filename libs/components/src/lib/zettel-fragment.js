@@ -1,12 +1,18 @@
 import { ZettelComponent } from './zettel-component';
-import { Fragment } from 'react';
 
-export function ZettelFragment({ fragment }) {
-  let childComponents = fragment.children.map(f => f?.frag
-    ? (<ZettelFragment key={f.key} fragment={f}/>)
-    : <ZettelComponent key={f.zettel.key} zettel={f.zettel}/>);
+export function ZettelFragment({ node }) {
+  let innerComponents = node.children.map(f => f.isNode
+    ? (<ZettelFragment key={f.key} node={f}/>)
+    : <ZettelComponent key={f.key} zettel={f}/>);
 
-  let Tag = fragment.link?.fragmentTag ?? Fragment;
+  function wrap(i) {
+    if (node.endsets.length <= i) {
+      return innerComponents;
+    } else {
+      let Tag = node.endsets[i].link.fragmentTag;
+      return (<Tag>{wrap(i + 1)}</Tag>);
+    }
+  }
 
-  return (<Tag>{childComponents}</Tag>);
+  return wrap(0);
 }

@@ -1,11 +1,11 @@
 import { ZettelFragment } from './zettel-fragment';
-import { ManyZettelSchneider, RenderLink } from '@commonplace/html';
+import { ManyZettelSchneider, RenderLinkFactory, TreeBuilder } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToDoc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docName, cache, fetcher }) {
 
-  let [fragmentState, setFragmentState] = useState(fragmentize([]));
+  let [fragmentState, setFragmentState] = useState(TreeBuilder([]).build());
 
   useEffect(() => {
     async function loadDoc() {
@@ -28,9 +28,12 @@ export function DocumentComponent({ docName, cache, fetcher }) {
       }
 
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
-      let links = (await loadAll(doc.overlay, true)).map(RenderLink);
+      let rawLinks = (await loadAll(doc.overlay, true));
+      let links = RenderLinkFactory(doc, rawLinks).renderLinks();
       let zettel = ManyZettelSchneider(doc.clips, links).zettel();
-      let fragment = fragmentize(zettel);
+      let tree = TreeBuilder(zettel).build();
+      console.log(tree);
+      //let fragment = fragmentize(zettel);
 
       let parts = await loadAll(doc.clips, false);
 
@@ -40,7 +43,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
         });
       });
 
-      setFragmentState(fragment);
+      setFragmentState(tree);
     }
 
     loadDoc();
@@ -48,7 +51,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
   return (
     <div>
-      <ZettelFragment key="froot" fragment={fragmentState}/>
+      <ZettelFragment key="froot" node={fragmentState}/>
     </div>
   );
 }
