@@ -32,8 +32,6 @@ export function DocumentComponent({ docName, cache, fetcher }) {
       let links = RenderLinkFactory(doc, rawLinks).renderLinks();
       let zettel = ManyZettelSchneider(doc.clips, links).zettel();
       let tree = TreeBuilder(zettel).build();
-      console.log(tree);
-      //let fragment = fragmentize(zettel);
 
       let parts = await loadAll(doc.clips, false);
 
@@ -57,29 +55,3 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 }
 
 export default Document;
-
-function fragmentize(zettel) {
-  let i = 0;
-  let previous = undefined;
-
-  function doFragment(endset) {
-    let list = [];
-
-    while(i < zettel.length
-      && (endset === undefined || zettel[i].hasModifiedEndset(endset))) {
-      let newEndsets = zettel[i].endsetsNotInOther(previous);
-      let nextEndset = newEndsets.find(e => e !== endset && e.link.type === "paragraph");
-      if (nextEndset) {
-        list.push(doFragment(nextEndset));
-      } else {
-        list.push({frag: false, zettel: zettel[i], key: zettel.key});
-      previous = zettel[i];
-      ++i;
-      }
-    }
-  
-    return {frag: true, children: list, link: endset?.link, key: "f" + i.toString() };    
-  }
-
-  return doFragment(undefined);
-}
