@@ -34,12 +34,6 @@ test('if the type has a style then this is set on the RenderLink', () => {
   expect(link.style).toEqual({fontWeight: "bold"});
 });
 
-test('if the type has an innerTag then this is set on the RenderLink', () => {
-  let link = RenderLink(Link("title"));
-
-  expect(link.innerTag).toBe("h1");
-});
-
 describe('fragments', () => {
   it('returns an empty array if the link has no endsets', () => {
     expect(makeParagraphLink().fragments()).toEqual([]);

@@ -2,18 +2,17 @@ import { addProperties, finalObject } from "@commonplace/core";
 import { Fragment } from "./fragment";
 
 let typeMap = {
-  paragraph: [null, null, "p"],
-  italics: [null, {fontStyle: "italic"}],
-  bold: [null, {fontWeight: "bold"}],
-  title: [null, null, "h1"]
+  paragraph: [null, "p"],
+  italics: [{fontStyle: "italic"}],
+  bold: [{fontWeight: "bold"}],
+  title: [null, "h1"]
 };
 
 export function RenderLink(link) {
   let renderLink = { modifiers: [] };
-  let [innerTag, style, fragmentTag] = typeMap[link.type] ?? [null, null, null];
+  let [style, fragmentTag] = typeMap[link.type] ?? [null, null];
 
   addProperties(renderLink, {
-    innerTag,
     style,
     fragmentTag,
     link,

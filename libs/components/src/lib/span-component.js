@@ -3,7 +3,6 @@ import { Fragment } from "react";
 export function SpanComponent({ zettel }) {
 
   let style = {};
-  let SurroundingTag = Fragment;
 
   zettel.endsets.forEach(endset => {
     let link = endset.link;
@@ -14,16 +13,13 @@ export function SpanComponent({ zettel }) {
         style[propName] = thisStyle[propName];
       });
     }
-
-    let innerTag = link.innerTag;
-    if (innerTag) { SurroundingTag = innerTag };
   });
 
   return (
     <cpla-span cpla-key={zettel.key}>
-      <SurroundingTag>
+      <span>
         <span style={style}>{zettel.content}</span>
-      </SurroundingTag>
+      </span>
     </cpla-span>
   );
 }
