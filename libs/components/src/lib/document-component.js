@@ -1,4 +1,4 @@
-import { ZettelFragment } from './zettel-fragment';
+import { ZettelSegment } from './zettel-segment';
 import { ManyZettelSchneider, RenderLinkFactory, TreeBuilder } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToDoc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
@@ -51,7 +51,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
   return (
     <div>
-      <ZettelFragment key="froot" node={fragmentState}/>
+      <ZettelSegment key="froot" node={fragmentState}/>
     </div>
   );
 }

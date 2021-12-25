@@ -1,8 +1,8 @@
 import { ZettelComponent } from './zettel-component';
 
-export function ZettelFragment({ node }) {
+export function ZettelSegment({ node }) {
   let innerComponents = node.children.map(f => f.isNode
-    ? (<ZettelFragment key={f.key} node={f}/>)
+    ? (<ZettelSegment key={f.key} node={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
   function wrap(i) {
@@ -14,5 +14,5 @@ export function ZettelFragment({ node }) {
     }
   }
 
-  return wrap(0);
+  return (<cpla-segment>{wrap(0)}</cpla-segment>);
 }
