@@ -49,7 +49,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
   return (
     <div>
-      <ZettelSegment key="froot" node={fragmentState}/>
+      <ZettelSegment key="froot" segment={fragmentState}/>
     </div>
   );
 }

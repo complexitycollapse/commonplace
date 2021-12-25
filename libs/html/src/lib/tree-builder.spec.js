@@ -18,26 +18,26 @@ describe('build', () => {
     expect(zettel).toEqual(copy);
   });
 
-  it('returns an empty node when there are no Zettel', () => {
+  it('returns an empty segment when there are no Zettel', () => {
     let actual = TreeBuilder([]).build();
 
     expect(actual.children).toEqual([]);
   });
 
-  it('returns a node with no links when there are no Zettel', () => {
+  it('returns a segment with no links when there are no Zettel', () => {
     let actual = TreeBuilder([]).build();
 
     expect(actual.endsets).toEqual([]);
   });
 
-  it('returns a node with the passed singleton Zettel as child', () => {
+  it('returns a segment with the passed singleton Zettel as child', () => {
     let zettel = makeZettel(10, 10);
     let actual = TreeBuilder([zettel]).build();
 
     expect(actual.children).toEqual([zettel]);
   });
 
-  it("puts the zettel endsets on the node", () => {
+  it("puts the zettel endsets on the segment", () => {
     let zettel = makeZettel(10, 10);
     addEndsets(zettel, "foo", "bar", "baz");
     let actual = TreeBuilder([zettel]).build();
@@ -45,7 +45,7 @@ describe('build', () => {
     expect(actual.endsets).toEqual(zettel.endsets);
   });
 
-  it("puts both zettel on the node if they have the same endsets", () => {
+  it("puts both zettel on the segment if they have the same endsets", () => {
     let zettel1 = makeZettel(10, 10);
     let endsets = addEndsets(zettel1, "foo", "bar", "baz");
     let zettel2 = makeZettel(20, 10);

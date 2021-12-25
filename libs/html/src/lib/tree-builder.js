@@ -1,5 +1,5 @@
 import { finalObject } from "@commonplace/core";
-import { Node } from "./node";
+import { ZettelSegment } from "./zettel-segment";
 
 export function TreeBuilder(zettel) {
   let remaining = [...zettel];
@@ -7,49 +7,49 @@ export function TreeBuilder(zettel) {
   let obj = {};
 
   function build() {
-    if (remaining.length === 0) { return Node([]); }
+    if (remaining.length === 0) { return ZettelSegment([]); }
     return descend(undefined);
   }
 
   function descend(limits) {
-    let node = Node([...(remaining[0].structuralEndsets)]);
-    return gobble(limits, node);
+    let segment = ZettelSegment([...(remaining[0].structuralEndsets)]);
+    return gobble(limits, segment);
   }
 
   function ascend(child, limits) {
-    let nodeEndsets = child.sharedEndsets(remaining[0], true);
-    let node = Node(nodeEndsets);
-    node.children.push(child);
-    return gobble(limits, node);
+    let segmentEndsets = child.sharedEndsets(remaining[0], true);
+    let segment = ZettelSegment(segmentEndsets);
+    segment.children.push(child);
+    return gobble(limits, segment);
   }
 
-  function gobble(limits, node) {
+  function gobble(limits, segment) {
     for (let next = remaining[0]; remaining.length !== 0; next = remaining[0]) {
       
       // The next zettel breaks the limits of this one
       if (limits) {
         if (limits.endsetsNotInOther(next, true).length > 0 || 
         limits.sameEndsets(next, true)) {
-          return node;
+          return segment;
         }
       }
 
-      // The next zettel needs to belong to the parent node
-      if (node.endsetsNotInOther(next, true).length > 0) {
-        return ascend(node, limits);
+      // The next zettel needs to belong to the parent segment
+      if (segment.endsetsNotInOther(next, true).length > 0) {
+        return ascend(segment, limits);
       }
 
       // The next zettel needs to belong to a child
-      if (next.endsetsNotInOther(node, true).length > 0) {
-        node.children.push(descend(node));
+      if (next.endsetsNotInOther(segment, true).length > 0) {
+        segment.children.push(descend(segment));
       } else {
-        // The next zettel should be added to this node
-        node.children.push(next);
+        // The next zettel should be added to this segment
+        segment.children.push(next);
         remaining.shift();
       }
     }
 
-    return node;  
+    return segment;  
   }
 
   return finalObject(obj, {

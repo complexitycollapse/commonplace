@@ -1,9 +1,9 @@
-import { describe, it, expect, test } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import { Endset, Link } from '@commonplace/core';
-import { Node } from './node';
+import { ZettelSegment } from './zettel-segment';
 
 function make(...endsets) {
-  return Node(endsets);
+  return ZettelSegment(endsets);
 }
 
 function makeEndsetsForLink(...endsetNames) {
@@ -17,11 +17,11 @@ function makeEndsetsForLink(...endsetNames) {
 }
 
 describe('endsetsNotInOther', () => {
-  it('returns an empty array if neither Node has any links', () => {
+  it('returns an empty array if neither ZettelSegment has any links', () => {
     expect(make().endsetsNotInOther(make())).toHaveLength(0);
   });
 
-  it('returns an empty array if both Nodes have the same endsets', () => {
+  it('returns an empty array if both ZettelSegments have the same endsets', () => {
     let [endset] = makeEndsetsForLink("bar");
     let z1 = make(endset), z2 = make(endset);
 

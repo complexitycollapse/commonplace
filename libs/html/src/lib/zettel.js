@@ -12,7 +12,7 @@ export function Zettel(clip) {
 
   addProperties(obj, {
     clip,
-    isNode: false
+    isSegment: false
   });
 
   function makeModifiedEndset(es, link, index) {
