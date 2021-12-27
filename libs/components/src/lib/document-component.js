@@ -1,11 +1,11 @@
 import { ZettelSegment } from './zettel-segment';
-import { ManyZettelSchneider, RenderLinkFactory, TreeBuilder } from '@commonplace/html';
-import { leafDataToLink, Part, leafDataToDoc } from '@commonplace/core';
+import { DocumentRenderElements } from '@commonplace/html';
+import { leafDataToLink, Part, leafDataToDoc, Doc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docName, cache, fetcher }) {
 
-  let [fragmentState, setFragmentState] = useState(TreeBuilder([]).build());
+  let [fragmentState, setFragmentState] = useState(DocumentRenderElements(Doc(), []).zettelTree());
 
   useEffect(() => {
     async function loadDoc() {
@@ -29,9 +29,9 @@ export function DocumentComponent({ docName, cache, fetcher }) {
 
       let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
       let rawLinks = (await loadAll(doc.overlay, true));
-      let links = RenderLinkFactory(doc, rawLinks).renderLinks();
-      let zettel = ManyZettelSchneider(doc.clips, links).zettel();
-      let tree = TreeBuilder(zettel).build();
+      let documentElements = DocumentRenderElements(doc, rawLinks);
+      let zettel = documentElements.zettel();
+      let tree = documentElements.zettelTree();
 
       let parts = await loadAll(doc.clips, false);
 

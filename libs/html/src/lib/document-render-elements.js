@@ -1,5 +1,6 @@
 import { addProperties, addMethods, listTable } from '@commonplace/core';
-import { ManyZettelSchneider } from '..';
+import { ManyZettelSchneider } from './zettel-schneider';
+import { TreeBuilder } from './tree-builder';
 import { RootFragment } from './fragment';
 import { RenderLinkFactory } from './render-link-factory';
 
@@ -33,6 +34,11 @@ export function DocumentRenderElements(doc, links) {
       zettelCache = ManyZettelSchneider(doc.clips, renderLinks).zettel();
     }
     return zettelCache;
+  }
+
+  function zettelTree() {
+    let zs = zettel();
+    return TreeBuilder(zs).build();
   }
 
   function ensureRenderLinks() {
@@ -77,7 +83,8 @@ export function DocumentRenderElements(doc, links) {
   addMethods(obj, {
     fragmentTree,
     overlappingLinks,
-    zettel
+    zettel,
+    zettelTree
   });
 
   return obj;
