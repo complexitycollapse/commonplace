@@ -17,6 +17,14 @@ test('type is set on the link', () => {
   expect(Link("my type").type).toBe("my type");
 });
 
+test('isLink is true', () => {
+  expect(Link("myType").isLink).toBeTruthy();
+});
+
+test('isClip is false', () => {
+  expect(Link("myType").isClip).toBeFalsy();
+});
+
 test('endsets is set on the link', () => {
   let endsets = [Endset("foo", [makeSpan()]), Endset("bar", [makeBox()]), Endset(undefined, [LinkPointer("foo"), DocPointer("bar")])];
 

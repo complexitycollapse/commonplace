@@ -61,6 +61,10 @@ describe('basic box functions', () => {
     expect(make().isClip).toBeTruthy();
   });
 
+  test('isLink is false', () => {
+    expect(make().isLink).toBeFalsy();
+  });
+
   test('clip type returns box', () => {
     expect(make().clipType).toBe("box");
   });

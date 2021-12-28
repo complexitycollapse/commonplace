@@ -45,6 +45,10 @@ describe('basic span functions', () => {
   test('isClip returns true', () => {
     expect(make().isClip).toBeTruthy();
   });
+
+  test('isLink is false', () => {
+    expect(make().isLink).toBeFalsy();
+  });
   
   test('clip type returns span', () => {
     expect(make().clipType).toBe("span");

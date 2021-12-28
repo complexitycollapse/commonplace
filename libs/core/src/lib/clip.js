@@ -7,7 +7,8 @@ export function Clip(clipType, origin) {
 
   addProperties(obj, {
     clipType,
-    origin
+    origin,
+    isLink: false
   });
 
   addMethods(obj, {

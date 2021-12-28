@@ -7,7 +7,9 @@ export function Link(type, ...endsets) {
 
   addProperties(obj, {
     type,
-    endsets
+    endsets,
+    isClip: false,
+    isLink: true
   });
 
   function leafData() {
