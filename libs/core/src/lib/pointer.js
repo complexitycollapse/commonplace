@@ -15,8 +15,17 @@ export function LinkPointer(linkName) {
   });
 }
 
+export function LinkTypePointer(linkType) {
+  return Pointer("link type", false, { linkType }, {
+    leafData() { return { typ: "link type", name: linkType }; }
+  });
+}
+
 export function leafDataToLinkPointer(data) {
   return LinkPointer(data.name, {});
+}
+export function leafDataToLinkTypePointer(data) {
+  return LinkTypePointer(data.name, {});
 }
 
 export function DocPointer(docName) {

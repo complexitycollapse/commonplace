@@ -1,5 +1,5 @@
 import { describe, it, expect, test } from '@jest/globals';
-import { LinkPointer, DocPointer, leafDataToLinkPointer, leafDataToDocPointer } from './pointer';
+import { LinkPointer, LinkTypePointer, DocPointer, leafDataToLinkPointer, leafDataToLinkTypePointer, leafDataToDocPointer } from './pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
@@ -7,6 +7,10 @@ import { Box } from './box';
 describe('pointerType', () => {
   it('equals "link" for LinkPointer', () => {
     expect(LinkPointer("name").pointerType).toBe("link");
+  });
+
+  it('equals "link type" for LinkTypePointer', () => {
+    expect(LinkTypePointer("name").pointerType).toBe("link type");
   });
 
   it('equals "doc" for DocPointer', () => {
@@ -25,6 +29,10 @@ describe('pointerType', () => {
 describe('isClip', () => {
   it('returns false for a LinkPointer', () => {
     expect(LinkPointer("link").isClip).toBeFalsy();
+  });
+
+  it('returns false for a LinkTypePointer', () => {
+    expect(LinkTypePointer("link").isClip).toBeFalsy();
   });
 
   it('returns false for a DocPointer', () => {
@@ -47,6 +55,12 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name"});
   });
 
+  it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
+    let leafData = LinkTypePointer("the name").leafData();
+
+    expect(leafData).toEqual({ typ: "link type", name: "the name"});
+  });
+
   it('returns object with typ "doc" and name prop when called on DocPointer', () => {
     let leafData = DocPointer("the name").leafData();
 
@@ -61,19 +75,31 @@ describe('restoring leafData', () => {
     expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
   });
 
+  test('leafDataToLinkTypePointer is inverse of leafData', () => {
+    let link = LinkTypePointer("test name");
+
+    expect(leafDataToLinkTypePointer(link.leafData())).toEqual(link);
+  });
+
   test('leafDataToDockPointer is inverse of leafData', () => {
     let doc = DocPointer("test name");
 
     expect(leafDataToDocPointer(doc.leafData())).toEqual(doc);
   });
 
-  test('leafDataToPointer is inverse of leafData', () => {
+  test('leafDataToPointer is inverse of leafData for LinkPointer', () => {
     let link = LinkPointer("test name");
 
     expect(leafDataToPointer(link.leafData())).toEqual(link);
   });
 
-  test('leafDataToPointer is inverse of leafData', () => {
+  test('leafDataToPointer is inverse of leafData for LinkTypePointer', () => {
+    let link = LinkTypePointer("test name");
+
+    expect(leafDataToPointer(link.leafData())).toEqual(link);
+  });
+
+  test('leafDataToPointer is inverse of leafData for DocPointer', () => {
     let doc = DocPointer("test name");
 
     expect(leafDataToPointer(doc.leafData())).toEqual(doc);

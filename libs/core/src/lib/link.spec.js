@@ -4,7 +4,7 @@ import { Endset } from './endset';
 import { Link, leafDataToLink } from './link';
 import { boxTesting } from './box';
 import { spanTesting } from './span';
-import { LinkPointer, DocPointer } from './pointer';
+import { LinkPointer, LinkTypePointer, DocPointer } from './pointer';
 
 expect.extend({
   hasClips
@@ -26,7 +26,11 @@ test('isClip is false', () => {
 });
 
 test('endsets is set on the link', () => {
-  let endsets = [Endset("foo", [makeSpan()]), Endset("bar", [makeBox()]), Endset(undefined, [LinkPointer("foo"), DocPointer("bar")])];
+  let endsets = [
+    Endset("foo", [makeSpan()]),
+    Endset("bar", [makeBox()]),
+    Endset(undefined, [LinkPointer("foo"), DocPointer("bar"), LinkTypePointer("baz")])
+  ];
 
   let lk = Link("my type", ...endsets);
 
