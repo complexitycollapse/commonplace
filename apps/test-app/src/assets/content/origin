@@ -1,1 +1,3 @@
 This is Hypertext!xxHere we have a long span whose purpose is to show that text can be wrapped, formatted as paragraphs, and similar things. It will hopefully be long enough to wrap across several lines when it's rendered but you never know as high def screens are quite wide.xxxxxThis is the final paragraph. And then we have some more stuff just in case.
+Now some link tests: this should be underlined, this should be struck through, and this should be both.
+ even though it is transcluded from different places.This should be both and have no break.

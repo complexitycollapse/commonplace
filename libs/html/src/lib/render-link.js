@@ -5,7 +5,9 @@ let typeMap = {
   paragraph: [null, "p"],
   italics: [{fontStyle: "italic"}],
   bold: [{fontWeight: "bold"}],
-  title: [null, "h1"]
+  title: [null, "h1"],
+  underline: [{textDecoration: "underline"}],
+  "strike through": [{textDecoration: "line-through"}]
 };
 
 export function RenderLink(link) {
