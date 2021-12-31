@@ -6,6 +6,7 @@
     {"typ": "span", "ori": "origin", "st": 357, "ln": 103},
     {"typ": "span", "ori": "origin", "st": 514, "ln": 37},
     {"typ": "span", "ori": "origin", "st": 460, "ln": 54},
+    {"typ": "span", "ori": "origin", "st": 553, "ln": 59},
     {"typ": "box", "ori": "some image", "x": 0, "y": 0, "width": 100, "height": 100}
   ],
   "odl": [
@@ -16,6 +17,9 @@
     "paragraphLink2.json",
     "paragraphLink3.json",
     "underlineLink.json",
-    "strikethroughLink.json"
+    "strikethroughLink.json",
+    "capitalizeLink.json",
+    "uppercaseLink.json",
+    "lowercaseLink.json"
   ]
 }

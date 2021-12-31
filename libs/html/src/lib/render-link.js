@@ -7,7 +7,10 @@ let typeMap = {
   bold: [{fontWeight: "bold"}],
   title: [null, "h1"],
   underline: [{textDecoration: "underline"}],
-  "strike through": [{textDecoration: "line-through"}]
+  "strike through": [{textDecoration: "line-through"}],
+  capitalize: [{textTransform: "capitalize"}],
+  uppercase: [{textTransform: "uppercase"}],
+  lowercase: [{textTransform: "lowercase"}]
 };
 
 export function RenderLink(link) {
