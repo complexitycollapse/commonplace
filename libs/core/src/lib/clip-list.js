@@ -8,17 +8,19 @@ export function ClipList(...clipDesignators) {
   let clips = [];
 
   {
-    let last = undefined;
-    clipDesignators.forEach(x => x.clipSource().forEach(s => {
-      if (last !== undefined) {
-        if (last.abuts(s)) {
-          clips.pop();
-          s = last.merge(s);
+    let lastClip = undefined;
+    clipDesignators.forEach(x => {
+      x.clipSource().forEach(c => {
+        if (lastClip !== undefined) {
+          if (lastClip.abuts(c)) {
+            clips.pop();
+            c = lastClip.merge(c);
+          }
         }
-      }
-      last = s;
-      clips.push(s);
-    }));
+        lastClip = c;
+        clips.push(c);
+      });
+    });
   }
 
   addProperties(obj, {
@@ -33,27 +35,44 @@ export function ClipList(...clipDesignators) {
     return ClipIterator(state => [state.shift(), state], [...clips]);
   }
 
+  function isSpan(x) {
+    return x.isClip && x.clipType == "span";
+  }
+
   function range(start, length) {
     if (length === 0) return ClipList();
 
     let rangeSpans = [];
     let i = 0;
 
-    while(clips[i] !== undefined && start >= clips[i].length) {
-      start -= clips[i].length;
+    function editDecisionLength(ed) {
+      if (ed.isClip) {
+        if (ed.clipType === "span") { return ed.length; }
+        else { return 1; }
+      } else {
+        return 0;
+      }
+    }
+
+    function crop(ed, startAdjust, newLength) {
+      return isSpan(ed) ? ed.crop(startAdjust, newLength) : ed;
+    }
+
+    while(clips[i] !== undefined && start >= editDecisionLength(clips[i])) {
+      start -= editDecisionLength(clips[i]);
       i += 1;
     }
 
     if (clips[i] === undefined) return ClipList();
 
-    let firstSpan = clips[i].crop(start, length);
+    let firstSpan = crop(clips[i], start, length);
     rangeSpans.push(firstSpan);
-    length -= firstSpan.length;
+    length -= editDecisionLength(firstSpan);
     i += 1;
 
     while(clips[i] !== undefined && length > 0) {
-      rangeSpans.push(clips[i].crop(0, length));
-      length -= clips[i].length;
+      rangeSpans.push(crop(clips[i], 0, length));
+      length -= editDecisionLength(clips[i]);
       i += 1;
     }
     
