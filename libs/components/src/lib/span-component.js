@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 export function SpanComponent({ zettel }) {
 
   let style = {};
@@ -7,7 +5,7 @@ export function SpanComponent({ zettel }) {
   zettel.endsets.forEach(endset => {
     let link = endset.link;
     
-    let thisStyle = link.style;
+    let thisStyle = link.style();
     if (thisStyle) {
       Object.getOwnPropertyNames(thisStyle).forEach(propName => {
         style[propName] = thisStyle[propName];

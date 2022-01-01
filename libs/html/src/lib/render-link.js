@@ -10,15 +10,18 @@ let typeMap = {
   "strike through": [{textDecoration: "line-through"}],
   capitalize: [{textTransform: "capitalize"}],
   uppercase: [{textTransform: "uppercase"}],
-  lowercase: [{textTransform: "lowercase"}]
+  lowercase: [{textTransform: "lowercase"}],
+  "left aligned text": [{textAlign: "left"}],
+  "right aligned text": [{textAlign: "right"}],
+  "centre aligned text": [{textAlign: "center"}],
+  "justified text": [{textAlign: "justify"}]
 };
 
 export function RenderLink(link) {
   let renderLink = { modifiers: [] };
-  let [style, fragmentTag] = typeMap[link.type] ?? [null, null];
+  let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
 
   addProperties(renderLink, {
-    style,
     fragmentTag,
     link,
     endsets: link.endsets,
@@ -42,7 +45,13 @@ export function RenderLink(link) {
   return fragments;
   }
 
+  function style() {
+    let mod = renderLink.modifiers.find(l => l.style());
+    return mod ? mod.style() : inlineStyle;
+  }
+
   return finalObject(renderLink, {
-    fragments
+    fragments,
+    style
   });
 }

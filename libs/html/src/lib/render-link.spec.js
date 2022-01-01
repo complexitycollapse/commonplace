@@ -18,7 +18,7 @@ test('if the type is unknown then the RenderLink properties are falsy', () => {
   let link = RenderLink(Link("some unknown type"));
 
   expect(link.innerTag).toBeFalsy();
-  expect(link.style).toBeFalsy();
+  expect(link.style()).toBeFalsy();
   expect(link.fragmentTag).toBeFalsy();
 });
 
@@ -31,7 +31,7 @@ test('if the type has a fragmentTag then this is set on the RenderLink', () => {
 test('if the type has a style then this is set on the RenderLink', () => {
   let link = RenderLink(Link("bold"));
 
-  expect(link.style).toEqual({fontWeight: "bold"});
+  expect(link.style()).toEqual({fontWeight: "bold"});
 });
 
 describe('fragments', () => {

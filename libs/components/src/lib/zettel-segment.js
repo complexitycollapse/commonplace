@@ -9,8 +9,10 @@ export function ZettelSegment({ segment }) {
     if (segment.endsets.length <= i) {
       return innerComponents;
     } else {
-      let Tag = segment.endsets[i].link.fragmentTag;
-      return (<Tag>{wrap(i + 1)}</Tag>);
+      let link = segment.endsets[i].link;
+      let Tag = link.fragmentTag;
+      let style = link.style();
+      return (<Tag style={style}>{wrap(i + 1)}</Tag>);
     }
   }
 

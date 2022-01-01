@@ -2,3 +2,4 @@ this is hypertext!xxHere we have a long span whose purpose is to show that text 
 Now some link tests: this should be underlined, this should be struck through, and this should be both.
  even though it is transcluded from different places.This should be both and have no break.
 This should be in upper case. This SHOULD Be in lower CASE.
+This text should be right aligned.
