@@ -1,4 +1,4 @@
-import { leafDataToClip } from "./clip-list";
+import { leafDataToClip } from "./doc";
 import { leafDataToLinkPointer, leafDataToLinkTypePointer, leafDataToDocPointer } from "./pointer";
 
 export function leafDataToPointer(data) {

@@ -1,10 +1,10 @@
 import { addProperties, finalObject } from "./utils";
-import { ClipList, leafDataToClip } from "./clip-list";
+import { leafDataToBox } from './box';
+import { leafDataToSpan } from './span';
 
 export function Doc(clips, overlay) {
   let obj = {};
-  let clipList = ClipList(...(clips ?? []));
-  clips = clipList.clips;
+  clips = clips ?? [];
   overlay = overlay ?? [];
 
   addProperties(obj, {
@@ -14,13 +14,12 @@ export function Doc(clips, overlay) {
 
   function leafData() {
     return {
-      edl: clipList.leafData(),
+      edl: clips.map(c => c.leafData()),
       odl: overlay
     };
   }
 
   return finalObject(obj, {
-    concLength: () => clipList.concLength(),
     leafData,
     convertToLeaf: () => JSON.stringify(leafData())
   });
@@ -28,4 +27,14 @@ export function Doc(clips, overlay) {
 
 export function leafDataToDoc(leafData) {
   return Doc(leafData.edl.map(leafDataToClip), leafData.odl);
+}
+
+export function leafDataToClip(leafData) {
+  if (leafData.typ === "span") {
+    return leafDataToSpan(leafData);
+  } else if (leafData.typ === "box") {
+    return leafDataToBox(leafData);
+  } else {
+    throw `leafDataToClip does not understand '${JSON.stringify(leafData)}'`;
+  }
 }
