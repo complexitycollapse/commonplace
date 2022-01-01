@@ -62,3 +62,15 @@ test('leafDataToLink is inverse of leafData', () => {
   let l = Link("my type", Endset("name1", [makeSpan()]), Endset("name2", [makeBox(), makeSpan()]));
   expect(leafDataToLink(l.leafData())).toEqual(l);
 });
+
+describe('clipSource', () => {
+  it('returns a function', () => {
+    expect(typeof Link().clipSource()).toBe('function');
+  });
+
+  it('returns undefined on first call', () => {
+    let link = Link();
+    let source = link.clipSource();
+    expect(source()).toBeUndefined();
+  });
+});
