@@ -2,7 +2,7 @@ import { expect, test, describe, it } from '@jest/globals';
 import { Endset, leafDataToEndset } from './endset';
 import { Span, spanTesting } from "./span";
 import { Box } from "./box";
-import { LinkPointer, LinkTypePointer, DocPointer } from "./pointer";
+import { LinkPointer, LinkTypePointer, EdlPointer } from "./pointer";
 
 let makeSpans = spanTesting.makeSpans;
 
@@ -55,16 +55,16 @@ describe('leafData', () => {
     }]);
   });
 
-  it('returns link type pointer serializer data for ptr if it contains a link pointer', () => {
+  it('returns link type pointer serializer data for ptr if it contains a link type pointer', () => {
     expect(Endset("foo", [LinkTypePointer("some string")]).leafData().ptr).toEqual([{
       typ: "link type",
       name: "some string"
     }]);
   });
 
-  it('returns doc pointer serializer data for ptr if it contains a doc pointer', () => {
-    expect(Endset("foo", [DocPointer("some string")]).leafData().ptr).toEqual([{
-      typ: "doc",
+  it('returns Edl pointer serializer data for ptr if it contains a edl pointer', () => {
+    expect(Endset("foo", [EdlPointer("some string")]).leafData().ptr).toEqual([{
+      typ: "edl",
       name: "some string"
     }]);
   });
@@ -72,7 +72,7 @@ describe('leafData', () => {
 
 describe('leafDataToEndset is inverse of leafData', () => {
   test('named case', () => {
-    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), DocPointer("doc name")];
+    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), EdlPointer("edl name")];
 
     let actual = leafDataToEndset(Endset("the name", clips).leafData());
 
@@ -81,7 +81,7 @@ describe('leafDataToEndset is inverse of leafData', () => {
   });
 
   test('no name case', () => {
-    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), DocPointer("doc name")];
+    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), EdlPointer("edl name")];
 
     let actual = leafDataToEndset(Endset(undefined, clips).leafData());
 

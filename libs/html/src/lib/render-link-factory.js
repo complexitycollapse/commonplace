@@ -18,7 +18,7 @@ export function RenderLinkFactory(doc, links) {
   function makeLinkHash(renderLinks) {
     let hash = hashTable();
     for (let i =0; i < renderLinks.length; ++i) {
-      hash.add(doc.overlay[i], renderLinks[i]);
+      hash.add(doc.links[i], renderLinks[i]);
     }
     return hash;
   }

@@ -1,7 +1,6 @@
-import { expect, test, describe, it } from '@jest/globals';
+import { expect, test } from '@jest/globals';
 import { hasClips } from "./clip.test-helpers";
-import { Doc, leafDataToDoc } from './doc';
-import { Box, boxTesting } from './box';
+import { Doc } from './doc';
 import { spanTesting } from './span';
 
 expect.extend({
@@ -9,8 +8,15 @@ expect.extend({
   toEqualSpan: spanTesting.toEqualSpan
 });
 
-let makeSpan = spanTesting.makeSpan, makeBox = boxTesting.makeBox;
 let makeSpans = spanTesting.makeSpans;
+
+test('type is set to "doc"', () => {
+  let spans = makeSpans(3);
+
+  let d = Doc(spans);
+
+  expect(d.type).toBe("doc");
+});
 
 test('clips is set on the doc', () => {
   let spans = makeSpans(3);
@@ -20,12 +26,18 @@ test('clips is set on the doc', () => {
   expect(d.clips).hasClips(...spans);
 });
 
-test('overlay is set on the doc', () => {
-  let overlay = ["link1", "link2"];
+test('links is set on the doc', () => {
+  let links = ["link1", "link2"];
 
-  let d = Doc([], overlay);
+  let d = Doc([], links);
 
-  expect(d.overlay).toEqual(overlay);
+  expect(d.links).toEqual(links);
+});
+
+test('can pass no arguments and get an EDL of type "doc"', () => {
+  let d = Doc();
+
+  expect(d.type).toBe("doc");
 });
 
 test('can pass no arguments and get an empty spanSet', () => {
@@ -35,25 +47,8 @@ test('can pass no arguments and get an empty spanSet', () => {
   expect(d.clips).hasClips();
 });
 
-test('can pass no arguments and get an empty overlay array', () => {
+test('can pass no arguments and get an empty links array', () => {
   let d = Doc();
 
-  expect(d.overlay.length).toBe(0);
-});
-
-describe('leafData', () => {
-  it('has the clips and overlay properties', () => {
-    let spans = makeSpans(5);
-    let overlay = ["link1", "link2", "link3"];
-    expect(Doc(spans, overlay).leafData()).toEqual({
-      edl: expect.arrayContaining(spans.map(s => s.leafData())),
-      odl: expect.arrayContaining(overlay),
-    });
-  });
-});
-
-test('leafDataToDoc is inverse of leafData', () => {
-  let clips = [...makeSpans(10), Box("orig3", 11, 22, 33, 44)];
-  let d = Doc(clips, ["link1", "link2", "link3"]);
-  expect(leafDataToDoc(d.leafData())).toEqual(d);
+  expect(d.links.length).toBe(0);
 });

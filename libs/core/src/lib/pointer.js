@@ -28,12 +28,12 @@ export function leafDataToLinkTypePointer(data) {
   return LinkTypePointer(data.name, {});
 }
 
-export function DocPointer(docName) {
-  return Pointer("doc", false, { docName }, {
-    leafData() { return { typ: "doc", name: docName }; }
+export function EdlPointer(docName) {
+  return Pointer("edl", false, { docName }, {
+    leafData() { return { typ: "edl", name: docName }; }
   });
 }
 
-export function leafDataToDocPointer(data) {
-  return DocPointer(data.name);
+export function leafDataToEdlPointer(data) {
+  return EdlPointer(data.name);
 }

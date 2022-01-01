@@ -1,6 +1,6 @@
 import { ZettelSegment } from './zettel-segment';
 import { DocumentRenderElements } from '@commonplace/html';
-import { leafDataToLink, Part, leafDataToDoc, Doc } from '@commonplace/core';
+import { leafDataToLink, Part, leafDataToEdl, Doc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docName, cache, fetcher }) {
@@ -27,8 +27,8 @@ export function DocumentComponent({ docName, cache, fetcher }) {
         return results.map(r => r[1]);
       }
 
-      let doc = cache.getObject(docName) || leafDataToDoc(await fetcher.getObject(docName));
-      let rawLinks = (await loadAll(doc.overlay, true));
+      let doc = cache.getObject(docName) || leafDataToEdl(await fetcher.getObject(docName));
+      let rawLinks = (await loadAll(doc.links, true));
       let documentElements = DocumentRenderElements(doc, rawLinks);
       let zettel = documentElements.zettel();
       let tree = documentElements.zettelTree();

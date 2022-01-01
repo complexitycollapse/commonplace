@@ -1,6 +1,6 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
-import { Link, LinkPointer, Endset, DocPointer, Span } from '@commonplace/core';
+import { Link, LinkPointer, Endset, EdlPointer, Span } from '@commonplace/core';
 
 function makeParagraphLink(...pointers) {
   return RenderLink(Link(
@@ -8,7 +8,7 @@ function makeParagraphLink(...pointers) {
     Endset(undefined, pointers.map(p => {
       if (typeof p === "string") {
         if (p.startsWith("link")) { return LinkPointer(p); }
-        else if (p.startsWith("doc")) { return DocPointer(p); }
+        else if (p.startsWith("edl")) { return EdlPointer(p); }
       }
       return p;
     }))));
@@ -39,8 +39,8 @@ describe('fragments', () => {
     expect(makeParagraphLink().fragments()).toEqual([]);
   });
 
-  it('returns an empty array if the link has only link and doc pointers', () => {
-    expect(makeParagraphLink().fragments("link", "doc")).toEqual([]);
+  it('returns an empty array if the link has only Link and Edl pointers', () => {
+    expect(makeParagraphLink().fragments("link", "edl")).toEqual([]);
   });
 
   it('returns a fragment for each clip pointer', () => {
@@ -50,7 +50,7 @@ describe('fragments', () => {
   });
 
   it('returns a only fragments for clip pointers', () => {
-    let link = makeParagraphLink(Span("x", 1, 2), "link", "doc");
+    let link = makeParagraphLink(Span("x", 1, 2), "link", "edl");
 
     let actual = link.fragments();
 

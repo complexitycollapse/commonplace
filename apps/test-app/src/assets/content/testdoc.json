@@ -1,5 +1,5 @@
 {
-  "edl": [
+  "cps": [
     {"typ": "span", "ori": "origin", "st": 0, "ln": 18},
     {"typ": "span", "ori": "origin", "st": 20, "ln": 256},
     {"typ": "span", "ori": "origin", "st": 281, "ln": 28},
@@ -10,7 +10,7 @@
     {"typ": "span", "ori": "origin", "st": 613, "ln": 34},
     {"typ": "box", "ori": "some image", "x": 0, "y": 0, "width": 100, "height": 100}
   ],
-  "odl": [
+  "lks": [
     "titleLink.json",
     "paragraphLink1.json",
     "italicsLink.json",
