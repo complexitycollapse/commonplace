@@ -55,6 +55,12 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name"});
   });
 
+  it('returns object with typ "link" and name and index props when called on LinkPointer with index', () => {
+    let leafData = LinkPointer("the name", 123).leafData();
+
+    expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123 });
+  });
+
   it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
     let leafData = LinkTypePointer("the name").leafData();
 
@@ -70,7 +76,7 @@ describe('leafData', () => {
 
 describe('restoring leafData', () => {
   test('leafDataToLinkPointer is inverse of leafData', () => {
-    let link = LinkPointer("test name");
+    let link = LinkPointer("test name", 123);
 
     expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
   });

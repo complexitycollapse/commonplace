@@ -1,7 +1,7 @@
 import { DocumentComponent } from './document-component';
 
-export function FlightComponent({ docNames, cache, fetcher }) {
+export function FlightComponent({ docPointers, cache, fetcher }) {
   return (
-    <DocumentComponent docName={docNames[0]} cache={cache} fetcher={fetcher}></DocumentComponent>
+    <DocumentComponent docPointer={docPointers[0]} cache={cache} fetcher={fetcher}></DocumentComponent>
   );
 }

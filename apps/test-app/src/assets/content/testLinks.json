@@ -1,0 +1,17 @@
+[
+  {
+    "typ": "bold",
+    "es": [{ "ptr": [{ "typ": "span", "ori": "origin", "st": 281, "ln": 28 }] }]
+  },
+  {
+    "typ": "capitalize",
+    "es": [{ "ptr": [{ "typ": "span", "ori": "origin", "st": 0, "ln": 18 }] }]
+  },
+  {
+    "typ": "italics",
+    "es": [{ "ptr": [
+      { "typ": "span", "ori": "origin", "st": 8, "ln": 10 },
+      { "typ": "span", "ori": "origin", "st": 35, "ln": 4 },
+      { "typ": "span", "ori": "origin", "st": 293, "ln": 5 }] }]
+  }  
+]

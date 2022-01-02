@@ -3,6 +3,7 @@ import { hasClips } from "./clip.test-helpers";
 import { Edl, leafDataToEdl } from './edl';
 import { Box } from './box';
 import { spanTesting } from './span';
+import { LinkPointer } from '..';
 
 expect.extend({
   hasClips,
@@ -55,17 +56,17 @@ test('can pass no arguments and get an empty links array', () => {
 describe('leafData', () => {
   it('has the type, clips and links properties', () => {
     let spans = makeSpans(5);
-    let links = ["link1", "link2", "link3"];
+    let links = [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")];
     expect(Edl("the type", spans, links).leafData()).toEqual({
       typ: "the type",
       cps: expect.arrayContaining(spans.map(s => s.leafData())),
-      lks: expect.arrayContaining(links),
+      lks: expect.arrayContaining(links.map(l => l.leafData())),
     });
   });
 });
 
 test('leafDataToEdl is inverse of leafData', () => {
   let clips = [...makeSpans(10), Box("orig3", 11, 22, 33, 44)];
-  let d = Edl("the type", clips, ["link1", "link2", "link3"]);
+  let d = Edl("the type", clips, [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")]);
   expect(leafDataToEdl(d.leafData())).toEqual(d);
 });

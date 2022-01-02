@@ -3,19 +3,30 @@ import { DocumentRenderElements } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToEdl, Doc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
-export function DocumentComponent({ docName, cache, fetcher }) {
+export function DocumentComponent({ docPointer, cache, fetcher }) {
 
   let [fragmentState, setFragmentState] = useState(DocumentRenderElements(Doc(), []).zettelTree());
 
   useEffect(() => {
     async function loadDoc() {
       async function loadContent(clip, isObject) {
-        let content = isObject ? cache.getObject(clip) : cache.getPart(clip);
+        let content = isObject ? cache.getObject(clip) : extractLink(clip, cache.getPart(clip));
         if (content) {
           return [true, isObject ? content : content];
         } else {
-        return isObject ? [false, leafDataToLink(await fetcher.getObject(clip))] : [false, Part(clip, await fetcher.getPart(clip))];
+          if (isObject) {
+            let obj = await fetcher.getObject(clip);
+            let leafData = extractLink(clip, obj);
+            let link = leafDataToLink(leafData);
+            return [false, link];
+          } else {
+            return [false, Part(clip, await fetcher.getPart(clip))];
+          }
         }
+      }
+
+      function extractLink(linkPointer, linkObject) {
+        return linkPointer.index !== undefined ? linkObject[linkPointer.index] : linkObject;
       }
 
       async function loadAll(iterable, areObjects) {
@@ -27,7 +38,7 @@ export function DocumentComponent({ docName, cache, fetcher }) {
         return results.map(r => r[1]);
       }
 
-      let doc = cache.getObject(docName) || leafDataToEdl(await fetcher.getObject(docName));
+      let doc = cache.getObject(docPointer) || leafDataToEdl(await fetcher.getObject(docPointer));
       let rawLinks = (await loadAll(doc.links, true));
       let documentElements = DocumentRenderElements(doc, rawLinks);
       let zettel = documentElements.zettel();

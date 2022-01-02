@@ -17,18 +17,22 @@ export function RenderLinkFactory(doc, links) {
 
   function makeLinkHash(renderLinks) {
     let hash = hashTable();
-    for (let i =0; i < renderLinks.length; ++i) {
-      hash.add(doc.links[i], renderLinks[i]);
+    for (let i = 0; i < renderLinks.length; ++i) {
+      hash.add(makeKey(doc.links[i]), renderLinks[i]);
     }
     return hash;
   }
 
-  function addModifiers(name, hash) {
-    let renderLink = hash.get(name);
-    for(let key of hash.keys()) {
-      if (key != name) {
-        let candidate = hash.get(key);
-        if (candidate.endsets.some(e => e.pointers.some(p => p.pointerType === "link" && p.linkName === name))) {
+  function makeKey(linkPointer) {
+    return linkPointer.name + "/" + (linkPointer.index === undefined ? "N" : linkPointer.index.toString());
+  }
+
+  function addModifiers(key, hash) {
+    let renderLink = hash.get(key);
+    for(let otherKey of hash.keys()) {
+      if (otherKey != key) {
+        let candidate = hash.get(otherKey);
+        if (candidate.endsets.some(e => e.pointers.some(p => p.pointerType === "link" && makeKey(p) === key))) {
           renderLink.modifiers.push(candidate);
         }
       }

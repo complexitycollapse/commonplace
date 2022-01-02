@@ -11,18 +11,18 @@
     {"typ": "box", "ori": "some image", "x": 0, "y": 0, "width": 100, "height": 100}
   ],
   "lks": [
-    "titleLink.json",
-    "paragraphLink1.json",
-    "italicsLink.json",
-    "boldLink.json",
-    "paragraphLink2.json",
-    "paragraphLink3.json",
-    "underlineLink.json",
-    "strikethroughLink.json",
-    "capitalizeLink.json",
-    "uppercaseLink.json",
-    "lowercaseLink.json",
-    "paragraphLink4.json",
-    "rightAlignLink.json"
+    { "typ": "link", "name": "titleLink.json" },
+    { "typ": "link", "name": "paragraphLink1.json" },
+    { "typ": "link", "name": "paragraphLink2.json" },
+    { "typ": "link", "name": "paragraphLink3.json" },
+    { "typ": "link", "name": "underlineLink.json" },
+    { "typ": "link", "name": "strikethroughLink.json" },
+    { "typ": "link", "name": "uppercaseLink.json" },
+    { "typ": "link", "name": "lowercaseLink.json" },
+    { "typ": "link", "name": "paragraphLink4.json" },
+    { "typ": "link", "name": "testLinks.json", "idx": 0 },
+    { "typ": "link", "name": "testLinks.json", "idx": 1 },
+    { "typ": "link", "name": "testLinks.json", "idx": 2 },
+    { "typ": "link", "name": "rightAlignLink.json" }
   ]
 }

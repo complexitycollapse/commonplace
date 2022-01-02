@@ -1,6 +1,7 @@
 import { addProperties, finalObject } from "./utils";
 import { leafDataToBox } from './box';
 import { leafDataToSpan } from './span';
+import { leafDataToLinkPointer } from "./pointer";
 
 export function Edl(type, clips, links) {
   let obj = {};
@@ -17,7 +18,7 @@ export function Edl(type, clips, links) {
     return {
       typ: type,
       cps: clips.map(c => c.leafData()),
-      lks: links
+      lks: links.map(l => l.leafData())
     };
   }
 
@@ -28,7 +29,10 @@ export function Edl(type, clips, links) {
 }
 
 export function leafDataToEdl(leafData) {
-  return Edl(leafData.typ, leafData.cps.map(leafDataToClip), leafData.lks);
+  return Edl(
+    leafData.typ,
+    leafData.cps.map(leafDataToClip),
+    leafData.lks.map(leafDataToLinkPointer));
 }
 
 export function leafDataToClip(leafData) {

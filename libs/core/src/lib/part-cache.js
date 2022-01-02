@@ -16,12 +16,12 @@ export function PartCache() {
     partCache.push(part.origin, part);
   }
 
-  function addObject(name, object) {
-    objectCache.add(name, object);
+  function addObject(pointer, object) {
+    objectCache.add(pointer.name, object);
   }
 
-  function getObject(name) {
-    return objectCache.get(name);
+  function getObject(pointer) {
+    return objectCache.get(pointer.name);
   }
   
   return finalObject(obj, {

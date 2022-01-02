@@ -5,14 +5,14 @@ import { RenderLinkFactory } from './render-link-factory';
 describe('renderLinks', () => {
   it('returns a RenderLink for each passed link', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
-    let doc = Doc([], ["1", "2", "3"]);
+    let doc = Doc([], [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")]);
 
     expect(RenderLinkFactory(doc, links).renderLinks().map(x => x.link)).toEqual(links)
   });
 
   it('attaches a link to the link it points to', () => {
     let links = [Link("foo", Endset(undefined, [LinkPointer("2")])), Link("foo")];
-    let doc = Doc([], ["1", "2"]);
+    let doc = Doc([], [LinkPointer("1"), LinkPointer("2")]);
 
     let actual = RenderLinkFactory(doc, links).renderLinks()[1].modifiers;
 
@@ -22,7 +22,7 @@ describe('renderLinks', () => {
 
   it('attaches a link to the link it points to, two levels', () => {
     let links = [Link("foo", Endset("x", [LinkPointer("1")])), Link("foo", Endset(undefined, [LinkPointer("2")])), Link("foo")];
-    let doc = Doc([], ["0", "1", "2"]);
+    let doc = Doc([], [LinkPointer("0"), LinkPointer("1"), LinkPointer("2")]);
 
     let actual = RenderLinkFactory(doc, links).renderLinks();
 
