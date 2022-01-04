@@ -3,11 +3,11 @@ import { Fragment } from "./fragment";
 
 let typeMap = {
   paragraph: [null, "p"],
-  italics: [{fontStyle: "italic"}],
-  bold: [{fontWeight: "bold"}],
+  italics: [{italic: true}],
+  bold: [{bold: true}],
   title: [null, "h1"],
-  underline: [{textDecoration: "underline"}],
-  "strike through": [{textDecoration: "line-through"}],
+  underline: [{underline: true}],
+  "strike through": [{"line-through": true}],
   capitalize: [{textTransform: "capitalize"}],
   uppercase: [{textTransform: "uppercase"}],
   lowercase: [{textTransform: "lowercase"}],
@@ -20,6 +20,7 @@ let typeMap = {
 export function RenderLink(link) {
   let renderLink = { modifiers: [] };
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
+  inlineStyle = inlineStyle ?? {};
 
   addProperties(renderLink, {
     fragmentTag,

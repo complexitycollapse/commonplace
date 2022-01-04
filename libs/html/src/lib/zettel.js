@@ -2,6 +2,7 @@ import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonp
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
+import { CssStyle } from './css-style';
 
 export function Zettel(clip) {
   let base = StructureElement([]);
@@ -55,10 +56,16 @@ export function Zettel(clip) {
     return base.endsetsNotInOther(other, onlyStructural);
   }
 
+  function style() {
+    let styles = obj.endsets.map(e => e.link.style());
+    return CssStyle(styles).css();
+  }
+
   addMethods(obj, {
     addEndset,
     addLink,
-    endsetsNotInOther
+    endsetsNotInOther,
+    style
   });
 
   return obj;

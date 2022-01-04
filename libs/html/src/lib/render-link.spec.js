@@ -14,12 +14,17 @@ function makeParagraphLink(...pointers) {
     }))));
 }
 
-test('if the type is unknown then the RenderLink properties are falsy', () => {
+test('if the type is unknown then the innerTag and fragmentTag properties are falsy', () => {
   let link = RenderLink(Link("some unknown type"));
 
   expect(link.innerTag).toBeFalsy();
-  expect(link.style()).toBeFalsy();
   expect(link.fragmentTag).toBeFalsy();
+});
+
+test('if the type is unknown then style returns an empty object', () => {
+  let link = RenderLink(Link("some unknown type"));
+
+  expect(link.style()).toEqual({});
 });
 
 test('if the type has a fragmentTag then this is set on the RenderLink', () => {
@@ -28,10 +33,10 @@ test('if the type has a fragmentTag then this is set on the RenderLink', () => {
   expect(link.fragmentTag).toBe("p");
 });
 
-test('if the type has a style then this is set on the RenderLink', () => {
+test('if the type has a style then it is returned by style', () => {
   let link = RenderLink(Link("bold"));
 
-  expect(link.style()).toEqual({fontWeight: "bold"});
+  expect(link.style()).toEqual({bold: true});
 });
 
 describe('fragments', () => {

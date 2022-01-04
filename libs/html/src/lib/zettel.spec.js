@@ -1,6 +1,7 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel, zettelTesting } from './zettel';
 import { Span, Link, Endset, testing, LinkPointer } from '@commonplace/core';
+import { RenderLink } from './render-link';
 
 let toEqualSpan = testing.spans.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
@@ -17,7 +18,7 @@ function make(clip = Span("origin", 1, 10)) {
 }
 
 function makeLink(type, ...endsets) {
-  return Link(type, ...endsets);
+  return RenderLink(Link(type, ...endsets));
 }
 
 test('clip returns the passed clip', () => {
@@ -299,5 +300,29 @@ describe('sameEndsets', () => {
     let endsets = addEndsets(ths, "foo", "bar", "baz");
     addExistingEndsets(that, endsets);
     expect(ths.sameEndsets(that)).toBeTruthy();
+  });
+});
+
+describe('style', () => {
+  it('returns an empty object if there are no endsets', () => {
+    expect(make().style()).toEqual({});
+  });
+
+  it('returns the mapped style of the endset', () => {
+    let zettel = make();
+    let endset = Endset(undefined, [makeLinkPointer()]);
+    let link = makeLink("bold", endset);
+    zettel.addEndset(endset, link);
+    expect(zettel.style()).toEqual({fontStyle: "bold"});
+  });
+
+  it('returns the combined style of all endsets', () => {
+    let zettel = make();
+    let endset1 = Endset(undefined, [makeLinkPointer()]), endset2 = Endset(undefined, [makeLinkPointer()]);
+    let link1 = makeLink("bold", endset1);
+    let link2 = makeLink("italics", endset2);
+    zettel.addEndset(endset1, link1);
+    zettel.addEndset(endset2, link2);
+    expect(zettel.style()).toEqual({fontStyle: "bold italic"});
   });
 });
