@@ -1,8 +1,8 @@
 import { addProperties, finalObject } from "./utils";
 import { Clip } from "./clip";
 
-export function Span(origin, start, length) {
-  let obj = Clip("span", origin);
+export function Span(origin, start, length, originalContext) {
+  let obj = Clip("span", origin, originalContext);
   addProperties(obj, {
     start,
     length,

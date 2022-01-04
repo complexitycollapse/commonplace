@@ -1,6 +1,7 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Span, leafDataToSpan, spanTesting } from './span';
 import { boxTesting, Box } from './box';
+import { EdlPointer } from '..';
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan
@@ -14,6 +15,17 @@ describe('span', () => {
     expect(actual.origin).toBe('origin');
     expect(actual.start).toBe(1);
     expect(actual.length).toBe(100);
+  });
+
+  it('can be used to set originalContext', () => {
+    let originalContext = EdlPointer("doc name");
+    let actual = Span('origin', 1, 100, originalContext);
+    expect(actual.originalContext).toBe(originalContext);
+  });
+
+  it('allows originalContext to be undefined', () => {
+    let actual = Span('origin', 1, 100);
+    expect(actual.originalContext).toBe(undefined);
   });
 });
 

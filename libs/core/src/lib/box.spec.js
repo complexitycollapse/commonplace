@@ -1,6 +1,7 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Box, leafDataToBox, boxTesting } from "./box";
 import { spanTesting } from './span';
+import { EdlPointer } from './pointer';
 
 expect.extend({
   toEqualBox: boxTesting.toEqualBox
@@ -16,6 +17,17 @@ describe('box', () => {
     expect(actual.y).toBe(100);
     expect(actual.width).toBe(200);
     expect(actual.height).toBe(250);
+  });
+
+  it('can be used to set originalContext', () => {
+    let originalContext = EdlPointer("doc name");
+    let actual = Box('origin', 1, 100, 200, 250, originalContext);
+    expect(actual.originalContext).toBe(originalContext);
+  });
+
+  it('allows originalContext to be undefined', () => {
+    let actual = Box('origin', 1, 100, 200, 250);
+    expect(actual.originalContext).toBe(undefined);
   });
 });
 

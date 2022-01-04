@@ -2,9 +2,9 @@ import { addProperties, finalObject } from "./utils";
 import { spanTesting } from "./span";
 import { Clip } from "./clip";
 
-export function Box(origin, x, y, width, height)
+export function Box(origin, x, y, width, height, originalContext)
 {
-  let obj = Clip("box", origin);
+  let obj = Clip("box", origin, originalContext);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     x,
