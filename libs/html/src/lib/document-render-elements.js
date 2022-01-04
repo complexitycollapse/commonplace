@@ -1,6 +1,6 @@
 import { addProperties, addMethods, listTable } from '@commonplace/core';
 import { ManyZettelSchneider } from './zettel-schneider';
-import { TreeBuilder } from './tree-builder';
+import { RegionBuilder } from './region-builder';
 import { RootFragment } from './fragment';
 import { RenderLinkFactory } from './render-link-factory';
 
@@ -38,7 +38,7 @@ export function DocumentRenderElements(doc, links) {
 
   function zettelTree() {
     let zs = zettel();
-    return TreeBuilder(zs).build();
+    return RegionBuilder(zs).build();
   }
 
   function ensureRenderLinks() {

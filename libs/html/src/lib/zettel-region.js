@@ -1,6 +1,6 @@
 import { StructureElement } from "./structure-element";
 
-export function ZettelSegment(endsets) {
+export function ZettelRegion(endsets) {
   let obj = StructureElement(endsets);
   obj.children = [];
   obj.key = 1;

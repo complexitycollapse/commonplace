@@ -1,8 +1,8 @@
 import { ZettelComponent } from './zettel-component';
 
-export function ZettelSegment({ segment }) {
+export function ZettelRegionComponent({ segment }) {
   let innerComponents = segment.children.map(f => f.isSegment
-    ? (<ZettelSegment key={f.key} segment={f}/>)
+    ? (<ZettelRegionComponent key={f.key} segment={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
   function wrap(i) {

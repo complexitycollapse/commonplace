@@ -1,4 +1,4 @@
-import { ZettelSegment } from './zettel-segment';
+import { ZettelRegionComponent } from './zettel-region-component';
 import { DocumentRenderElements } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToEdl, Doc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
@@ -60,7 +60,7 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
 
   return (
     <div>
-      <ZettelSegment key="froot" segment={fragmentState}/>
+      <ZettelRegionComponent key="froot" segment={fragmentState}/>
     </div>
   );
 }

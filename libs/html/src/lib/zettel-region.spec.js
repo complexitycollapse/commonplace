@@ -1,9 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
 import { Endset, Link } from '@commonplace/core';
-import { ZettelSegment } from './zettel-segment';
+import { ZettelRegion } from './zettel-region';
 
 function make(...endsets) {
-  return ZettelSegment(endsets);
+  return ZettelRegion(endsets);
 }
 
 function makeEndsetsForLink(...endsetNames) {

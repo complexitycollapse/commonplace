@@ -1,24 +1,24 @@
 import { finalObject } from "@commonplace/core";
-import { ZettelSegment } from "./zettel-segment";
+import { ZettelRegion } from "./zettel-region";
 
-export function TreeBuilder(zettel) {
+export function RegionBuilder(zettel) {
   let remaining = [...zettel];
 
   let obj = {};
 
   function build() {
-    if (remaining.length === 0) { return ZettelSegment([]); }
+    if (remaining.length === 0) { return ZettelRegion([]); }
     return descend(undefined);
   }
 
   function descend(limits) {
-    let segment = ZettelSegment([...(remaining[0].structuralEndsets)]);
+    let segment = ZettelRegion([...(remaining[0].structuralEndsets)]);
     return gobble(limits, segment);
   }
 
   function ascend(child, limits) {
     let segmentEndsets = child.sharedEndsets(remaining[0], true);
-    let segment = ZettelSegment(segmentEndsets);
+    let segment = ZettelRegion(segmentEndsets);
     segment.children.push(child);
     return gobble(limits, segment);
   }
