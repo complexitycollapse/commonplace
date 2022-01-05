@@ -586,40 +586,40 @@ describe('equals', () => {
   });
 });
 
-describe('overlapingButNotEngulfing', () => {
+describe('overlappingButNotEngulfing', () => {
   it('returns false if this is before that', () => {
-    expect(Span("x", 20, 10).overlapingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
+    expect(Span("x", 20, 10).overlappingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
   });
 
   it('returns false if this is after that', () => {
-    expect(Span("x", 30, 10).overlapingButNotEngulfing(Span("x", 20, 10))).toBeFalsy();
+    expect(Span("x", 30, 10).overlappingButNotEngulfing(Span("x", 20, 10))).toBeFalsy();
   });
 
   it('returns false if this contains', () => {
-    expect(Span("x", 20, 20).overlapingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
+    expect(Span("x", 20, 20).overlappingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
   });
 
   it('returns false if that contains this', () => {
-    expect(Span("x", 30, 10).overlapingButNotEngulfing(Span("x", 20, 20))).toBeFalsy();
+    expect(Span("x", 30, 10).overlappingButNotEngulfing(Span("x", 20, 20))).toBeFalsy();
   });
 
   it('returns false if the spans are identical', () => {
-    expect(Span("x", 30, 10).overlapingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
+    expect(Span("x", 30, 10).overlappingButNotEngulfing(Span("x", 30, 10))).toBeFalsy();
   });
 
   it('returns true if this overlaps the lower end of that', () => {
-    expect(Span("x", 20, 10).overlapingButNotEngulfing(Span("x", 29, 10))).toBeTruthy();
+    expect(Span("x", 20, 10).overlappingButNotEngulfing(Span("x", 29, 10))).toBeTruthy();
   });
 
   it('returns true if that overlaps the lower end of this', () => {
-    expect(Span("x", 29, 10).overlapingButNotEngulfing(Span("x", 20, 10))).toBeTruthy();
+    expect(Span("x", 29, 10).overlappingButNotEngulfing(Span("x", 20, 10))).toBeTruthy();
   });
 
   it('returns false if they have different origins', () => {
-    expect(Span("x", 29, 10).overlapingButNotEngulfing(Span("y", 20, 10))).toBeFalsy();
+    expect(Span("x", 29, 10).overlappingButNotEngulfing(Span("y", 20, 10))).toBeFalsy();
   });
 
   it('returns false if they have different clip types', () => {
-    expect(Span("x", 29, 10).overlapingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
+    expect(Span("x", 29, 10).overlappingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
   });
 });

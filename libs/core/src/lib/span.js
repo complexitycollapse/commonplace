@@ -38,7 +38,7 @@ export function Span(origin, start, length, originalContext) {
     return obj.sameType(span) && obj.equalOrigin(span) && !(obj.end < span.start || span.end < start);
   }
 
-  function overlapingButNotEngulfing(span) {
+  function overlappingButNotEngulfing(span) {
     return obj.overlaps(span) && !obj.engulfs(span) && !span.engulfs(obj);
   }
 
@@ -86,7 +86,7 @@ export function Span(origin, start, length, originalContext) {
     crop,
     leafData,
     intersect,
-    overlapingButNotEngulfing
+    overlappingButNotEngulfing
   });
 }
 

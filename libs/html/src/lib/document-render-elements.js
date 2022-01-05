@@ -68,7 +68,7 @@ export function DocumentRenderElements(doc, links) {
       for(let i = 0; i < frags.length; ++i) {
         let overlapping = false;
         for(let j = 0; j < frags.length; ++j) {
-          if (j !== i && frags[i].clip.overlapingButNotEngulfing(frags[j].clip)){
+          if (j !== i && frags[i].clip.overlappingButNotEngulfing(frags[j].clip)){
             overlappingLinksCache.push(frags[i]);
             overlapping = true;
             break;
