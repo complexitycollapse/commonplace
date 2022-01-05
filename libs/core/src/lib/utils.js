@@ -29,7 +29,7 @@ export function forAllOwnProperties(obj, callback) {
   }
 }
  
-export function listTable() {
+export function listMap() {
   let obj = {};
   let table = new Map();
 

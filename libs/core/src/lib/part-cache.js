@@ -1,8 +1,8 @@
-import { finalObject, listTable } from './utils';
+import { finalObject, listMap } from './utils';
 
 export function PartCache() {
   let obj = {};
-  let partCache = listTable();
+  let partCache = listMap();
   let objectCache = new Map();
 
   function getPart(clip) {

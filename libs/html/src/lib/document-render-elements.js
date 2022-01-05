@@ -1,4 +1,4 @@
-import { addProperties, addMethods, listTable } from '@commonplace/core';
+import { addProperties, addMethods, listMap } from '@commonplace/core';
 import { ManyZettelSchneider } from './zettel-schneider';
 import { RegionBuilder } from './region-builder';
 import { RootFragment } from './fragment';
@@ -61,7 +61,7 @@ export function DocumentRenderElements(doc, links) {
     let fragments = links.map(l => l.fragments().filter(inDoc)).flat();
     overlappingLinksCache = [];
 
-    let hash = listTable();
+    let hash = listMap();
     fragments.forEach(f => hash.push(f.clip.origin, f));
 
     for(let [_, frags] of hash.entries()) {

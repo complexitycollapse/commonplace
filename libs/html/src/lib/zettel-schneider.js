@@ -1,4 +1,4 @@
-import { finalObject, listTable } from "@commonplace/core";
+import { finalObject, listMap } from "@commonplace/core";
 import { Zettel } from "./zettel";
 
 export function ManyZettelSchneider(clips, renderLinks = []) {
@@ -94,7 +94,7 @@ export function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
 }
 
 function makeEndsetHash(links) {
-  let hash = listTable();
+  let hash = listMap();
   forEachClipPointer(links, (p, e, l) => {
     if (p.isClip) { hash.push(p.origin, buildClipEndsetLink(p, e, l)); }
   });
