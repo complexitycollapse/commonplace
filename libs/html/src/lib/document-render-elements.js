@@ -64,8 +64,7 @@ export function DocumentRenderElements(doc, links) {
     let hash = listTable();
     fragments.forEach(f => hash.push(f.clip.origin, f));
 
-    for(let key of hash.keys()) {
-      let frags = hash.get(key);
+    for(let [_, frags] of hash.entries()) {
       for(let i = 0; i < frags.length; ++i) {
         let overlapping = false;
         for(let j = 0; j < frags.length; ++j) {

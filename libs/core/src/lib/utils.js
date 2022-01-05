@@ -28,52 +28,23 @@ export function forAllOwnProperties(obj, callback) {
     }
   }
 }
-
-export function hashTable() {
-  let obj = {};
-  let table = {};
-
-  function add(key, value) {
-    table[key] = value;
-  }
-
-  function get(key) {
-    if (hasKey(key)) { return table[key]; }
-    else { return undefined; }
-  }
-
-  function hasKey(name) {
-    return Object.prototype.hasOwnProperty.call(table, name);
-  }
-
-  function keys() {
-    return Object.getOwnPropertyNames(table);
-  }
-
-  return finalObject(obj, {
-    add,
-    get,
-    hasKey,
-    keys
-  });
-}
  
 export function listTable() {
   let obj = {};
-  let table = hashTable();
+  let table = new Map();
 
   function push(key, value) {
-    if (table.hasKey(key)) {
+    if (table.has(key)) {
       table.get(key).push(value);
     } else {
-      table.add(key, [value]);
+      table.set(key, [value]);
     }
   }
 
   return finalObject(obj, {
     push,
     get: key => table.get(key) ?? [],
-    hasKey: table.hasKey,
-    keys: table.keys
+    has: key => table.has(key),
+    entries: () => table.entries()
   });
 }

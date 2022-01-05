@@ -1,12 +1,12 @@
-import { finalObject, listTable, hashTable } from './utils';
+import { finalObject, listTable } from './utils';
 
 export function PartCache() {
   let obj = {};
   let partCache = listTable();
-  let objectCache = hashTable();
+  let objectCache = new Map();
 
   function getPart(clip) {
-    if(partCache.hasKey(clip.origin)) {
+    if(partCache.has(clip.origin)) {
       return partCache.get(clip.origin).find(p => p.engulfs(clip));
     }
     return undefined;
@@ -17,7 +17,7 @@ export function PartCache() {
   }
 
   function addObject(pointer, object) {
-    objectCache.add(pointer.name, object);
+    objectCache.set(pointer.name, object);
   }
 
   function getObject(pointer) {
