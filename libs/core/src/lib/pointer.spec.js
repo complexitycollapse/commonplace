@@ -111,3 +111,13 @@ describe('restoring leafData', () => {
     expect(leafDataToPointer(edl.leafData())).toEqual(edl);
   });
 });
+
+describe('LinkPointer.hashableName', () => {
+  it('returns the link name suffixed with /N if there is no index specified', () => {
+    expect(LinkPointer("xyz").hashableName()).toBe("xyz/N");
+  });
+
+  it('returns the link name suffixed with the index if there is an index specified', () => {
+    expect(LinkPointer("xyz", 123).hashableName()).toBe("xyz/123");
+  });
+});

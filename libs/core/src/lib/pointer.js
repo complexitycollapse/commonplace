@@ -13,7 +13,8 @@ export function Pointer(pointerType, isClip, nameMapping, properties, methods) {
 
 export function LinkPointer(linkName, index) {
   return Pointer("link", false, x => x.linkName, { linkName, index }, {
-    leafData() { return { typ: "link", name: linkName, idx: index }; }
+    leafData() { return { typ: "link", name: linkName, idx: index }; },
+    hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); }
   });
 }
 
