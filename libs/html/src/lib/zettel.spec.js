@@ -47,8 +47,8 @@ describe('addEndset', () => {
     z.addEndset(e1, l1);
     z.addEndset(e2, l2);
 
-    expect(z.endsets[0].link).toBe(l1);
-    expect(z.endsets[1].link).toBe(l2);
+    expect(z.endsets[0].renderLink).toBe(l1);
+    expect(z.endsets[1].renderLink).toBe(l2);
   });
 
   it('does not add link properties to the original endsets', () => {
@@ -59,8 +59,8 @@ describe('addEndset', () => {
     z.addEndset(e1, l1);
     z.addEndset(e2, l2);
 
-    expect(e1).not.toHaveProperty("link");
-    expect(e2).not.toHaveProperty("link");
+    expect(e1).not.toHaveProperty("renderLink");
+    expect(e2).not.toHaveProperty("renderLink");
   });
 
   it('adds the endset index property to copies of the endsets', () => {
@@ -123,8 +123,8 @@ describe('addLink', () => {
 
     expect(newZettel).toHaveLength(1);
     expect(newZettel[0].endsets).toHaveLength(2);
-    expect(newZettel[0].endsets[0].link).toBe(l2);
-    expect(newZettel[0].endsets[1].link).toBe(l1);
+    expect(newZettel[0].endsets[0].renderLink).toBe(l2);
+    expect(newZettel[0].endsets[1].renderLink).toBe(l1);
   });
 
   it('will split the zettel according to the link spans', () => {
@@ -140,12 +140,12 @@ describe('addLink', () => {
     expect(newZettel).toHaveLength(2);
 
     expect(newZettel[0].endsets).toHaveLength(1);
-    expect(newZettel[0].endsets[0].link).toBe(l1);
+    expect(newZettel[0].endsets[0].renderLink).toBe(l1);
     expect(newZettel[0].clip).toEqualSpan(s.crop(0, 1));
 
     expect(newZettel[1].endsets).toHaveLength(2);
-    expect(newZettel[1].endsets[0].link).toBe(l2);
-    expect(newZettel[1].endsets[1].link).toBe(l1);
+    expect(newZettel[1].endsets[0].renderLink).toBe(l2);
+    expect(newZettel[1].endsets[1].renderLink).toBe(l1);
     expect(newZettel[1].clip).toEqualSpan(s.crop(1, 9));
   });
 
@@ -195,7 +195,7 @@ describe('addLink', () => {
   });
 });
 
-describe('endsetsNotInOther', () => {
+describe('renderEndsetsNotInOther', () => {
   it('returns all the endsets if the other is undefined', () => {
     let endset1 = Endset("bar1", [makeLinkPointer()]), endset2 = Endset("bar2", [makeLinkPointer()]);
     let link = makeLink("foo", endset1, endset2);
@@ -203,11 +203,11 @@ describe('endsetsNotInOther', () => {
     zettel.addEndset(endset1, link);
     zettel.addEndset(endset2, link);
 
-    expect(zettel.endsetsNotInOther(undefined)).toHaveLength(2);
+    expect(zettel.renderEndsetsNotInOther(undefined)).toHaveLength(2);
   });
 
   it('returns an empty array if neither Zettel has any links', () => {
-    expect(make().endsetsNotInOther(make())).toHaveLength(0);
+    expect(make().renderEndsetsNotInOther(make())).toHaveLength(0);
   });
 
   it('returns an empty array if both Zettel have the same endsets', () => {
@@ -217,7 +217,7 @@ describe('endsetsNotInOther', () => {
     z1.addEndset(endset, link);
     z2.addEndset(endset, link);
 
-    expect(z1.endsetsNotInOther(z2)).toHaveLength(0);
+    expect(z1.renderEndsetsNotInOther(z2)).toHaveLength(0);
   });
 
   it('returns an endset if it is in this but not that', () => {
@@ -226,8 +226,8 @@ describe('endsetsNotInOther', () => {
     let z1 = make(), z2 = make();
     z1.addEndset(endset, link);
 
-    expect(z1.endsetsNotInOther(z2)).toHaveLength(1);
-    expect(z1.endsetsNotInOther(z2)[0]).toEqual(expect.objectContaining({ link: link, index: 0 }));
+    expect(z1.renderEndsetsNotInOther(z2)).toHaveLength(1);
+    expect(z1.renderEndsetsNotInOther(z2)[0]).toEqual(expect.objectContaining({ renderLink: link, index: 0 }));
   });
 
   it('does not return an endset if it is in that but not this', () => {
@@ -236,7 +236,7 @@ describe('endsetsNotInOther', () => {
     let z1 = make(), z2 = make();
     z2.addEndset(endset, link);
 
-    expect(z1.endsetsNotInOther(z2)).toHaveLength(0);
+    expect(z1.renderEndsetsNotInOther(z2)).toHaveLength(0);
   });
 
   it('returns endset even if the link (but not the endset) is shared by both Zettel', () => {
@@ -248,12 +248,12 @@ describe('endsetsNotInOther', () => {
 
     z1.addEndset(endset2, link);
 
-    expect(z1.endsetsNotInOther(z2)).toHaveLength(1);
-    expect(z1.endsetsNotInOther(z2)[0].name).toBe("bar2");
+    expect(z1.renderEndsetsNotInOther(z2)).toHaveLength(1);
+    expect(z1.renderEndsetsNotInOther(z2)[0].name).toBe("bar2");
   });
 });
 
-describe('sharedEndsets', () => {
+describe('sharedRenderEndsets', () => {
   it('returns endsets that the two zettel have in common', () => {
     let endset1 = Endset("bar1", []), endset2 = Endset("bar2", []), endset3 = Endset("bar3", []), endset4 = Endset("bar4", []);
     let link = makeLink("foo", endset1, endset2, endset3);
@@ -266,40 +266,40 @@ describe('sharedEndsets', () => {
     z2.addEndset(endset3, link);
     z2.addEndset(endset4, link);
 
-    expect(z1.sharedEndsets(z2)).toHaveLength(2);
-    expect(z1.sharedEndsets(z2).map(e => e.name)).toEqual(["bar2", "bar3"]);
+    expect(z1.sharedRenderEndsets(z2)).toHaveLength(2);
+    expect(z1.sharedRenderEndsets(z2).map(e => e.name)).toEqual(["bar2", "bar3"]);
   });
 });
 
-describe('sameEndsets', () => {
+describe('sameRenderEndsets', () => {
   it('returns true if they both have no endsets', () => {
-    expect(make().sameEndsets(make())).toBeTruthy();
+    expect(make().sameRenderEndsets(make())).toBeTruthy();
   });
 
   it('returns false if this has an endset and that doesnt', () => {
     let ths = make();
     addEndset(ths, "foo");
-    expect(ths.sameEndsets(make())).toBeFalsy();
+    expect(ths.sameRenderEndsets(make())).toBeFalsy();
   });
 
   it('returns false if that has an endset and this doesnt', () => {
     let that = make();
     addEndset(that, "foo");
-    expect(make().sameEndsets(that)).toBeFalsy();
+    expect(make().sameRenderEndsets(that)).toBeFalsy();
   });
 
   it('returns true if they both have the same endset', () => {
     let ths = make(), that = make();
     let endset = addEndset(ths, "foo");
     addExistingEndsets(that, [endset]);
-    expect(ths.sameEndsets(that)).toBeTruthy();
+    expect(ths.sameRenderEndsets(that)).toBeTruthy();
   });
 
   it('returns true if they both have the same endsets', () => {
     let ths = make(), that = make();
     let endsets = addEndsets(ths, "foo", "bar", "baz");
     addExistingEndsets(that, endsets);
-    expect(ths.sameEndsets(that)).toBeTruthy();
+    expect(ths.sameRenderEndsets(that)).toBeTruthy();
   });
 });
 

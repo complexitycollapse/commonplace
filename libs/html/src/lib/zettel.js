@@ -3,6 +3,7 @@ import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
 import { CssStyle } from './css-style';
+import { RenderEndset } from './render-endset';
 
 export function Zettel(clip) {
   let base = StructureElement([]);
@@ -16,17 +17,9 @@ export function Zettel(clip) {
     isSegment: false
   });
 
-  function makeModifiedEndset(es, link, index) {
-    let newEndset = Endset(es.name, es.pointers);
-    newEndset.link = link;
-    newEndset.index = index;
-    return newEndset;
-  }
-
   function addEndset(endset, link) {
-    let index = link.endsets.indexOf(endset);
-    let newEndset = makeModifiedEndset(endset, link, index);
-    if (obj.hasModifiedEndset(newEndset)) {
+    let newEndset = RenderEndset(endset, link);
+    if (obj.hasRenderEndset(newEndset)) {
       return;
     }
     obj.endsets.push(newEndset);
@@ -38,7 +31,7 @@ export function Zettel(clip) {
 
     parts.forEach(z => {
       obj.endsets.forEach(e => {
-        if (!z.hasModifiedEndset(e)) {
+        if (!z.hasRenderEndset(e)) {
           z.endsets.push(e);
           if (link.isStructural) { obj.structuralEndsets.push(e) };
         }
@@ -49,22 +42,22 @@ export function Zettel(clip) {
     return parts;
   }
 
-  function endsetsNotInOther(other, onlyStructural) {
+  function renderEndsetsNotInOther(other, onlyStructural) {
     if (other === undefined) {
       return [...obj.endsets];
     }
-    return base.endsetsNotInOther(other, onlyStructural);
+    return base.renderEndsetsNotInOther(other, onlyStructural);
   }
 
   function style() {
-    let styles = obj.endsets.map(e => e.link.style());
+    let styles = obj.endsets.map(e => e.renderLink.style());
     return CssStyle(styles).css();
   }
 
   addMethods(obj, {
     addEndset,
     addLink,
-    endsetsNotInOther,
+    renderEndsetsNotInOther,
     style
   });
 
@@ -95,7 +88,7 @@ export let zettelTesting = {
       let candidate = actualEndsets[i];
       if (candidate.name === expectedEndset.name
           && candidate.index === index
-          && candidate.link.type === link.type) {
+          && candidate.renderLink.type === link.type) {
         if (clipArraysEqual(candidate.pointers, expectedEndset.pointers)) {
           return {
             message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,

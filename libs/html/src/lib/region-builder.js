@@ -17,7 +17,7 @@ export function RegionBuilder(zettel) {
   }
 
   function ascend(child, limits) {
-    let segmentEndsets = child.sharedEndsets(remaining[0], true);
+    let segmentEndsets = child.sharedRenderEndsets(remaining[0], true);
     let segment = ZettelRegion(segmentEndsets);
     segment.children.push(child);
     return gobble(limits, segment);
@@ -28,19 +28,19 @@ export function RegionBuilder(zettel) {
       
       // The next zettel breaks the limits of this one
       if (limits) {
-        if (limits.endsetsNotInOther(next, true).length > 0 || 
-        limits.sameEndsets(next, true)) {
+        if (limits.renderEndsetsNotInOther(next, true).length > 0 || 
+        limits.sameRenderEndsets(next, true)) {
           return segment;
         }
       }
 
       // The next zettel needs to belong to the parent segment
-      if (segment.endsetsNotInOther(next, true).length > 0) {
+      if (segment.renderEndsetsNotInOther(next, true).length > 0) {
         return ascend(segment, limits);
       }
 
       // The next zettel needs to belong to a child
-      if (next.endsetsNotInOther(segment, true).length > 0) {
+      if (next.renderEndsetsNotInOther(segment, true).length > 0) {
         segment.children.push(descend(segment));
       } else {
         // The next zettel should be added to this segment

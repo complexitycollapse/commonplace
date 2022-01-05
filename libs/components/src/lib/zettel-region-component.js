@@ -9,7 +9,7 @@ export function ZettelRegionComponent({ segment }) {
     if (segment.endsets.length <= i) {
       return innerComponents;
     } else {
-      let link = segment.endsets[i].link;
+      let link = segment.endsets[i].renderLink;
       let Tag = link.fragmentTag;
       let style = link.style();
       return (<Tag style={style}>{wrap(i + 1)}</Tag>);

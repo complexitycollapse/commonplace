@@ -5,19 +5,19 @@ export function StructureElement(endsets) {
   
   addProperties(obj, {
     endsets,
-    structuralEndsets: endsets.filter(e => e.link.isStructural)
+    structuralEndsets: endsets.filter(e => e.renderLink.isStructural)
   });
 
-  function pickEndsets(onlyStructural) {
+  function pickRenderEndsets(onlyStructural) {
     return onlyStructural ? obj.structuralEndsets : endsets;
   }
 
-  function endsetsNotInOther(other, onlyStructural) {
+  function renderEndsetsNotInOther(other, onlyStructural) {
     let openings = [];
-    let objEndsets = obj.pickEndsets(onlyStructural);
+    let objEndsets = obj.pickRenderEndsets(onlyStructural);
   
     objEndsets.forEach(ourEndset => {
-      if (!other.hasModifiedEndset(ourEndset, onlyStructural)) {
+      if (!other.hasRenderEndset(ourEndset, onlyStructural)) {
         openings.push(ourEndset);
       }
     });
@@ -25,12 +25,12 @@ export function StructureElement(endsets) {
     return openings;
   }
   
-  function sharedEndsets(other, onlyStructural) {
+  function sharedRenderEndsets(other, onlyStructural) {
     let common = [];
-    let objEndsets = obj.pickEndsets(onlyStructural);
+    let objEndsets = obj.pickRenderEndsets(onlyStructural);
   
     objEndsets.forEach(ourEndset => {
-      if (other.hasModifiedEndset(ourEndset, onlyStructural)) {
+      if (other.hasRenderEndset(ourEndset, onlyStructural)) {
         common.push(ourEndset);
       }
     });
@@ -38,24 +38,24 @@ export function StructureElement(endsets) {
     return common;
   }
 
-  function sameEndsets(other, onlyStructural) {
-    let otherEndsets = other.pickEndsets(onlyStructural);
-    let length = obj.pickEndsets(onlyStructural).length;
-    return otherEndsets.length === length && obj.sharedEndsets(other, onlyStructural).length === length;
+  function sameRenderEndsets(other, onlyStructural) {
+    let otherEndsets = other.pickRenderEndsets(onlyStructural);
+    let length = obj.pickRenderEndsets(onlyStructural).length;
+    return otherEndsets.length === length && obj.sharedRenderEndsets(other, onlyStructural).length === length;
   }
   
-  function hasModifiedEndset(endset, onlyStructural) {
-    let objEndsets = obj.pickEndsets(onlyStructural);
+  function hasRenderEndset(endset, onlyStructural) {
+    let objEndsets = obj.pickRenderEndsets(onlyStructural);
     return objEndsets.find(ours => 
-      endset.link === ours.link && endset.index === ours.index);
+      endset.renderLink === ours.renderLink && endset.index === ours.index);
   }
 
   addMethods(obj, {
-    hasModifiedEndset,
-    endsetsNotInOther,
-    sharedEndsets,
-    sameEndsets,
-    pickEndsets
+    hasRenderEndset,
+    renderEndsetsNotInOther,
+    sharedRenderEndsets,
+    sameRenderEndsets,
+    pickRenderEndsets
   });
 
   return obj;

@@ -6,7 +6,7 @@ export function ManyZettelSchneider(clips, renderLinks = []) {
     zettel() {
       let hash = makeEndsetHash(renderLinks);
 
-      let clipToZettel = (clip, index) => {
+      function clipToZettel(clip, index) {
         return ZettelSchneider(clip, hash.get(clip.origin), index.toString())
           .zettel();
       }
