@@ -1,34 +1,21 @@
 import { describe, it, expect } from '@jest/globals';
-import { testing, Doc, Span, Endset, Link } from "@commonplace/core";
+import { Doc, Span, Endset, Link, LinkPointer } from "@commonplace/core";
 import { DocumentRenderElements } from './document-render-elements';
 import { zettelTesting } from './zettel';
-
-let makeSpanLink = testing.links.makeSpanLink;
 
 expect.extend({
   hasEndset: zettelTesting.hasEndset
 });
 
-describe('zettel', () => {
-  it('assigns all links that overlap the zettel', () => {
-    let s = Span("origin", 0, 10);
-    let l1 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
-    let l2 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
-    let doc = Doc([s], ["a", "b"]);
-
-    let zettel = DocumentRenderElements(doc, [l1, l2]).zettel();
-
-    expect(zettel).toHaveLength(1);
-    expect(zettel[0]).hasEndset(l1, 0);
-    expect(zettel[0]).hasEndset(l2, 0);
-  });
-});
+function makeDoc(clips, linkNames) {
+  return Doc(clips, linkNames.map(n => LinkPointer(n, undefined)));
+}
 
 describe('fragmentTree', () => {
   it('returns a fragment tree containing all the valid fragment links', () => {
     let link1 = Link("paragraph", Endset(undefined, [Span("or", 1, 10)]));
     let link2 = Link("paragraph", Endset(undefined, [Span("or", 2, 5)]));
-    let doc = Doc([Span("or", 0, 100)], ["a", "b"]);
+    let doc = makeDoc([Span("or", 0, 100)], ["a", "b"]);
 
     let actual = DocumentRenderElements(doc, [link1, link2]).fragmentTree();
 
@@ -40,7 +27,7 @@ describe('fragmentTree', () => {
   it('only adds fragments for pointers that overlap with the document', () => {
     let link1 = Link("paragraph", Endset(undefined, [Span("or", 1, 10)]));
     let link2 = Link("paragraph", Endset(undefined, [Span("or", 11, 10)]));
-    let doc = Doc([Span("or", 0, 5)], ["a", "b"]);
+    let doc = makeDoc([Span("or", 0, 5)], ["a", "b"]);
 
     let actual = DocumentRenderElements(doc, [link1, link2]).fragmentTree();
 
@@ -51,7 +38,7 @@ describe('fragmentTree', () => {
   it('does not return fragments that overlap with each other', () => {
     let link1 = Link("paragraph", Endset(undefined, [Span("or", 1, 10)]));
     let link2 = Link("paragraph", Endset(undefined, [Span("or", 5, 10)]));
-    let doc = Doc([Span("or", 0, 100)], ["a", "b"]);
+    let doc = makeDoc([Span("or", 0, 100)], ["a", "b"]);
 
     let actual = DocumentRenderElements(doc, [link1, link2]).fragmentTree();
 
@@ -62,7 +49,7 @@ describe('fragmentTree', () => {
     let span1 = Span("or", 1, 10), span2 = Span("or", 5, 10);
     let link1 = Link("paragraph", Endset(undefined, [span1]));
     let link2 = Link("paragraph", Endset(undefined, [span2]));
-    let doc = Doc([Span("or", 0, 100)], ["a", "b"]);
+    let doc = makeDoc([Span("or", 0, 100)], ["a", "b"]);
 
     let actual = DocumentRenderElements(doc, [link1, link2]).overlappingLinks();
 

@@ -2,35 +2,40 @@ import { finalObject } from "@commonplace/core";
 import { RenderLink } from "./render-link";
 
 export function RenderLinkFactory(doc, links) {
+  let hash = new Map();
+  for (let i = 0; i < links.length; ++i) {
+    hash.set(doc.links[i], links[i]);
+  }
+  return RenderLinkFactory2(hash);
+}
+
+export function RenderLinkFactory2(linkMap) {
   let obj = {};
 
   function renderLinks() {
-    let renderLinks = links.map(l => RenderLink(l));
-    let hash = makeLinkMap(renderLinks);
+    let hash = makeLinkMap(linkMap);
 
     for (let [key, renderLink] of hash.entries()) {
       addModifiers(key, renderLink, hash);
     }
     
-    return renderLinks;
+    return Array.from(hash.values());
   }
 
-  function makeLinkMap(renderLinks) {
+  function makeLinkMap(linkMap) {
     let hash = new Map();
-    for (let i = 0; i < renderLinks.length; ++i) {
-      hash.set(makeKey(doc.links[i]), renderLinks[i]);
+    for (let [linkPointer, link] of linkMap) {
+      hash.set(linkPointer.hashableName(), RenderLink(link));
     }
     return hash;
-  }
-
-  function makeKey(linkPointer) {
-    return linkPointer.name + "/" + (linkPointer.index === undefined ? "N" : linkPointer.index.toString());
   }
 
   function addModifiers(key, renderLink, hash) {
     for(let [otherKey, candidate] of hash.entries()) {
       if (otherKey != key) {
-        if (candidate.endsets.some(e => e.pointers.some(p => p.pointerType === "link" && makeKey(p) === key))) {
+        if (candidate.endsets.some(e => 
+            e.pointers.some(p => p.pointerType === "link"
+            && p.hashableName() === key))) {
           renderLink.modifiers.push(candidate);
         }
       }

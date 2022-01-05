@@ -42,6 +42,12 @@ export function Zettel(clip) {
     return parts;
   }
 
+  function tryAddPart(part) {
+    if (part.engulfs(clip)) {
+      obj.content = part.content.substring(clip.start, clip.next);
+    }
+  }
+
   function renderEndsetsNotInOther(other, onlyStructural) {
     if (other === undefined) {
       return [...obj.endsets];
@@ -57,6 +63,7 @@ export function Zettel(clip) {
   addMethods(obj, {
     addEndset,
     addLink,
+    tryAddPart,
     renderEndsetsNotInOther,
     style
   });

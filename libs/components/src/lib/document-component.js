@@ -1,11 +1,11 @@
 import { ZettelRegionComponent } from './zettel-region-component';
-import { DocumentRenderElements } from '@commonplace/html';
+import { RenderDocument } from '@commonplace/html';
 import { leafDataToLink, Part, leafDataToEdl, Doc } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, cache, fetcher }) {
 
-  let [fragmentState, setFragmentState] = useState(DocumentRenderElements(Doc(), []).zettelTree());
+  let [zettelTreeState, setZettelTreeState] = useState(RenderDocument(Doc()).zettelTree());
 
   useEffect(() => {
     async function loadDoc() {
@@ -40,19 +40,14 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
 
       let doc = cache.getObject(docPointer) || leafDataToEdl(await fetcher.getObject(docPointer));
       let rawLinks = (await loadAll(doc.links, true));
-      let documentElements = DocumentRenderElements(doc, rawLinks);
-      let zettel = documentElements.zettel();
-      let tree = documentElements.zettelTree();
+      let renderDoc = RenderDocument(doc);
+      rawLinks.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l));
+      let tree = renderDoc.zettelTree();
 
       let parts = await loadAll(doc.clips, false);
+      parts.forEach(part => renderDoc.resolvePart(part));
 
-      parts.forEach(part => {
-        zettel.forEach(z => {
-          if (part.engulfs(z.clip)) { z.content = part.content.substring(z.clip.start, z.clip.next); }
-        });
-      });
-
-      setFragmentState(tree);
+      setZettelTreeState(tree);
     }
 
     loadDoc();
@@ -60,7 +55,7 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
 
   return (
     <div>
-      <ZettelRegionComponent key="froot" segment={fragmentState}/>
+      <ZettelRegionComponent key="froot" segment={zettelTreeState}/>
     </div>
   );
 }

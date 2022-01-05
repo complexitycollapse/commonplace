@@ -1,13 +1,10 @@
 import { addProperties, addMethods, listMap } from '@commonplace/core';
-import { ManyZettelSchneider } from './zettel-schneider';
-import { RegionBuilder } from './region-builder';
 import { RootFragment } from './fragment';
 import { RenderLinkFactory } from './render-link-factory';
 
 export function DocumentRenderElements(doc, links) {
   let renderLinksCache = undefined;
   let fragmentTreeCache = undefined;
-  let zettelCache = undefined;
   let overlappingLinksCache = undefined;
 
   let obj = {};
@@ -26,19 +23,6 @@ export function DocumentRenderElements(doc, links) {
 
   function inDoc(fragment) {
     return doc.clips.find(c => c.overlaps(fragment.clip));
-  }
-
-  function zettel() {
-    if (!zettelCache) {
-      let renderLinks = ensureRenderLinks();
-      zettelCache = ManyZettelSchneider(doc.clips, renderLinks).zettel();
-    }
-    return zettelCache;
-  }
-
-  function zettelTree() {
-    let zs = zettel();
-    return RegionBuilder(zs).build();
   }
 
   function ensureRenderLinks() {
@@ -81,9 +65,7 @@ export function DocumentRenderElements(doc, links) {
 
   addMethods(obj, {
     fragmentTree,
-    overlappingLinks,
-    zettel,
-    zettelTree
+    overlappingLinks
   });
 
   return obj;
