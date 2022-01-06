@@ -623,3 +623,41 @@ describe('overlappingButNotEngulfing', () => {
     expect(Span("x", 29, 10).overlappingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
   });
 });
+
+describe('intersectingContent', () => {
+  it('returns undefined if the clip does not overlap the Part', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 202, 20), "abcdefghij")).toBeFalsy();
+  });
+
+  it('returns the whole content if the spans are the same', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 100, 10), "abcdefghij")).toBe("abcdefghij");
+  });
+
+  it('returns the whole content if the passed span is more expansive', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 50, 200), "abcdefghij")).toBe("abcdefghij");
+  });
+
+  it('returns the portion of the content selected by the span', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 101, 8), "abcdefghij")).toBe("bcdefghi");
+  });
+
+  it('returns the overlapping portion of the content when the passed clip starts earlier', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 90, 19), "abcdefghij")).toBe("abcdefghi");
+  });
+
+  it('returns the overlapping portion of the content when the passed clip ends later', () => {
+    let span = Span("x", 100, 10);
+
+    expect(span.intersectingContent(Span("x", 101, 20), "abcdefghij")).toBe("bcdefghij");
+  });
+});

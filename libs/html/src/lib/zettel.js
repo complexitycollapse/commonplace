@@ -1,4 +1,4 @@
-import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonplace/core';
+import { addProperties, addMethods, Endset, testing, Link, Span, Part } from '@commonplace/core';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
@@ -6,10 +6,8 @@ import { CssStyle } from './css-style';
 import { RenderEndset } from './render-endset';
 
 export function Zettel(clip) {
-  let base = StructureElement([]);
-
-  let obj = Object.create(base);
-  obj.content = undefined;
+  let obj = StructureElement([]);
+  let contentInternal = undefined;
   obj.key = undefined;
 
   addProperties(obj, {
@@ -27,32 +25,26 @@ export function Zettel(clip) {
   }
 
   function addLink(link) {
-    let parts = SingleZettelSchneider(clip, [link], obj.key).zettel();
+    let newZettel = SingleZettelSchneider(clip, [link], obj.key).zettel();
+    let part = Part(clip, contentInternal);
 
-    parts.forEach(z => {
+    newZettel.forEach(z => {
       obj.endsets.forEach(e => {
         if (!z.hasRenderEndset(e)) {
           z.endsets.push(e);
           if (link.isStructural) { obj.structuralEndsets.push(e) };
         }
-        z.content = obj.content;
+        if (contentInternal) { z.tryAddPart(part); }
       });
     });
 
-    return parts;
+    return newZettel;
   }
 
   function tryAddPart(part) {
     if (part.engulfs(clip)) {
-      obj.content = part.content.substring(clip.start, clip.next);
+      contentInternal = part.intersectingContent(clip);
     }
-  }
-
-  function renderEndsetsNotInOther(other, onlyStructural) {
-    if (other === undefined) {
-      return [...obj.endsets];
-    }
-    return base.renderEndsetsNotInOther(other, onlyStructural);
   }
 
   function style() {
@@ -64,8 +56,8 @@ export function Zettel(clip) {
     addEndset,
     addLink,
     tryAddPart,
-    renderEndsetsNotInOther,
-    style
+    style,
+    content: () => contentInternal
   });
 
   return obj;

@@ -13,6 +13,8 @@ export function StructureElement(endsets) {
   }
 
   function renderEndsetsNotInOther(other, onlyStructural) {
+    if (other === undefined) { return [...obj.endsets]; }
+
     let openings = [];
     let objEndsets = obj.pickRenderEndsets(onlyStructural);
   

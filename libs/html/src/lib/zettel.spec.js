@@ -1,6 +1,6 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel, zettelTesting } from './zettel';
-import { Span, Link, Endset, testing, LinkPointer } from '@commonplace/core';
+import { Span, Link, Endset, testing, LinkPointer, Part } from '@commonplace/core';
 import { RenderLink } from './render-link';
 
 let toEqualSpan = testing.spans.toEqualSpan;
@@ -149,20 +149,19 @@ describe('addLink', () => {
     expect(newZettel[1].clip).toEqualSpan(s.crop(1, 9));
   });
 
-  it('will copy the zettel content to all the new zettel', () => {
-    let s = Span("origin", 1, 10);
+  it('will split the zettel content to all the new zettel', () => {
+    let s = Span("origin", 1, 20);
     let e1 = Endset("name1", [s]);
     let l1 = makeLink("type1", e1);
     let l2 = makeLink("type2", Endset("name2", [s.crop(1)]));
-    let zettel = make();
+    let zettel = make(s);
     zettel.addEndset(e1, l1);
-    zettel.content = "This is some content";
+    zettel.tryAddPart(Part(s, "This is some content"));
 
     let newZettel = zettel.addLink(l2);
 
-    newZettel.forEach(z => {
-      expect(z.content).toBe(zettel.content);
-    });
+    expect(newZettel[0].content()).toBe("T");
+    expect(newZettel[1].content()).toBe("his is some content");
   });
 
   it('will assign keys to the new zettel if the original has a key', () => {
@@ -324,5 +323,25 @@ describe('style', () => {
     zettel.addEndset(endset1, link1);
     zettel.addEndset(endset2, link2);
     expect(zettel.style()).toEqual({fontStyle: "bold italic"});
+  });
+});
+
+describe('tryAddPart', () => {
+  it('leaves the content undefined if the part does not overlap with the zettel', () => {
+    let zettel = make(Span("x", 1, 100));
+    let part = Part(Span("x", 200, 10), "0123456789");
+
+    zettel.tryAddPart(part);
+
+    expect(zettel.content()).toBe(undefined);
+  });
+
+  it('assigns the correct portion of the parts content if the part overlaps the zettel', () => {
+    let zettel = make(Span("x", 204, 3));
+    let part = Part(Span("x", 200, 10), "0123456789");
+
+    zettel.tryAddPart(part);
+
+    expect(zettel.content()).toBe("456");
   });
 });

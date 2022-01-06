@@ -4,7 +4,7 @@ export function SpanComponent({ zettel }) {
 
   return (
     <cpla-span cpla-key={zettel.key}>
-      <span style={style}>{zettel.content}</span>
+      <span style={style}>{zettel.content()}</span>
     </cpla-span>
   );
 }

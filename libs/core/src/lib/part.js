@@ -7,11 +7,16 @@ export function Part(clip, content) {
     return Part(clip.clone(props), "content" in props ? props.content : content);
   }
 
+  function intersectingContent(otherClip) {
+    return clip.intersectingContent(otherClip, content);
+  }
+
   addProperties(obj, {
     content
   });
 
   return finalObject(obj, {
-    clone
+    clone,
+    intersectingContent
   });
 }
