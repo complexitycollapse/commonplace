@@ -7,7 +7,7 @@ import { RenderEndset } from './render-endset';
 
 export function Zettel(clip) {
   let obj = StructureElement([]);
-  let contentInternal = undefined;
+  let contentPart = undefined;
   obj.key = undefined;
 
   addProperties(obj, {
@@ -26,7 +26,6 @@ export function Zettel(clip) {
 
   function addLink(link) {
     let newZettel = SingleZettelSchneider(clip, [link], obj.key).zettel();
-    let part = Part(clip, contentInternal);
 
     newZettel.forEach(z => {
       obj.endsets.forEach(e => {
@@ -34,7 +33,7 @@ export function Zettel(clip) {
           z.endsets.push(e);
           if (link.isStructural) { obj.structuralEndsets.push(e) };
         }
-        if (contentInternal) { z.tryAddPart(part); }
+        if (contentPart) { z.tryAddPart(contentPart); }
       });
     });
 
@@ -42,8 +41,8 @@ export function Zettel(clip) {
   }
 
   function tryAddPart(part) {
-    if (part.engulfs(clip)) {
-      contentInternal = part.intersectingContent(clip);
+    if (part.clip.engulfs(clip)) {
+      contentPart = part.intersect(clip);
     }
   }
 
@@ -57,7 +56,7 @@ export function Zettel(clip) {
     addLink,
     tryAddPart,
     style,
-    content: () => contentInternal
+    part: () => contentPart
   });
 
   return obj;

@@ -7,13 +7,13 @@ export function PartCache() {
 
   function getPart(clip) {
     if(partCache.has(clip.origin)) {
-      return partCache.get(clip.origin).find(p => p.engulfs(clip));
+      return partCache.get(clip.origin).find(p => p.clip.engulfs(clip));
     }
     return undefined;
   }
 
   function addPart(part) {
-    partCache.push(part.origin, part);
+    partCache.push(part.clip.origin, part);
   }
 
   function addObject(pointer, object) {

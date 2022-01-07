@@ -18,7 +18,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part)).toEqual(part);
+    expect(pc.getPart(part.clip)).toEqual(part);
   });
 
   test('getPart retrieves the part if it has 100% of the content in the cache', () => {
@@ -27,7 +27,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.clone({start: part.start + 1, length: part.length - 1}))).toEqual(part);
+    expect(pc.getPart(part.clip.clone({start: part.clip.start + 1, length: part.clip.length - 1}))).toEqual(part);
   });
 
   test('getPart returns nothing if any part of the requested content is missing', () => {
@@ -36,7 +36,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.clone({start: part.start + 1}))).toBe(undefined);
+    expect(pc.getPart(part.clip.clone({start: part.start + 1}))).toBe(undefined);
   });
 
   test('getPart will not retrieve inherited object methods', () => {
@@ -49,7 +49,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part)).toEqual(part);
+    expect(pc.getPart(part.clip)).toEqual(part);
   });
 });
 

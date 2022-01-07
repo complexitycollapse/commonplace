@@ -94,6 +94,19 @@ export function Box(origin, x, y, width, height, originalContext)
       && contains(box.rightEdge, box.bottomEdge);
   }
 
+  function intersect(box) {
+    if (!overlaps(box)) {
+      return [false, undefined];
+    }
+    let newX = Math.max(box.x, x), newY = Math.max(box.y, y);
+    return [true, Box(
+                    origin,
+                    newX,
+                    newY,
+                    Math.min(box.nextX, obj.nextX) - newX,
+                    Math.min(box.nextY, obj.nextY) - newY)];
+  }
+
   return finalObject(obj, {
     clone,
     abutsHorizontally,
@@ -105,7 +118,8 @@ export function Box(origin, x, y, width, height, originalContext)
     leafData,
     overlaps,
     contains,
-    engulfs
+    engulfs,
+    intersect
   });
 }
 

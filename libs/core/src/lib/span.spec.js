@@ -445,76 +445,83 @@ test('leafDataToSpan is inverse of leafData', () => {
 });
 
 describe('intersect', () => {
+  it('returns [false, undefined] if the spans do not overlap', () => {
+    let s1 = make();
+    let s2 = s1.clone({start: s1.next});
+
+    expect(s1.intersect(s2)).toEqual([false, undefined]);
+  });
+
+  it('returns [true, result] if the spans overlap', () => {
+    let s1 = make();
+    let s2 = s1.clone({start: s1.next - 1});
+
+    expect(s1.intersect(s2)[0]).toEqual(true);
+  });
+
   it('returns the original span if the second is equal to it', () => {
     let s1 = make();
     let s2 = s1.clone();
 
-    expect(s1.intersect(s2)).toEqualSpan(s1);
+    expect(s1.intersect(s2)[1]).toEqualSpan(s1);
   });
 
   it('returns the original dimensions if the second span encompasses it', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
 
-    expect(s1.intersect(s2)).toEqualSpan(s1);
-  });
-
-  it('returns the original dimensions if the second span is equal to it', () => {
-    let s1 = make();
-    let s2 = s1.clone();
-
-    expect(s1.intersect(s2)).toEqualSpan(s1);
+    expect(s1.intersect(s2)[1]).toEqualSpan(s1);
   });
 
   it('returns the dimensions of the second span if we encompass it', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
 
-    expect(s2.intersect(s1)).toEqualSpan(s1);
+    expect(s2.intersect(s1)[1]).toEqualSpan(s1);
   });
 
   it('has the start of the other span if that is later', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start + 1});
 
-    expect(s1.intersect(s2).start).toBe(s2.start);
+    expect(s1.intersect(s2)[1].start).toBe(s2.start);
   });
 
   it('has the start of this span if that is later', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start + 1});
 
-    expect(s2.intersect(s1).start).toBe(s2.start);
+    expect(s2.intersect(s1)[1].start).toBe(s2.start);
   });
 
   it('has the end of the other span if that is earlier', () => {
     let s1 = make();
     let s2 = s1.clone({ length: s1.length - 1});
 
-    expect(s1.intersect(s2).end).toBe(s2.end);
+    expect(s1.intersect(s2)[1].end).toBe(s2.end);
   });
 
   it('has the end of this span if that is earlier', () => {
     let s1 = make();
     let s2 = s1.clone({ length: s1.length - 1});
 
-    expect(s2.intersect(s1).end).toBe(s2.end);
+    expect(s2.intersect(s1)[1].end).toBe(s2.end);
   });
 
   it('is equal to the overlapping section if this is earlier than the other', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
 
-    expect(s1.intersect(s2).start).toBe(s2.start);
-    expect(s1.intersect(s2).end).toBe(s1.end);
+    expect(s1.intersect(s2)[1].start).toBe(s2.start);
+    expect(s1.intersect(s2)[1].end).toBe(s1.end);
   });
 
   it('is equal to the overlapping section if this is later than the other', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
 
-    expect(s2.intersect(s1).start).toBe(s2.start);
-    expect(s2.intersect(s1).end).toBe(s1.end);
+    expect(s2.intersect(s1)[1].start).toBe(s2.start);
+    expect(s2.intersect(s1)[1].end).toBe(s1.end);
   });
 });
 
@@ -621,43 +628,5 @@ describe('overlappingButNotEngulfing', () => {
 
   it('returns false if they have different clip types', () => {
     expect(Span("x", 29, 10).overlappingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
-  });
-});
-
-describe('intersectingContent', () => {
-  it('returns undefined if the clip does not overlap the Part', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 202, 20), "abcdefghij")).toBeFalsy();
-  });
-
-  it('returns the whole content if the spans are the same', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 100, 10), "abcdefghij")).toBe("abcdefghij");
-  });
-
-  it('returns the whole content if the passed span is more expansive', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 50, 200), "abcdefghij")).toBe("abcdefghij");
-  });
-
-  it('returns the portion of the content selected by the span', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 101, 8), "abcdefghij")).toBe("bcdefghi");
-  });
-
-  it('returns the overlapping portion of the content when the passed clip starts earlier', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 90, 19), "abcdefghij")).toBe("abcdefghi");
-  });
-
-  it('returns the overlapping portion of the content when the passed clip ends later', () => {
-    let span = Span("x", 100, 10);
-
-    expect(span.intersectingContent(Span("x", 101, 20), "abcdefghij")).toBe("bcdefghij");
   });
 });

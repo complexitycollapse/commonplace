@@ -52,7 +52,7 @@ export function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
 
     let overlappingClip = overlappingEntries[0].clip;
     let remainingEntries = overlappingEntries.slice(1);
-    let cropped = span.intersect(overlappingClip);
+    let cropped = span.intersect(overlappingClip)[1];
     let subResults = [];
 
     if (cropped.start > span.start){

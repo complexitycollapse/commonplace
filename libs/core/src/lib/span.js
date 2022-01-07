@@ -52,7 +52,7 @@ export function Span(origin, start, length, originalContext) {
   }
 
   function crop(startAdjust, newLength) {
-    startAdjust = startAdjust > 0 ? startAdjust : 0;
+    startAdjust = Math.max(startAdjust, 0);
     newLength = Math.min(newLength ?? length, length - startAdjust);
     return clone({
       start: start + startAdjust,
@@ -60,18 +60,14 @@ export function Span(origin, start, length, originalContext) {
   }
 
   function intersect(s) {
+    if (!overlaps(s)) {
+      return [false, undefined];
+    }
     let newStart = Math.max(s.start, start);
-    return Span(
-      origin,
-      newStart,
-      Math.min(s.next, obj.next) - newStart);
-  }
-
-  function intersectingContent(clip, content) {
-    if (!obj.overlaps(clip)) { return undefined; }
-    let start = Math.max(clip.start, obj.start);
-    let next = Math.min(obj.next, clip.next);
-    return content.substring(Math.max(0, start - obj.start), Math.min(obj.next, next - obj.start));
+    return [true, Span(
+                    origin,
+                    newStart,
+                    Math.min(s.next, obj.next) - newStart)];
   }
 
   function leafData() {
@@ -93,8 +89,7 @@ export function Span(origin, start, length, originalContext) {
     crop,
     leafData,
     intersect,
-    overlappingButNotEngulfing,
-    intersectingContent
+    overlappingButNotEngulfing
   });
 }
 

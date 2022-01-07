@@ -574,3 +574,128 @@ describe('engulfs', () => {
     expect(box.engulfs(box.clone({x: 100, y: 120, width: 100, height: 20}))).toBeFalsy();
   });
 });
+
+describe('intersect', () => {
+  it('returns [false, undefined] if the boxes do not overlap', () => {
+    let b1 = make();
+    let b2 = b1.clone({x: b1.nextX});
+
+    expect(b1.intersect(b2)).toEqual([false, undefined]);
+  });
+
+  it('returns [true, result] if the boxes overlap', () => {
+    let b1 = make();
+    let b2 = b1.clone({x: b1.nextX - 1});
+
+    expect(b1.intersect(b2)[0]).toEqual(true);
+  });
+
+  it('returns the original box if the second is equal to it', () => {
+    let b1 = make();
+    let b2 = b1.clone();
+
+    expect(b1.intersect(b2)[1]).toEqual(b1);
+  });
+
+  it('returns the original dimensions if the second box encompasses it', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x - 1, y: b1.y - 1, width: b1.width + 2, height: b1.height + 2 });
+
+    expect(b1.intersect(b2)[1]).toEqual(b1);
+  });
+
+  it('returns the dimensions of the second box if we encompass it', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x - 1, y: b1.y - 1, width: b1.width + 2, height: b1.height + 2 });
+
+    expect(b2.intersect(b1)[1]).toEqual(b1);
+  });
+
+  it('has the x of the other box if that is later', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x + 1});
+
+    expect(b1.intersect(b2)[1].x).toBe(b2.x);
+  });
+
+  it('has the y of the other box if that is later', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1});
+
+    expect(b1.intersect(b2)[1].y).toBe(b2.y);
+  });
+
+  it('has the x of this box if that is later', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x + 1});
+
+    expect(b2.intersect(b1)[1].x).toBe(b2.x);
+  });
+
+  it('has the y of this box if that is later', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1});
+
+    expect(b2.intersect(b1)[1].y).toBe(b2.y);
+  });
+
+  it('has the nextX of the other box if that is lesser', () => {
+    let b1 = make();
+    let b2 = b1.clone({ width: b1.width - 1});
+
+    expect(b1.intersect(b2)[1].nextX).toBe(b2.nextX);
+  });
+
+  it('has the nextY of the other box if that is lesser', () => {
+    let b1 = make();
+    let b2 = b1.clone({ height: b1.height - 1});
+
+    expect(b1.intersect(b2)[1].nextY).toBe(b2.nextY);
+  });
+
+  it('has the nextX of the other box if that is greater', () => {
+    let b1 = make();
+    let b2 = b1.clone({ width: b1.width - 1});
+
+    expect(b2.intersect(b1)[1].nextX).toBe(b2.nextX);
+  });
+
+  it('has the nextY of the other box if that is greater', () => {
+    let b1 = make();
+    let b2 = b1.clone({ height: b1.height - 1});
+
+    expect(b2.intersect(b1)[1].nextY).toBe(b2.nextY);
+  });
+
+  it('is equal to the overlapping section if this is lefter than the other', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x + 1, width: b1.width + 3});
+
+    expect(b1.intersect(b2)[1].x).toBe(b2.x);
+    expect(b1.intersect(b2)[1].nextX).toBe(b1.nextX);
+  });
+
+  it('is equal to the overlapping section if this is to higher than the other', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1, height: b1.height + 3});
+
+    expect(b1.intersect(b2)[1].y).toBe(b2.y);
+    expect(b1.intersect(b2)[1].nextY).toBe(b1.nextY);
+  });
+
+  it('is equal to the overlapping section if this is righter than the other', () => {
+    let b1 = make();
+    let b2 = b1.clone({ x: b1.x + 1, width: b1.width + 3});
+
+    expect(b2.intersect(b1)[1].x).toBe(b2.x);
+    expect(b2.intersect(b1)[1].nextX).toBe(b1.nextX);
+  });
+
+  it('is equal to the overlapping section if this is to lower than the other', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1, height: b1.height + 3});
+
+    expect(b2.intersect(b1)[1].y).toBe(b2.y);
+    expect(b2.intersect(b1)[1].nextY).toBe(b1.nextY);
+  });
+});

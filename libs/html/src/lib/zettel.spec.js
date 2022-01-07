@@ -150,18 +150,22 @@ describe('addLink', () => {
   });
 
   it('will split the zettel content to all the new zettel', () => {
-    let s = Span("origin", 1, 20);
-    let e1 = Endset("name1", [s]);
+    let s1 = Span("origin", 1, 20);
+    let s2 = s1.crop(1);
+    let e1 = Endset("name1", [s1]);
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s.crop(1)]));
-    let zettel = make(s);
+    let l2 = makeLink("type2", Endset("name2", [s2]));
+    let content = "This is some content";
+    let zettel = make(s1);
     zettel.addEndset(e1, l1);
-    zettel.tryAddPart(Part(s, "This is some content"));
+    zettel.tryAddPart(Part(s1, content));
 
     let newZettel = zettel.addLink(l2);
 
-    expect(newZettel[0].content()).toBe("T");
-    expect(newZettel[1].content()).toBe("his is some content");
+    expect(newZettel[0].part().content).toBe(content);
+    expect(newZettel[1].part().content).toBe(content);
+    expect(newZettel[0].part().clip).toEqual(Span("origin", 1, 1));
+    expect(newZettel[1].part().clip).toEqual(s2);
   });
 
   it('will assign keys to the new zettel if the original has a key', () => {
@@ -327,21 +331,30 @@ describe('style', () => {
 });
 
 describe('tryAddPart', () => {
-  it('leaves the content undefined if the part does not overlap with the zettel', () => {
+  it('leaves the content undefined if the part does not engulf the zettel', () => {
     let zettel = make(Span("x", 1, 100));
-    let part = Part(Span("x", 200, 10), "0123456789");
+    let part = Part(Span("x", 50, 100), "0123456789");
 
     zettel.tryAddPart(part);
 
-    expect(zettel.content()).toBe(undefined);
+    expect(zettel.part()).toBe(undefined);
   });
 
-  it('assigns the correct portion of the parts content if the part overlaps the zettel', () => {
+  it('assigns the correct portion of the parts content if the part engulfs the zettel', () => {
     let zettel = make(Span("x", 204, 3));
     let part = Part(Span("x", 200, 10), "0123456789");
 
     zettel.tryAddPart(part);
 
-    expect(zettel.content()).toBe("456");
+    expect(zettel.part().clip).toEqual(Span("x", 204, 3));
+  });
+
+  it('assigns the parts content if the part engulfs the zettel', () => {
+    let zettel = make(Span("x", 204, 3));
+    let part = Part(Span("x", 200, 10), "0123456789");
+
+    zettel.tryAddPart(part);
+
+    expect(zettel.part().content).toBe(part.content);
   });
 });
