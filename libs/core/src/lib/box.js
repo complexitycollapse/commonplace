@@ -90,8 +90,8 @@ export function Box(origin, x, y, width, height, originalContext)
 
   function engulfs(box) {
     return origin === box.origin 
-      && contains(box.x, box.y)
-      && contains(box.rightEdge, box.bottomEdge);
+    && contains(box.x, box.y)
+    && contains(box.rightEdge, box.bottomEdge);
   }
 
   function intersect(box) {
@@ -124,7 +124,7 @@ export function Box(origin, x, y, width, height, originalContext)
 }
 
 export function leafDataToBox(leafData) {
-  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.hg);
+  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht);
 }
 
 export let boxTesting = {

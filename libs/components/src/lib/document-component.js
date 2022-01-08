@@ -1,6 +1,6 @@
 import { ZettelRegionComponent } from './zettel-region-component';
 import { RenderDocument } from '@commonplace/html';
-import { leafDataToLink, Part, leafDataToEdl, Doc, Span } from '@commonplace/core';
+import { leafDataToLink, Part, leafDataToEdl, Doc, Span, Box } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, cache, fetcher }) {
@@ -21,7 +21,10 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
             return [false, link];
           } else {
             let content = await fetcher.getPart(clip);
-            return [false, Part(Span(clip.origin, 0, content.length), content)];
+            let newClip = clip.clipType === "span" ?
+              Span(clip.origin, 0, content.length) :
+              Box(clip.origin, 0, 0, 10000, 10000);
+            return [false, Part(newClip, content)];
           }
         }
       }
