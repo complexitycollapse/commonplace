@@ -44,7 +44,7 @@ describe('leafData', () => {
       x: 101,
       y: 505,
       wd: 22,
-      hg: 33
+      ht: 33
     });
   });
 
