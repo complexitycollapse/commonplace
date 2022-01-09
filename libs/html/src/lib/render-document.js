@@ -26,7 +26,8 @@ export function RenderDocument(doc) {
 
   function ensureRenderLinks() {
     if (renderLinkCache === undefined) {
-      renderLinkCache = RenderLinkFactory2(linkMap).renderLinks();
+      let nameLinkPairs = Array.from(linkMap.entries(), pair => [pair[0], pair[1].link]);
+      renderLinkCache = RenderLinkFactory2(nameLinkPairs).renderLinks();
     }
     return renderLinkCache;
   }

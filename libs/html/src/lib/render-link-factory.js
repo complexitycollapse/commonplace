@@ -2,38 +2,32 @@ import { finalObject } from "@commonplace/core";
 import { RenderLink } from "./render-link";
 
 export function RenderLinkFactory(doc, links) {
-  let hash = new Map();
+  let keyLinkPairs = [];
   for (let i = 0; i < links.length; ++i) {
-    hash.set(doc.links[i].hashableName(), { link: links[i] });
+    keyLinkPairs.push([doc.links[i].hashableName(), links[i]]);
   }
-  return RenderLinkFactory2(hash);
+  return RenderLinkFactory2(keyLinkPairs);
 }
 
-export function RenderLinkFactory2(linkMap) {
+export function RenderLinkFactory2(nameLinkPairs) {
   let obj = {};
 
   function renderLinks() {
-    let hash = makeLinkMap(linkMap);
+    let nameRenderLinkPairs = makeNameRenderLinkPairs(nameLinkPairs);
 
-    for (let [key, renderLink] of hash.entries()) {
-      addModifiers(key, renderLink, hash);
+    for (let [key, renderLink] of nameRenderLinkPairs) {
+      addModifiers(key, renderLink, nameRenderLinkPairs);
     }
     
-    return Array.from(hash.values());
+    return nameRenderLinkPairs.map(p => p[1]);
   }
 
-  function makeLinkMap(linkMap) {
-    let hash = new Map();
-    for (let [linkName, value] of linkMap) {
-      if (value.link) {
-        hash.set(linkName, RenderLink(value.link));
-      }
-    }
-    return hash;
+  function makeNameRenderLinkPairs(linkMap) {
+    return linkMap.filter(p => p[1]).map(p => [p[0], RenderLink(p[1])]);
   }
 
-  function addModifiers(key, renderLink, hash) {
-    for(let [otherKey, candidate] of hash.entries()) {
+  function addModifiers(key, renderLink, nameRenderLinkPairs) {
+    for(let [otherKey, candidate] of nameRenderLinkPairs) {
       if (otherKey != key) {
         if (candidate.endsets.some(e => 
             e.pointers.some(p => p.pointerType === "link"
