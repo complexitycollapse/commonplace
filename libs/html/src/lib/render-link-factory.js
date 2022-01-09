@@ -25,7 +25,9 @@ export function RenderLinkFactory2(linkMap) {
   function makeLinkMap(linkMap) {
     let hash = new Map();
     for (let [linkName, value] of linkMap) {
-      hash.set(linkName, RenderLink(value.link));
+      if (value.link) {
+        hash.set(linkName, RenderLink(value.link));
+      }
     }
     return hash;
   }

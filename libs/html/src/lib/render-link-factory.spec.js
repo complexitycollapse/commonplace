@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { Link, LinkPointer, Endset } from '@commonplace/core';
-import { RenderLinkFactory2 } from './render-link-factory';
+import { RenderLinkFactory, RenderLinkFactory2 } from './render-link-factory';
 
 function makeLinkMap(links) {
   return new Map(links.map((l, i) => [LinkPointer(i.toString()).hashableName(), { link: l }]));
@@ -11,6 +11,17 @@ describe('renderLinks', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
 
     expect(RenderLinkFactory2(makeLinkMap(links)).renderLinks().map(x => x.link)).toEqual(links)
+  });
+
+  it('does not return a RenderLink if the link was undefined', () => {
+    let links = [Link("foo"), Link("foo"), Link("foo")];
+    let linkMap = makeLinkMap(links);
+    linkMap.set("missing link", { link: undefined });
+
+    let renderLinks = RenderLinkFactory2(linkMap).renderLinks();
+
+    expect(renderLinks).not.toHaveProperty("missing link");
+    expect(renderLinks.map(x => x.link)).toEqual(links);
   });
 
   it('attaches a link to the link it points to', () => {
