@@ -1,6 +1,6 @@
 import { finalObject } from "@commonplace/core";
 import { RegionBuilder } from "./region-builder";
-import { RenderLinkFactory } from "./render-link-factory";
+import { RenderLinkFactory2 } from "./render-link-factory";
 import { ManyZettelSchneider } from "./zettel-schneider";
 
 export function RenderDocument(doc) {
@@ -26,8 +26,7 @@ export function RenderDocument(doc) {
 
   function ensureRenderLinks() {
     if (renderLinkCache === undefined) {
-      let links = Array.from(linkMap.values()).map(x => x.link);
-      renderLinkCache = RenderLinkFactory(doc, links).renderLinks();
+      renderLinkCache = RenderLinkFactory2(linkMap).renderLinks();
     }
     return renderLinkCache;
   }

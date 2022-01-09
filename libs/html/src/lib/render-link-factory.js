@@ -4,7 +4,7 @@ import { RenderLink } from "./render-link";
 export function RenderLinkFactory(doc, links) {
   let hash = new Map();
   for (let i = 0; i < links.length; ++i) {
-    hash.set(doc.links[i], links[i]);
+    hash.set(doc.links[i].hashableName(), { link: links[i] });
   }
   return RenderLinkFactory2(hash);
 }
@@ -24,8 +24,8 @@ export function RenderLinkFactory2(linkMap) {
 
   function makeLinkMap(linkMap) {
     let hash = new Map();
-    for (let [linkPointer, link] of linkMap) {
-      hash.set(linkPointer.hashableName(), RenderLink(link));
+    for (let [linkName, value] of linkMap) {
+      hash.set(linkName, RenderLink(value.link));
     }
     return hash;
   }

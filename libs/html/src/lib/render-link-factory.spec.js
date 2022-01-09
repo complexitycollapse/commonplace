@@ -3,7 +3,7 @@ import { Link, LinkPointer, Endset } from '@commonplace/core';
 import { RenderLinkFactory2 } from './render-link-factory';
 
 function makeLinkMap(links) {
-  return new Map(links.map((l, i) => [LinkPointer(i.toString()), l]));
+  return new Map(links.map((l, i) => [LinkPointer(i.toString()).hashableName(), { link: l }]));
 }
 
 describe('renderLinks', () => {
