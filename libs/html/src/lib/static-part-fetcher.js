@@ -20,7 +20,7 @@ export function StaticPartFetcher(origin) {
   }
 
   async function getObject(pointer) {
-    let response = await fetch(origin + pointer.name);
+    let response = await fetch(origin + pointer.origin);
     let object = await response.json();
     return object;
   }

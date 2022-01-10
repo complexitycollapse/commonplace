@@ -6,8 +6,8 @@ export function Pointer(pointerType, isClip, nameMapping, properties, methods) {
   addProperties(obj, { pointerType, isClip });
   addProperties(obj, properties);
   addMethods(obj, methods);
-  let name = nameMapping(obj);
-  addProperties(obj, { name });
+  let origin = nameMapping(obj);
+  addProperties(obj, { origin });
   return obj;
 }
 
@@ -18,14 +18,14 @@ export function LinkPointer(linkName, index) {
   });
 }
 
-export function LinkTypePointer(linkType) {
-  return Pointer("link type", false, x => x.linkType, { linkType }, {
-    leafData() { return { typ: "link type", name: linkType }; }
-  });
-}
-
 export function leafDataToLinkPointer(data) {
   return LinkPointer(data.name, data["idx"]);
+}
+
+export function LinkTypePointer(linkType) {
+  return Pointer("link type", false, () => undefined, { linkType }, {
+    leafData() { return { typ: "link type", name: linkType }; }
+  });
 }
 
 export function leafDataToLinkTypePointer(data) {
