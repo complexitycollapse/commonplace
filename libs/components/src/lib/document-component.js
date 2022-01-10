@@ -15,11 +15,12 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
 
         let content = undefined;
 
+        let obj = await fetcher.getPart(clip);
+        if (!obj) { return undefined; }
         if (isObject) {
-          let obj = await fetcher.getObject(clip);
           content = leafDataToLink(obj);
         } else {
-          content = await fetcher.getPart(clip);
+          content = obj;
           clip = clip.clipType === "span" ?
             Span(clip.origin, 0, content.length) :
             Box(clip.origin, 0, 0, 10000, 10000);
@@ -35,13 +36,13 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
       async function loadAll(iterable, areObjects) {
         let results = await Promise.all(iterable.map(item => loadContent(item, areObjects)));
         results.forEach(r => {
-          if (!r[0]) { cache.addPart(r[1]); }
+          if (r && !r[0]) { cache.addPart(r[1]); }
         });
 
         return results.map(r => r[1]);
       }
 
-      let doc = cache.getPart(docPointer)?.content || leafDataToEdl(await fetcher.getObject(docPointer));
+      let doc = cache.getPart(docPointer)?.content || leafDataToEdl(await fetcher.getPart(docPointer));
       let rawLinks = (await loadAll(doc.links, true)).map(p => extractLink(p.pointer, p.content));
       let renderDoc = RenderDocument(doc);
       rawLinks.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l));

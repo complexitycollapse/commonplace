@@ -3,7 +3,7 @@ import { FlightComponent } from '@commonplace/components';
 import { StaticPartFetcher } from '@commonplace/html';
 
 let cache = LeafCache();
-let fetcher = StaticPartFetcher("/assets/content/");
+let fetcher = StaticPartFetcher("/assets/content/", fetch);
 
 export function App() {
     return (
