@@ -1,4 +1,4 @@
-import { addProperties, addMethods, Endset, testing, Link, Span, Part } from '@commonplace/core';
+import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonplace/core';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';

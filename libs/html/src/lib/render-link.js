@@ -1,5 +1,4 @@
 import { addProperties, finalObject } from "@commonplace/core";
-import { Fragment } from "./fragment";
 
 let typeMap = {
   paragraph: [null, "p"],
@@ -30,29 +29,12 @@ export function RenderLink(link) {
     isStructural: fragmentTag ? true : false
   });
 
-  function fragments() {
-  let fragments = [];
-
-  if (fragmentTag) {
-    link.endsets.forEach(e => {
-      e.pointers.forEach(p => {
-        if (p.isClip) {
-          fragments.push(Fragment(p, e, renderLink));
-        }
-      });
-    });
-  }
-
-  return fragments;
-  }
-
   function style() {
     let mod = renderLink.modifiers.find(l => l.style());
     return mod ? mod.style() : inlineStyle;
   }
 
   return finalObject(renderLink, {
-    fragments,
     style
   });
 }
