@@ -22,45 +22,45 @@ describe('clone', () => {
     expect(part.clone({content: undefined}).content).toBe(undefined);
   });
 
-  it('changes the clip property if it is provided', () => {
+  it('changes the pointer property if it is provided', () => {
     let part = make();
 
-    let clone = part.clone({clip: Span("new", 555, 999)});
+    let clone = part.clone({pointer: Span("new", 555, 999)});
 
-    expect(clone.clip.origin).toBe("new");
-    expect(clone.clip.start).toBe(555);
-    expect(clone.clip.length).toBe(999);
+    expect(clone.pointer.origin).toBe("new");
+    expect(clone.pointer.start).toBe(555);
+    expect(clone.pointer.length).toBe(999);
   });
 });
 
 describe('intersect', () => {
-  it('returns undefined if the clip does not overlap the Part', () => {
+  it('returns undefined if the pointer does not overlap the Part', () => {
     let part = make(Span("x", 100, 10), "abcdefghij");
 
     expect(part.intersect(Span("x", 202, 20))).toBeFalsy();
   });
 
-  it('returns an identical part if the clips are the same', () => {
+  it('returns an identical part if the pointers are the same', () => {
     let part = make(Span("x", 100, 10), "abcdefghij");
 
     expect(part.intersect(Span("x", 100, 10))).toEqual(part);
   });
 
-  it('returns an identical par if the passed clip is more expansive than the part', () => {
+  it('returns an identical par if the passed pointer is more expansive than the part', () => {
     let part = make(Span("x", 100, 10), "abcdefghij");
 
     expect(part.intersect(Span("x", 50, 200))).toEqual(part);
   });
 
-  it('returns a part with the same content as the original if the clip overlaps the part', () => {
+  it('returns a part with the same content as the original if the pointer overlaps the part', () => {
     let part = make(Span("x", 100, 10), "abcdefghij");
 
     expect(part.intersect(Span("x", 105, 100)).content).toBe(part.content);
   });
 
-  it('returns a part with an intersection of the clips if the clip overlaps the part', () => {
+  it('returns a part with an intersection of the pointers if the pointer overlaps the part', () => {
     let part = make(Span("x", 100, 10), "abcdefghij");
 
-    expect(part.intersect(Span("x", 105, 100)).clip).toEqual(Span("x", 105, 5));
+    expect(part.intersect(Span("x", 105, 100)).pointer).toEqual(Span("x", 105, 5));
   });
 });

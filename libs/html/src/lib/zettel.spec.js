@@ -164,8 +164,8 @@ describe('addLink', () => {
 
     expect(newZettel[0].part().content).toBe(content);
     expect(newZettel[1].part().content).toBe(content);
-    expect(newZettel[0].part().clip).toEqual(Span("origin", 1, 1));
-    expect(newZettel[1].part().clip).toEqual(s2);
+    expect(newZettel[0].part().pointer).toEqual(Span("origin", 1, 1));
+    expect(newZettel[1].part().pointer).toEqual(s2);
   });
 
   it('will assign keys to the new zettel if the original has a key', () => {
@@ -346,7 +346,7 @@ describe('tryAddPart', () => {
 
     zettel.tryAddPart(part);
 
-    expect(zettel.part().clip).toEqual(Span("x", 204, 3));
+    expect(zettel.part().pointer).toEqual(Span("x", 204, 3));
   });
 
   it('assigns the parts content if the part engulfs the zettel', () => {

@@ -10,23 +10,22 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
   useEffect(() => {
     async function loadDoc() {
       async function loadContent(clip, isObject) {
-        let content = isObject ? cache.getObject(clip) : extractLink(clip, cache.getPart(clip));
-        if (content) {
-          return [true, isObject ? content : content];
+        let cachedClip = cache.getPart(clip);
+        if (cachedClip) { return [true, cachedClip]; }
+
+        let content = undefined;
+
+        if (isObject) {
+          let obj = await fetcher.getObject(clip);
+          content = leafDataToLink(obj);
         } else {
-          if (isObject) {
-            let obj = await fetcher.getObject(clip);
-            let leafData = extractLink(clip, obj);
-            let link = leafDataToLink(leafData);
-            return [false, link];
-          } else {
-            let content = await fetcher.getPart(clip);
-            let newClip = clip.clipType === "span" ?
-              Span(clip.origin, 0, content.length) :
-              Box(clip.origin, 0, 0, 10000, 10000);
-            return [false, Part(newClip, content)];
-          }
+          content = await fetcher.getPart(clip);
+          clip = clip.clipType === "span" ?
+            Span(clip.origin, 0, content.length) :
+            Box(clip.origin, 0, 0, 10000, 10000);
         }
+
+        return [false, Part(clip, content)];
       }
 
       function extractLink(linkPointer, linkObject) {
@@ -36,14 +35,14 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
       async function loadAll(iterable, areObjects) {
         let results = await Promise.all(iterable.map(item => loadContent(item, areObjects)));
         results.forEach(r => {
-          if (!r[0]) { areObjects? cache.addObject(r[1]) : cache.addPart(r[1]); }
+          if (!r[0]) { cache.addPart(r[1]); }
         });
 
         return results.map(r => r[1]);
       }
 
-      let doc = cache.getObject(docPointer) || leafDataToEdl(await fetcher.getObject(docPointer));
-      let rawLinks = (await loadAll(doc.links, true));
+      let doc = cache.getPart(docPointer)?.content || leafDataToEdl(await fetcher.getObject(docPointer));
+      let rawLinks = (await loadAll(doc.links, true)).map(p => extractLink(p.pointer, p.content));
       let renderDoc = RenderDocument(doc);
       rawLinks.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l));
       let tree = renderDoc.zettelTree();

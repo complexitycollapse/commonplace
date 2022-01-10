@@ -27,6 +27,7 @@ export function Link(type, ...endsets) {
 }
 
 export function leafDataToLink(leafData) {
+  if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
   let es = leafData.es.map(leafDataToEndset);
   return Link(leafData.typ, ...es);
 }

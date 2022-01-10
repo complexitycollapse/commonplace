@@ -6,7 +6,7 @@ export function BoxComponent({ zettel }) {
 
   if (part) {
     imagePath = URL.createObjectURL(part.content);
-    let clip = part.clip;
+    let clip = part.pointer;
     innerStyle = {
       backgroundImage: `url("${imagePath}")`,
       width: clip.width,

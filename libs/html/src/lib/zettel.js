@@ -41,7 +41,7 @@ export function Zettel(clip) {
   }
 
   function tryAddPart(part) {
-    if (part.clip.engulfs(clip)) {
+    if (part.pointer.engulfs(clip)) {
       contentPart = part.intersect(clip);
     }
   }

@@ -3,7 +3,7 @@ import { hasClips } from "./clip.test-helpers";
 import { Endset } from './endset';
 import { Link, leafDataToLink } from './link';
 import { boxTesting } from './box';
-import { spanTesting } from './span';
+import { Span, spanTesting } from './span';
 import { LinkPointer, LinkTypePointer, EdlPointer } from './pointer';
 
 expect.extend({
@@ -61,6 +61,24 @@ describe('leafData', () => {
 test('leafDataToLink is inverse of leafData', () => {
   let l = Link("my type", Endset("name1", [makeSpan()]), Endset("name2", [makeBox(), makeSpan()]));
   expect(leafDataToLink(l.leafData())).toEqual(l);
+});
+
+test('leafDataToLink can convert an array to an array of links', () => {
+  let expectedLinks = [Link("t1", Endset("e1", [Span("x", 1, 2)])), Link("t2", Endset("e2", [Span("y", 3, 4)]))];
+  let leafData = [
+    {
+      "typ": "t1",
+      "es": [{ "name": "e1", "ptr": [{ "typ": "span", "ori": "x", "st": 1, "ln": 2 }] }]
+    },
+    {
+      "typ": "t2",
+      "es": [{ "name": "e2", "ptr": [{ "typ": "span", "ori": "y", "st": 3, "ln": 4 }] }]
+    }
+  ];
+
+  let actualLinks = leafDataToLink(leafData);
+
+  expect(actualLinks).toEqual(expectedLinks);
 });
 
 describe('clipSource', () => {

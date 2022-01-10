@@ -4,7 +4,7 @@ export function SpanComponent({ zettel }) {
   let part = zettel.part();
   let content = "";
   if (part) {
-    content = part.content.substring(part.clip.start, part.clip.next);
+    content = part.content.substring(part.pointer.start, part.pointer.next);
   }
 
   return (

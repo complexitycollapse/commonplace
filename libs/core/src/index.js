@@ -7,6 +7,6 @@ export { Edl, leafDataToEdl } from './lib/edl';
 export { Link, leafDataToLink } from './lib/link';
 export { Endset } from './lib/endset';
 export { Part } from './lib/part';
-export { PartCache } from './lib/part-cache';
+export { LeafCache } from './lib/leaf-cache';
 export { LinkPointer, LinkTypePointer, EdlPointer } from './lib/pointer';
 export * as testing from './testing';
