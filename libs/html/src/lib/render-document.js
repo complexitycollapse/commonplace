@@ -1,9 +1,10 @@
-import { finalObject } from "@commonplace/core";
+import { Doc, finalObject } from "@commonplace/core";
 import { RegionBuilder } from "./region-builder";
 import { RenderLinkFactory2 } from "./render-link-factory";
 import { ManyZettelSchneider } from "./zettel-schneider";
 
 export function RenderDocument(doc) {
+  doc = doc ?? Doc();
   let obj = {};
   let linkMap = new Map(doc.links.map(l => [l.hashableName(), { pointer: l, link: undefined}]));
   let renderLinkCache = undefined, zettelTreeCache = undefined, zettelCache = undefined;

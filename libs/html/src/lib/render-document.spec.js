@@ -1,4 +1,4 @@
-import { expect, describe, it } from '@jest/globals';
+import { expect, describe, it, test } from '@jest/globals';
 import { testing, Doc, Span, LinkPointer } from "@commonplace/core";
 import { zettelTesting } from './zettel';
 import { RenderDocument } from './render-document';
@@ -18,6 +18,15 @@ function makeRenderDocWithLinks(doc, links) {
   links.forEach((l, i) => rd.resolveLink(LinkPointer(i.toString()), l));
   return rd;
 }
+
+test('if no arguments are passed then assume an empty document', () => {
+  let renderDoc = RenderDocument();
+
+  let zettelTree = renderDoc.zettelTree();
+
+  expect(zettelTree.children).toEqual([]);
+  expect(zettelTree.endsets).toEqual([]);
+});
 
 describe('zettelTree', () => {
   it('assigns all links that overlap the zettel', () => {

@@ -1,4 +1,4 @@
-import { finalObject } from '@commonplace/core';
+import { Box, finalObject, Part, Span } from '@commonplace/core';
 
 export function StaticPartFetcher(origin, fetch) {
   let obj = {};
@@ -7,8 +7,10 @@ export function StaticPartFetcher(origin, fetch) {
     let url = origin + pointer.origin;
     let response = await fetch(url);
     if (response.ok) { 
-      let rawObject = await retrieveAndParse(pointer, response);
-      return pointer.contentParser(rawObject);
+      let rawObject = await readResponse(pointer, response);
+      let parsedObject = pointer.contentParser(rawObject);
+      let partPointer = makePartPointer(pointer, parsedObject);
+      return Part(partPointer, parsedObject);
     }
     else {
       console.log(`Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`);
@@ -16,7 +18,7 @@ export function StaticPartFetcher(origin, fetch) {
     }
   }
 
-  async function retrieveAndParse(pointer, response) {
+  async function readResponse(pointer, response) {
     if (pointer.isClip) {
       if (pointer.clipType === "span") {
         return await response.text();
@@ -27,6 +29,16 @@ export function StaticPartFetcher(origin, fetch) {
       }
     } else {
       return await response.json();
+    }
+  }
+
+  function makePartPointer(originalPointer, parsedObject) {
+    if (originalPointer.isClip) {
+      return originalPointer.clipType === "span" ?
+            Span(originalPointer.origin, 0, parsedObject.length) :
+            Box(originalPointer.origin, 0, 0, 10000, 10000);
+    } else {
+      return originalPointer;
     }
   }
 
