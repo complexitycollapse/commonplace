@@ -1,6 +1,6 @@
 import { ZettelRegionComponent } from './zettel-region-component';
 import { RenderDocument } from '@commonplace/html';
-import { leafDataToLink, Part, leafDataToEdl, Doc, Span, Box } from '@commonplace/core';
+import { Part, Doc, Span, Box } from '@commonplace/core';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, cache, fetcher }) {
@@ -13,14 +13,9 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
         let cachedClip = cache.getPart(clip);
         if (cachedClip) { return [true, cachedClip]; }
 
-        let content = undefined;
+        let content = await fetcher.getPart(clip);
 
-        let obj = await fetcher.getPart(clip);
-        if (!obj) { return undefined; }
-        if (isObject) {
-          content = leafDataToLink(obj);
-        } else {
-          content = obj;
+        if (!isObject) {
           clip = clip.clipType === "span" ?
             Span(clip.origin, 0, content.length) :
             Box(clip.origin, 0, 0, 10000, 10000);
@@ -42,7 +37,7 @@ export function DocumentComponent({ docPointer, cache, fetcher }) {
         return results.map(r => r[1]);
       }
 
-      let doc = cache.getPart(docPointer)?.content || leafDataToEdl(await fetcher.getPart(docPointer));
+      let doc = cache.getPart(docPointer)?.content || await fetcher.getPart(docPointer);
       let rawLinks = (await loadAll(doc.links, true)).map(p => extractLink(p.pointer, p.content));
       let renderDoc = RenderDocument(doc);
       rawLinks.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l));

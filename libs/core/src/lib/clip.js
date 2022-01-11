@@ -3,7 +3,7 @@ import { addProperties, addMethods } from "./utils";
 import { Pointer } from "./pointer";
 
 export function Clip(clipType, origin, originalContext) {
-  let obj = Pointer("clip", true, () => origin);
+  let obj = Pointer("clip", true, () => origin, x => x);
 
   addProperties(obj, {
     clipType,

@@ -6,7 +6,10 @@ export function StaticPartFetcher(origin, fetch) {
   async function getPart(pointer) {
     let url = origin + pointer.origin;
     let response = await fetch(url);
-    if (response.ok) { return retrieveAndParse(pointer, response); }
+    if (response.ok) { 
+      let rawObject = await retrieveAndParse(pointer, response);
+      return pointer.contentParser(rawObject);
+    }
     else {
       console.log(`Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`);
       return undefined;

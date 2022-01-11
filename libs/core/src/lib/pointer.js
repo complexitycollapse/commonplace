@@ -1,18 +1,20 @@
-import { addMethods } from "..";
-import { addProperties } from "./utils";
+import { leafDataToEdl } from "./edl";
+import { leafDataToLink } from "./link";
+import { addProperties, addMethods } from "./utils";
 
-export function Pointer(pointerType, isClip, nameMapping, properties, methods) {
+export function Pointer(pointerType, isClip, originMapping, contentParser, properties, methods) {
   let obj = {};
   addProperties(obj, { pointerType, isClip });
   addProperties(obj, properties);
+  addMethods(obj, { contentParser });
   addMethods(obj, methods);
-  let origin = nameMapping(obj);
+  let origin = originMapping(obj);
   addProperties(obj, { origin });
   return obj;
 }
 
 export function LinkPointer(linkName, index) {
-  return Pointer("link", false, x => x.linkName, { linkName, index }, {
+  return Pointer("link", false, x => x.linkName, leafDataToLink, { linkName, index }, {
     leafData() { return { typ: "link", name: linkName, idx: index }; },
     hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); }
   });
@@ -23,7 +25,7 @@ export function leafDataToLinkPointer(data) {
 }
 
 export function LinkTypePointer(linkType) {
-  return Pointer("link type", false, () => undefined, { linkType }, {
+  return Pointer("link type", false, () => undefined, undefined, { linkType }, {
     leafData() { return { typ: "link type", name: linkType }; }
   });
 }
@@ -33,7 +35,7 @@ export function leafDataToLinkTypePointer(data) {
 }
 
 export function EdlPointer(docName) {
-  return Pointer("edl", false, x => x.docName, { docName }, {
+  return Pointer("edl", false, x => x.docName, leafDataToEdl, { docName }, {
     leafData() { return { typ: "edl", name: docName }; }
   });
 }
