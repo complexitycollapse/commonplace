@@ -2,8 +2,8 @@ import { ClipIterator } from "./clip-iterator";
 import { addProperties, addMethods } from "./utils";
 import { Pointer } from "./pointer";
 
-export function Clip(clipType, origin, originalContext) {
-  let obj = Pointer("clip", true, () => origin, x => x);
+export function Clip(clipType, origin, partBuilder, originalContext) {
+  let obj = Pointer("clip", true, () => origin, partBuilder);
 
   addProperties(obj, {
     clipType,

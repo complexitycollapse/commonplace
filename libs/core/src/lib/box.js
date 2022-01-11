@@ -1,10 +1,11 @@
 import { addProperties, finalObject } from "./utils";
 import { spanTesting } from "./span";
 import { Clip } from "./clip";
+import { Part } from "./part";
 
 export function Box(origin, x, y, width, height, originalContext)
 {
-  let obj = Clip("box", origin, originalContext);
+  let obj = Clip("box", origin, buildPartFromContent, originalContext);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     x,
@@ -125,6 +126,23 @@ export function Box(origin, x, y, width, height, originalContext)
 
 export function leafDataToBox(leafData) {
   return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht);
+}
+
+function buildPartFromContent(originalBox, response) {
+  return new Promise((resolve, reject) => {
+    response.blob()
+    .then(content => {
+      let url = URL.createObjectURL(content);
+      let img = new Image();
+      img.src = url;
+      img.onload = function()
+        {
+          let newBox = Box(originalBox.origin, 0, 0, this.width, this.height);
+          resolve(Part(newBox, content));
+        };
+    })
+    .catch(reason => reject(reason));
+  });
 }
 
 export let boxTesting = {

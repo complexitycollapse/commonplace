@@ -1,8 +1,9 @@
 import { addProperties, finalObject } from "./utils";
 import { Clip } from "./clip";
+import { Part } from "./part";
 
 export function Span(origin, start, length, originalContext) {
-  let obj = Clip("span", origin, originalContext);
+  let obj = Clip("span", origin, buildPartFromContent, originalContext);
   addProperties(obj, {
     start,
     length,
@@ -95,6 +96,11 @@ export function Span(origin, start, length, originalContext) {
 
 export function leafDataToSpan(leafData) {
   return Span(leafData.ori, leafData.st, leafData.ln);
+}
+
+async function buildPartFromContent(originalSpan, response) {
+  let content = await response.text();
+  return Part(Span(originalSpan.origin, 0, content.length), content);
 }
 
 export let spanTesting = {
