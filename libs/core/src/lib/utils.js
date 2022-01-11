@@ -45,6 +45,13 @@ export function listMap() {
     push,
     get: key => table.get(key) ?? [],
     has: key => table.has(key),
-    entries: () => table.entries()
+    entries: () => table.entries(),
+    values: () => table.values()
   });
+}
+
+export function listMapFromList(keyFn, valueFn, list) {
+  let map = listMap();
+  list.forEach(item => map.push(keyFn(item), valueFn(item)));
+  return map;  
 }

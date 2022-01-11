@@ -8,11 +8,10 @@ export function StaticPartFetcher(origin, fetch) {
     let response = await fetch(url);
     if (response.ok) { 
       let part = await pointer.partBuilder(pointer, response);
-      return part;
+      return [true, part];
     }
     else {
-      console.log(`Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`);
-      return undefined;
+      return [false, `Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`];
     }
   }
 

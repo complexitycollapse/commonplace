@@ -1,13 +1,12 @@
-import { LeafCache, EdlPointer } from '@commonplace/core';
+import { EdlPointer } from '@commonplace/core';
 import { FlightComponent } from '@commonplace/components';
-import { StaticPartFetcher } from '@commonplace/html';
+import { StaticPartFetcher, PartRepository } from '@commonplace/html';
 
-let cache = LeafCache();
-let fetcher = StaticPartFetcher("/assets/content/", fetch);
+let repository = PartRepository(StaticPartFetcher("/assets/content/", fetch));
 
 export function App() {
     return (
-    <FlightComponent docPointers={[EdlPointer("testdoc.json")]} cache={cache} fetcher={fetcher}/>
+    <FlightComponent docPointers={[EdlPointer("testdoc.json")]} repository={repository}/>
   );
 }
 export default App;

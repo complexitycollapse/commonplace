@@ -1,5 +1,5 @@
 export * from './lib/commonplace-core';
-export { addMethods, addProperties, finalObject, listMap } from './lib/utils';
+export { addMethods, addProperties, finalObject, listMap, listMapFromList } from './lib/utils';
 export { Span } from './lib/span';
 export { Box } from './lib/box';
 export { Doc } from './lib/doc';

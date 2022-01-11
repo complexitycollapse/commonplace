@@ -19,7 +19,7 @@ export function LinkPointer(linkName, index) {
     "link",
     false,
     x => x.linkName,
-    async (pointer, response) => Part(pointer, leafDataToLink(await response.json())),
+    async (pointer, response) => Part(LinkPointer(pointer.linkName), leafDataToLink(await response.json())),
     { linkName, index }, {
     leafData() { return { typ: "link", name: linkName, idx: index }; },
     hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); }
