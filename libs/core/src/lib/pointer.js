@@ -19,7 +19,7 @@ export function LinkPointer(linkName, index) {
     "link",
     false,
     x => x.linkName,
-    async (pointer, response) => Part(LinkPointer(pointer.linkName), leafDataToLink(await response.json())),
+    async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     { linkName, index }, {
     leafData() { return { typ: "link", name: linkName, idx: index }; },
     hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); }
@@ -41,14 +41,16 @@ export function leafDataToLinkTypePointer(data) {
 }
 
 export function EdlPointer(docName) {
-  return Pointer(
+  let pointer = Pointer(
     "edl",
     false,
     x => x.docName,
-    async (pointer, response) => Part(pointer, leafDataToEdl(await response.json())),
+    async response => Part(pointer, leafDataToEdl(await response.json())),
     { docName }, {
     leafData() { return { typ: "edl", name: docName }; }
   });
+
+  return pointer;
 }
 
 export function leafDataToEdlPointer(data) {

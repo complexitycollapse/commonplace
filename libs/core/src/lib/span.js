@@ -3,7 +3,7 @@ import { Clip } from "./clip";
 import { Part } from "./part";
 
 export function Span(origin, start, length, originalContext) {
-  let obj = Clip("span", origin, buildPartFromContent, originalContext);
+  let obj = Clip("span", origin, r => buildPartFromContent(obj, r), originalContext);
   addProperties(obj, {
     start,
     length,
