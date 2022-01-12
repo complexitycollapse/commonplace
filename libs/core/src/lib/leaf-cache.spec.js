@@ -11,8 +11,21 @@ function makePart() {
 }
 
 describe('getPart/addPart', () => {
+  test('getPart returns false if the name cannot be found in the cache', () => {
+    expect(LeafCache().getPart("something")[0]).toBe(false);
+  });
+
   test('getPart returns undefined if the name cannot be found in the cache', () => {
-    expect(LeafCache().getPart("something")).toBe(undefined);
+    expect(LeafCache().getPart("something")[1]).toBe(undefined);
+  });
+
+  test('getPart returns true if the part is in the cache', () => {
+    let pc = LeafCache();
+    let part = makePart();
+    
+    pc.addPart(part);
+
+    expect(pc.getPart(part.pointer)[0]).toEqual(true);
   });
 
   test('getPart retrieves an added part', () => {
@@ -21,7 +34,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer)).toEqual(part);
+    expect(pc.getPart(part.pointer)[1]).toEqual(part);
   });
 
   test('getPart retrieves the part if it has 100% of the content in the cache', () => {
@@ -30,20 +43,20 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer.clone({start: part.pointer.start + 1, length: part.pointer.length - 1}))).toEqual(part);
+    expect(pc.getPart(part.pointer.clone({start: part.pointer.start + 1, length: part.pointer.length - 1}))[1]).toEqual(part);
   });
 
-  test('getPart returns nothing if any part of the requested content is missing', () => {
+  test('getPart returns false if any part of the requested content is missing', () => {
     let pc = LeafCache();
     let part = makePart();
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer.clone({start: part.start + 1}))).toBe(undefined);
+    expect(pc.getPart(part.pointer.clone({start: part.start + 1}))[0]).toBe(false);
   });
 
   test('getPart will not retrieve inherited object methods', () => {
-    expect(LeafCache().getPart(Span("hasOwnProperty", 1, 1))).toBe(undefined);
+    expect(LeafCache().getPart(Span("hasOwnProperty", 1, 1))[0]).toBe(false);
   });
 
   test('getPart still works even if we override hasOwnProperty', () => {
@@ -52,7 +65,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer)).toEqual(part);
+    expect(pc.getPart(part.pointer)[1]).toEqual(part);
   });
 
   test('getPart can retrieve a link when passed a link pointer', () => {
@@ -62,7 +75,7 @@ describe('getPart/addPart', () => {
     
     cache.addPart(part);
 
-    expect(cache.getPart(LinkPointer("link name"))).toBe(part);
+    expect(cache.getPart(LinkPointer("link name"))[1]).toBe(part);
   });
 
   test('getPart returns undefined if the link name doesnt match any link', () => {
@@ -72,7 +85,7 @@ describe('getPart/addPart', () => {
     
     cache.addPart(part);
 
-    expect(cache.getPart(LinkPointer("other link name"))).toBe(undefined);
+    expect(cache.getPart(LinkPointer("other link name"))[0]).toBe(false);
   });
 
   test('getPart can retrieve an Edl when passed an Edl pointer', () => {
@@ -82,6 +95,6 @@ describe('getPart/addPart', () => {
     
     cache.addPart(part);
 
-    expect(cache.getPart(EdlPointer("doc name"))).toBe(part);
+    expect(cache.getPart(EdlPointer("doc name"))[1]).toBe(part);
   });
 });
