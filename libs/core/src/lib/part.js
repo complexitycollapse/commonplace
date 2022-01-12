@@ -9,19 +9,12 @@ export function Part(pointer, content) {
       "content" in props ? props.content : content);
   }
 
-  function intersect(otherPointer) {
-    let intersection = pointer.intersect(otherPointer);
-    if (intersection[0]) { return Part(intersection[1], content); }
-    else { return undefined; }
-  }
-
   addProperties(obj, {
     content,
     pointer
   });
 
   return finalObject(obj, {
-    intersect,
     clone
   });
 }

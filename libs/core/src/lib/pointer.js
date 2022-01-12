@@ -7,7 +7,10 @@ export function Pointer(pointerType, isClip, originMapping, partBuilder, propert
   let obj = {};
   addProperties(obj, { pointerType, isClip });
   addProperties(obj, properties);
-  addMethods(obj, { partBuilder });
+  addMethods(obj, { 
+    partBuilder,
+    hasSamePointerType: pointer => pointer.pointerType === pointerType
+  });
   addMethods(obj, methods);
   let origin = originMapping(obj);
   addProperties(obj, { origin });
@@ -15,15 +18,31 @@ export function Pointer(pointerType, isClip, originMapping, partBuilder, propert
 }
 
 export function LinkPointer(linkName, index) {
-  return Pointer(
+  let obj = Pointer(
     "link",
     false,
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     { linkName, index }, {
     leafData() { return { typ: "link", name: linkName, idx: index }; },
-    hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); }
+    hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); },
+    clipPart(part) { 
+      let pointer = part.pointer;
+      if (!obj.hasSamePointerType(pointer) || pointer.linkName !== linkName) {
+        return [false, undefined];
+      } else if (index === undefined) {
+        return pointer.index === undefined ? [true, part] : [false, undefined];
+      } else if (pointer.index === index) {
+        return [true, part];
+      } else if (pointer.index === undefined) {
+        return [true, Part(obj, part.content[index])];
+      } else {
+        return [false, undefined];
+      }
+    }
   });
+
+  return obj;
 }
 
 export function leafDataToLinkPointer(data) {
@@ -31,9 +50,16 @@ export function leafDataToLinkPointer(data) {
 }
 
 export function LinkTypePointer(linkType) {
-  return Pointer("link type", false, () => Promise.resolve(undefined), undefined, { linkType }, {
-    leafData() { return { typ: "link type", name: linkType }; }
+  let obj = Pointer("link type", false, () => Promise.resolve(undefined), undefined, { linkType }, {
+    leafData() { return { typ: "link type", name: linkType }; },
+    clipPart (part){
+      return obj.hasSamePointerType(part.pointer) && linkType === part.pointer.linkType 
+        ? [true, part] 
+        : [false, undefined];
+    }
   });
+
+  return obj;
 }
 
 export function leafDataToLinkTypePointer(data) {
@@ -41,16 +67,21 @@ export function leafDataToLinkTypePointer(data) {
 }
 
 export function EdlPointer(docName) {
-  let pointer = Pointer(
+  let obj = Pointer(
     "edl",
     false,
     x => x.docName,
-    async response => Part(pointer, leafDataToEdl(await response.json())),
+    async response => Part(obj, leafDataToEdl(await response.json())),
     { docName }, {
-    leafData() { return { typ: "edl", name: docName }; }
+    leafData() { return { typ: "edl", name: docName }; },
+    clipPart (part){
+      return obj.hasSamePointerType(part.pointer) && docName === part.pointer.docName 
+        ? [true, part] 
+        : [false, undefined];
+    }
   });
 
-  return pointer;
+  return obj;
 }
 
 export function leafDataToEdlPointer(data) {

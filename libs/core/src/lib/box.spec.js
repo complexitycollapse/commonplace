@@ -2,12 +2,17 @@ import { describe, expect, it, test, jest } from '@jest/globals';
 import { Box, leafDataToBox, boxTesting } from "./box";
 import { spanTesting } from './span';
 import { EdlPointer } from './pointer';
+import { Part } from './part';
 
 expect.extend({
   toEqualBox: boxTesting.toEqualBox
 });
 
 let make = boxTesting.makeBox;
+
+function makePart(box) {
+  return Part(box, new Blob());
+}
 
 describe('box', () => {
   it('has origin, x, y, width and height', () => {
@@ -699,3 +704,35 @@ describe('intersect', () => {
     expect(b2.intersect(b1)[1].nextY).toBe(b1.nextY);
   });
 });
+
+describe('clipPart', () => {
+  it('returns [false, undefined] if the boxes do not overlap', () => {
+    let b1 = make();
+    let b2 = b1.clone({x: b1.nextX});
+
+    expect(b1.clipPart(makePart(b2))).toEqual([false, undefined]);
+  });
+
+  it('returns [true, result] if the boxes overlap', () => {
+    let b1 = make();
+    let b2 = b1.clone({x: b1.nextX - 1});
+
+    expect(b1.clipPart(makePart(b2))[0]).toEqual(true);
+  });
+
+  it('returns the intersection of the two boxes', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1, height: b1.height + 3});
+
+    expect(b2.clipPart(makePart(b1))[1].pointer).toEqual(b2.intersect(b1)[1]);
+  });
+
+  it('returns the associated content unchanged', () => {
+    let b1 = make();
+    let b2 = b1.clone({ y: b1.y + 1, height: b1.height + 3});
+    let part = Part(b2, new Blob());
+
+    expect(b2.clipPart(part)[1].content).toBe(part.content);
+  });
+});
+

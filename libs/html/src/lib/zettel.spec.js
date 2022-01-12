@@ -162,8 +162,8 @@ describe('addLink', () => {
 
     let newZettel = zettel.addLink(l2);
 
-    expect(newZettel[0].part().content).toBe(content);
-    expect(newZettel[1].part().content).toBe(content);
+    expect(newZettel[0].part().content).toBe("T");
+    expect(newZettel[1].part().content).toBe("his is some content");
     expect(newZettel[0].part().pointer).toEqual(Span("origin", 1, 1));
     expect(newZettel[1].part().pointer).toEqual(s2);
   });
@@ -349,12 +349,12 @@ describe('tryAddPart', () => {
     expect(zettel.part().pointer).toEqual(Span("x", 204, 3));
   });
 
-  it('assigns the parts content if the part engulfs the zettel', () => {
+  it('assigns the part the overlapping content if the part engulfs the zettel', () => {
     let zettel = make(Span("x", 204, 3));
     let part = Part(Span("x", 200, 10), "0123456789");
 
     zettel.tryAddPart(part);
 
-    expect(zettel.part().content).toBe(part.content);
+    expect(zettel.part().content).toBe("456");
   });
 });

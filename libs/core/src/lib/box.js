@@ -108,6 +108,16 @@ export function Box(origin, x, y, width, height, originalContext)
                     Math.min(box.nextY, obj.nextY) - newY)];
   }
 
+  function clipPart(part) {
+    let intersection = intersect(part.pointer);
+
+    if (!intersection[0]) {
+      return [false, undefined];
+    }
+
+    return [true, Part(intersection[1], part.content)];
+  }
+
   return finalObject(obj, {
     clone,
     abutsHorizontally,
@@ -120,7 +130,8 @@ export function Box(origin, x, y, width, height, originalContext)
     overlaps,
     contains,
     engulfs,
-    intersect
+    intersect,
+    clipPart
   });
 }
 

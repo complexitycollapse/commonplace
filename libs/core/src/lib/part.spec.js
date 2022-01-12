@@ -33,34 +33,3 @@ describe('clone', () => {
   });
 });
 
-describe('intersect', () => {
-  it('returns undefined if the pointer does not overlap the Part', () => {
-    let part = make(Span("x", 100, 10), "abcdefghij");
-
-    expect(part.intersect(Span("x", 202, 20))).toBeFalsy();
-  });
-
-  it('returns an identical part if the pointers are the same', () => {
-    let part = make(Span("x", 100, 10), "abcdefghij");
-
-    expect(part.intersect(Span("x", 100, 10))).toEqual(part);
-  });
-
-  it('returns an identical par if the passed pointer is more expansive than the part', () => {
-    let part = make(Span("x", 100, 10), "abcdefghij");
-
-    expect(part.intersect(Span("x", 50, 200))).toEqual(part);
-  });
-
-  it('returns a part with the same content as the original if the pointer overlaps the part', () => {
-    let part = make(Span("x", 100, 10), "abcdefghij");
-
-    expect(part.intersect(Span("x", 105, 100)).content).toBe(part.content);
-  });
-
-  it('returns a part with an intersection of the pointers if the pointer overlaps the part', () => {
-    let part = make(Span("x", 100, 10), "abcdefghij");
-
-    expect(part.intersect(Span("x", 105, 100)).pointer).toEqual(Span("x", 105, 5));
-  });
-});

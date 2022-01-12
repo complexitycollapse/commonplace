@@ -1,13 +1,18 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Span, leafDataToSpan, spanTesting } from './span';
 import { boxTesting, Box } from './box';
-import { EdlPointer } from '..';
+import { EdlPointer } from './pointer';
+import { Part } from './part';
 
 expect.extend({
   toEqualSpan: spanTesting.toEqualSpan
 });
 
 let make = spanTesting.makeSpan;
+
+function makePart(span) {
+  return Part(span,  new Array(span.length + 1).join("x"));
+}
 
 describe('span', () => {
   it('has origin, start and length', () => {
@@ -522,6 +527,37 @@ describe('intersect', () => {
 
     expect(s2.intersect(s1)[1].start).toBe(s2.start);
     expect(s2.intersect(s1)[1].end).toBe(s1.end);
+  });
+});
+
+describe('clipPart', () => {
+  it('returns [false, undefined] if the spans do not overlap', () => {
+    let s1 = make();
+    let s2 = s1.clone({start: s1.next});
+
+    expect(s1.clipPart(makePart(s2))).toEqual([false, undefined]);
+  });
+
+  it('returns [true, result] if the spans overlap', () => {
+    let s1 = make();
+    let s2 = s1.clone({start: s1.next - 1});
+
+    expect(s1.clipPart(makePart(s2))[0]).toEqual(true);
+  });
+
+  it('returns the intersection of the two spans', () => {
+    let s1 = make();
+    let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
+
+    expect(s2.clipPart(makePart(s1))[1].pointer).toEqualSpan(s1.intersect(s2)[1]);
+  });
+
+  it('returns content trimmed to the portion represented by the overlapping portion', () => {
+    let s1 = make({start: 10, length: 15});
+    let s2 = s1.clone({ start: 11, length: 13});
+    let part = Part(s1, "abcdefghijklmno");
+
+    expect(s2.clipPart(part)[1].content).toBe("bcdefghijklmn");
   });
 });
 

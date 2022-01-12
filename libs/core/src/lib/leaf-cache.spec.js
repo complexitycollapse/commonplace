@@ -43,7 +43,7 @@ describe('getPart/addPart', () => {
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer.clone({start: part.pointer.start + 1, length: part.pointer.length - 1}))[1]).toEqual(part);
+    expect(pc.getPart(part.pointer.clone({start: part.pointer.start + 1, length: part.pointer.length - 1}))[0]).toBe(true);
   });
 
   test('getPart returns false if any part of the requested content is missing', () => {
@@ -61,11 +61,11 @@ describe('getPart/addPart', () => {
 
   test('getPart still works even if we override hasOwnProperty', () => {
     let pc = LeafCache();
-    let part = Part(Span("HasOwnPProperty", 1, 1));
+    let part = Part(Span("HasOwnPProperty", 1, 1), "a");
     
     pc.addPart(part);
 
-    expect(pc.getPart(part.pointer)[1]).toEqual(part);
+    expect(pc.getPart(part.pointer)[0]).toBe(true);
   });
 
   test('getPart can retrieve a link when passed a link pointer', () => {

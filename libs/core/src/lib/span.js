@@ -71,6 +71,22 @@ export function Span(origin, start, length, originalContext) {
                     Math.min(s.next, obj.next) - newStart)];
   }
 
+  function clipPart(part) {
+    let s = part.pointer;
+
+    let intersection = intersect(s);
+    if (!intersection[0]) {
+      return [false, undefined];
+    }
+
+    let newSpan = intersection[1];
+
+    return [true, Part(
+      newSpan,
+      part.content.substring(newSpan.start - s.start, newSpan.next - s.start))];
+  }
+
+
   function leafData() {
     return { typ: obj.clipType, ori: origin, st: start, ln: length };
   }
@@ -90,6 +106,7 @@ export function Span(origin, start, length, originalContext) {
     crop,
     leafData,
     intersect,
+    clipPart,
     overlappingButNotEngulfing
   });
 }

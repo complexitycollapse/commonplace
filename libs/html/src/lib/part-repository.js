@@ -1,4 +1,4 @@
-import { finalObject, LeafCache, listMapFromList, Part } from "@commonplace/core";
+import { finalObject, LeafCache, listMapFromList } from "@commonplace/core";
 
 export function PartRepository(fetcher) {
   let obj = {};
@@ -7,9 +7,6 @@ export function PartRepository(fetcher) {
   async function getPart(pointer) {
     let cached = cache.getPart(pointer);
     if (cached[0]) { 
-      if (pointer.pointerType === "link" && pointer.index !== undefined) {
-        return Part(pointer, cached[1].content[pointer.index]);
-      }
       return cached[1];
      }
 
@@ -17,10 +14,7 @@ export function PartRepository(fetcher) {
     if (fetched[0]) {
       let part = fetched[1];
       cache.addPart(part);
-      if (pointer.pointerType === "link" && pointer.index !== undefined) {
-        return Part(pointer, part.content[pointer.index]);
-      }
-      return part;
+      return pointer.clipPart(part)[1];
     } else {
       console.log(fetched[1]);
       return undefined;

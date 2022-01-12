@@ -9,11 +9,11 @@ export function LeafCache() {
 
     if (pointer.isClip) {
       let matching = list.find(p => p.pointer.engulfs(pointer));
-      return matching ? [true, matching] : [false, undefined];
+      return matching ? [true, pointer.clipPart(matching)[1]] : [false, undefined];
     } else {
       // Note that this line will become a problem when downloading partial files
       // is properly supported.
-      if (list.length > 0) { return [true, list[0]]; }
+      if (list.length > 0) { return [true, pointer.clipPart(list[0])[1]]; }
     }
     
     return [false, undefined];
