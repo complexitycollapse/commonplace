@@ -1,5 +1,5 @@
 import { ZettelRegionComponent } from './zettel-region-component';
-import { RenderDocument } from '@commonplace/html';
+import { Pouncer, RenderDocument } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, repository }) {
@@ -7,20 +7,7 @@ export function DocumentComponent({ docPointer, repository }) {
   let [zettelTreeState, setZettelTreeState] = useState(RenderDocument().zettelTree());
 
   useEffect(() => {
-    async function loadDoc() {
-      let doc = (await repository.getPart(docPointer)).content;
-      let linkParts = (await repository.getManyParts(doc.links));
-      let renderDoc = RenderDocument(doc);
-      linkParts.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l.content));
-      let tree =  renderDoc.zettelTree();
-
-      let parts = await repository.getManyParts(doc.clips);
-      parts.forEach(part => renderDoc.resolvePart(part));
-
-      setZettelTreeState(tree);
-    }
-
-    loadDoc();
+    Pouncer(repository).fetchDoc(docPointer).then(tree => setZettelTreeState(tree));
   }, []);
 
   return (
@@ -29,5 +16,3 @@ export function DocumentComponent({ docPointer, repository }) {
     </div>
   );
 }
-
-export default Document;
