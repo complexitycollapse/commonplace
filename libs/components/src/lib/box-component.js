@@ -1,3 +1,4 @@
+import { CssStyle } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
 export function BoxComponent({ zettel }) {
@@ -7,7 +8,7 @@ export function BoxComponent({ zettel }) {
     zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
   }, []);
 
-  let style = zettel.style();
+  let style = CssStyle(zettel.style()).css();
   let imagePath = "";
   let innerStyle = {};
 

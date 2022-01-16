@@ -54,7 +54,7 @@ export function Zettel(clip) {
 
   function style() {
     let styles = obj.endsets.map(e => e.renderLink.style());
-    return CssStyle(styles).css();
+    return styles;
   }
 
   function outstandingRequests() {

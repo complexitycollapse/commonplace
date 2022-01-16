@@ -307,26 +307,27 @@ describe('sameRenderEndsets', () => {
 });
 
 describe('style', () => {
-  it('returns an empty object if there are no endsets', () => {
-    expect(make().style()).toEqual({});
+  it('returns an empty array if there are no endsets', () => {
+    expect(make().style()).toEqual([]);
   });
 
-  it('returns the mapped style of the endset', () => {
+  it('returns the style of the endset', () => {
     let zettel = make();
     let endset = Endset(undefined, [makeLinkPointer()]);
     let link = makeLink("bold", endset);
     zettel.addEndset(endset, link);
-    expect(zettel.style()).toEqual({fontStyle: "bold"});
+    expect(zettel.style()[0]).toEqual({ bold: true });
   });
 
-  it('returns the combined style of all endsets', () => {
+  it('returns an item for each endset', () => {
     let zettel = make();
     let endset1 = Endset(undefined, [makeLinkPointer()]), endset2 = Endset(undefined, [makeLinkPointer()]);
     let link1 = makeLink("bold", endset1);
-    let link2 = makeLink("italics", endset2);
+    let link2 = makeLink("italic", endset2);
     zettel.addEndset(endset1, link1);
     zettel.addEndset(endset2, link2);
-    expect(zettel.style()).toEqual({fontStyle: "bold italic"});
+    expect(zettel.style()[0]).toEqual({ bold: true });
+    expect(zettel.style()[1]).toEqual({ italic: true });
   });
 });
 

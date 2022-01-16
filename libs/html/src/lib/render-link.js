@@ -2,7 +2,7 @@ import { addProperties, finalObject } from "@commonplace/core";
 
 let typeMap = {
   paragraph: [null, "p"],
-  italics: [{italic: true}],
+  italic: [{italic: true}],
   bold: [{bold: true}],
   title: [null, "h1"],
   underline: [{underline: true}],

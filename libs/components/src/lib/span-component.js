@@ -1,3 +1,4 @@
+import { CssStyle } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
 export function SpanComponent({ zettel }) {
@@ -8,7 +9,7 @@ export function SpanComponent({ zettel }) {
     zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
   }, []);
 
-  let style = zettel.style();
+  let style = CssStyle(zettel.style()).css();
   let content = zettelPartState ? zettelPartState.content : "";
 
   return (
