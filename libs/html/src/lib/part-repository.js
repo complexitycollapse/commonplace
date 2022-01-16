@@ -21,17 +21,19 @@ export function PartRepository(fetcher) {
     }
   }
 
-  async function getPartsForOrigin(pointers) {
+  async function getPartsForOrigin(requests) {
     let results = [];
-    for (let i = 0; i < pointers.length; i++) {
-      results.push(await getPart(pointers[i]));
+    for (let i = 0; i < requests.length; i++) {
+      let request = requests[i];
+      results.push(request[0]);
+      request[1](await getPart(request[0]));
     }
     return results;
   }
 
-  function getManyParts(pointers) {
-    let asHash = listMapFromList(p => p.origin, p => p, pointers);
-    return Promise.all([...asHash.values()].map(ps => getPartsForOrigin(ps))).then(xs => [].concat(...xs));
+  function getManyParts(requests) {
+    let asHash = listMapFromList(r => r[0].origin, r => r, requests);
+    return Promise.all([...asHash.values()].map(rs => getPartsForOrigin(rs)));
   }
 
   return finalObject(obj, {

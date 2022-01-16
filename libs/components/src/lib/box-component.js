@@ -1,12 +1,19 @@
+import { useState, useEffect } from 'react';
+
 export function BoxComponent({ zettel }) {
+  let [zettelPartState, setZettelPartState] = useState(zettel.part());
+
+  useEffect(() => {
+    zettel.setContentCallback(() => setZettelPartState(zettel.part()));
+  }, []);
+
   let style = zettel.style();
-  let part = zettel.part();
   let imagePath = "";
   let innerStyle = {};
 
-  if (part) {
-    imagePath = URL.createObjectURL(part.content);
-    let clip = part.pointer;
+  if (zettelPartState) {
+    imagePath = URL.createObjectURL(zettelPartState.content);
+    let clip = zettelPartState.pointer;
     innerStyle = {
       backgroundImage: `url("${imagePath}")`,
       width: clip.width,

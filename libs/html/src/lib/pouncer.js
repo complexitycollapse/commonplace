@@ -6,13 +6,12 @@ export function Pouncer(repository) {
 
   async function fetchDoc(docPointer) {
     let doc = (await repository.getPart(docPointer)).content;
-    let linkParts = (await repository.getManyParts(doc.links));
+    let nameLinkPairs = [];
+    await repository.getManyParts(doc.links.map(l => [l, lp => nameLinkPairs.push([l, lp.content])]));
     let renderDoc = RenderDocument(doc);
-    linkParts.forEach((l, i) => renderDoc.resolveLink(doc.links[i], l.content));
+    nameLinkPairs.forEach(nlp => renderDoc.resolveLink(nlp[0], nlp[1]));
     let tree =  renderDoc.zettelTree();
-
-    let parts = await repository.getManyParts(doc.clips);
-    parts.forEach(part => renderDoc.resolvePart(part));
+    repository.getManyParts(tree.outstandingRequests());
 
     return tree;
   }
