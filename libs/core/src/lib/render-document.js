@@ -1,7 +1,7 @@
 import { finalObject } from "..";
 import { Doc } from "./doc";
 import { RegionBuilder } from "./region-builder";
-import { RenderLinkFactory2 } from "./render-link-factory";
+import { RenderLinkFactory } from "./render-link-factory";
 import { ManyZettelSchneider } from "./zettel-schneider";
 
 export function RenderDocument(doc) {
@@ -29,7 +29,7 @@ export function RenderDocument(doc) {
   function ensureRenderLinks() {
     if (renderLinkCache === undefined) {
       let nameLinkPairs = Array.from(linkMap.entries(), pair => [pair[0], pair[1].link]);
-      renderLinkCache = RenderLinkFactory2(nameLinkPairs).renderLinks();
+      renderLinkCache = RenderLinkFactory(nameLinkPairs).renderLinks();
     }
     return renderLinkCache;
   }

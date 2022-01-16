@@ -1,15 +1,7 @@
 import { finalObject } from "./utils";
 import { RenderLink } from "./render-link";
 
-export function RenderLinkFactory(doc, links) {
-  let keyLinkPairs = [];
-  for (let i = 0; i < links.length; ++i) {
-    keyLinkPairs.push([doc.links[i].hashableName(), links[i]]);
-  }
-  return RenderLinkFactory2(keyLinkPairs);
-}
-
-export function RenderLinkFactory2(nameLinkPairs) {
+export function RenderLinkFactory(nameLinkPairs) {
   let obj = {};
 
   function renderLinks() {
