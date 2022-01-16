@@ -4,7 +4,7 @@ export function BoxComponent({ zettel }) {
   let [zettelPartState, setZettelPartState] = useState(zettel.part());
 
   useEffect(() => {
-    zettel.setContentCallback(() => setZettelPartState(zettel.part()));
+    zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
   }, []);
 
   let style = zettel.style();

@@ -7,7 +7,7 @@ import { RenderEndset } from './render-endset';
 
 export function Zettel(clip) {
   let obj = StructureElement([]);
-  let contentCallback = undefined;
+  let onUpdate = undefined;
   let contentPart = undefined;
   obj.key = undefined;
 
@@ -44,12 +44,12 @@ export function Zettel(clip) {
   function tryAddPart(part) {
     if (part.pointer.engulfs(clip)) {
       contentPart = clip.clipPart(part)[1];
-      if (contentCallback) { contentCallback(); }
+      if (onUpdate) { onUpdate(); }
     }
   }
 
-  function setContentCallback(callback) {
-    contentCallback = callback;
+  function setOnUpdate(callback) {
+    onUpdate = callback;
   }
 
   function style() {
@@ -74,7 +74,7 @@ export function Zettel(clip) {
     style,
     part: () => contentPart,
     outstandingRequests,
-    setContentCallback
+    setOnUpdate
   });
 
   return obj;
