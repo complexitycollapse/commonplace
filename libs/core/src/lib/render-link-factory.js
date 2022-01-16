@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/core";
+import { finalObject } from "./utils";
 import { RenderLink } from "./render-link";
 
 export function RenderLinkFactory(doc, links) {

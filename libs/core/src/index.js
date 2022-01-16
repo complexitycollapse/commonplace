@@ -9,4 +9,5 @@ export { Endset } from './lib/endset';
 export { Part } from './lib/part';
 export { LeafCache } from './lib/leaf-cache';
 export { LinkPointer, LinkTypePointer, EdlPointer } from './lib/pointer';
+export { RenderDocument } from './lib/render-document';
 export * as testing from './testing';

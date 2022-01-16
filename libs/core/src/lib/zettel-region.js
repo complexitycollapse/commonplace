@@ -1,5 +1,5 @@
 import { StructureElement } from "./structure-element";
-import { addMethods } from '@commonplace/core';
+import { addMethods } from './utils';
 
 export function ZettelRegion(endsets) {
   let obj = StructureElement(endsets);

@@ -1,9 +1,13 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel, zettelTesting } from './zettel';
-import { Span, Link, Endset, testing, LinkPointer, Part } from '@commonplace/core';
+import { Endset } from './endset';
+import { Link } from './link';
+import { Span, spanTesting } from './span';
+import { Part } from './part';
+import { LinkPointer } from './pointer';
 import { RenderLink } from './render-link';
 
-let toEqualSpan = testing.spans.toEqualSpan;
+let toEqualSpan = spanTesting.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
 let addEndsets = zettelTesting.addEndsets;
 let addEndset = zettelTesting.addEndset;

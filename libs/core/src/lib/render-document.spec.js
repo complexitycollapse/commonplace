@@ -1,9 +1,10 @@
 import { expect, describe, it, test } from '@jest/globals';
-import { testing, Doc, Span, LinkPointer } from "@commonplace/core";
+import { Doc } from './doc';
+import { Span } from './span';
+import { LinkPointer } from './pointer';
+import { linkTesting } from './link';
 import { zettelTesting } from './zettel';
 import { RenderDocument } from './render-document';
-
-let makeSpanLink = testing.links.makeSpanLink;
 
 expect.extend({
   hasEndset: zettelTesting.hasEndset
@@ -31,8 +32,8 @@ test('if no arguments are passed then assume an empty document', () => {
 describe('zettelTree', () => {
   it('assigns all links that overlap the zettel', () => {
     let s = Span("origin", 0, 10);
-    let l1 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
-    let l2 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
+    let l1 = linkTesting.makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
+    let l2 = linkTesting.makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
     let doc = makeDoc([s], ["0", "1"]);
 
     let zettelTree = makeRenderDocWithLinks(doc, [l1, l2]).zettelTree();

@@ -1,4 +1,4 @@
-import { addMethods, addProperties } from "@commonplace/core";
+import { addMethods, addProperties } from "./utils";
 
 export function StructureElement(endsets) {
   let obj = {};

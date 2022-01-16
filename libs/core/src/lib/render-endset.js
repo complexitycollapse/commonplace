@@ -1,4 +1,4 @@
-import { addProperties } from "@commonplace/core";
+import { addProperties } from "./utils";
 
 export function RenderEndset(endset, renderLink) {
   let obj = {};

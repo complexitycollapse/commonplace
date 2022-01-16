@@ -1,6 +1,8 @@
-import { test, expect, describe, it } from '@jest/globals';
+import { test, expect } from '@jest/globals';
 import { RenderLink } from './render-link';
-import { Link, LinkPointer, Endset, EdlPointer, Span } from '@commonplace/core';
+import { LinkPointer, EdlPointer } from './pointer';
+import { Link } from './link';
+import { Endset } from './endset';
 
 function makeParagraphLink(...pointers) {
   return RenderLink(Link(

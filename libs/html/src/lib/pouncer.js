@@ -1,5 +1,4 @@
-import { finalObject } from "@commonplace/core";
-import { RenderDocument } from "./render-document";
+import { finalObject, RenderDocument } from "@commonplace/core";
 
 export function Pouncer(repository) {
   let obj = {};

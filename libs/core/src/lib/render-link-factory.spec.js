@@ -1,5 +1,7 @@
 import { describe, it, expect } from '@jest/globals';
-import { Link, LinkPointer, Endset } from '@commonplace/core';
+import { Link } from './link';
+import { LinkPointer } from './pointer';
+import { Endset } from './endset';
 import { RenderLinkFactory2 } from './render-link-factory';
 
 function makeNameLinkPairs(links) {

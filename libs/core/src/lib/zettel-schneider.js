@@ -1,4 +1,4 @@
-import { finalObject, listMap } from "@commonplace/core";
+import { finalObject, listMap } from "./utils";
 import { Zettel } from "./zettel";
 
 export function ManyZettelSchneider(clips, renderLinks = []) {

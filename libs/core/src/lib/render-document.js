@@ -1,4 +1,5 @@
-import { Doc, finalObject } from "@commonplace/core";
+import { finalObject } from "..";
+import { Doc } from "./doc";
 import { RegionBuilder } from "./region-builder";
 import { RenderLinkFactory2 } from "./render-link-factory";
 import { ManyZettelSchneider } from "./zettel-schneider";

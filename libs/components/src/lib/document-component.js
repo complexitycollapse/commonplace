@@ -1,5 +1,6 @@
 import { ZettelRegionComponent } from './zettel-region-component';
-import { Pouncer, RenderDocument } from '@commonplace/html';
+import { RenderDocument } from '@commonplace/core';
+import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, repository }) {

@@ -1,12 +1,14 @@
 import { describe, it, expect } from '@jest/globals';
 import { SingleZettelSchneider, ManyZettelSchneider } from './zettel-schneider';
-import { Span, Box, testing } from '@commonplace/core';
+import { toEqualClip } from './clip.test-helpers';
+import { Span } from './span';
+import { Box } from './box';
 import { RenderLink } from './render-link';
 import { zettelTesting } from './zettel';
+import { linkTesting } from './link';
 
-let toEqualClip = testing.clips.toEqualClip;
 let makeSpanLink = (...args) =>
-  RenderLink(testing.links.makeSpanLink.call(null, ...args));
+  RenderLink(linkTesting.makeSpanLink.call(null, ...args));
 
 let hasEndset = zettelTesting.hasEndset;
 

@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/core";
+import { finalObject } from "./utils";
 import { ZettelRegion } from "./zettel-region";
 
 export function RegionBuilder(zettel) {

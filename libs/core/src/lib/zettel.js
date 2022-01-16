@@ -1,8 +1,11 @@
-import { addProperties, addMethods, Endset, testing, Link, Span } from '@commonplace/core';
+import { addProperties, addMethods } from './utils';
+import { Endset } from './endset';
+import { Link } from './link';
+import { Span } from './span';
+import { toEqualClip } from './clip.test-helpers';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
-import { CssStyle } from './css-style';
 import { RenderEndset } from './render-endset';
 
 export function Zettel(clip) {
@@ -79,8 +82,6 @@ export function Zettel(clip) {
 
   return obj;
 }
-
-let toEqualClip = testing.clips.toEqualClip;
 
 function clipArraysEqual(actual, expected) {
   if (actual === undefined || expected === undefined) { return false; }

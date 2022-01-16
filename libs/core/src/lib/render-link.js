@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from "@commonplace/core";
+import { addProperties, finalObject } from "./utils";
 
 let typeMap = {
   paragraph: [null, "p"],
