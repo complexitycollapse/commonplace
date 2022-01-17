@@ -3,15 +3,16 @@ import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 
 export function EdlZettel(edl, endsets, key) {
-  let obj = StructureElement(endsets);
-  let children = [];
+  let obj = StructureElement(endsets, {
+    children: []
+  });
 
   edl.clips.forEach((clip, index) => {
     if (clip.clipType === "edl") {
-      children.push(EdlZettelDummy(clip, endsets, children, index));
+      obj.children.push(EdlZettelDummy(clip, endsets, obj.children, index));
     } else {
       let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), key).zettel();
-      zettel.foreach(z => children.push(z));
+      zettel.forEach(z => obj.children.push(z));
     }
   });
 

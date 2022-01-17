@@ -5,6 +5,9 @@ import { EdlZettel } from './edl-zettel';
 import { Endset } from './endset';
 import { RenderEndset } from './render-endset';
 import { RenderLink } from './render-link';
+import { Span } from './span';
+import { Box } from './box';
+import { Part } from './part';
 
 function make(edl, {endsets, key} = {}) {
   endsets = endsets ?? makeEndsets("a", "b", "c");
@@ -14,6 +17,10 @@ function make(edl, {endsets, key} = {}) {
 
 function emptyEdl() {
   return Edl(undefined, [], []);
+}
+
+function makeEdl(clips) {
+  return Edl(undefined, clips, []);
 }
 
 function makeEndsets(...linkTypes) {
@@ -31,5 +38,29 @@ describe('basic properties', () => {
   it('sets the endsets property', () => {
     let endsets = makeEndsets("a", "b", "c");
     expect(make(emptyEdl(), { endsets }).endsets).toBe(endsets);
+  });
+});
+
+describe('outstandingRequests', () => {
+  it('returns nothing for an empty EDL', () => {
+    expect(make(emptyEdl()).outstandingRequests()).toEqual([]);
+  });
+
+  it('returns a value for each clip', () => {
+    let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+
+    let actualRequests = make(makeEdl(clips)).outstandingRequests();
+
+    expect(actualRequests.map(x => x[0])).toEqual(clips);
+  });
+
+  it('stops returning a clip once it has been resolved', () => {
+    let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+    let ez = make(makeEdl(clips));
+    let firstRequest = ez.outstandingRequests()[0];
+
+    firstRequest[1].call(undefined, Part(firstRequest[0], "0123456789"));
+
+    expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips.slice(1));
   });
 });

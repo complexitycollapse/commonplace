@@ -1,12 +1,14 @@
 import { addMethods, addProperties } from "./utils";
 
-export function StructureElement(endsets) {
+export function StructureElement(endsets, properties = {}) {
   let obj = {};
   
   addProperties(obj, {
     endsets,
     structuralEndsets: endsets.filter(e => e.renderLink.isStructural)
   });
+
+  addProperties(obj, properties);
 
   function pickRenderEndsets(onlyStructural) {
     return onlyStructural ? obj.structuralEndsets : endsets;
