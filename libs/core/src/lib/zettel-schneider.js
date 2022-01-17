@@ -25,7 +25,7 @@ export function SingleZettelSchneider(clip, renderLinks = [], keyPrefix) {
   });
 }
 
-export function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
+function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
   let obj = {};
 
   function zettel() {
