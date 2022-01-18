@@ -8,10 +8,12 @@ export function EdlZettel(edl, endsets, key) {
   });
 
   edl.clips.forEach((clip, index) => {
-    if (clip.clipType === "edl") {
-      obj.children.push(EdlZettelDummy(clip, endsets, obj.children, index));
+    let newKey = key + "." + index.toString();
+    
+    if (clip.pointerType === "edl") {
+      obj.children.push(EdlZettelDummy(clip, endsets, obj.children, index, newKey));
     } else {
-      let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), key).zettel();
+      let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), newKey).zettel();
       zettel.forEach(z => obj.children.push(z));
     }
   });
@@ -32,9 +34,7 @@ export function EdlZettel(edl, endsets, key) {
   return obj;
 }
 
-function EdlZettelDummy(edlPointer, endsets, parentChildCollection, childIndex, parentKey) {
-  let key = parentKey + "." + childIndex.toString();
-
+function EdlZettelDummy(edlPointer, endsets, parentChildCollection, childIndex, key) {
   return {
     outstandingRequests: () => [
       [
