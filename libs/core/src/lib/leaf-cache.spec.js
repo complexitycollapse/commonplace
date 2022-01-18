@@ -1,10 +1,10 @@
 import { expect, test, describe } from '@jest/globals';
-import { LinkPointer, EdlPointer } from './pointer';
+import { LinkPointer, EdlPointer } from './Pointers/pointer';
 import { LeafCache } from './leaf-cache';
 import { Part } from './part';
-import { Span } from './span';
-import { Link } from './link';
-import { Doc } from './doc';
+import { Span } from './Pointers/span';
+import { Link } from './Model/link';
+import { Doc } from './Model/doc';
 
 function makePart() {
   return Part(Span("orig", 10, 20), "This is the content!");
