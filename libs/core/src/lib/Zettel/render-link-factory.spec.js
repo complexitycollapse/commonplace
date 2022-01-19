@@ -1,7 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { Link } from '../Model/link';
-import { LinkPointer } from '../Pointers/pointer';
-import { Endset } from '../Model/endset';
+import { Link, Endset } from '../model';
+import { LinkPointer } from '../pointers';
 import { RenderLinkFactory } from './render-link-factory';
 
 function makeNameLinkPairs(links) {

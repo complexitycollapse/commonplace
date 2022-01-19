@@ -1,6 +1,6 @@
 import { expect, describe, it } from '@jest/globals';
 import { Part } from './part';
-import { Span } from './Pointers/span';
+import { Span } from './pointers';
 
 function make(span = Span("orig", 10, 20), content = "This is the content!") {
   return Part(span, content);

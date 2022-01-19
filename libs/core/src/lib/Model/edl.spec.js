@@ -1,9 +1,6 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasClips } from "../Pointers/clip.test-helpers";
+import { hasClips, Box, spanTesting, LinkPointer } from "../pointers";
 import { Edl, leafDataToEdl } from './edl';
-import { Box } from '../Pointers/box';
-import { spanTesting } from '../Pointers/span';
-import { LinkPointer } from '../Pointers/pointer';
 
 expect.extend({
   hasClips,

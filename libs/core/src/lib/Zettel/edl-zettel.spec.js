@@ -1,14 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link } from '../Model/link';
-import { Edl } from '../Model/edl';
+import { Link, Edl, Endset } from '../model';
 import { EdlZettel } from './edl-zettel';
-import { Endset } from '../Model/endset';
 import { RenderEndset } from './render-endset';
 import { RenderLink } from './render-link';
-import { Span } from '../Pointers/span';
-import { Box } from '../Pointers/box';
+import { Span, Box, EdlPointer } from '../pointers';
 import { Part } from '../part';
-import { EdlPointer } from '../Pointers/pointer';
 
 function make(edl, {endsets, key} = {}) {
   endsets = endsets ?? makeEndsets("a", "b", "c");

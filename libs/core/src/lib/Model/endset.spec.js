@@ -1,8 +1,6 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { Endset, leafDataToEndset } from './endset';
-import { Span, spanTesting } from "../Pointers/span";
-import { Box } from "../Pointers/box";
-import { LinkPointer, LinkTypePointer, EdlPointer } from "../Pointers/pointer";
+import { Span, spanTesting, Box, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
 
 let makeSpans = spanTesting.makeSpans;
 

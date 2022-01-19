@@ -1,11 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
 import { SingleZettelSchneider, ManyZettelSchneider } from './zettel-schneider';
-import { toEqualClip } from '../Pointers/clip.test-helpers';
-import { Span } from '../Pointers/span';
-import { Box } from '../Pointers/box';
+import { toEqualClip, Span, Box } from '../pointers';
 import { RenderLink } from './render-link';
 import { zettelTesting } from './zettel';
-import { linkTesting } from '../Model/link';
+import { linkTesting } from '../model';
 
 let makeSpanLink = (...args) =>
   RenderLink(linkTesting.makeSpanLink.call(null, ...args));

@@ -1,6 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { Endset } from '../Model/endset';
-import { Link } from '../Model/link';
+import { Endset, Link } from '../model';
 import { ZettelRegion } from './zettel-region';
 import { RenderEndset } from './render-endset';
 import { RenderLink } from './render-link';

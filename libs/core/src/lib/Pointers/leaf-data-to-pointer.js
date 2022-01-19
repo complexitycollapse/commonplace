@@ -1,4 +1,4 @@
-import { leafDataToClip } from "../Model/edl";
+import { leafDataToClip } from "../model";
 import { leafDataToLinkPointer, leafDataToLinkTypePointer, leafDataToEdlPointer } from "./pointer";
 
 export function leafDataToPointer(data) {

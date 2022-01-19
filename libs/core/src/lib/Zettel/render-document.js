@@ -1,5 +1,5 @@
 import { finalObject } from "../utils";
-import { Doc } from "../Model/doc";
+import { Doc } from "../model";
 import { RegionBuilder } from "./region-builder";
 import { RenderLinkFactory } from "./render-link-factory";
 import { ManyZettelSchneider } from "./zettel-schneider";

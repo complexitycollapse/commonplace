@@ -1,7 +1,6 @@
 import { addProperties, finalObject } from "../utils";
 import { Endset, leafDataToEndset } from "./endset";
-import { Span } from "../Pointers/span";
-import { ClipIterator } from "../Pointers/clip-iterator";
+import { Span, ClipIterator } from "../pointers";
 
 export function Link(type, ...endsets) {
   let obj = {};

@@ -1,7 +1,5 @@
 import { addProperties, finalObject } from "../utils";
-import { leafDataToBox } from '../Pointers/box';
-import { leafDataToSpan } from '../Pointers/span';
-import { leafDataToLinkPointer } from "../Pointers/pointer";
+import { leafDataToBox, leafDataToSpan, leafDataToLinkPointer } from '../pointers';
 
 export function Edl(type, clips, links) {
   let obj = {};

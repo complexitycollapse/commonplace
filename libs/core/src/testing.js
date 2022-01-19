@@ -1,4 +1,3 @@
-export { spanTesting as spans } from "./lib/Pointers/span";
-export { boxTesting as boxes } from "./lib/Pointers/box";
-export { linkTesting as links } from "./lib/Model/link";
-export * as clips from "./lib/Pointers/clip.test-helpers";
+export { spanTesting as spans, boxTesting as boxes } from "./lib/pointers";
+export { linkTesting as links } from "./lib/model";
+export * as clips from "./lib/pointers";

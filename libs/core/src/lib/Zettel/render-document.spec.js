@@ -1,8 +1,6 @@
 import { expect, describe, it, test } from '@jest/globals';
-import { Doc } from '../Model/doc';
-import { Span } from '../Pointers/span';
-import { LinkPointer } from '../Pointers/pointer';
-import { linkTesting } from '../Model/link';
+import { Doc, linkTesting } from '../model';
+import { Span, LinkPointer } from '../pointers';
 import { zettelTesting } from './zettel';
 import { RenderDocument } from './render-document';
 

@@ -1,10 +1,8 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel, zettelTesting } from './zettel';
-import { Endset } from '../Model/endset';
-import { Link } from '../Model/link';
-import { Span, spanTesting } from '../Pointers/span';
+import { Endset, Link } from '../model';
+import { Span, spanTesting, LinkPointer } from '../pointers';
 import { Part } from '../part';
-import { LinkPointer } from '../Pointers/pointer';
 import { RenderLink } from './render-link';
 
 let toEqualSpan = spanTesting.toEqualSpan;

@@ -1,4 +1,4 @@
-import { leafDataToPointer } from "../Pointers/leaf-data-to-pointer";
+import { leafDataToPointer } from "../pointers";
 import { addProperties, addMethods } from "../utils";
 
 export function Endset(name, pointers) {

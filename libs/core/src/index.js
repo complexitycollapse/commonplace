@@ -1,13 +1,8 @@
 export * from './lib/commonplace-core';
 export { addMethods, addProperties, finalObject, listMap, listMapFromList } from './lib/utils';
-export { Span } from './lib/Pointers/span';
-export { Box } from './lib/Pointers/box';
-export { Doc } from './lib/Model/doc';
-export { Edl, leafDataToEdl } from './lib/Model/edl';
-export { Link, leafDataToLink } from './lib/Model/link';
-export { Endset } from './lib/Model/endset';
+export { Span, Box, LinkPointer, LinkTypePointer, EdlPointer } from './lib/pointers';
+export { Doc, Edl, leafDataToEdl, Link, leafDataToLink, Endset } from './lib/model';
 export { Part } from './lib/part';
 export { LeafCache } from './lib/leaf-cache';
-export { LinkPointer, LinkTypePointer, EdlPointer } from './lib/Pointers/pointer';
-export { RenderDocument } from './lib/Zettel/render-document';
+export { RenderDocument } from './lib/zettel';
 export * as testing from './testing';

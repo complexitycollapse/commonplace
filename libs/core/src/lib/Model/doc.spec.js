@@ -1,7 +1,6 @@
 import { expect, test } from '@jest/globals';
-import { hasClips } from "../Pointers/clip.test-helpers";
+import { hasClips, spanTesting } from "../pointers";
 import { Doc } from './doc';
-import { spanTesting } from '../Pointers/span';
 
 expect.extend({
   hasClips,

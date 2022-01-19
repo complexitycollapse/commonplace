@@ -1,8 +1,6 @@
 import { addProperties, addMethods } from '../utils';
-import { Endset } from '../Model/endset';
-import { Link } from '../Model/link';
-import { Span } from '../Pointers/span';
-import { toEqualClip } from '../Pointers/clip.test-helpers';
+import { Endset, Link } from '../model';
+import { Span, toEqualClip } from '../pointers';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';

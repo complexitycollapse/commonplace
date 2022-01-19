@@ -1,6 +1,5 @@
 import { Part } from "../part";
-import { leafDataToEdl } from "../Model/edl";
-import { leafDataToLink } from "../Model/link";
+import { leafDataToEdl, leafDataToLink } from "../model";
 import { addProperties, addMethods } from "../utils";
 
 export function Pointer(pointerType, isClip, originMapping, partBuilder, properties, methods) {
