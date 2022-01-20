@@ -1,7 +1,7 @@
 import { addProperties, addMethods } from '../utils';
 import { Endset, Link } from '../model';
 import { Span, toEqualClip } from '../pointers';
-import { SingleZettelSchneider } from './zettel-schneider';
+import { ZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
 import { RenderEndset } from './render-endset';
@@ -27,7 +27,7 @@ export function Zettel(clip) {
   }
 
   function addLink(link) {
-    let newZettel = SingleZettelSchneider(clip, [link], obj.key).zettel();
+    let newZettel = ZettelSchneider(clip, [link], obj.key).zettel();
 
     newZettel.forEach(z => {
       obj.endsets.forEach(e => {

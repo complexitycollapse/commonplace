@@ -1,33 +1,10 @@
-import { finalObject, listMap } from "../utils";
+import { finalObject } from "../utils";
 import { Zettel } from "./zettel";
 
-export function ManyZettelSchneider(clips, renderLinks = []) {
-  return finalObject({}, {
-    zettel() {
-      let hash = makeEndsetHash(renderLinks);
-
-      function clipToZettel(clip, index) {
-        return ZettelSchneider(clip, hash.get(clip.origin), index.toString())
-          .zettel();
-      }
-    
-      let zettel = clips.map(clipToZettel).flat();
-      return zettel;
-    }
-  });
-}
-
-export function SingleZettelSchneider(clip, renderLinks = [], keyPrefix) {
-  return finalObject({}, {
-    zettel() {
-      return ZettelSchneider(clip, buildClipEndsetLinks(renderLinks), keyPrefix).zettel();
-    }
-  });
-}
-
-function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
+export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
   let obj = {};
-
+  let clipEndsetLinks = buildClipEndsetLinks(renderLinks);
+  
   function zettel() {
     let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps(clip));
     let result = undefined;
@@ -91,14 +68,6 @@ function ZettelSchneider(clip, clipEndsetLinks, keyPrefix) {
   return finalObject(obj, {
     zettel
   });
-}
-
-function makeEndsetHash(links) {
-  let hash = listMap();
-  forEachClipPointer(links, (p, e, l) => {
-    if (p.isClip) { hash.push(p.origin, buildClipEndsetLink(p, e, l)); }
-  });
-  return hash;
 }
 
 function buildClipEndsetLinks(links) {
