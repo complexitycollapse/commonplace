@@ -7,8 +7,8 @@ export function RenderLinkFactory(nameLinkPairs) {
   function renderLinks() {
     let nameRenderLinkPairs = makeNameRenderLinkPairs(nameLinkPairs);
 
-    Object.keys(nameRenderLinkPairs).forEach(key => {
-      addModifiers(key, nameRenderLinkPairs[key], nameRenderLinkPairs);
+    Object.entries(nameRenderLinkPairs).forEach(([key, renderLink]) => {
+      addModifiers(key, renderLink, nameRenderLinkPairs);
     });
     
     return nameRenderLinkPairs;
@@ -21,8 +21,7 @@ export function RenderLinkFactory(nameLinkPairs) {
   }
 
   function addModifiers(key, renderLink, nameRenderLinkPairs) {
-    Object.keys(nameRenderLinkPairs).forEach(otherKey => {
-      let candidate = nameRenderLinkPairs[otherKey];
+    Object.entries(nameRenderLinkPairs).forEach(([otherKey, candidate]) => {
       if (otherKey != key) {
         if (candidate.endsets.some(e => 
             e.pointers.some(p => p.pointerType === "link"
