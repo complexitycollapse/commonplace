@@ -7,19 +7,22 @@ export function RenderLinkFactory(nameLinkPairs) {
   function renderLinks() {
     let nameRenderLinkPairs = makeNameRenderLinkPairs(nameLinkPairs);
 
-    for (let [key, renderLink] of nameRenderLinkPairs) {
-      addModifiers(key, renderLink, nameRenderLinkPairs);
-    }
+    Object.keys(nameRenderLinkPairs).forEach(key => {
+      addModifiers(key, nameRenderLinkPairs[key], nameRenderLinkPairs);
+    });
     
-    return nameRenderLinkPairs.map(p => p[1]);
+    return nameRenderLinkPairs;
   }
 
   function makeNameRenderLinkPairs(linkMap) {
-    return linkMap.filter(p => p[1]).map(p => [p[0], RenderLink(p[1])]);
+    let renderLinks = {};
+    linkMap.filter(p => p[1]).forEach(p => renderLinks[p[0]] = RenderLink(p[1]));
+    return renderLinks;
   }
 
   function addModifiers(key, renderLink, nameRenderLinkPairs) {
-    for(let [otherKey, candidate] of nameRenderLinkPairs) {
+    Object.keys(nameRenderLinkPairs).forEach(otherKey => {
+      let candidate = nameRenderLinkPairs[otherKey];
       if (otherKey != key) {
         if (candidate.endsets.some(e => 
             e.pointers.some(p => p.pointerType === "link"
@@ -27,7 +30,7 @@ export function RenderLinkFactory(nameLinkPairs) {
           renderLink.modifiers.push(candidate);
         }
       }
-    }
+    });
     return renderLink;
   }
 

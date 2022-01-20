@@ -37,7 +37,7 @@ export function EdlZettel(edlPointer, parent, key) {
     }
 
     unresolvedLinks = undefined;
-    obj.renderLinks = RenderLinkFactory(obj.edl.links.map((n, i) => [n, links[i]])).renderLinks();
+    obj.renderLinks = RenderLinkFactory(obj.edl.links.map((n, i) => [n.hashableName(), links[i]])).renderLinks();
     createChildZettel();
   }
 
@@ -48,7 +48,7 @@ export function EdlZettel(edlPointer, parent, key) {
       if (clip.pointerType === "edl") {
         obj.children.push(EdlZettel(clip, obj, newKey));
       } else {
-        let zettel = ZettelSchneider(clip, obj.renderLinks, newKey).zettel();
+        let zettel = ZettelSchneider(clip, Object.values(obj.renderLinks), newKey).zettel();
         zettel.forEach(z => obj.children.push(z));
       }
     });
