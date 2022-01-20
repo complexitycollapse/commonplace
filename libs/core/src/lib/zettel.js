@@ -1,1 +1,1 @@
-export { RenderDocument } from './Zettel/render-document';
+export { EdlZettel } from './Zettel/edl-zettel';

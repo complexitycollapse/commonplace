@@ -1,20 +1,20 @@
 import { ZettelComponent } from './zettel-component';
 
-export function ZettelRegionComponent({ segment }) {
-  let innerComponents = segment.children.map(f => f.isSegment
-    ? (<ZettelRegionComponent key={f.key} segment={f}/>)
+export function EdlComponent({ edl }) {
+  let innerComponents = edl.children.map(f => f.clip.pointerType === "edl"
+    ? (<EdlComponent key={f.key} segment={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
   function wrap(i) {
-    if (segment.endsets.length <= i) {
+    if (edl.endsets.length <= i) {
       return innerComponents;
     } else {
-      let link = segment.endsets[i].renderLink;
+      let link = edl.endsets[i].renderLink;
       let Tag = link.fragmentTag;
       let style = link.style();
       return (<Tag style={style}>{wrap(i + 1)}</Tag>);
     }
   }
 
-  return (<cpla-segment>{wrap(0)}</cpla-segment>);
+  return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
 }

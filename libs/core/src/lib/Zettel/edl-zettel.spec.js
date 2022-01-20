@@ -1,29 +1,19 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link, Edl, Endset } from '../model';
+import { Link, Edl } from '../model';
 import { EdlZettel } from './edl-zettel';
-import { RenderEndset } from './render-endset';
-import { RenderLink } from './render-link';
 import { Span, Box, EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
 
-function make(edl, {endsets, key} = {}) {
-  endsets = endsets ?? makeEndsets("a", "b", "c");
+function make(edl, {parent, key} = {}) {
   key = key ?? "testKey";
   let edlPointer = EdlPointer("name");
-  let edlz = EdlZettel(edlPointer, endsets, key);
+  let edlz = EdlZettel(edlPointer, parent, key);
   edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
   return edlz;
 }
 
 function makeEdl(clips = [], links = []) {
   return Edl(undefined, clips, links);
-}
-
-function makeEndsets(...linkTypes) {
-  return linkTypes.map(t => {
-    let endset = Endset(undefined, []);
-    return RenderEndset(endset, RenderLink(Link(t, endset)));
-  });
 }
 
 function resolve(request, value) {
@@ -35,9 +25,9 @@ describe('basic properties', () => {
     expect(make(makeEdl(), { key: "123" }).key).toBe("123");
   });
 
-  it('sets the endsets property', () => {
-    let endsets = makeEndsets("a", "b", "c");
-    expect(make(makeEdl(), { endsets }).endsets).toBe(endsets);
+  it('sets the parent property', () => {
+    let parent = make(makeEdl());
+    expect(make(makeEdl(), { parent }).parent).toBe(parent);
   });
 });
 

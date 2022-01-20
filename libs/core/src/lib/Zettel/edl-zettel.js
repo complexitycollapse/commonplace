@@ -1,15 +1,19 @@
 import { addProperties, addMethods } from '../utils';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
+import { RenderLinkFactory } from './render-link-factory';
 
-export function EdlZettel(edlPointer, endsets, key) {
-  let obj = StructureElement(endsets, {
-    children: []
+export function EdlZettel(edlPointer, parent, key) {
+  let obj = StructureElement([], {
+    children: [],
+    parent,
+    clip: edlPointer
   });
   obj.edl = undefined;
 
   let unresolvedLinks = undefined;
   let links = undefined;
+  let renderLinks = undefined;
 
   function resolveEdl(part) {
     obj.edl = part.content;
@@ -19,6 +23,7 @@ export function EdlZettel(edlPointer, endsets, key) {
       links = new Array(unresolvedLinks.length);
     } else {
       links = [];
+      renderLinks = [];
       createChildZettel();
     }
   }
@@ -32,6 +37,7 @@ export function EdlZettel(edlPointer, endsets, key) {
     }
 
     unresolvedLinks = undefined;
+    renderLinks = RenderLinkFactory(obj.edl.links.map((n, i) => [n, links[i]])).renderLinks();
     createChildZettel();
   }
 
@@ -40,9 +46,9 @@ export function EdlZettel(edlPointer, endsets, key) {
       let newKey = key + "." + index.toString();
       
       if (clip.pointerType === "edl") {
-        obj.children.push(EdlZettel(clip, endsets, newKey));
+        obj.children.push(EdlZettel(clip, obj, newKey));
       } else {
-        let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), newKey).zettel();
+        let zettel = SingleZettelSchneider(clip, renderLinks, newKey).zettel();
         zettel.forEach(z => obj.children.push(z));
       }
     });
@@ -63,7 +69,8 @@ export function EdlZettel(edlPointer, endsets, key) {
   });
 
   addMethods(obj, {
-    outstandingRequests
+    outstandingRequests,
+    style() { return {}; }
   });
 
   return obj;

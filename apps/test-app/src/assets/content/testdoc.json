@@ -1,4 +1,5 @@
 {
+  "typ": "doc",
   "cps": [
     {"typ": "span", "ori": "origin", "st": 0, "ln": 18},
     {"typ": "span", "ori": "origin", "st": 20, "ln": 256},

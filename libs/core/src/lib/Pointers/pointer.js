@@ -83,6 +83,8 @@ export function EdlPointer(docName) {
   return obj;
 }
 
+export let emptyDocPointer = EdlPointer("empty.json");
+
 export function leafDataToEdlPointer(data) {
   return EdlPointer(data.name);
 }
