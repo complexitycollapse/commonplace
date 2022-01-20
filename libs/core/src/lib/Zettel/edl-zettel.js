@@ -2,28 +2,63 @@ import { addProperties, addMethods } from '../utils';
 import { SingleZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 
-export function EdlZettel(edl, endsets, key) {
+export function EdlZettel(edlPointer, endsets, key) {
   let obj = StructureElement(endsets, {
     children: []
   });
+  obj.edl = undefined;
 
-  edl.clips.forEach((clip, index) => {
-    let newKey = key + "." + index.toString();
-    
-    if (clip.pointerType === "edl") {
-      obj.children.push(EdlZettelDummy(clip, endsets, obj.children, index, newKey));
+  let unresolvedLinks = undefined;
+  let links = undefined;
+
+  function resolveEdl(part) {
+    obj.edl = part.content;
+
+    if (obj.edl.links.length > 0) {
+      unresolvedLinks = [...obj.edl.links];
+      links = new Array(unresolvedLinks.length);
     } else {
-      let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), newKey).zettel();
-      zettel.forEach(z => obj.children.push(z));
+      links = [];
+      createChildZettel();
     }
-  });
+  }
+
+  function resolveLink(part, index) {
+    unresolvedLinks[index] = undefined;
+    links[index] = part.content;
+
+    if (unresolvedLinks.some(x => x)) {
+      return;
+    }
+
+    unresolvedLinks = undefined;
+    createChildZettel();
+  }
+
+  function createChildZettel() {
+    obj.edl.clips.forEach((clip, index) => {
+      let newKey = key + "." + index.toString();
+      
+      if (clip.pointerType === "edl") {
+        obj.children.push(EdlZettel(clip, endsets, newKey));
+      } else {
+        let zettel = SingleZettelSchneider(clip, endsets.map(e => e.renderLink), newKey).zettel();
+        zettel.forEach(z => obj.children.push(z));
+      }
+    });
+  }
 
   function outstandingRequests() {
-    return obj.children.map(z => z.outstandingRequests()).flat();
+    if (obj.edl === undefined) {
+      return [[edlPointer, resolveEdl]];
+    } else if (unresolvedLinks) {
+      return unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLink(p, i)]);
+    } else {
+      return obj.children.map(z => z.outstandingRequests()).flat();
+    }
   }
 
   addProperties(obj, {
-    edl,
     key
   });
 
@@ -32,17 +67,4 @@ export function EdlZettel(edl, endsets, key) {
   });
 
   return obj;
-}
-
-function EdlZettelDummy(edlPointer, endsets, parentChildCollection, childIndex, key) {
-  return {
-    outstandingRequests: () => [
-      [
-        edlPointer,
-        p => parentChildCollection[childIndex] = EdlZettel(p.content, endsets, key)
-      ]
-    ],
-    children: [],
-    key
-  };
 }

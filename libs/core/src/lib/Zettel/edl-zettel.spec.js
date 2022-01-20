@@ -3,21 +3,20 @@ import { Link, Edl, Endset } from '../model';
 import { EdlZettel } from './edl-zettel';
 import { RenderEndset } from './render-endset';
 import { RenderLink } from './render-link';
-import { Span, Box, EdlPointer } from '../pointers';
+import { Span, Box, EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
 
 function make(edl, {endsets, key} = {}) {
   endsets = endsets ?? makeEndsets("a", "b", "c");
   key = key ?? "testKey";
-  return EdlZettel(edl, endsets, key);
+  let edlPointer = EdlPointer("name");
+  let edlz = EdlZettel(edlPointer, endsets, key);
+  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
+  return edlz;
 }
 
-function emptyEdl() {
-  return Edl(undefined, [], []);
-}
-
-function makeEdl(clips) {
-  return Edl(undefined, clips, []);
+function makeEdl(clips = [], links = []) {
+  return Edl(undefined, clips, links);
 }
 
 function makeEndsets(...linkTypes) {
@@ -27,92 +26,132 @@ function makeEndsets(...linkTypes) {
   });
 }
 
+function resolve(request, value) {
+  request[1].call(undefined, Part(request[0], value));
+}
+
 describe('basic properties', () => {
   it('sets the key property', () => {
-    expect(make(emptyEdl(), { key: "123" }).key).toBe("123");
+    expect(make(makeEdl(), { key: "123" }).key).toBe("123");
   });
 
   it('sets the endsets property', () => {
     let endsets = makeEndsets("a", "b", "c");
-    expect(make(emptyEdl(), { endsets }).endsets).toBe(endsets);
+    expect(make(makeEdl(), { endsets }).endsets).toBe(endsets);
   });
 });
 
 describe('outstandingRequests', () => {
-  it('returns nothing for an empty EDL', () => {
-    expect(make(emptyEdl()).outstandingRequests()).toEqual([]);
+  it('initially requests the EDL', () => {
+    let edlPointer = EdlPointer("p");
+    
+    expect(EdlZettel(edlPointer, [], "1").outstandingRequests().map(x => x[0])).toEqual([edlPointer]);
   });
 
-  it('returns a value for each clip', () => {
-    let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+  it('stops requesting the EDL once it has been resolved', () => {
+    let edlPointer = EdlPointer("p");
+    let ez = EdlZettel(edlPointer, [], "1");
 
-    let actualRequests = make(makeEdl(clips)).outstandingRequests();
-
-    expect(actualRequests.map(x => x[0])).toEqual(clips);
-  });
-
-  it('stops returning a clip once it has been resolved', () => {
-    let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
-    let ez = make(makeEdl(clips));
-    let firstRequest = ez.outstandingRequests()[0];
-
-    firstRequest[1].call(undefined, Part(firstRequest[0], "0123456789"));
-
-    expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips.slice(1));
-  });
-});
-
-describe('nested EDLs', () => {
-  it('places a dummy EDL as the child when passed an EDL', () => {
-    let ez = make(makeEdl([EdlPointer("name")]));
-    let actualChild = ez.children[0];
-
-    expect(actualChild).toBeTruthy();
-    expect(actualChild.children).toEqual([]);
-    expect(actualChild).toHaveProperty("outstandingRequests");
-  });
-
-  it('returns a request for the child EDL', () => {
-    let childEdlPointer = EdlPointer("name");
-    let ez = make(makeEdl([childEdlPointer]));
-
-    expect(ez.outstandingRequests()[0][0]).toBe(childEdlPointer);
-  });
-
-  it('does not request the child EDL once it has been resolved', () => {
-    let childEdlPointer = EdlPointer("name");
-    let childEdl = emptyEdl();
-    let ez = make(makeEdl([childEdlPointer]));
-    let firstRequest = ez.outstandingRequests()[0];
-
-    firstRequest[1].call(undefined, Part(firstRequest[0], childEdl));
-
+    resolve(ez.outstandingRequests()[0], makeEdl())
 
     expect(ez.outstandingRequests()).toEqual([]);
   });
 
-  it('replaces the dummy EDL with an EdlZettel for the resolved EDL', () => {
-    let childEdlPointer = EdlPointer("name");
-    let childEdl = emptyEdl();
-    let ez = make(makeEdl([childEdlPointer]));
-    let firstRequest = ez.outstandingRequests()[0];
+  describe('after EDL downloaded', () => {
+    it('requests all links initially, but not content', () => {
+      let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
+      let ez = make(makeEdl([Span("x", 1, 10), EdlPointer("child")], links));
+      
+      let actualRequests = ez.outstandingRequests();
 
-    firstRequest[1].call(undefined, Part(firstRequest[0], childEdl));
+      expect(actualRequests.map(x => x[0])).toEqual(links);
+    });
 
-    expect(ez.children[0].edl).toBe(childEdl);
+    it('stops requesting a link once it has been resolved', () => {
+      let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
+      let ez = make(makeEdl([Span("x", 1, 10), EdlPointer("child")], links));
+      let initialRequests = ez.outstandingRequests();
+
+      resolve(initialRequests[1], Link(undefined));
+
+      expect(ez.outstandingRequests().map(x => x[0])).toEqual([links[0], links[2]]);
+    });
+
+    it('goes directly to requesting clips if the EDL has no links', () => {
+      let clips = [Span("x", 1, 10), EdlPointer("child")];
+      let ez = make(makeEdl(clips, []));
+
+      expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips);
+    });
+
+    it('requests clips once all links are resolved', () => {
+      let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
+      let clips = [Span("x", 1, 10), EdlPointer("child")];
+      let ez = make(makeEdl(clips, links));
+      let initialRequests = ez.outstandingRequests();
+
+      resolve(initialRequests[0], Link(undefined));
+      resolve(initialRequests[1], Link(undefined));
+      resolve(initialRequests[2], Link(undefined));
+
+      expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips);
+    });
   });
 
-  it('requests all content of a resolved child EDL', () => {
-    let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
-    let childEdlPointer = EdlPointer("name");
-    let childEdl = makeEdl(clips);
-    let ez = make(makeEdl([childEdlPointer]));
-    let firstRequest = ez.outstandingRequests()[0];
-    firstRequest[1].call(undefined, Part(firstRequest[0], childEdl));
+  describe('after links downloaded', () => { 
+    it('stops returning a clip once it has been resolved', () => {
+      let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+      let ez = make(makeEdl(clips));
+      let firstRequest = ez.outstandingRequests()[0];
+  
+      resolve(firstRequest, "0123456789");
+  
+      expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips.slice(1));
+    });
+  });
 
-    let actualRequests = ez.outstandingRequests();
+  describe('nested EDLs', () => {
+    it('returns a request for the child EDL', () => {
+      let childEdlPointer = EdlPointer("name");
+      let ez = make(makeEdl([childEdlPointer]));
 
-    expect(actualRequests.map(x => x[0])).toEqual(clips);
+      expect(ez.outstandingRequests()[0][0]).toBe(childEdlPointer);
+    });
+
+    it('does not request the child EDL once it has been resolved', () => {
+      let childEdlPointer = EdlPointer("name");
+      let childEdl = makeEdl();
+      let ez = make(makeEdl([childEdlPointer]));
+      let firstRequest = ez.outstandingRequests()[0];
+
+      resolve(firstRequest, childEdl);
+
+      expect(ez.outstandingRequests()).toEqual([]);
+    });
+
+    it('replaces the dummy EDL with an EdlZettel for the resolved EDL', () => {
+      let childEdlPointer = EdlPointer("name");
+      let childEdl = makeEdl();
+      let ez = make(makeEdl([childEdlPointer]));
+      let firstRequest = ez.outstandingRequests()[0];
+
+      resolve(firstRequest, childEdl);
+
+      expect(ez.children[0].edl).toBe(childEdl);
+    });
+
+    it('requests all content of a resolved child EDL', () => {
+      let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+      let childEdlPointer = EdlPointer("name");
+      let childEdl = makeEdl(clips);
+      let ez = make(makeEdl([childEdlPointer]));
+      let firstRequest = ez.outstandingRequests()[0];
+      firstRequest[1].call(undefined, Part(firstRequest[0], childEdl));
+
+      let actualRequests = ez.outstandingRequests();
+
+      expect(actualRequests.map(x => x[0])).toEqual(clips);
+    });
   });
 });
 
@@ -137,7 +176,7 @@ describe('key', () => {
 
   it('gives the same key to the resolved EdlZettel as it did to the dummy', () => {
     let childEdlPointer = EdlPointer("name");
-    let childEdl = emptyEdl();
+    let childEdl = makeEdl();
     let ez = make(makeEdl([childEdlPointer]));
     let firstRequest = ez.outstandingRequests()[0];
     let expectedKey = ez.children[0].key;
