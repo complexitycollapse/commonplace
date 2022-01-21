@@ -11,7 +11,8 @@ export function RenderPointer(pointer, renderEndset) {
     pointer,
     renderEndset,
     renderLink: renderEndset.renderLink,
-    getAttributeEndowment: () => undefined
+    getAttributeEndowment: () => undefined,
+    getAllAttributeEndowments: () => undefined
   });
 
   return finalObject(obj);
@@ -34,6 +35,7 @@ function mockRenderPointer(pointer, attributes) {
     pointer,
     renderEndset: RenderEndset(link.endsets[0], rl),
     renderLink: rl,
-    getAttributeEndowment: name => attributes[name]
+    getAttributeEndowment: name => attributes[name],
+    getAllAttributeEndowments: () => attributes
   };
 }

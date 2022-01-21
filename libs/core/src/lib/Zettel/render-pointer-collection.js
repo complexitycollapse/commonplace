@@ -22,8 +22,27 @@ export function RenderPointerCollection() {
     return undefined;
   }
 
+  function all() {
+    let result = {};
+
+    function addAllValues(pointers) {
+      for(let i = pointers.length - 1; i >= 0; --i) {
+        Object.entries(pointers[i].getAllAttributeEndowments()).forEach( kv => {
+          result[kv[0]] = kv[1];
+        });
+      };
+    }
+
+    addAllValues(typePointers);
+    addAllValues(directPointers);
+
+    return result;
+  }
+
   return finalObject(obj, {
     add,
-    get
+    get,
+    all
   });
 }
+ 

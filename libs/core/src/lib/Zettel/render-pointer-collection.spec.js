@@ -79,3 +79,26 @@ test('if there are two link pointers with the attribute, the value of the second
 
   expect(rpc.get("attr")).toBe("expected value");
 });
+
+test('all returns all attributes, preferring direct values to type values and later values to earlier', () => {
+  let linkPointer1 = mockLinkRenderPointer("name", {key1: "ignored value"});
+  let linkPointer2 = mockLinkRenderPointer("name", {key1: "key1 value"});
+  let linkPointer3 = mockLinkRenderPointer("name", {key2: "key2 value"});
+  let linkTypePointer1 = mockLinkTypeRenderPointer("name", {key2: "ignored value"});
+  let linkTypePointer2 = mockLinkTypeRenderPointer("name", {key3: "ignored value"});
+  let linkTypePointer3 = mockLinkTypeRenderPointer("name", {key3: "key3 value"});
+  let rpc = RenderPointerCollection();
+  
+  rpc.add(linkPointer1);
+  rpc.add(linkPointer2);
+  rpc.add(linkPointer3);
+  rpc.add(linkTypePointer1);
+  rpc.add(linkTypePointer2);
+  rpc.add(linkTypePointer3);
+
+  expect(rpc.all()).toEqual({
+    key1: "key1 value",
+    key2: "key2 value",
+    key3: "key3 value"
+  });
+});
