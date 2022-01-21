@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from './utils';
+import { addProperties, finalObject } from '../utils';
 import { LinkPointer, LinkTypePointer } from '../pointers';
 import { RenderEndset } from './render-endset';
 import { Endset, Link } from '../model';

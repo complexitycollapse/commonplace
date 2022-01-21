@@ -14,8 +14,6 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
     } else {
       let singleZettel = Zettel(clip);
       overlappingEntries.forEach(c => {
-        // TODO: remove call to addEndset once RegionBuilder is gone
-        singleZettel.addEndset(c.endset, c.link);
         singleZettel.addPointer(c.clip, c.endset, c.link);
       });
       result = [singleZettel];
@@ -64,8 +62,6 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
 
     if (coveringSpan) {
       zettel.forEach(z => {
-        // TODO: remove call to addEndset once RegionBuilder is gone
-        z.addEndset(coveringSpan.endset, coveringSpan.link);
         z.addPointer(span, coveringSpan.endset, coveringSpan.link);
       });
     }

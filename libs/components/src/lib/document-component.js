@@ -1,4 +1,4 @@
-import { EdlComponent } from './zettel-region-component';
+import { EdlComponent } from './edl-component';
 import { EdlZettel, emptyDocPointer } from '@commonplace/core';
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';

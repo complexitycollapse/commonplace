@@ -35,9 +35,9 @@ expect.extend({
       if (!result.pass) { return result; }
     });
 
-    if (endsets.length !== zettel.endsets.length) {
+    if (endsets.length !== zettel.renderPointers.length) {
       return {
-        message: () => `expected ${endsets.length} endsets, received ${zettel.endsets.length}`,
+        message: () => `expected ${endsets.length} endsets, received ${zettel.renderPointers.length}`,
         pass: false
       }
     }
@@ -216,7 +216,7 @@ describe('ZettelSchneider.zettel', () => {
 
     let zettel = ZettelSchneider(s, [l]).zettel();
 
-    expect(zettel[0].endsets).toHaveLength(1);
+    expect(zettel[0].renderPointers).toHaveLength(1);
   });
 
   it('assigns links only to the spans that overlap them', () => {

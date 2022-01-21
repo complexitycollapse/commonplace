@@ -6,10 +6,10 @@ export function EdlComponent({ edl }) {
     : <ZettelComponent key={f.key} zettel={f}/>);
 
   function wrap(i) {
-    if (edl.endsets.length <= i) {
+    if (edl.renderPointers.length <= i) {
       return innerComponents;
     } else {
-      let link = edl.endsets[i].renderLink;
+      let link = edl.renderPointers[i].renderLink;
       let Tag = link.fragmentTag;
       let style = link.style();
       return (<Tag style={style}>{wrap(i + 1)}</Tag>);

@@ -1,14 +1,14 @@
 import { addProperties, addMethods } from '../utils';
 import { ZettelSchneider } from './zettel-schneider';
-import { StructureElement } from './structure-element';
 import { RenderLinkFactory } from './render-link-factory';
 
 export function EdlZettel(edlPointer, parent, key) {
-  let obj = StructureElement([], {
+  let obj = {
     children: [],
     parent,
-    clip: edlPointer
-  });
+    clip: edlPointer,
+    renderPointers: []
+  };
   obj.edl = undefined;
   obj.renderLinks = undefined;
 
