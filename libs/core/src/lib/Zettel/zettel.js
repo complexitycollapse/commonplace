@@ -5,6 +5,7 @@ import { ZettelSchneider } from './zettel-schneider';
 import { StructureElement } from './structure-element';
 import { RenderLink } from './render-link';
 import { RenderEndset } from './render-endset';
+import { RenderPointer } from './render-pointer';
 
 export function Zettel(clip) {
   let obj = StructureElement([]);
@@ -14,7 +15,8 @@ export function Zettel(clip) {
 
   addProperties(obj, {
     clip,
-    isSegment: false
+    isSegment: false,
+    renderPointers: []
   });
 
   function addEndset(endset, link) {
@@ -26,14 +28,22 @@ export function Zettel(clip) {
     if (link.isStructural) { obj.structuralEndsets.push(newEndset) };
   }
 
+  function addPointer(pointer, endset, link) {
+    let renderEndset = RenderEndset(endset, link);
+    let renderPointer = RenderPointer(pointer, renderEndset);
+    if (obj.hasRenderEndset2(renderEndset)) {
+      return;
+    }
+    obj.renderPointers.push(renderPointer);
+  }
+
   function addLink(link) {
     let newZettel = ZettelSchneider(clip, [link], obj.key).zettel();
 
     newZettel.forEach(z => {
-      obj.endsets.forEach(e => {
-        if (!z.hasRenderEndset(e)) {
-          z.endsets.push(e);
-          if (link.isStructural) { obj.structuralEndsets.push(e) };
+      obj.renderPointers.forEach(p => {
+        if (!z.hasRenderEndset2(p.renderEndset)) {
+          z.renderPointers.push(p);
         }
         if (contentPart) { z.tryAddPart(contentPart); }
       });
@@ -75,7 +85,8 @@ export function Zettel(clip) {
     style,
     part: () => contentPart,
     outstandingRequests,
-    setOnUpdate
+    setOnUpdate,
+    addPointer
   });
 
   return obj;

@@ -13,7 +13,11 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
       result = mapSpanToZettel(clip, overlappingEntries);
     } else {
       let singleZettel = Zettel(clip);
-      overlappingEntries.forEach(c => singleZettel.addEndset(c.endset, c.link));
+      overlappingEntries.forEach(c => {
+        // TODO: remove call to addEndset once RegionBuilder is gone
+        singleZettel.addEndset(c.endset, c.link);
+        singleZettel.addPointer(c.clip, c.endset, c.link);
+      });
       result = [singleZettel];
     }
 
@@ -59,7 +63,11 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
     var zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.clip.overlaps(span)));
 
     if (coveringSpan) {
-      zettel.forEach(z => z.addEndset(coveringSpan.endset, coveringSpan.link));
+      zettel.forEach(z => {
+        // TODO: remove call to addEndset once RegionBuilder is gone
+        z.addEndset(coveringSpan.endset, coveringSpan.link);
+        z.addPointer(span, coveringSpan.endset, coveringSpan.link);
+      });
     }
 
     return zettel;

@@ -54,8 +54,14 @@ export function StructureElement(endsets, properties = {}) {
       endset.renderLink === ours.renderLink && endset.index === ours.index);
   }
 
+  function hasRenderEndset2(endset) {
+    return obj.renderPointers.find(ours => 
+      endset.renderLink === ours.renderEndset.renderLink && endset.index === ours.renderEndset.index);
+  }
+
   addMethods(obj, {
     hasRenderEndset,
+    hasRenderEndset2,
     renderEndsetsNotInOther,
     sharedRenderEndsets,
     sameRenderEndsets,
