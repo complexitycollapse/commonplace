@@ -4,7 +4,7 @@ import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';
 import { RenderPointer } from './render-pointer';
 
-export function Zettel(clip) {
+export function Zettel(clip, parent) {
   let obj = {};
   let onUpdate = undefined;
   let contentPart = undefined;
@@ -13,7 +13,8 @@ export function Zettel(clip) {
   addProperties(obj, {
     clip,
     isSegment: false,
-    renderPointers: []
+    renderPointers: [],
+    parent
   });
 
   function addPointer(pointer, endset, link) {

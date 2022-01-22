@@ -1,9 +1,11 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
 import { Endset, Link } from '../model';
-import { Span, spanTesting, LinkPointer } from '../pointers';
+import { Span, spanTesting, LinkPointer, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
+import { exitCode } from 'process';
+import { EdlZettel } from './edl-zettel';
 
 let toEqualSpan = spanTesting.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
@@ -245,5 +247,12 @@ describe('tryAddPart', () => {
     zettel.tryAddPart(part);
 
     expect(zettel.part().content).toBe("456");
+  });
+});
+
+describe('parent', () => {
+  it('is set on the zettel', () => {
+    let expectedParent = EdlZettel(EdlPointer("foo"), undefined, "1");
+    expect(Zettel(makeSpan(), expectedParent).parent).toBe(expectedParent);
   });
 });
