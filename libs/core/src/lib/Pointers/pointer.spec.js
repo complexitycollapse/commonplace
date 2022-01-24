@@ -1,5 +1,8 @@
 import { describe, it, expect, test } from '@jest/globals';
-import { LinkPointer, LinkTypePointer, EdlPointer, leafDataToLinkPointer, leafDataToLinkTypePointer, leafDataToEdlPointer } from './pointer';
+import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
+import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
+import { LinkTypePointer, leafDataToLinkTypePointer } from './link-type-pointer';
+import { EdlTypePointer, leafDataToEdlTypePointer } from './edl-type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
@@ -15,6 +18,10 @@ describe('pointerType', () => {
 
   it('equals "edl" for EdlPointer', () => {
     expect(EdlPointer("name").pointerType).toBe("edl");
+  });
+
+  it('equals "edl type" for EdlTypePointer', () => {
+    expect(EdlTypePointer("name").pointerType).toBe("edl type");
   });
 
   it('equals "clip" for Span', () => {
@@ -37,6 +44,10 @@ describe('isClip', () => {
 
   it('returns false for a EdlPointer', () => {
     expect(EdlPointer("edl").isClip).toBeFalsy();
+  });
+
+  it('returns false for a EdlTypePointer', () => {
+    expect(EdlTypePointer("edl").isClip).toBeFalsy();
   });
 
   it('returns true for a Span', () => {
@@ -72,6 +83,12 @@ describe('leafData', () => {
 
     expect(leafData).toEqual({ typ: "edl", name: "the name"});
   });
+
+  it('returns object with typ "edl type" and name prop when called on EdlTypePointer', () => {
+    let leafData = EdlTypePointer("the name").leafData();
+
+    expect(leafData).toEqual({ typ: "edl type", name: "the name"});
+  });
 });
 
 describe('restoring leafData', () => {
@@ -91,6 +108,12 @@ describe('restoring leafData', () => {
     let edl = EdlPointer("test name");
 
     expect(leafDataToEdlPointer(edl.leafData())).toEqual(edl);
+  });
+
+  test('leafDataToEdlTypePointer is inverse of leafData', () => {
+    let edl = EdlTypePointer("test name");
+
+    expect(leafDataToEdlTypePointer(edl.leafData())).toEqual(edl);
   });
 
   test('leafDataToPointer is inverse of leafData for LinkPointer', () => {

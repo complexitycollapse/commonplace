@@ -1,7 +1,7 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Span, leafDataToSpan, spanTesting } from './span';
 import { boxTesting, Box } from './box';
-import { EdlPointer } from './pointer';
+import { EdlPointer } from './edl-pointer';
 import { Part } from '../part';
 
 expect.extend({
