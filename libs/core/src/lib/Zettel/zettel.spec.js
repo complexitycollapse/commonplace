@@ -4,7 +4,6 @@ import { Endset, Link } from '../model';
 import { Span, spanTesting, LinkPointer, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
-import { exitCode } from 'process';
 import { EdlZettel } from './edl-zettel';
 
 let toEqualSpan = spanTesting.toEqualSpan;

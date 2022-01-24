@@ -65,16 +65,16 @@ export function leafDataToLinkTypePointer(data) {
   return LinkTypePointer(data.name);
 }
 
-export function EdlPointer(docName) {
+export function EdlPointer(edlName) {
   let obj = Pointer(
     "edl",
     false,
-    x => x.docName,
+    x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
-    { docName }, {
-    leafData() { return { typ: "edl", name: docName }; },
+    { edlName }, {
+    leafData() { return { typ: "edl", name: edlName }; },
     clipPart (part){
-      return obj.hasSamePointerType(part.pointer) && docName === part.pointer.docName 
+      return obj.hasSamePointerType(part.pointer) && edlName === part.pointer.edlName 
         ? [true, part] 
         : [false, undefined];
     }
