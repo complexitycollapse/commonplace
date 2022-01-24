@@ -144,3 +144,97 @@ describe('LinkPointer.hashableName', () => {
     expect(LinkPointer("xyz", 123).hashableName()).toBe("xyz/123");
   });
 });
+
+describe('engulfs', () => {
+  describe('LinkPointer', () => {
+    it('returns false if the other pointer is not a link pointer', () => {
+      expect(LinkPointer("name").engulfs(EdlPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if the other pointer has a different link name', () => {
+      expect(LinkPointer("name").engulfs(LinkPointer("name2"))).toBeFalsy();
+    });
+
+    it('returns true if the other pointer has an index but we dont', () => {
+      // in this case we represent the entire array of links and hence engulf
+      // the individual link pointer
+      expect(LinkPointer("name").engulfs(LinkPointer("name", 0))).toBeTruthy();
+    });
+
+    it('returns false if we have an index but the other does not', () => {
+      expect(LinkPointer("name", 0).engulfs(LinkPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if they both have indexes but they are different', () => {
+      expect(LinkPointer("name", 1).engulfs(LinkPointer("name", 2))).toBeFalsy();
+    });
+
+    it('returns true if they have the same name and index', () => {
+      expect(LinkPointer("name", 1).engulfs(LinkPointer("name", 1))).toBeTruthy();
+    });
+
+    it('returns true if they have the same name and neither has an index', () => {
+      expect(LinkPointer("name").engulfs(LinkPointer("name"))).toBeTruthy();
+    });
+  });
+
+  describe('EdlPointer', () => {
+    it('returns false if the other pointer is not an Edl pointer', () => {
+      expect(EdlPointer("name").engulfs(LinkPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if the other pointer has a different Edl name', () => {
+      expect(EdlPointer("name").engulfs(EdlPointer("name2"))).toBeFalsy();
+    });
+
+    it('returns true if the other pointer has an index but we dont', () => {
+      // in this case we represent the entire array of links and hence engulf
+      // the individual link pointer
+      expect(EdlPointer("name").engulfs(EdlPointer("name", 0))).toBeTruthy();
+    });
+
+    it('returns false if we have an index but the other does not', () => {
+      expect(EdlPointer("name", 0).engulfs(EdlPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if they both have indexes but they are different', () => {
+      expect(EdlPointer("name", 1).engulfs(EdlPointer("name", 2))).toBeFalsy();
+    });
+
+    it('returns true if they have the same name and index', () => {
+      expect(EdlPointer("name", 1).engulfs(EdlPointer("name", 1))).toBeTruthy();
+    });
+
+    it('returns true if they have the same name and neither has an index', () => {
+      expect(EdlPointer("name").engulfs(EdlPointer("name"))).toBeTruthy();
+    });
+  });
+
+  describe('EdlTypePointer', () => {
+    it('returns false if the other pointer is not an EdlTypePointer', () => {
+      expect(EdlTypePointer("name").engulfs(LinkPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if the other pointer has a different type name', () => {
+      expect(EdlTypePointer("name").engulfs(EdlTypePointer("name2"))).toBeFalsy();
+    });
+
+    it('returns true if they have the same name', () => {
+      expect(EdlTypePointer("name").engulfs(EdlTypePointer("name"))).toBeTruthy();
+    });
+  });
+
+  describe('LinkTypePointer', () => {
+    it('returns false if the other pointer is not an LinkTypePointer', () => {
+      expect(LinkTypePointer("name").engulfs(LinkPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if the other pointer has a different type name', () => {
+      expect(LinkTypePointer("name").engulfs(LinkTypePointer("name2"))).toBeFalsy();
+    });
+
+    it('returns true if they have the same name', () => {
+      expect(LinkTypePointer("name").engulfs(LinkTypePointer("name"))).toBeTruthy();
+    });
+  });
+});

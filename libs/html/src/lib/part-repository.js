@@ -14,9 +14,14 @@ export function PartRepository(fetcher) {
     if (fetched[0]) {
       let part = fetched[1];
       cache.addPart(part);
-      return pointer.clipPart(part)[1];
+      let clipResult = pointer.clipPart(part);
+      if (clipResult[0]) { return clipResult[1]; }
+      else {
+        console.error(`Error when fetching leaf for pointer ${JSON.stringify(pointer)}. Could not clip the result to the pointer.`);
+        return undefined;
+      }
     } else {
-      console.log(fetched[1]);
+      console.error(fetched[1]);
       return undefined;
     }
   }
