@@ -180,7 +180,7 @@ describe('key', () => {
 describe('links to EDL', () => {
   it('will create a RenderPointer for a link in the EDL that points to the EDL', () => {
     let edlPointer = EdlPointer("name");
-    let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer, edlPointer: edlPointer }));
+    let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }), { edlPointer: edlPointer });
 
     resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [edlPointer])));
 
