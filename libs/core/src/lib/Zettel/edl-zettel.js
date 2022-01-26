@@ -41,7 +41,7 @@ export function EdlZettel(edlPointer, parent, key) {
     }
 
     unresolvedLinks = undefined;
-    obj.renderLinks = RenderLinkFactory(obj.edl.links.map((n, i) => [n.hashableName(), links[i]])).renderLinks();
+    obj.renderLinks = RenderLinkFactory(obj.edl.links.map((n, i) => [n.hashableName, links[i]])).renderLinks();
     applyLinksToSelf();
     createChildZettel();
   }

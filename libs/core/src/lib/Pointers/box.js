@@ -5,7 +5,7 @@ import { Part } from "../part";
 
 export function Box(origin, x, y, width, height, originalContext)
 {
-  let obj = Clip("box", origin, r => buildPartFromContent(obj, r), originalContext);
+  let obj = Clip("box", origin, r => buildPartFromContent(obj, r), () => `box:${origin}:${x}:${y}:${width}:${height}`, originalContext);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     x,

@@ -136,12 +136,12 @@ describe('restoring leafData', () => {
 });
 
 describe('LinkPointer.hashableName', () => {
-  it('returns the link name suffixed with /N if there is no index specified', () => {
-    expect(LinkPointer("xyz").hashableName()).toBe("xyz/N");
+  it('returns link and the link name suffixed with :N if there is no index specified', () => {
+    expect(LinkPointer("xyz").hashableName).toBe("link:xyz:N");
   });
 
-  it('returns the link name suffixed with the index if there is an index specified', () => {
-    expect(LinkPointer("xyz", 123).hashableName()).toBe("xyz/123");
+  it('returns link and the link name suffixed with the index if there is an index specified', () => {
+    expect(LinkPointer("xyz", 123).hashableName).toBe("link:xyz:123");
   });
 });
 

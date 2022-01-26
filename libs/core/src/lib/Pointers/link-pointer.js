@@ -8,10 +8,10 @@ export function LinkPointer(linkName, index) {
     false,
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
+    () => `link:${linkName}:${index ?? "N"}`,
     { linkName, index },
     {
       leafData() { return { typ: "link", name: linkName, idx: index }; },
-      hashableName() { return linkName + "/" + (index === undefined ? "N" : index.toString()); },
       clipPart(part) { 
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {

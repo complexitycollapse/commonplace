@@ -8,10 +8,10 @@ export function EdlPointer(edlName, index) {
     false,
     x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
+    () => `edl:${edlName}:${index ?? "N"}`,
     { edlName, index }, 
     {
       leafData() { return { typ: "edl", name: edlName, idx: index }; },
-      hashableName() { return edlName + "/" + (index === undefined ? "N" : index.toString()); },
       clipPart(part) { 
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {

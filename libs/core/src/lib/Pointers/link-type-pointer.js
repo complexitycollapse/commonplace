@@ -1,7 +1,9 @@
 import { Pointer } from "./pointer";
 
 export function LinkTypePointer(linkType) {
-  let obj = Pointer("link type", false, () => Promise.resolve(undefined), undefined, { linkType },
+  let obj = Pointer("link type", false, () => Promise.resolve(undefined), undefined,
+  () => `link type:${linkType}`,
+  { linkType },
   {
     leafData() { return { typ: "link type", name: linkType }; },
     clipPart (part) {

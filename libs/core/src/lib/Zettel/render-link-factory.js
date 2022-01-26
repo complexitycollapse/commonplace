@@ -25,7 +25,7 @@ export function RenderLinkFactory(nameLinkPairs) {
       if (otherKey != key) {
         if (candidate.endsets.some(e => 
             e.pointers.some(p => p.pointerType === "link"
-            && p.hashableName() === key))) {
+            && p.hashableName === key))) {
           renderLink.modifiers.push(candidate);
         }
       }

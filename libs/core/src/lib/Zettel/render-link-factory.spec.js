@@ -4,7 +4,7 @@ import { LinkPointer } from '../pointers';
 import { RenderLinkFactory } from './render-link-factory';
 
 function makeNameLinkPairs(links) {
-  return links.map((l, i) => [LinkPointer("link-" + i.toString()).hashableName(), l]);
+  return links.map((l, i) => [LinkPointer("link-" + i.toString()).hashableName, l]);
 }
 
 function getLinks(renderLinkObject) {
@@ -30,8 +30,8 @@ describe('renderLinks', () => {
 
   it('attaches a link to the link it points to', () => {
     let links = [
-      [LinkPointer("a").hashableName(), Link("foo", Endset("x", [LinkPointer("b")]))],
-      [LinkPointer("b").hashableName(), Link("foo")]
+      [LinkPointer("a").hashableName, Link("foo", Endset("x", [LinkPointer("b")]))],
+      [LinkPointer("b").hashableName, Link("foo")]
     ];
 
     let actual = RenderLinkFactory(links).renderLinks()[links[1][0]].modifiers;
@@ -42,9 +42,9 @@ describe('renderLinks', () => {
 
   it('attaches a link to the link it points to, two levels', () => {
     let links = [
-      [LinkPointer("a").hashableName(), Link("foo", Endset("x", [LinkPointer("b")]))],
-      [LinkPointer("b").hashableName(), Link("foo", Endset(undefined, [LinkPointer("c")]))],
-      [LinkPointer("c").hashableName(), Link("foo")]
+      [LinkPointer("a").hashableName, Link("foo", Endset("x", [LinkPointer("b")]))],
+      [LinkPointer("b").hashableName, Link("foo", Endset(undefined, [LinkPointer("c")]))],
+      [LinkPointer("c").hashableName, Link("foo")]
     ];
 
     let actual = RenderLinkFactory(links).renderLinks();
