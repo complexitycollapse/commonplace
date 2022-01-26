@@ -26,7 +26,8 @@ export function RenderLink(link) {
     link,
     endsets: link.endsets,
     type: link.type,
-    isStructural: fragmentTag ? true : false
+    isStructural: fragmentTag ? true : false,
+    linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat()
   });
 
   function style() {
@@ -34,7 +35,23 @@ export function RenderLink(link) {
     return mod ? mod.style() : inlineStyle;
   }
 
+  function resolveContent(part) {
+    let entry = renderLink.linkedContent.find(x => x[0] === part.pointer);
+    entry[2] = part.content;
+  }
+
+  function getContentForPointer(pointer, endset) {
+    let entry = renderLink.linkedContent.find(x => x[0] === pointer && x[1] === endset);
+    return entry ? entry[2] : undefined;
+  }
+
+  function outstandingRequests() {
+    return renderLink.linkedContent.filter(x => !x[2]).map(x => [x[0], resolveContent]);
+  }
+
   return finalObject(renderLink, {
-    style
+    style,
+    outstandingRequests,
+    getContentForPointer
   });
 }
