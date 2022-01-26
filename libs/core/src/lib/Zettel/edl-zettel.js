@@ -3,19 +3,20 @@ import { ZettelSchneider } from './zettel-schneider';
 import { RenderLinkFactory } from './render-link-factory';
 import { RenderPointer } from './render-pointer';
 import { RenderEndset } from './render-endset';
+import { RenderPointerCollection } from './render-pointer-collection';
 
 export function EdlZettel(edlPointer, parent, key) {
   let obj = {
     children: [],
     parent,
-    clip: edlPointer,
-    renderPointers: []
+    clip: edlPointer
   };
   obj.edl = undefined;
   obj.renderLinks = undefined;
 
   let unresolvedLinks = undefined;
   let links = undefined;
+  let renderPointers = undefined;
 
   function resolveEdl(part) {
     obj.edl = part.content;
@@ -49,10 +50,12 @@ export function EdlZettel(edlPointer, parent, key) {
     function addLinks(source) {
       Object.values(source.renderLinks).forEach(l => l.endsets.forEach(e => e.pointers.forEach(p => {
         if (p.pointerType === "edl" && p.edlName === edlPointer.edlName) {
-          obj.renderPointers.push(RenderPointer(p, RenderEndset(e, l)));
+          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, l)));
         }
       })));
     }
+
+    renderPointers = RenderPointerCollection(edlPointer, obj.edl.type);
     
     for(let linkSource = obj; linkSource !== undefined; linkSource = linkSource.parent) {
       addLinks(linkSource);
@@ -82,13 +85,19 @@ export function EdlZettel(edlPointer, parent, key) {
     }
   }
 
+  function attributes() {
+    if (renderPointers) {
+      return renderPointers.all();
+    } else { return {}; }
+  }
+
   addProperties(obj, {
     key
   });
 
   addMethods(obj, {
     outstandingRequests,
-    style() { return {}; }
+    attributes
   });
 
   return obj;

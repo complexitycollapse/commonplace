@@ -31,7 +31,8 @@ export function PartRepository(fetcher) {
     for (let i = 0; i < requests.length; i++) {
       let request = requests[i];
       results.push(request[0]);
-      request[1](await getPart(request[0]));
+      let part = await getPart(request[0]);
+      request[1](part);
     }
     return results;
   }

@@ -177,32 +177,32 @@ describe('key', () => {
   });
 });
 
-describe('links to EDL', () => {
-  it('will create a RenderPointer for a link in the EDL that points to the EDL', () => {
-    let edlPointer = EdlPointer("name");
-    let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }), { edlPointer: edlPointer });
+// describe('links to EDL', () => {
+//   it('will create a RenderPointer for a link in the EDL that points to the EDL', () => {
+//     let edlPointer = EdlPointer("name");
+//     let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }), { edlPointer: edlPointer });
 
-    resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [edlPointer])));
+//     resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [edlPointer])));
 
-    expect(ez.renderPointers.map(p => p.pointer)).toEqual([edlPointer]);
-  });
+//     expect(ez.renderPointers.map(p => p.pointer)).toEqual([edlPointer]);
+//   });
 
-  it('will not create a render pointer if the link pointer points to a different EDL', () => {
-    let edlPointer = EdlPointer("name");
-    let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }));
+//   it('will not create a render pointer if the link pointer points to a different EDL', () => {
+//     let edlPointer = EdlPointer("name");
+//     let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }));
 
-    resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [EdlPointer("something else")])));
+//     resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [EdlPointer("something else")])));
 
-    expect(ez.renderPointers).toEqual([]);
-  });
+//     expect(ez.renderPointers).toEqual([]);
+//   });
 
-  it('will create a render pointer for links in the parent that point to the EDL', () => {
-    let childPointer = EdlPointer("child");
-    let parent = make(makeEdl([childPointer], [LinkPointer("foo")]));
-    resolve(parent.outstandingRequests()[0], Link(undefined, Endset(undefined, [childPointer])));
+//   it('will create a render pointer for links in the parent that point to the EDL', () => {
+//     let childPointer = EdlPointer("child");
+//     let parent = make(makeEdl([childPointer], [LinkPointer("foo")]));
+//     resolve(parent.outstandingRequests()[0], Link(undefined, Endset(undefined, [childPointer])));
 
-    let child = make(makeEdl([], [], { name: childPointer }), { parent: parent, edlPointer: childPointer });
+//     let child = make(makeEdl([], [], { name: childPointer }), { parent: parent, edlPointer: childPointer });
 
-    expect(child.renderPointers.map(p => p.pointer)).toEqual([childPointer]);
-  });
-});
+//     expect(child.renderPointers.map(p => p.pointer)).toEqual([childPointer]);
+//   });
+// });

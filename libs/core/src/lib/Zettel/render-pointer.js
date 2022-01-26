@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from '../utils';
-import { LinkPointer, LinkTypePointer } from '../pointers';
+import { EdlPointer, LinkPointer, LinkTypePointer } from '../pointers';
 import { RenderEndset } from './render-endset';
 import { Endset, Link } from '../model';
 import { RenderLink } from './render-link';
@@ -25,6 +25,11 @@ export function mockLinkRenderPointer(linkName, attributes) {
 
 export function mockLinkTypeRenderPointer(linkType, attributes) {
   let pointer = LinkTypePointer(linkType);
+  return mockRenderPointer(pointer, attributes);
+}
+
+export function mockEdlRenderPointer(edlName, attributes) {
+  let pointer = EdlPointer(edlName);
   return mockRenderPointer(pointer, attributes);
 }
 

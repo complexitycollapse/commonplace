@@ -1,3 +1,4 @@
+import { CssStyle } from '@commonplace/html';
 import { ZettelComponent } from './zettel-component';
 
 export function EdlComponent({ edl }) {
@@ -5,16 +6,19 @@ export function EdlComponent({ edl }) {
     ? (<EdlComponent key={f.key} segment={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
-  function wrap(i) {
-    if (edl.renderPointers.length <= i) {
-      return innerComponents;
-    } else {
-      let link = edl.renderPointers[i].renderLink;
-      let Tag = link.fragmentTag;
-      let style = link.style();
-      return (<Tag style={style}>{wrap(i + 1)}</Tag>);
-    }
-  }
+  let style = CssStyle([edl.attributes()]);
 
-  return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
+  // function wrap(i) {
+  //   if (edl.renderPointers.length <= i) {
+  //     return innerComponents;
+  //   } else {
+  //     let link = edl.renderPointers[i].renderLink;
+  //     let Tag = link.fragmentTag;
+  //     let style = link.style();
+  //     return (<Tag style={style}>{wrap(i + 1)}</Tag>);
+  //   }
+  // }
+
+  //return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
+  return (<cpla-edl key={edl.key} style={style}>{innerComponents}</cpla-edl>);
 }
