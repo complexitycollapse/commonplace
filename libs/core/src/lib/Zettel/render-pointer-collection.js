@@ -55,10 +55,15 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     return result;
   }
 
+  function renderPointers() {
+    return typePointers.concat(directPointers);
+  }
+
   return finalObject(obj, {
     tryAdd,
     get,
-    all
+    all,
+    renderPointers
   });
 }
  

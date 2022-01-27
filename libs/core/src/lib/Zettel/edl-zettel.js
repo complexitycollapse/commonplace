@@ -8,8 +8,7 @@ import { RenderPointerCollection } from './render-pointer-collection';
 export function EdlZettel(edlPointer, parent, key) {
   let obj = {
     children: [],
-    parent,
-    clip: edlPointer
+    parent
   };
   obj.edl = undefined;
   obj.renderLinks = undefined;
@@ -81,7 +80,13 @@ export function EdlZettel(edlPointer, parent, key) {
     } else if (unresolvedLinks) {
       return unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLink(p, i)]);
     } else {
-      return obj.children.map(z => z.outstandingRequests()).flat();
+      let rps = renderPointers.renderPointers();
+      let linkContentRequests = rps.map(p => p.renderLink.outstandingRequests()).flat();
+      if (linkContentRequests.length > 0) {
+        return linkContentRequests;
+      } else {
+        return obj.children.map(z => z.outstandingRequests()).flat();
+      }
     }
   }
 
@@ -92,7 +97,8 @@ export function EdlZettel(edlPointer, parent, key) {
   }
 
   addProperties(obj, {
-    key
+    key,
+    clip: edlPointer
   });
 
   addMethods(obj, {

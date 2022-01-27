@@ -74,7 +74,34 @@ describe('outstandingRequests', () => {
       expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips);
     });
 
-    it('requests clips once all links are resolved', () => {
+    it('requests link content once all links are resolved', () => {
+      let clip = Span("x", 1, 10);
+      let ez = make(makeEdl([], [LinkPointer("1")]));
+      let initialRequests = ez.outstandingRequests();
+
+      resolve(initialRequests[0], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clip])));
+
+      expect(ez.outstandingRequests().map(x => x[0])).toEqual([clip]);
+    });
+  });
+
+  describe('after link downloaded', () => {
+    it('requests content for all pointers in all endsets that point to content', () => {
+      let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
+      let clips = [Span("x", 1, 10), Box("y", 1, 1, 100, 100), Span("z", 10, 10)];
+      let ez = make(makeEdl([], links));
+      let initialRequests = ez.outstandingRequests();
+      resolve(initialRequests[0], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clips[0], clips[1]])));
+      resolve(initialRequests[1], Link(undefined, Endset(undefined, [ez.clip])));
+      resolve(initialRequests[2], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clips[2]])));
+
+      let requestedContent = ez.outstandingRequests().map(x => x[0]);
+
+      expect(requestedContent).toHaveLength(3);
+      expect(requestedContent).toEqual(expect.arrayContaining(clips));
+    });
+
+    it('requests clips once all link content is resolved', () => {
       let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
       let clips = [Span("x", 1, 10), EdlPointer("child")];
       let ez = make(makeEdl(clips, links));
@@ -88,7 +115,7 @@ describe('outstandingRequests', () => {
     });
   });
 
-  describe('after links downloaded', () => { 
+  describe('after link content downloaded', () => { 
     it('stops returning a clip once it has been resolved', () => {
       let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
       let ez = make(makeEdl(clips));

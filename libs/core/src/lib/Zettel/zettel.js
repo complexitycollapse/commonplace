@@ -60,6 +60,11 @@ export function Zettel(clip, parent) {
   function outstandingRequests() {
     let outstanding = [];
     
+    let linkContentRequests = obj.renderPointers.map(p => p.renderLink.outstandingRequests()).flat();
+    if (linkContentRequests.length > 0) {
+      return linkContentRequests;
+    }
+
     if (contentPart === undefined) {
       outstanding.push([clip, p => tryAddPart(p)]);
     }
