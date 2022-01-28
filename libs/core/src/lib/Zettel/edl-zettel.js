@@ -92,7 +92,7 @@ export function EdlZettel(edlPointer, parent, key) {
 
   function attributes() {
     if (renderPointers) {
-      return renderPointers.all();
+      return renderPointers.attributes();
     } else { return {}; }
   }
 
