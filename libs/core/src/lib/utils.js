@@ -55,3 +55,7 @@ export function listMapFromList(keyFn, valueFn, list) {
   list.forEach(item => map.push(keyFn(item), valueFn(item)));
   return map;  
 }
+
+export function mergeObjects(target, source) {
+  Object.entries(source).forEach(e => target[e[0]] = e[1]);
+}
