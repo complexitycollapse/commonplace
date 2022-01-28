@@ -36,7 +36,7 @@ export function RenderLink(link) {
   }
 
   function resolveContent(part) {
-    let entry = renderLink.linkedContent.find(x => x[0] === part.pointer);
+    let entry = renderLink.linkedContent.find(x => x[0].denotesSame(part.pointer));
     entry[2] = part.content;
   }
 
