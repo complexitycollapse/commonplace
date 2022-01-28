@@ -8,7 +8,8 @@ export function RenderEndset(endset, renderLink) {
     index,
     renderLink,
     name: endset.name,
-    pointers: endset.pointers
+    pointers: endset.pointers,
+    endset
   });
 
   return obj;

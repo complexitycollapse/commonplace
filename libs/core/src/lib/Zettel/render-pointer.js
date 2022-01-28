@@ -10,11 +10,15 @@ export function RenderPointer(pointer, renderEndset) {
   addProperties(obj, {
     pointer,
     renderEndset,
-    renderLink: renderEndset.renderLink,
-    getAllAttributeEndowments: () => undefined
+    renderLink: renderEndset.renderLink
   });
 
-  return finalObject(obj);
+  return finalObject(obj, {
+    allDirectAttributeEndowments: () => undefined,
+    allContentAttributeEndowments: () => undefined,
+    allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEndset.endset),
+    allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEndset.endset),
+  });
 }
 
 export function mockLinkRenderPointer(linkName, attributes) {

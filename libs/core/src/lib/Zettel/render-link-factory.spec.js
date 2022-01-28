@@ -31,13 +31,15 @@ describe('renderLinks', () => {
   it('attaches a link to the link it points to', () => {
     let links = [
       [LinkPointer("a").hashableName, Link("foo", Endset("x", [LinkPointer("b")]))],
-      [LinkPointer("b").hashableName, Link("foo")]
+      [LinkPointer("b").hashableName, Link("bar")]
     ];
 
     let actual = RenderLinkFactory(links).renderLinks()[links[1][0]].modifiers;
 
     expect(actual).toHaveLength(1);
-    expect(actual[0].link).toEqual(links[0][1]);
+    expect(actual[0].pointer).toEqual(links[0][1].endsets[0].pointers[0]);
+    expect(actual[0].renderEndset.endset).toEqual(links[0][1].endsets[0]);
+    expect(actual[0].renderLink.link).toEqual(links[0][1]);
   });
 
   it('attaches a link to the link it points to, two levels', () => {
@@ -50,8 +52,8 @@ describe('renderLinks', () => {
     let actual = RenderLinkFactory(links).renderLinks();
 
     expect(actual[links[2][0]].modifiers).toHaveLength(1);
-    expect(actual[links[2][0]].modifiers[0].link).toEqual(links[1][1]);
+    expect(actual[links[2][0]].modifiers[0].renderLink.link).toEqual(links[1][1]);
     expect(actual[links[1][0]].modifiers).toHaveLength(1);
-    expect(actual[links[1][0]].modifiers[0].link).toEqual(links[0][1]);
+    expect(actual[links[1][0]].modifiers[0].renderLink.link).toEqual(links[0][1]);
   });  
 });

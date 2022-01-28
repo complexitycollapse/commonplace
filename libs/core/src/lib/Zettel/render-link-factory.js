@@ -1,5 +1,7 @@
 import { finalObject } from "../utils";
+import { RenderEndset } from "./render-endset";
 import { RenderLink } from "./render-link";
+import { RenderPointer } from "./render-pointer";
 
 export function RenderLinkFactory(nameLinkPairs) {
   let obj = {};
@@ -20,14 +22,16 @@ export function RenderLinkFactory(nameLinkPairs) {
     return renderLinks;
   }
 
-  function addModifiers(key, renderLink, nameRenderLinkPairs) {
-    Object.entries(nameRenderLinkPairs).forEach(([otherKey, candidate]) => {
+  function addModifiers(key, renderLink, renderLinksByName) {
+    Object.entries(renderLinksByName).forEach(([otherKey, otherRenderLink]) => {
       if (otherKey != key) {
-        if (candidate.endsets.some(e => 
-            e.pointers.some(p => p.pointerType === "link"
-            && p.hashableName === key))) {
-          renderLink.modifiers.push(candidate);
-        }
+        otherRenderLink.endsets.forEach(e => {
+          e.pointers.forEach(p => {
+            if (p.pointerType === "link" && p.hashableName === key) {
+              renderLink.modifiers.push(RenderPointer(p, RenderEndset(e, otherRenderLink)));
+            }
+          });
+        });
       }
     });
     return renderLink;

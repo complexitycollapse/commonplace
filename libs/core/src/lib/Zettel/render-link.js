@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from "../utils";
+import { addProperties, finalObject, mergeObjects } from "../utils";
 
 let typeMap = {
   paragraph: [null, "p"],
@@ -16,7 +16,7 @@ let typeMap = {
   "justified text": [{textAlign: "justify"}]
 };
 
-export function RenderLink(link) {
+export function RenderLink(link, { directMetaEndowments, contentMetaEndowments  } = {}) {
   let renderLink = { modifiers: [] };
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
@@ -26,12 +26,11 @@ export function RenderLink(link) {
     link,
     endsets: link.endsets,
     type: link.type,
-    isStructural: fragmentTag ? true : false,
     linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat()
   });
 
   function style() {
-    let mod = renderLink.modifiers.find(l => l.style());
+    let mod = renderLink.modifiers.map(p => p.renderLink).find(l => l.style());
     return mod ? mod.style() : inlineStyle;
   }
 
@@ -52,6 +51,19 @@ export function RenderLink(link) {
   return finalObject(renderLink, {
     style,
     outstandingRequests,
-    getContentForPointer
+    getContentForPointer,
+    allDirectAttributeEndowments: () => mergeAllMetaAttributes(renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
+    allContentAttributeEndowments: () => mergeAllMetaAttributes(renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
+    allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
+    allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
   });
+}
+
+
+function mergeAllMetaAttributes(modifiers, extractFn) {
+  let metaAttributes = {};
+
+  modifiers.forEach(p => mergeObjects(metaAttributes, extractFn(p)));
+
+  return metaAttributes;
 }
