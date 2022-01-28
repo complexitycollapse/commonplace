@@ -11,7 +11,6 @@ export function RenderPointer(pointer, renderEndset) {
     pointer,
     renderEndset,
     renderLink: renderEndset.renderLink,
-    getAttributeEndowment: () => undefined,
     getAllAttributeEndowments: () => undefined
   });
 

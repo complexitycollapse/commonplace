@@ -28,17 +28,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     return false;
   }
 
-  function get(attributeName) {
-    let pointer = directPointers.find(p => p.getAttributeEndowment(attributeName));
-    if (pointer) { return pointer.getAttributeEndowment(attributeName); }
-
-    pointer = typePointers.find(p => p.getAttributeEndowment(attributeName));
-    if (pointer) { return pointer.getAttributeEndowment(attributeName); }
-
-    return undefined;
-  }
-
-  function all() {
+  function attributes() {
     let result = {};
 
     function addAllValues(pointers) {
@@ -61,8 +51,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
 
   return finalObject(obj, {
     tryAdd,
-    get,
-    all,
+    attributes,
     renderPointers
   });
 }
