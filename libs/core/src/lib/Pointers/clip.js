@@ -19,3 +19,12 @@ export function Clip(clipType, origin, partBuilder, hashableNameFn, originalCont
 
   return obj;
 }
+
+export function compareOriginalContexts(actual, expected) {
+  if (actual.originalContext === undefined) {
+    return expected.originalContext === undefined;
+  } else {
+    return expected.originalContext !== undefined &&
+      actual.originalContext.denotesSame(expected.originalContext);
+  }
+}

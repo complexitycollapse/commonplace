@@ -1,6 +1,7 @@
 import { addProperties, finalObject } from "../utils";
-import { Clip } from "./clip";
+import { Clip, compareOriginalContexts } from "./clip";
 import { Part } from "../part";
+import { leafDataToPointer } from "./leaf-data-to-pointer";
 
 export function Span(origin, start, length, originalContext) {
   let obj = Clip("span", origin, r => buildPartFromContent(obj, r), () => `span:${origin}:${start}:${length}`, originalContext);
@@ -88,7 +89,7 @@ export function Span(origin, start, length, originalContext) {
 
 
   function leafData() {
-    return { typ: obj.clipType, ori: origin, st: start, ln: length };
+    return { typ: obj.clipType, ori: origin, st: start, ln: length, ctx: originalContext?.leafData() };
   }
 
   return finalObject(obj, {
@@ -112,7 +113,7 @@ export function Span(origin, start, length, originalContext) {
 }
 
 export function leafDataToSpan(leafData) {
-  return Span(leafData.ori, leafData.st, leafData.ln);
+  return Span(leafData.ori, leafData.st, leafData.ln, leafData.ctx ? leafDataToPointer(leafData.ctx) : undefined);
 }
 
 async function buildPartFromContent(originalSpan, response) {
@@ -122,8 +123,8 @@ async function buildPartFromContent(originalSpan, response) {
 
 export let spanTesting = {
 
-  makeSpan({origin = "origin", start = 10, length = 20} = {}) {
-    return Span(origin, start, length);
+  makeSpan({origin = "origin", start = 10, length = 20, originalContext} = {}) {
+    return Span(origin, start, length, originalContext);
   },
 
   makeSpans(qty) {
@@ -139,7 +140,8 @@ export let spanTesting = {
     return spanTesting.compareElements(actualSpan, expectedSpan, (actual, expected) => {
       return actual.origin === expected.origin &&
         actual.start === expected.start &&
-        actual.length === expected.length;
+        actual.length === expected.length &&
+        compareOriginalContexts(actual, expected);
     })
   },
 

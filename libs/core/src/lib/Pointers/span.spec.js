@@ -434,7 +434,7 @@ describe('clipSource', () => {
 });
 
 describe('leafData', () => {
-  it('has the clipType, origin, start and length properties', () => {
+  it('has the typ, ori, st and ln properties if originalContext is not given', () => {
     expect(Span("a", 101, 505).leafData()).toEqual({
       typ: "span",
       ori: "a",
@@ -442,10 +442,25 @@ describe('leafData', () => {
       ln: 505
     });
   });
+
+  it('has the typ, ori, st, ln and ctx properties if originalContext is given', () => {
+    expect(Span("a", 101, 505, EdlPointer("foo")).leafData()).toEqual({
+      typ: "span",
+      ori: "a",
+      st: 101,
+      ln: 505,
+      ctx: { typ: "edl", name: "foo" }
+    });
+  });
 });
 
 test('leafDataToSpan is inverse of leafData', () => {
   let s = make();
+  expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
+});
+
+test('leafDataToSpan is inverse of leafData when Span has originalContext', () => {
+  let s = make({ originalContext: EdlPointer("foo", 10) });
   expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
 });
 

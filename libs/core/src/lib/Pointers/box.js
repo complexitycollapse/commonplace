@@ -1,7 +1,8 @@
 import { addProperties, finalObject } from "../utils";
 import { spanTesting } from "./span";
-import { Clip } from "./clip";
+import { Clip, compareOriginalContexts } from "./clip";
 import { Part } from "../part";
+import { leafDataToPointer } from "./leaf-data-to-pointer";
 
 export function Box(origin, x, y, width, height, originalContext)
 {
@@ -77,7 +78,7 @@ export function Box(origin, x, y, width, height, originalContext)
   }
 
   function leafData() {
-    return {typ: obj.clipType, ori: origin, x, y, wd: width, ht: height };
+    return {typ: obj.clipType, ori: origin, x, y, wd: width, ht: height, ctx: obj.originalContext?.leafData() };
   }
 
   function contains(pointX, pointY) {
@@ -136,7 +137,7 @@ export function Box(origin, x, y, width, height, originalContext)
 }
 
 export function leafDataToBox(leafData) {
-  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht);
+  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht, leafData.ctx ? leafDataToPointer(leafData.ctx) : undefined);
 }
 
 function buildPartFromContent(originalBox, response) {
@@ -167,7 +168,8 @@ export let boxTesting = {
         actual.x === expected.x &&
         actual.y === expected.y &&
         actual.height === expected.height &&
-        actual.width === expected.width;
+        actual.width === expected.width &&
+        compareOriginalContexts(actual, expected);
     });
   }
 }

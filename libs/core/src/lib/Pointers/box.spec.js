@@ -404,7 +404,7 @@ describe('clipSource', () => {
 });
 
 describe('leafData', () => {
-  it('has the clipType, origin, x, y, width and height properties', () => {
+  it('has the typ, ori, x, y, wd and ht properties when originalContext is missing', () => {
     expect(Box("a", 101, 505, 22, 33).leafData()).toEqual({
       typ: "box",
       ori: "a",
@@ -414,10 +414,27 @@ describe('leafData', () => {
       ht: 33
     });
   });
+
+  it('has the typ, ori, x, y, wd, ht and ctx properties when originalContext is present', () => {
+    expect(Box("a", 101, 505, 22, 33, EdlPointer("foo")).leafData()).toEqual({
+      typ: "box",
+      ori: "a",
+      x: 101,
+      y: 505,
+      wd: 22,
+      ht: 33,
+      ctx: { typ: "edl", name: "foo" }
+    });
+  });
 });
 
-test('leafDataToBox is inverse of leafData', () => {
+test('leafDataToBox is inverse of leafData when originalContext missing', () => {
   let b = Box("orig", 1, 2, 101, 202);
+  expect(leafDataToBox(b.leafData())).toEqualBox(b);
+});
+
+test('leafDataToBox is inverse of leafData when originalContext present', () => {
+  let b = Box("orig", 1, 2, 101, 202, EdlPointer("foo"));
   expect(leafDataToBox(b.leafData())).toEqualBox(b);
 });
 
