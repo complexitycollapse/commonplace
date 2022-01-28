@@ -2,11 +2,29 @@ import { addProperties, addMethods } from "../utils";
 
 export function Pointer(pointerType, isClip, originFn, partBuilder, hashableNameFn, properties, methods) {
   let obj = {};
-  addProperties(obj, { pointerType, isClip });
+
+  addProperties(obj, {
+    pointerType,
+    isClip
+  });
+
   addProperties(obj, properties);
+
+  function denotesSame(otherPointer) {
+    if (pointerType !== otherPointer.pointerType) {
+      return false;
+    }
+
+    let propsLeaf = obj.leafData();
+    let otherPropsLeaf = otherPointer.leafData();
+
+    return Object.entries(propsLeaf).every(e => e[0] === "ctx" || otherPropsLeaf[e[0]] == e[1]);
+  }
+
   addMethods(obj, { 
     partBuilder,
-    hasSamePointerType: pointer => pointer.pointerType === pointerType
+    hasSamePointerType: pointer => pointer.pointerType === pointerType,
+    denotesSame
   });
   addMethods(obj, methods);
   let origin = originFn(obj);

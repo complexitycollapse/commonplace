@@ -666,3 +666,25 @@ describe('overlappingButNotEngulfing', () => {
     expect(Span("x", 29, 10).overlappingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
   });
 });
+
+describe('denotesSame', () => {
+  it('is true if the spans have the same origin, start and length', () => {
+    expect(Span("x", 10, 100).denotesSame(Span("x", 10, 100))).toBeTruthy();
+  });
+
+  it('is false if they have different origin', () => {
+    expect(Span("x", 10, 100).denotesSame(Span("y", 10, 100))).toBeFalsy();
+  });
+
+  it('is false if they have different start', () => {
+    expect(Span("x", 10, 100).denotesSame(Span("x", 11, 100))).toBeFalsy();
+  });
+
+  it('is false if they have different length', () => {
+    expect(Span("x", 10, 100).denotesSame(Span("x", 10, 101))).toBeFalsy();
+  });
+
+  it('is true even if they have different originalContext', () => {
+    expect(Span("x", 10, 100, EdlPointer("foo")).denotesSame(Span("x", 10, 100))).toBeTruthy();
+  });
+});
