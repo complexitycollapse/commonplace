@@ -2,7 +2,7 @@ import { Part } from "../part";
 import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
 
-export function LinkPointer(linkName, index) {
+export function LinkPointer(linkName, index, endsetName, endsetIndex) {
   let obj = Pointer(
     "link",
     false,
@@ -11,7 +11,7 @@ export function LinkPointer(linkName, index) {
     () => `link:${linkName}:${index ?? "N"}`,
     { linkName, index },
     {
-      leafData() { return { typ: "link", name: linkName, idx: index }; },
+      leafData() { return { typ: "link", name: linkName, idx: index, es: endsetName, ex: endsetIndex }; },
       clipPart(part) { 
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {
@@ -41,5 +41,5 @@ export function LinkPointer(linkName, index) {
 }
 
 export function leafDataToLinkPointer(data) {
-  return LinkPointer(data.name, data["idx"]);
+  return LinkPointer(data.name, data["idx"], data["es"], data["ex"]);
 }

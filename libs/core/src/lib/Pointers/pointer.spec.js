@@ -72,6 +72,12 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123 });
   });
 
+  it('returns object with typ "link"m name, index, endsetName and endsetIndex props when called on LinkPointer with those properties', () => {
+    let leafData = LinkPointer("the name", 123, "endset name", 100).leafData();
+
+    expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123, es: "endset name", ex: 100 });
+  });
+
   it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
     let leafData = LinkTypePointer("the name").leafData();
 
@@ -94,6 +100,12 @@ describe('leafData', () => {
 describe('restoring leafData', () => {
   test('leafDataToLinkPointer is inverse of leafData', () => {
     let link = LinkPointer("test name", 123);
+
+    expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
+  });
+
+  test('leafDataToLinkPointer is inverse of leafData when endset details are specified', () => {
+    let link = LinkPointer("test name", 123, "the endset name", 21);
 
     expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
   });
@@ -175,6 +187,11 @@ describe('engulfs', () => {
 
     it('returns true if they have the same name and neither has an index', () => {
       expect(LinkPointer("name").engulfs(LinkPointer("name"))).toBeTruthy();
+    });
+
+    it('is unaffected by the endsetName and endsetIndex properties', () => {
+      expect(LinkPointer("name", undefined, "foo", 123).engulfs(LinkPointer("name"))).toBeTruthy();
+      expect(LinkPointer("name").engulfs(LinkPointer("name", undefined, "foo", 123))).toBeTruthy();
     });
   });
 
