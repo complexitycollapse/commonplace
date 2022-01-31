@@ -2,7 +2,7 @@ import { Part } from "../part";
 import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
 
-export function LinkPointer(linkName, index, endsetName, endsetIndex) {
+export function LinkPointer(linkName, index) {
   let obj = Pointer(
     "link",
     false,
@@ -11,7 +11,7 @@ export function LinkPointer(linkName, index, endsetName, endsetIndex) {
     () => `link:${linkName}:${index ?? "N"}`,
     { linkName, index },
     {
-      leafData() { return { typ: "link", name: linkName, idx: index, es: endsetName, ex: endsetIndex }; },
+      leafData() { return { typ: "link", name: linkName, idx: index }; },
       clipPart(part) { 
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {
@@ -28,6 +28,15 @@ export function LinkPointer(linkName, index, endsetName, endsetIndex) {
         // If we don't have an index but other does then we may still match as we
         // may represent the array that contains other.
 
+        // We can also potentially engulf an endset pointer, as that is more specific.
+
+        if (other.pointerType === "endset") {
+          if (linkName === other.linkName) {
+            let indexMatches = index === undefined || index === other.linkIndex;
+            return indexMatches;
+          }
+        }
+
         if (obj.hasSamePointerType(other) && linkName === other.linkName) {
           let indexMatches = index === undefined || index === other.index;
           return indexMatches;
@@ -41,5 +50,5 @@ export function LinkPointer(linkName, index, endsetName, endsetIndex) {
 }
 
 export function leafDataToLinkPointer(data) {
-  return LinkPointer(data.name, data["idx"], data["es"], data["ex"]);
+  return LinkPointer(data.name, data["idx"]);
 }

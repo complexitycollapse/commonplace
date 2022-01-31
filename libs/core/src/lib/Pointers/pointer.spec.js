@@ -6,6 +6,7 @@ import { EdlTypePointer, leafDataToEdlTypePointer } from './edl-type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
+import { EndsetPointer } from './endset-pointer';
 
 describe('pointerType', () => {
   it('equals "link" for LinkPointer', () => {
@@ -72,12 +73,6 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123 });
   });
 
-  it('returns object with typ "link"m name, index, endsetName and endsetIndex props when called on LinkPointer with those properties', () => {
-    let leafData = LinkPointer("the name", 123, "endset name", 100).leafData();
-
-    expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123, es: "endset name", ex: 100 });
-  });
-
   it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
     let leafData = LinkTypePointer("the name").leafData();
 
@@ -100,12 +95,6 @@ describe('leafData', () => {
 describe('restoring leafData', () => {
   test('leafDataToLinkPointer is inverse of leafData', () => {
     let link = LinkPointer("test name", 123);
-
-    expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
-  });
-
-  test('leafDataToLinkPointer is inverse of leafData when endset details are specified', () => {
-    let link = LinkPointer("test name", 123, "the endset name", 21);
 
     expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
   });
@@ -189,9 +178,32 @@ describe('engulfs', () => {
       expect(LinkPointer("name").engulfs(LinkPointer("name"))).toBeTruthy();
     });
 
-    it('is unaffected by the endsetName and endsetIndex properties', () => {
-      expect(LinkPointer("name", undefined, "foo", 123).engulfs(LinkPointer("name"))).toBeTruthy();
-      expect(LinkPointer("name").engulfs(LinkPointer("name", undefined, "foo", 123))).toBeTruthy();
+    describe('called on EndsetPointer', () => {
+      it('returns false if the other pointer has a different link name', () => {
+        expect(LinkPointer("name").engulfs(EndsetPointer("name2", undefined, "endset name", 100))).toBeFalsy();
+      });
+  
+      it('returns true if the other pointer has an index but we dont', () => {
+        // in this case we represent the entire array of links and hence engulf
+        // the individual link pointer
+        expect(LinkPointer("name").engulfs(EndsetPointer("name", 0, "endset name", 100))).toBeTruthy();
+      });
+  
+      it('returns false if we have an index but the other does not', () => {
+        expect(LinkPointer("name", 0).engulfs(EndsetPointer("name", undefined, "endset name", 100))).toBeFalsy();
+      });
+  
+      it('returns false if they both have indexes but they are different', () => {
+        expect(LinkPointer("name", 1).engulfs(EndsetPointer("name", 2, "endset name", 100))).toBeFalsy();
+      });
+  
+      it('returns true if they have the same name and index', () => {
+        expect(LinkPointer("name", 1).engulfs(EndsetPointer("name", 1, "endset name", 100))).toBeTruthy();
+      });
+  
+      it('returns true if they have the same name and neither has an index', () => {
+        expect(LinkPointer("name").engulfs(EndsetPointer("name", undefined, "endset name", 100))).toBeTruthy();
+      });
     });
   });
 

@@ -64,7 +64,7 @@ function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   let metaAttributes = {};
 
   modifiers.forEach(p => {
-    if (p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
+    if (p.pointerType !== "endset" || p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
     {
       mergeObjects(metaAttributes, extractFn(p));
     }
