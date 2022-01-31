@@ -52,18 +52,23 @@ export function RenderLink(link, { directMetaEndowments, contentMetaEndowments  
     style,
     outstandingRequests,
     getContentForPointer,
-    allDirectAttributeEndowments: () => mergeAllMetaAttributes(renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
-    allContentAttributeEndowments: () => mergeAllMetaAttributes(renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
+    allDirectAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
+    allContentAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
     allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
   });
 }
 
 
-function mergeAllMetaAttributes(modifiers, extractFn) {
+function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   let metaAttributes = {};
 
-  modifiers.forEach(p => mergeObjects(metaAttributes, extractFn(p)));
+  modifiers.forEach(p => {
+    if (p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
+    {
+      mergeObjects(metaAttributes, extractFn(p));
+    }
+  });
 
   return metaAttributes;
 }

@@ -14,8 +14,8 @@ export function RenderPointer(pointer, renderEndset) {
   });
 
   return finalObject(obj, {
-    allDirectAttributeEndowments: () => undefined,
-    allContentAttributeEndowments: () => undefined,
+    allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEndset.endset),
+    allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEndset.endset),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEndset.endset),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEndset.endset),
   });
