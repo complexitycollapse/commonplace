@@ -3,11 +3,11 @@ import { RenderEndset } from "./render-endset";
 import { RenderLink } from "./render-link";
 import { RenderPointer } from "./render-pointer";
 
-export function RenderLinkFactory(nameLinkPairs) {
+export function RenderLinkFactory(edlZettel) {
   let obj = {};
 
   function renderLinks() {
-    let nameRenderLinkPairs = makeNameRenderLinkPairs(nameLinkPairs);
+    let nameRenderLinkPairs = makeNameRenderLinkPairs(edlZettel.nameLinkPairs());
 
     Object.entries(nameRenderLinkPairs).forEach(([key, renderLink]) => {
       addModifiers(key, renderLink, nameRenderLinkPairs);

@@ -7,6 +7,13 @@ function makeNameLinkPairs(links) {
   return links.map((l, i) => [LinkPointer("link-" + i.toString()).hashableName, l]);
 }
 
+function makeEdlZettel(nameLinkPairs, parent) {
+  return {
+    nameLinkPairs: () => nameLinkPairs,
+    parent
+  }
+}
+
 function getLinks(renderLinkObject) {
   return Object.values(renderLinkObject).map(x => x.link);
 }
@@ -14,7 +21,7 @@ function getLinks(renderLinkObject) {
 describe('renderLinks', () => {
   it('returns a RenderLink for each passed link', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
-    expect(getLinks(RenderLinkFactory(makeNameLinkPairs(links)).renderLinks())).toEqual(links);
+    expect(getLinks(RenderLinkFactory(makeEdlZettel(makeNameLinkPairs(links))).renderLinks())).toEqual(links);
   });
 
   it('does not return a RenderLink if the link was undefined', () => {
@@ -22,7 +29,7 @@ describe('renderLinks', () => {
     let nameLinkPairs = makeNameLinkPairs(links);
     nameLinkPairs.push(["missing link", undefined]);
 
-    let renderLinks = RenderLinkFactory(nameLinkPairs).renderLinks();
+    let renderLinks = RenderLinkFactory(makeEdlZettel(nameLinkPairs)).renderLinks();
 
     expect(renderLinks).not.toHaveProperty("missing link");
     expect(getLinks(renderLinks)).toEqual(links);
@@ -34,7 +41,7 @@ describe('renderLinks', () => {
       [LinkPointer("b").hashableName, Link("bar")]
     ];
 
-    let actual = RenderLinkFactory(links).renderLinks()[links[1][0]].modifiers;
+    let actual = RenderLinkFactory(makeEdlZettel(links)).renderLinks()[links[1][0]].modifiers;
 
     expect(actual).toHaveLength(1);
     expect(actual[0].pointer).toEqual(links[0][1].endsets[0].pointers[0]);
@@ -49,7 +56,7 @@ describe('renderLinks', () => {
       [LinkPointer("c").hashableName, Link("foo")]
     ];
 
-    let actual = RenderLinkFactory(links).renderLinks();
+    let actual = RenderLinkFactory(makeEdlZettel(links)).renderLinks();
 
     expect(actual[links[2][0]].modifiers).toHaveLength(1);
     expect(actual[links[2][0]].modifiers[0].renderLink.link).toEqual(links[1][1]);
