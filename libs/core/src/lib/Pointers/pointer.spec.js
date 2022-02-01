@@ -3,6 +3,7 @@ import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
 import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
 import { LinkTypePointer, leafDataToLinkTypePointer } from './link-type-pointer';
 import { EdlTypePointer, leafDataToEdlTypePointer } from './edl-type-pointer';
+import { ClipTypePointer } from './clip-type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
@@ -121,6 +122,18 @@ describe('restoring leafData', () => {
     let link = LinkPointer("test name");
 
     expect(leafDataToPointer(link.leafData())).toEqual(link);
+  });
+
+  test('leafDataToPointer is inverse of leafData for EndsetPointer', () => {
+    let pointer = EndsetPointer("link name", 123, "endset name", 100);
+
+    expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
+  });
+
+  test('leafDataToPointer is inverse of leafData for ClipTypePointer', () => {
+    let pointer = ClipTypePointer("span");
+
+    expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
   });
 
   test('leafDataToPointer is inverse of leafData for LinkTypePointer', () => {
