@@ -18,7 +18,7 @@ export function RenderLinkFactory(edlZettel) {
 
   function makeNameRenderLinkPairs(linkMap) {
     let renderLinks = {};
-    linkMap.filter(p => p[1]).forEach(p => renderLinks[p[0]] = RenderLink(p[1]));
+    linkMap.filter(p => p[1]).forEach(p => renderLinks[p[0]] = RenderLink(p[1], edlZettel));
     return renderLinks;
   }
 

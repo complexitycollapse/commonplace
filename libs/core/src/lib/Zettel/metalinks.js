@@ -1,23 +1,23 @@
 import { RenderLink } from "./render-link";
 
-export function DirectMetalink(link) {
+export function DirectMetalink(link, homeEdl) {
   function allDirectAttributeMetaEndowments(renderPointer, linkedContent) {
     return extractEndowments(link, renderPointer, linkedContent);
   }
 
-  let obj = RenderLink(link, {
+  let obj = RenderLink(link, homeEdl, {
     directMetaEndowments: allDirectAttributeMetaEndowments
   });
 
   return obj;
 }
 
-export function ContentMetalink(link) {
+export function ContentMetalink(link, homeEdl) {
   function allContentAttributeMetaEndowments(renderPointer, linkedContent) {
     return extractEndowments(link, renderPointer, linkedContent);
   }
 
-  let obj = RenderLink(link, {
+  let obj = RenderLink(link, homeEdl, {
     contentMetaEndowments: allContentAttributeMetaEndowments
   });
 

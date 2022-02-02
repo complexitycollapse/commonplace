@@ -3,6 +3,7 @@ import { RenderLink } from './render-link';
 import { LinkPointer, EdlPointer, Span } from '../pointers';
 import { Link, Endset } from '../model';
 import { Part } from '../part';
+import { EdlZettel } from './edl-zettel';
 
 function makeParagraphLink(...pointers) {
   return RenderLink(Link(
@@ -15,6 +16,11 @@ function makeParagraphLink(...pointers) {
       return p;
     }))));
 }
+
+test('The homeEdl property should be set on the RenderLink', () => {
+  let edlZettel = EdlZettel(EdlPointer("foo"));
+  expect(RenderLink(Link(), edlZettel).homeEdl).toBe(edlZettel);
+});
 
 test('if the type is unknown then the innerTag and fragmentTag properties are falsy', () => {
   let link = RenderLink(Link("some unknown type"));
@@ -47,7 +53,7 @@ describe('outstandingRequests/getContentForPointer', () => {
     let endset = Endset(undefined, [clip, LinkPointer("foo")]);
     let link = Link(undefined, endset);
     
-    let renderLink = RenderLink(link, Link(undefined, Endset(undefined, [EdlPointer("bar")])));
+    let renderLink = RenderLink(link);
 
     expect(renderLink.outstandingRequests().map(x => x[0])).toEqual([clip]);
   });
@@ -57,7 +63,7 @@ describe('outstandingRequests/getContentForPointer', () => {
     let endset = Endset(undefined, [clip, LinkPointer("foo")]);
     let link = Link(undefined, endset);
     
-    let renderLink = RenderLink(link, Link(undefined, Endset(undefined, [EdlPointer("bar")])));
+    let renderLink = RenderLink(link);
 
     expect(renderLink.getContentForPointer(clip, endset)).toBe(undefined);
   });
@@ -67,7 +73,7 @@ describe('outstandingRequests/getContentForPointer', () => {
     let part = Part(clip, "0123456789");
     let endset = Endset(undefined, [clip, LinkPointer("foo")]);
     let link = Link(undefined, endset);
-    let renderLink = RenderLink(link, Link(undefined, Endset(undefined, [EdlPointer("bar")])));
+    let renderLink = RenderLink(link);
     let request = renderLink.outstandingRequests()[0];
 
     request[1].call(undefined, part);
@@ -80,7 +86,7 @@ describe('outstandingRequests/getContentForPointer', () => {
     let part = Part(clip, "0123456789");
     let endset = Endset(undefined, [clip, LinkPointer("foo")]);
     let link = Link(undefined, endset);
-    let renderLink = RenderLink(link, Link(undefined, Endset(undefined, [EdlPointer("bar")])));
+    let renderLink = RenderLink(link);
     let request = renderLink.outstandingRequests()[0];
 
     request[1].call(undefined, part);

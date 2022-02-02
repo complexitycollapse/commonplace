@@ -24,6 +24,12 @@ describe('renderLinks', () => {
     expect(getLinks(RenderLinkFactory(makeEdlZettel(makeNameLinkPairs(links))).renderLinks())).toEqual(links);
   });
 
+  it('attached the EDL to every link', () => {
+    let edl = makeEdlZettel(makeNameLinkPairs([Link("foo")]));
+    let renderLinks = Object.values(RenderLinkFactory(edl).renderLinks());
+    expect(renderLinks[0].homeEdl).toBe(edl);
+  });
+
   it('does not return a RenderLink if the link was undefined', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
     let nameLinkPairs = makeNameLinkPairs(links);

@@ -16,7 +16,7 @@ let typeMap = {
   "justified text": [{textAlign: "justify"}]
 };
 
-export function RenderLink(link, { directMetaEndowments, contentMetaEndowments  } = {}) {
+export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEndowments  } = {}) {
   let renderLink = { modifiers: [] };
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
@@ -26,7 +26,8 @@ export function RenderLink(link, { directMetaEndowments, contentMetaEndowments  
     link,
     endsets: link.endsets,
     type: link.type,
-    linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat()
+    linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
+    homeEdl
   });
 
   function style() {
