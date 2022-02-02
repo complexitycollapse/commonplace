@@ -8,7 +8,8 @@ export function Clip(clipType, origin, partBuilder, hashableNameFn, originalCont
   addProperties(obj, {
     clipType,
     isLink: false,
-    originalContext
+    originalContext,
+    isTypePointer: false
   });
 
   addMethods(obj, {

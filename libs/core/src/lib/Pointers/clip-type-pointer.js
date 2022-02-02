@@ -3,7 +3,7 @@ import { Pointer } from "./pointer";
 export function ClipTypePointer(clipType) {
   let obj = Pointer("clip type", false, () => Promise.resolve(undefined), undefined,
   () => `clip type:${clipType}`,
-  { clipType },
+  { clipType, isTypePointer: true, allTypes: clipType === "all" },
   {
     leafData() { return { typ: "clip type", name: clipType }; },
     clipPart (part) {

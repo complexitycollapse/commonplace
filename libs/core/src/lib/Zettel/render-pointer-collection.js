@@ -2,30 +2,29 @@ import { finalObject } from "../utils";
 
 export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   let obj = {};
-  let directPointers = [], typePointers = [];
-  let directPointerType = ownerPointer.pointerType;
-  let typePointerType = directPointerType === "link" ? "link type" : "edl type";
+  let directPointers = [], typePointers = [], allTypePointers = [];
 
   function tryAdd(renderPointer) {
     let pointer = renderPointer.pointer;
-
-    if (pointer.pointerType === directPointerType) {
+    
+    if (pointer.isTypePointer) {
+      if (pointer.allTypes) {
+        allTypePointers.unshift(renderPointer);
+        return true
+      } else if (ownerTypePointer.engulfs(pointer)) {
+        typePointers.unshift(renderPointer);
+        return true;
+      } else {
+        return false;
+      }
+    } else {
       if (ownerPointer.engulfs(pointer)) {
         directPointers.unshift(renderPointer);
         return true;
       } else {
         return false;
       }
-    } else if (pointer.pointerType === typePointerType) {
-      if (ownerTypePointer.engulfs(pointer)) {
-        typePointers.unshift(renderPointer);
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    return false;
+    } 
   }
 
   function attributes() {

@@ -10,7 +10,7 @@ export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     () => `endset:${linkName}:${linkIndex ?? "N"}:${endsetName ?? ""}:${endsetIndex ?? "N"}`,
-    { linkName, linkIndex, endsetName, endsetIndex },
+    { linkName, linkIndex, endsetName, endsetIndex, isTypePointer: false },
     {
       leafData() { return { typ: "endset", lnk: linkName, lx: linkIndex, es: endsetName, ex: endsetIndex }; },
       clipPart(part) { 

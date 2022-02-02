@@ -3,7 +3,7 @@ import { Pointer } from "./pointer";
 export function EdlTypePointer(edlType) {
   let obj = Pointer("edl type", false, () => Promise.resolve(undefined), undefined,
   () => `edl type:${edlType}`,
-  { edlType: edlType },
+  { edlType: edlType, isTypePointer: true, allTypes: edlType === "all" },
   {
     leafData() { return { typ: "edl type", name: edlType }; },
     clipPart (part) {

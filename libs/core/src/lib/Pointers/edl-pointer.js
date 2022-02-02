@@ -9,7 +9,7 @@ export function EdlPointer(edlName, index) {
     x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
     () => `edl:${edlName}:${index ?? "N"}`,
-    { edlName, index }, 
+    { edlName, index, isTypePointer: false }, 
     {
       leafData() { return { typ: "edl", name: edlName, idx: index }; },
       clipPart(part) { 
