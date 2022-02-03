@@ -1,4 +1,5 @@
 import { addProperties, finalObject, mergeObjects } from "../utils";
+import { RenderPointerCollection } from "./render-pointer-collection";
 
 let typeMap = {
   paragraph: [null, "p"],
@@ -17,7 +18,7 @@ let typeMap = {
 };
 
 export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEndowments  } = {}) {
-  let renderLink = { modifiers: [] };
+  let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
 
@@ -27,11 +28,12 @@ export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEnd
     endsets: link.endsets,
     type: link.type,
     linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
-    homeEdl
+    homeEdl,
+    modifiers: RenderPointerCollection(homeEdl.nameLinkPairs().find(e => e[1] === link)[0])
   });
 
   function style() {
-    let mod = renderLink.modifiers.map(p => p.renderLink).find(l => l.style());
+    let mod = renderLink.modifiers.renderPointers().map(p => p.renderLink).find(l => l.style());
     return mod ? mod.style() : inlineStyle;
   }
 
@@ -64,7 +66,7 @@ export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEnd
 function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   let metaAttributes = {};
 
-  modifiers.forEach(p => {
+  modifiers.renderPointers().forEach(p => {
     if (p.pointerType !== "endset" || p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
     {
       mergeObjects(metaAttributes, extractFn(p));

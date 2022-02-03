@@ -4,7 +4,7 @@ import { Endset, Link } from '../model';
 import { Span, spanTesting, LinkPointer, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
-import { EdlZettel } from './edl-zettel';
+import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
 let toEqualSpan = spanTesting.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
@@ -19,7 +19,8 @@ function make(clip = Span("origin", 1, 10)) {
 }
 
 function makeLink(type, ...endsets) {
-  return RenderLink(Link(type, ...endsets));
+  let link = Link(type, ...endsets);
+  return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
 test('clip returns the passed clip', () => {

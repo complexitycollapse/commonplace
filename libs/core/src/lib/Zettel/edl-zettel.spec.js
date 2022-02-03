@@ -1,16 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import { Link, Edl, Endset } from '../model';
-import { EdlZettel } from './edl-zettel';
+import { EdlZettel, makeTestEdlZettel } from './edl-zettel';
 import { Span, Box, EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
 
-function make(edl, {edlPointer, parent, key} = {}) {
-  key = key ?? "testKey";
-  edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
-  let edlz = EdlZettel(edlPointer, parent, key);
-  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
-  return edlz;
-}
+let make = makeTestEdlZettel;
 
 function makeEdl(clips = [], links = []) {
   return Edl(undefined, clips, links);

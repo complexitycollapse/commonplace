@@ -4,6 +4,10 @@ import { RenderLinkFactory } from './render-link-factory';
 import { RenderPointer } from './render-pointer';
 import { RenderEndset } from './render-endset';
 import { RenderPointerCollection } from './render-pointer-collection';
+import { EdlPointer, LinkPointer } from '../pointers';
+import { Part } from '../part';
+import { Edl } from '../model';
+import { EdlTypePointer } from '../Pointers/edl-type-pointer';
 
 export function EdlZettel(edlPointer, parent, key) {
   let obj = {
@@ -26,7 +30,7 @@ export function EdlZettel(edlPointer, parent, key) {
       links = new Array(unresolvedLinks.length);
     } else {
       links = [];
-      obj.renderLinks = {};
+      obj.renderLinks = [];
       applyLinksToSelf();
       createChildZettel();
     }
@@ -41,7 +45,7 @@ export function EdlZettel(edlPointer, parent, key) {
     }
 
     unresolvedLinks = undefined;
-    nameLinkPairs = obj.edl.links.map((n, i) => [n.hashableName, links[i]]);
+    nameLinkPairs = obj.edl.links.map((n, i) => [n, links[i]]);
     obj.renderLinks = RenderLinkFactory(obj).renderLinks();
     applyLinksToSelf();
     createChildZettel();
@@ -49,14 +53,14 @@ export function EdlZettel(edlPointer, parent, key) {
 
   function applyLinksToSelf() {
     function addLinks(source) {
-      Object.values(source.renderLinks).forEach(l => l.endsets.forEach(e => e.pointers.forEach(p => {
+      source.renderLinks.forEach(pair => pair[1].endsets.forEach(e => e.pointers.forEach(p => {
         if (p.pointerType === "edl" && p.edlName === edlPointer.edlName) {
-          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, l)));
+          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, pair[1])));
         }
       })));
     }
 
-    renderPointers = RenderPointerCollection(edlPointer, obj.edl.type);
+    renderPointers = RenderPointerCollection(edlPointer, EdlTypePointer(obj.edl.type));
     
     for(let linkSource = obj; linkSource !== undefined; linkSource = linkSource.parent) {
       addLinks(linkSource);
@@ -70,7 +74,7 @@ export function EdlZettel(edlPointer, parent, key) {
       if (clip.pointerType === "edl") {
         obj.children.push(EdlZettel(clip, obj, newKey));
       } else {
-        let zettel = ZettelSchneider(clip, Object.values(obj.renderLinks), newKey).zettel();
+        let zettel = ZettelSchneider(clip, obj.renderLinks.map(x => x[1]), newKey).zettel();
         zettel.forEach(z => obj.children.push(z));
       }
     });
@@ -110,4 +114,29 @@ export function EdlZettel(edlPointer, parent, key) {
   });
 
   return obj;
+}
+
+export function makeTestEdlZettel(edl, {edlPointer, parent, key} = {}) {
+  key = key ?? "testKey";
+  edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
+  let edlz = EdlZettel(edlPointer, parent, key);
+  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
+  return edlz;
+}
+
+export function makeTestEdlZettelWithLinks(edl, links, {edlPointer, parent, key} = {}) {
+  key = key ?? "testKey";
+  edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
+  let edlz = EdlZettel(edlPointer, parent, key);
+  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
+  let linkRequests = edlz.outstandingRequests();
+  links.forEach((link, i) => linkRequests[i][1](Part(linkRequests[i][0], link)));
+  return edlz;
+}
+
+export function makeTestEdlAndEdlZettelFromLinks(links, linkNames, parent) {
+  linkNames = linkNames ?? links.map((x, i) => LinkPointer(i.toString()));
+  let edl = Edl(undefined, [], linkNames);
+  let edlZettel = makeTestEdlZettelWithLinks(edl, links, { parent });
+  return edlZettel;
 }

@@ -4,9 +4,12 @@ import { toEqualClip, Span, Box } from '../pointers';
 import { RenderLink } from './render-link';
 import { zettelTesting } from './zettel';
 import { linkTesting } from '../model';
+import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
-let makeSpanLink = (...args) =>
-  RenderLink(linkTesting.makeSpanLink.call(null, ...args));
+let makeSpanLink = (...args) => {
+  let link = linkTesting.makeSpanLink.call(null, ...args);
+  return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
+}
 
 let hasEndset = zettelTesting.hasEndset;
 
