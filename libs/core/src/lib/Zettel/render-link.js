@@ -17,13 +17,14 @@ let typeMap = {
   "justified text": [{textAlign: "justify"}]
 };
 
-export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEndowments  } = {}) {
+export function RenderLink(linkName, link, homeEdl, { directMetaEndowments, contentMetaEndowments  } = {}) {
   let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
 
   addProperties(renderLink, {
     fragmentTag,
+    linkName,
     link,
     endsets: link.endsets,
     type: link.type,

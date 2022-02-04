@@ -8,7 +8,7 @@ import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
 let makeSpanLink = (...args) => {
   let link = linkTesting.makeSpanLink.call(null, ...args);
-  return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
+  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
 let hasEndset = zettelTesting.hasEndset;

@@ -20,7 +20,7 @@ function make(clip = Span("origin", 1, 10)) {
 
 function makeLink(type, ...endsets) {
   let link = Link(type, ...endsets);
-  return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
+  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
 test('clip returns the passed clip', () => {

@@ -42,7 +42,7 @@ function mockRenderPointer(pointer, attributes) {
   let link = Link(undefined, Endset(undefined, [pointer]));
   let edl = Edl(undefined, [], [linkPointerForEdl]);
   let edlZettel = makeTestEdlZettelWithLinks(edl, [link]);
-  let rl = RenderLink(link, edlZettel);
+  let rl = RenderLink("mock", link, edlZettel);
   return {
     pointer,
     renderEndset: RenderEndset(link.endsets[0], rl),

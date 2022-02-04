@@ -1,30 +1,18 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
-import { LinkPointer, EdlPointer, Span } from '../pointers';
+import { LinkPointer, Span } from '../pointers';
 import { Link, Endset } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
-function makeParagraphLink(...pointers) {
-  return RenderLink(Link(
-    "paragraph",
-    Endset(undefined, pointers.map(p => {
-      if (typeof p === "string") {
-        if (p.startsWith("link")) { return LinkPointer(p); }
-        else if (p.startsWith("edl")) { return EdlPointer(p); }
-      }
-      return p;
-    }))));
-}
-
 function make(link) {
-  return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
+  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
 test('The getHomeEdl method should return the EDL that the link resides in', () => {
   let link = Link();
   let edlZettel = makeTestEdlAndEdlZettelFromLinks([link]);
-  expect(RenderLink(link, edlZettel).getHomeEdl()).toBe(edlZettel);
+  expect(RenderLink("foo", link, edlZettel).getHomeEdl()).toBe(edlZettel);
 });
 
 test('if the type is unknown then the innerTag and fragmentTag properties are falsy', () => {
