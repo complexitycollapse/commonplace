@@ -28,7 +28,6 @@ export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEnd
     endsets: link.endsets,
     type: link.type,
     linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
-    homeEdl,
     modifiers: RenderPointerCollection(homeEdl.nameLinkPairs().find(e => e[1] === link)[0])
   });
 
@@ -59,6 +58,7 @@ export function RenderLink(link, homeEdl, { directMetaEndowments, contentMetaEnd
     allContentAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
     allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
+    getHomeEdl: () => homeEdl
   });
 }
 

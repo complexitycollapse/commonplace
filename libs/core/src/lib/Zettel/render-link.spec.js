@@ -7,7 +7,7 @@ import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
 function makeParagraphLink(...pointers) {
   return RenderLink(Link(
-    "paragraph", 
+    "paragraph",
     Endset(undefined, pointers.map(p => {
       if (typeof p === "string") {
         if (p.startsWith("link")) { return LinkPointer(p); }
@@ -21,10 +21,10 @@ function make(link) {
   return RenderLink(link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
-test('The homeEdl property should be set on the RenderLink', () => {
+test('The getHomeEdl method should return the EDL that the link resides in', () => {
   let link = Link();
   let edlZettel = makeTestEdlAndEdlZettelFromLinks([link]);
-  expect(RenderLink(link, edlZettel).homeEdl).toBe(edlZettel);
+  expect(RenderLink(link, edlZettel).getHomeEdl()).toBe(edlZettel);
 });
 
 test('if the type is unknown then the innerTag and fragmentTag properties are falsy', () => {
