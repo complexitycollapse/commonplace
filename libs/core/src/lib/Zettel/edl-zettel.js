@@ -53,9 +53,9 @@ export function EdlZettel(edlPointer, parent, key) {
 
   function applyLinksToSelf() {
     function addLinks(source) {
-      source.renderLinks.forEach(pair => pair[1].endsets.forEach(e => e.pointers.forEach(p => {
+      source.renderLinks.forEach(renderLink => renderLink.endsets.forEach(e => e.pointers.forEach(p => {
         if (p.pointerType === "edl" && p.edlName === edlPointer.edlName) {
-          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, pair[1])));
+          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, renderLink)));
         }
       })));
     }
@@ -74,7 +74,7 @@ export function EdlZettel(edlPointer, parent, key) {
       if (clip.pointerType === "edl") {
         obj.children.push(EdlZettel(clip, obj, newKey));
       } else {
-        let zettel = ZettelSchneider(clip, obj.renderLinks.map(x => x[1]), newKey).zettel();
+        let zettel = ZettelSchneider(clip, obj.renderLinks, newKey).zettel();
         zettel.forEach(z => obj.children.push(z));
       }
     });

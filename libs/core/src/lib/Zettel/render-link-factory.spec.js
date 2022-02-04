@@ -13,7 +13,7 @@ function makeEdlZettel(linksByName, parent) {
 }
 
 function getLinks(renderLinks) {
-  return renderLinks.map(x => x[1].link);
+  return renderLinks.map(x => x.link);
 }
 
 describe('renderLinks', () => {
@@ -31,17 +31,19 @@ describe('renderLinks', () => {
   it('attached the EDL to every link', () => {
     let edl = makeEdlZettel(makeLinksByName([Link("foo")]));
     let renderLinks = RenderLinkFactory(edl).renderLinks();
-    expect(renderLinks[0][1].getHomeEdl()).toBe(edl);
+    expect(renderLinks[0].getHomeEdl()).toBe(edl);
   });
 
   it('does not return a RenderLink if the link was undefined', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
     let linksByName = makeLinksByName(links);
-    linksByName["missing link"] = undefined;
+    linksByName[LinkPointer("missing link")] = undefined;
 
     let renderLinks = RenderLinkFactory(makeEdlZettel(linksByName)).renderLinks();
 
-    expect(renderLinks.map(x => x[0].linkName)).not.toContain("missing link");
+    expect(renderLinks).toHaveLength(3);
+    expect(renderLinks.map(x => x.pointer.linkName)).toContain(linksByName[0][0].linkName);
+    expect(renderLinks.map(x => x.pointer.linkName)).not.toContain("missing link");
     expect(getLinks(renderLinks)).toEqual(links);
   });
 
@@ -51,9 +53,8 @@ describe('renderLinks', () => {
       [LinkPointer("b"), Link("bar")]
     ];
 
-
     let renderLinks = RenderLinkFactory(makeEdlZettel(links)).renderLinks();
-    let actual = renderLinks[1][1].modifiers.renderPointers();
+    let actual = renderLinks[1].modifiers.renderPointers();
 
     expect(actual).toHaveLength(1);
     expect(actual[0].pointer).toEqual(links[0][1].endsets[0].pointers[0]);
@@ -70,9 +71,9 @@ describe('renderLinks', () => {
 
     let actual = RenderLinkFactory(makeEdlZettel(links)).renderLinks();
 
-    expect(actual[2][1].modifiers.renderPointers()).toHaveLength(1);
-    expect(actual[2][1].modifiers.renderPointers()[0].renderLink.link).toEqual(links[1][1]);
-    expect(actual[1][1].modifiers.renderPointers()).toHaveLength(1);
-    expect(actual[1][1].modifiers.renderPointers()[0].renderLink.link).toEqual(links[0][1]);
-  });  
+    expect(actual[2].modifiers.renderPointers()).toHaveLength(1);
+    expect(actual[2].modifiers.renderPointers()[0].renderLink.link).toEqual(links[1][1]);
+    expect(actual[1].modifiers.renderPointers()).toHaveLength(1);
+    expect(actual[1].modifiers.renderPointers()[0].renderLink.link).toEqual(links[0][1]);
+  });
 });

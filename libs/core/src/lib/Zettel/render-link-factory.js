@@ -7,23 +7,23 @@ export function RenderLinkFactory(edlZettel) {
   let obj = {};
 
   function renderLinks() {
-    let nameRenderLinkPairs = makeNameRenderLinkPairs(edlZettel.nameLinkPairs());
+    let renderLinks = makeRenderLinks(edlZettel.nameLinkPairs());
 
-    nameRenderLinkPairs.forEach(([linkName, renderLink]) => {
-      addModifiers(linkName, renderLink, nameRenderLinkPairs);
+    renderLinks.forEach((renderLink) => {
+      addModifiers(renderLink.pointer, renderLink, renderLinks);
     });
     
-    return nameRenderLinkPairs;
-  }
-
-  function makeNameRenderLinkPairs(nameLinkPairs) {
-    let renderLinks = nameLinkPairs.filter(p => p[1]).map(p => [p[0], RenderLink(p[0], p[1], edlZettel)]);
     return renderLinks;
   }
 
-  function addModifiers(linkName, renderLink, renderLinksByName) {
-    renderLinksByName.forEach(([otherLinkName, otherRenderLink]) => {
-      if (otherLinkName.hashableName != linkName.hashableName) {
+  function makeRenderLinks(nameLinkPairs) {
+    let renderLinks = nameLinkPairs.filter(p => p[1]).map(p => RenderLink(p[0], p[1], edlZettel));
+    return renderLinks;
+  }
+
+  function addModifiers(linkName, renderLink, renderLinks) {
+    renderLinks.forEach((otherRenderLink) => {
+      if (otherRenderLink.pointer.hashableName != linkName.hashableName) {
         otherRenderLink.endsets.forEach(e => {
           e.pointers.forEach(p => {
             renderLink.modifiers.tryAdd(RenderPointer(p, RenderEndset(e, otherRenderLink)));
