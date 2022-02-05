@@ -17,7 +17,14 @@ let typeMap = {
   "justified text": [{textAlign: "justify"}]
 };
 
-export function RenderLink(pointer, link, homeEdl, { directMetaEndowments, contentMetaEndowments  } = {}) {
+export function RenderLink(pointer, link, homeEdl) {
+  let type = link.type;
+  if (type === directMetalinkType) { return DirectMetalink(pointer, link, homeEdl); }
+  else if (type === contentMetalinkType) { return ContentMetalink(pointer, link, homeEdl); }
+  else { return BaseRenderLink(pointer, link, homeEdl); }
+}
+
+function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMetaEndowments) {
   let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
@@ -63,6 +70,50 @@ export function RenderLink(pointer, link, homeEdl, { directMetaEndowments, conte
   });
 }
 
+const directMetalinkType = "endows direct attributes";
+const contentMetalinkType = "endows content attributes";
+
+function DirectMetalink(linkName, link, homeEdl) {
+  function allDirectAttributeMetaEndowments(renderPointer, linkedContent) {
+    return extractEndowments(link, renderPointer, linkedContent);
+  }
+
+  let obj = BaseRenderLink(linkName, link, homeEdl, allDirectAttributeMetaEndowments);
+
+  return obj;
+}
+
+function ContentMetalink(linkName, link, homeEdl) {
+  function allContentAttributeMetaEndowments(renderPointer, linkedContent) {
+    return extractEndowments(link, renderPointer, linkedContent);
+  }
+
+  let obj = BaseRenderLink(linkName, link, homeEdl, undefined, allContentAttributeMetaEndowments);
+
+  return obj;
+}
+
+function extractEndowments(link, renderPointer, linkedContent) {
+  if (renderPointer.renderEndset.endset.type !== undefined) {
+    return {};
+  }
+
+  let endowments = {};
+
+  for(let i = 0; i < link.endsets.length - 1; ++i) {
+    if (link.endsets[i].type === "attribute" && link.endsets[i+1].type === "value") {
+      let attribute = findContent(linkedContent, link.Endsets[i]);
+      let value = findContent(linkedContent, link.Endsets[i+1]);
+      endowments[attribute] = value;
+    }
+  }
+
+  return endowments;
+}
+
+function findContent(linkedContent, endset) {
+  return linkedContent.find(x => x[1] === endset)[2];
+}
 
 function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   let metaAttributes = {};
