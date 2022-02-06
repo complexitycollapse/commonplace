@@ -4,7 +4,7 @@ import { LinkPointer } from '../pointers';
 import { RenderLinkFactory } from './render-link-factory';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
-function makeLinksByName(links) {
+function makeLinksByPointer(links) {
   return links.map((l, i) => [LinkPointer("link-" + i.toString()), l]);
 }
 
@@ -18,8 +18,8 @@ function getLinks(renderLinks) {
 
 describe('renderLinks', () => {
   it('returns a RenderLink for each passed link', () => {
-    let links = [Link("foo"), Link("foo"), Link("foo")];
-    let linksByPointer = makeLinksByName(links);
+    let links = [Link("foo1"), Link("foo2"), Link("foo3")];
+    let linksByPointer = makeLinksByPointer(links);
     let edlZettel = makeEdlZettel(linksByPointer);
     let factory = RenderLinkFactory(edlZettel);
 
@@ -28,15 +28,43 @@ describe('renderLinks', () => {
     expect(getLinks(renderLinks)).toEqual(links);
   });
 
+  it('returns a RenderLink child AND parent links', () => {
+    let links = [Link("foo1"), Link("foo2")];
+    let linksByPointer = makeLinksByPointer(links);
+    let parent = makeEdlZettel([linksByPointer[1]]);
+    let edlZettel = makeEdlZettel([linksByPointer[0]], parent);
+    let factory = RenderLinkFactory(edlZettel);
+
+    let renderLinks = factory.renderLinks();
+
+    expect(getLinks(renderLinks)).toEqual(links);
+  });
+
   it('attached the EDL to every link', () => {
-    let edl = makeEdlZettel(makeLinksByName([Link("foo")]));
+    let edl = makeEdlZettel(makeLinksByPointer([Link("foo")]));
     let renderLinks = RenderLinkFactory(edl).renderLinks();
     expect(renderLinks[0].getHomeEdl()).toBe(edl);
   });
 
+  it('attached the parent EDL to links originating in the parent and child EDL likewise', () => {
+    let parent = makeEdlZettel(makeLinksByPointer([Link("foo1")]));
+    let edl = makeEdlZettel(makeLinksByPointer([Link("foo2")]), parent);
+    let renderLinks = RenderLinkFactory(edl).renderLinks();
+    expect(renderLinks.find(r => r.link.type === "foo1").getHomeEdl()).toBe(parent);
+    expect(renderLinks.find(r => r.link.type === "foo2").getHomeEdl()).toBe(edl);
+  });
+
+  it('attached the grandparent EDL to links originating in the grandparent', () => {
+    let grandparent = makeEdlZettel(makeLinksByPointer([Link("foo1")]));
+    let parent = makeEdlZettel(makeLinksByPointer([Link("foo2")]), grandparent);
+    let edl = makeEdlZettel(makeLinksByPointer([Link("foo3")]), parent);
+    let renderLinks = RenderLinkFactory(edl).renderLinks();
+    expect(renderLinks.find(r => r.link.type === "foo1").getHomeEdl()).toBe(grandparent);
+  });
+
   it('does not return a RenderLink if the link was undefined', () => {
     let links = [Link("foo"), Link("foo"), Link("foo")];
-    let linksByName = makeLinksByName(links);
+    let linksByName = makeLinksByPointer(links);
     linksByName[LinkPointer("missing link")] = undefined;
 
     let renderLinks = RenderLinkFactory(makeEdlZettel(linksByName)).renderLinks();
