@@ -1,25 +1,40 @@
 import { finalObject } from "../utils";
+import { RenderEndset } from "./render-endset";
+import { RenderPointer } from "./render-pointer";
 
 export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   let obj = {};
   let directPointers = [], typePointers = [], allTypePointers = [];
 
+  function tryAddAll(renderLinks) {
+    renderLinks.forEach(renderLink => {
+      renderLink.endsets.forEach(e => {
+        e.pointers.forEach(p => {
+          internalTryAdd(p, () => RenderPointer(p, RenderEndset(e, renderLink)));
+        });
+      });
+    });
+  }
+
+  // This is a hack so that I can inject mock renderPointers. Not a good idea.
   function tryAdd(renderPointer) {
-    let pointer = renderPointer.pointer;
-    
+    return internalTryAdd(renderPointer.pointer, () => renderPointer);
+  }
+
+  function internalTryAdd(pointer, renderPointerFn) {
     if (pointer.isTypePointer) {
       if (pointer.allTypes) {
-        allTypePointers.unshift(renderPointer);
+        allTypePointers.unshift(renderPointerFn());
         return true
       } else if (ownerTypePointer.engulfs(pointer)) {
-        typePointers.unshift(renderPointer);
+        typePointers.unshift(renderPointerFn());
         return true;
       } else {
         return false;
       }
     } else {
       if (ownerPointer.engulfs(pointer)) {
-        directPointers.unshift(renderPointer);
+        directPointers.unshift(renderPointerFn());
         return true;
       } else {
         return false;
@@ -50,6 +65,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
 
   return finalObject(obj, {
     tryAdd,
+    tryAddAll,
     attributes,
     renderPointers
   });

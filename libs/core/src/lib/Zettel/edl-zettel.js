@@ -1,8 +1,6 @@
 import { addProperties, addMethods } from '../utils';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderLinkFactory } from './render-link-factory';
-import { RenderPointer } from './render-pointer';
-import { RenderEndset } from './render-endset';
 import { RenderPointerCollection } from './render-pointer-collection';
 import { EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
@@ -52,19 +50,8 @@ export function EdlZettel(edlPointer, parent, key) {
   }
 
   function applyLinksToSelf() {
-    function addLinks(source) {
-      source.renderLinks.forEach(renderLink => renderLink.endsets.forEach(e => e.pointers.forEach(p => {
-        if (p.pointerType === "edl" && p.edlName === edlPointer.edlName) {
-          renderPointers.tryAdd(RenderPointer(p, RenderEndset(e, renderLink)));
-        }
-      })));
-    }
-
     renderPointers = RenderPointerCollection(edlPointer, EdlTypePointer(obj.edl.type));
-    
-    for(let linkSource = obj; linkSource !== undefined; linkSource = linkSource.parent) {
-      addLinks(linkSource);
-    }
+    renderPointers.tryAddAll(obj.renderLinks);
   }
 
   function createChildZettel() {

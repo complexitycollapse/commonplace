@@ -1,3 +1,4 @@
+import { LinkTypePointer } from "../pointers";
 import { addProperties, finalObject, mergeObjects } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 
@@ -36,7 +37,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
     endsets: link.endsets,
     type: link.type,
     linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
-    modifiers: RenderPointerCollection(homeEdl.nameLinkPairs().find(e => e[1] === link)[0])
+    modifiers: RenderPointerCollection(homeEdl.nameLinkPairs().find(e => e[1] === link)[0], LinkTypePointer(link.type))
   });
 
   function style() {
