@@ -4,6 +4,21 @@ import { leafDataToLink } from "../model";
 import { LinkPointer } from "./link-pointer";
 
 export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
+  function engulfs(obj, other) {
+    // If we don't have an endset index but other does then we may still match as we
+    // represent all endsets with that name.
+
+    if (obj.hasSamePointerType(other)
+        && linkName === other.linkName
+        && linkIndex === other.linkIndex
+        && endsetName === other.endsetName) {
+      let indexMatches = endsetIndex === undefined || endsetIndex === other.endsetIndex;
+      return indexMatches;
+    }
+
+    return false;
+  }
+
   let obj = Pointer(
     "endset",
     false,
@@ -21,20 +36,8 @@ export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
         return false;
         }
       },
-      engulfs(other) {
-        // If we don't have an endset index but other does then we may still match as we
-        // represent all endsets with that name.
-
-        if (obj.hasSamePointerType(other)
-            && linkName === other.linkName
-            && linkIndex === other.linkIndex
-            && endsetName === other.endsetName) {
-          let indexMatches = endsetIndex === undefined || endsetIndex === other.endsetIndex;
-          return indexMatches;
-        }
-
-        return false;
-      }
+      engulfs: other => engulfs(obj, other),
+      overlaps: other => engulfs(obj, other)
     });
 
   return obj;

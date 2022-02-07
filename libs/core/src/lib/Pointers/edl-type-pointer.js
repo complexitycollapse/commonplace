@@ -11,7 +11,8 @@ export function EdlTypePointer(edlType) {
         ? [true, part] 
         : [false, undefined];
     },
-    engulfs: other => obj.hasSamePointerType(other) && edlType === other.edlType
+    engulfs: other => obj.hasSamePointerType(other) && edlType === other.edlType,
+    overlaps: other => obj.hasSamePointerType(other) && edlType === other.edlType,
   });
 
   return obj;

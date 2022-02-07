@@ -11,7 +11,8 @@ export function LinkTypePointer(linkType) {
         ? [true, part] 
         : [false, undefined];
     },
-    engulfs: other => obj.hasSamePointerType(other) && linkType === other.linkType
+    engulfs: other => obj.hasSamePointerType(other) && linkType === other.linkType,
+    overlaps: other => obj.hasSamePointerType(other) && linkType === other.linkType
   });
 
   return obj;

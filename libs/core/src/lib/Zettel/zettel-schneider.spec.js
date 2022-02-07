@@ -38,7 +38,7 @@ expect.extend({
       if (!result.pass) { return result; }
     });
 
-    if (endsets.length !== zettel.renderPointers.length) {
+    if (endsets.length !== zettel.renderPointers.renderPointers().length) {
       return {
         message: () => `expected ${endsets.length} endsets, received ${zettel.renderPointers.length}`,
         pass: false
@@ -211,15 +211,6 @@ describe('ZettelSchneider.zettel', () => {
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l1, 0);
     expect(zettel[0]).hasEndset(l2, 0);
-  });
-
-  it('assigns a link once even if there are multiple overlapping spans', () => {
-    let s = Span("origin", 0, 10);
-    let l = makeSpanLink({ clipLists: [[Span("origin", 0, 10), Span("origin", 0, 10)]] });
-
-    let zettel = ZettelSchneider(s, [l]).zettel();
-
-    expect(zettel[0].renderPointers).toHaveLength(1);
   });
 
   it('assigns links only to the spans that overlap them', () => {

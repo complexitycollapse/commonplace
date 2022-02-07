@@ -16,7 +16,6 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     });
   }
 
-  // This is a hack so that I can inject mock renderPointers. Not a good idea.
   function tryAdd(renderPointer) {
     return internalTryAdd(renderPointer.pointer, () => renderPointer);
   }
@@ -24,17 +23,17 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   function internalTryAdd(pointer, renderPointerFn) {
     if (pointer.isTypePointer) {
       if (pointer.allTypes) {
-        allTypePointers.unshift(renderPointerFn());
+        allTypePointers.push(renderPointerFn());
         return true
       } else if (ownerTypePointer.engulfs(pointer)) {
-        typePointers.unshift(renderPointerFn());
+        typePointers.push(renderPointerFn());
         return true;
       } else {
         return false;
       }
     } else {
-      if (ownerPointer.engulfs(pointer)) {
-        directPointers.unshift(renderPointerFn());
+      if (pointer.overlaps(ownerPointer)) {
+        directPointers.push(renderPointerFn());
         return true;
       } else {
         return false;
@@ -46,7 +45,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     let result = {};
 
     function addAllValues(pointers) {
-      for(let i = pointers.length - 1; i >= 0; --i) {
+      for(let i = 0; i <= pointers.length - 1; ++i) {
         Object.entries(pointers[i].getAllAttributeEndowments()).forEach( kv => {
           result[kv[0]] = kv[1];
         });

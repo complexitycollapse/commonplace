@@ -3,6 +3,18 @@ import { Part } from "../part";
 import { Pointer } from "./pointer";
 
 export function EdlPointer(edlName, index) {
+  function engulfs(obj, other) {
+    // If we don't have an index but other does then we may still match as we
+    // may represent the array that contains other.
+
+    if (obj.hasSamePointerType(other) && edlName === other.edlName) {
+      let indexMatches = index === undefined || index === other.index;
+      return indexMatches;
+    }
+
+    return false;
+  }
+
   let obj = Pointer(
     "edl",
     false,
@@ -24,17 +36,8 @@ export function EdlPointer(edlName, index) {
         return false;
         }
       },
-      engulfs(other) {
-        // If we don't have an index but other does then we may still match as we
-        // may represent the array that contains other.
-
-        if (obj.hasSamePointerType(other) && edlName === other.edlName) {
-          let indexMatches = index === undefined || index === other.index;
-          return indexMatches;
-        }
-
-        return false;
-      }
+      engulfs: other => engulfs(obj, other),
+      overlaps: other => engulfs(obj, other)
   });
 
   return obj;

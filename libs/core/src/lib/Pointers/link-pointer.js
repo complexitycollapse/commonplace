@@ -3,6 +3,27 @@ import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
 
 export function LinkPointer(linkName, index) {
+  function engulfs(obj, other) {
+    // If we don't have an index but other does then we may still match as we
+    // may represent the array that contains other.
+
+    // We can also potentially engulf an endset pointer, as that is more specific.
+
+    if (other.pointerType === "endset") {
+      if (linkName === other.linkName) {
+        let indexMatches = index === undefined || index === other.linkIndex;
+        return indexMatches;
+      }
+    }
+
+    if (obj.hasSamePointerType(other) && linkName === other.linkName) {
+      let indexMatches = index === undefined || index === other.index;
+      return indexMatches;
+    }
+
+    return false;
+  }
+
   let obj = Pointer(
     "link",
     false,
@@ -24,26 +45,8 @@ export function LinkPointer(linkName, index) {
         return false;
         }
       },
-      engulfs(other) {
-        // If we don't have an index but other does then we may still match as we
-        // may represent the array that contains other.
-
-        // We can also potentially engulf an endset pointer, as that is more specific.
-
-        if (other.pointerType === "endset") {
-          if (linkName === other.linkName) {
-            let indexMatches = index === undefined || index === other.linkIndex;
-            return indexMatches;
-          }
-        }
-
-        if (obj.hasSamePointerType(other) && linkName === other.linkName) {
-          let indexMatches = index === undefined || index === other.index;
-          return indexMatches;
-        }
-
-        return false;
-      }
+      engulfs: other => engulfs(obj, other),
+      overlaps: other => engulfs(obj, other)
     });
 
   return obj;

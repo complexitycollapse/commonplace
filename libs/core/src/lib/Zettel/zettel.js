@@ -1,8 +1,9 @@
 import { addProperties, addMethods } from '../utils';
-import { Span, toEqualClip } from '../pointers';
+import { ClipTypePointer, Span, toEqualClip } from '../pointers';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';
 import { RenderPointer } from './render-pointer';
+import { RenderPointerCollection } from './render-pointer-collection';
 
 export function Zettel(clip, parent) {
   let obj = {};
@@ -13,29 +14,22 @@ export function Zettel(clip, parent) {
   addProperties(obj, {
     clip,
     isSegment: false,
-    renderPointers: [],
+    renderPointers: RenderPointerCollection(clip, ClipTypePointer(clip.clipType)),
     parent
   });
 
   function addPointer(pointer, endset, link) {
     let renderEndset = RenderEndset(endset, link);
     let renderPointer = RenderPointer(pointer, renderEndset);
-    if (obj.hasRenderEndset(renderEndset)) {
-      return;
-    }
-    obj.renderPointers.push(renderPointer);
+    obj.renderPointers.tryAdd(renderPointer);
   }
 
   function addLink(link) {
     let newZettel = ZettelSchneider(clip, [link], obj.key).zettel();
 
     newZettel.forEach(z => {
-      obj.renderPointers.forEach(p => {
-        if (!z.hasRenderEndset(p.renderEndset)) {
-          z.renderPointers.push(p);
-        }
-        if (contentPart) { z.tryAddPart(contentPart); }
-      });
+      obj.renderPointers.renderPointers().forEach(p => z.renderPointers.tryAdd(p));
+      if (contentPart) { z.tryAddPart(contentPart); }
     });
 
     return newZettel;
@@ -53,14 +47,14 @@ export function Zettel(clip, parent) {
   }
 
   function style() {
-    let styles = obj.renderPointers.map(e => e.renderLink.style());
+    let styles = obj.renderPointers.renderPointers().map(e => e.renderLink.style());
     return styles;
   }
 
   function outstandingRequests() {
     let outstanding = [];
     
-    let linkContentRequests = obj.renderPointers.map(p => p.renderLink.outstandingRequests()).flat();
+    let linkContentRequests = obj.renderPointers.renderPointers().map(p => p.renderLink.outstandingRequests()).flat();
     if (linkContentRequests.length > 0) {
       return linkContentRequests;
     }
@@ -72,11 +66,6 @@ export function Zettel(clip, parent) {
     return outstanding;
   }
 
-  function hasRenderEndset(endset) {
-    return obj.renderPointers.find(ours => 
-      endset.renderLink === ours.renderEndset.renderLink && endset.index === ours.renderEndset.index);
-  }
-
   addMethods(obj, {
     addLink,
     tryAddPart,
@@ -84,8 +73,7 @@ export function Zettel(clip, parent) {
     part: () => contentPart,
     outstandingRequests,
     setOnUpdate,
-    addPointer,
-    hasRenderEndset
+    addPointer
   });
 
   return obj;
@@ -107,7 +95,7 @@ function clipArraysEqual(actual, expected) {
 export let zettelTesting = {
   hasEndset(zettel, link, index = 0) {
     let expectedEndset = link.endsets[index];
-    let actualEndsets = zettel.renderPointers.map(p => p.renderEndset);
+    let actualEndsets = zettel.renderPointers.renderPointers().map(p => p.renderEndset);
 
     for(let i = 0; i < actualEndsets.length; ++i) {
       let candidate = actualEndsets[i];

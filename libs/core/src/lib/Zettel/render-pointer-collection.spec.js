@@ -120,7 +120,7 @@ test('if there are two link pointers with the attribute, the value of the second
 });
 
 
-test('if there are two link pointers with the attribute, the value of the second one to be added takes precedence', () => {
+test('if there are two link type pointers with the attribute, the value of the second one to be added takes precedence', () => {
   let typePointer1 = mockLinkTypeRenderPointer("type", {attr: "ignored value"});
   let typePointer2 = mockLinkTypeRenderPointer("type", {attr: "expected value"});
   let rpc = make("name", "type");
