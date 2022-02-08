@@ -1,10 +1,10 @@
-import { finalObject } from "../utils";
+import { finalObject, listMap } from "../utils";
 import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
 
 export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   let obj = {};
-  let directPointers = [], typePointers = [], allTypePointers = [];
+  let directPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
 
   function tryAddAll(renderLinks) {
     renderLinks.forEach(renderLink => {
@@ -23,17 +23,17 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   function internalTryAdd(pointer, renderPointerFn) {
     if (pointer.isTypePointer) {
       if (pointer.allTypes) {
-        allTypePointers.push(renderPointerFn());
+        push(allTypePointers, renderPointerFn());
         return true
       } else if (ownerTypePointer.engulfs(pointer)) {
-        typePointers.push(renderPointerFn());
+        push(typePointers, renderPointerFn());
         return true;
       } else {
         return false;
       }
     } else {
       if (pointer.overlaps(ownerPointer)) {
-        directPointers.push(renderPointerFn());
+        push(directPointers, renderPointerFn());
         return true;
       } else {
         return false;
@@ -41,32 +41,45 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     } 
   }
 
-  function attributes() {
-    let result = {};
-
-    function addAllValues(pointers) {
-      for(let i = 0; i <= pointers.length - 1; ++i) {
-        Object.entries(pointers[i].getAllAttributeEndowments()).forEach( kv => {
-          result[kv[0]] = kv[1];
-        });
-      };
-    }
-
-    addAllValues(typePointers);
-    addAllValues(directPointers);
-
-    return result;
+  function push(collection, renderPointer) {
+    collection.push(renderPointer.renderLink.getHomeEdl(), renderPointer);
   }
 
+  function allPointers() {
+    return [directPointers, typePointers, allTypePointers];
+  }
+
+  // function attributes() {
+  //   let result = {};
+
+  //   function addAllValues(pointers) {
+  //     for(let i = 0; i <= pointers.length - 1; ++i) {
+  //       Object.entries(pointers[i].getAllAttributeEndowments()).forEach( kv => {
+  //         result[kv[0]] = kv[1];
+  //       });
+  //     };
+  //   }
+
+    // addAllValues(typePointers);
+    // addAllValues(directPointers);
+
+    // return result;
+  // }
+
   function renderPointers() {
-    return typePointers.concat(directPointers);
+    function flatten(map) {
+      return [...map.values()].flat();
+    }
+
+    let all = flatten(allTypePointers), type = flatten(typePointers), direct = flatten(directPointers);
+    return all.concat(type, direct);
   }
 
   return finalObject(obj, {
     tryAdd,
     tryAddAll,
-    attributes,
+    allPointers,
     renderPointers
   });
 }
- 
+
