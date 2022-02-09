@@ -91,7 +91,8 @@ export function EdlZettel(edlPointer, parent, key) {
 
   addProperties(obj, {
     key,
-    clip: edlPointer
+    clip: edlPointer,
+    hashableName: edlPointer.hashableName
   });
 
   addMethods(obj, {

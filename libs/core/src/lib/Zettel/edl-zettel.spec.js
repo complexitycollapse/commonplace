@@ -23,6 +23,11 @@ describe('basic properties', () => {
     let parent = make(makeEdl());
     expect(make(makeEdl(), { parent }).parent).toBe(parent);
   });
+
+  it('sets the hashableName property to the hashable name the EDL pointer', () => {
+    let edlPointer = EdlPointer("some name", 10);
+    expect(make(makeEdl(), { edlPointer }).hashableName).toBe(edlPointer.hashableName);
+  });
 });
 
 describe('outstandingRequests', () => {

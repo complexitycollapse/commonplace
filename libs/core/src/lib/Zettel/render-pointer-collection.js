@@ -42,7 +42,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   }
 
   function push(collection, renderPointer) {
-    collection.push(renderPointer.renderLink.getHomeEdl(), renderPointer);
+    collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
   }
 
   function allPointers() {
