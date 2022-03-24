@@ -21,14 +21,14 @@ export function Zettel(clip, parent) {
   function addPointer(pointer, endset, link) {
     let renderEndset = RenderEndset(endset, link);
     let renderPointer = RenderPointer(pointer, renderEndset);
-    obj.renderPointers.tryAdd(renderPointer);
+    obj.renderPointers.tryAddRenderPointer(renderPointer);
   }
 
   function addLink(link) {
     let newZettel = ZettelSchneider(clip, [link], obj.key).zettel();
 
     newZettel.forEach(z => {
-      obj.renderPointers.renderPointers().forEach(p => z.renderPointers.tryAdd(p));
+      obj.renderPointers.renderPointers().forEach(p => z.renderPointers.tryAddRenderPointer(p));
       if (contentPart) { z.tryAddPart(contentPart); }
     });
 

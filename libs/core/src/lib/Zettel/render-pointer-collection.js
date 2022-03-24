@@ -16,7 +16,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     });
   }
 
-  function tryAdd(renderPointer) {
+  function tryAddRenderPointer(renderPointer) {
     return internalTryAdd(renderPointer.pointer, () => renderPointer);
   }
 
@@ -76,7 +76,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   }
 
   return finalObject(obj, {
-    tryAdd,
+    tryAddRenderPointer,
     tryAddAll,
     allPointers,
     renderPointers

@@ -17,64 +17,64 @@ test('', () =>{ return; });
 //   let pointer = mockLinkRenderPointer("name", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(pointer);
+//   rpc.tryAddRenderPointer(pointer);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
 
-// test('if a link pointer has been added, tryAdd returns true', () => {
+// test('if a link pointer has been added, tryAddRenderPointer returns true', () => {
 //   let pointer = mockLinkRenderPointer("name", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   expect(rpc.tryAdd(pointer)).toBeTruthy();
+//   expect(rpc.tryAddRenderPointer(pointer)).toBeTruthy();
 // });
 
 // test('if a link pointer is not for this collection, its attributes should not be added', () => {
 //   let pointer = mockLinkRenderPointer("wrong name", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(pointer);
+//   rpc.tryAddRenderPointer(pointer);
 
 //   expect(rpc.attributes().attr).toBe(undefined);
 // });
 
-// test('if a link pointer is not for this collection, tryAdd returns false', () => {
+// test('if a link pointer is not for this collection, tryAddRenderPointer returns false', () => {
 //   let pointer = mockLinkRenderPointer("wrong name", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   expect(rpc.tryAdd(pointer)).toBeFalsy();
+//   expect(rpc.tryAddRenderPointer(pointer)).toBeFalsy();
 // });
 
 // test('if a link type pointer has been added, attributes should retrieve the attributes', () => {
 //   let pointer = mockLinkTypeRenderPointer("type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(pointer);
+//   rpc.tryAddRenderPointer(pointer);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
 
-// test('if a link type pointer has been added, tryAdd returns true', () => {
+// test('if a link type pointer has been added, tryAddRenderPointer returns true', () => {
 //   let pointer = mockLinkTypeRenderPointer("type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   expect(rpc.tryAdd(pointer)).toBeTruthy();
+//   expect(rpc.tryAddRenderPointer(pointer)).toBeTruthy();
 // });
 
 // test('if a link type pointer is not for this collection type, its attributes should not be added', () => {
 //   let pointer = mockLinkTypeRenderPointer("wrong type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(pointer);
+//   rpc.tryAddRenderPointer(pointer);
 
 //   expect(rpc.attributes().attr).toBe(undefined);
 // });
 
-// test('if a link type pointer is not for this collection, tryAdd returns false', () => {
+// test('if a link type pointer is not for this collection, tryAddRenderPointer returns false', () => {
 //   let pointer = mockLinkTypeRenderPointer("wrong type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   expect(rpc.tryAdd(pointer)).toBeFalsy();
+//   expect(rpc.tryAddRenderPointer(pointer)).toBeFalsy();
 // });
 
 // test('if both a link and link type pointer have the attribute, return the link pointer value', () => {
@@ -82,8 +82,8 @@ test('', () =>{ return; });
 //   let typePointer = mockLinkTypeRenderPointer("type", {attr: "hidden value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(linkPointer);
-//   rpc.tryAdd(typePointer);
+//   rpc.tryAddRenderPointer(linkPointer);
+//   rpc.tryAddRenderPointer(typePointer);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
@@ -93,8 +93,8 @@ test('', () =>{ return; });
 //   let typePointer = mockLinkTypeRenderPointer("type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(linkPointer);
-//   rpc.tryAdd(typePointer);
+//   rpc.tryAddRenderPointer(linkPointer);
+//   rpc.tryAddRenderPointer(typePointer);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
@@ -104,8 +104,8 @@ test('', () =>{ return; });
 //   let typePointer = mockLinkTypeRenderPointer("type", {otherAttr: "ignored value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(linkPointer);
-//   rpc.tryAdd(typePointer);
+//   rpc.tryAddRenderPointer(linkPointer);
+//   rpc.tryAddRenderPointer(typePointer);
 
 //   expect(rpc.attributes().attr).toBe(undefined);
 // });
@@ -115,8 +115,8 @@ test('', () =>{ return; });
 //   let linkPointer2 = mockLinkRenderPointer("name", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(linkPointer1);
-//   rpc.tryAdd(linkPointer2);
+//   rpc.tryAddRenderPointer(linkPointer1);
+//   rpc.tryAddRenderPointer(linkPointer2);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
@@ -127,8 +127,8 @@ test('', () =>{ return; });
 //   let typePointer2 = mockLinkTypeRenderPointer("type", {attr: "expected value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(typePointer1);
-//   rpc.tryAdd(typePointer2);
+//   rpc.tryAddRenderPointer(typePointer1);
+//   rpc.tryAddRenderPointer(typePointer2);
 
 //   expect(rpc.attributes().attr).toBe("expected value");
 // });
@@ -142,12 +142,12 @@ test('', () =>{ return; });
 //   let linkTypePointer3 = mockLinkTypeRenderPointer("type", {key3: "key3 value"});
 //   let rpc = make("name", "type");
   
-//   rpc.tryAdd(linkPointer1);
-//   rpc.tryAdd(linkPointer2);
-//   rpc.tryAdd(linkPointer3);
-//   rpc.tryAdd(linkTypePointer1);
-//   rpc.tryAdd(linkTypePointer2);
-//   rpc.tryAdd(linkTypePointer3);
+//   rpc.tryAddRenderPointer(linkPointer1);
+//   rpc.tryAddRenderPointer(linkPointer2);
+//   rpc.tryAddRenderPointer(linkPointer3);
+//   rpc.tryAddRenderPointer(linkTypePointer1);
+//   rpc.tryAddRenderPointer(linkTypePointer2);
+//   rpc.tryAddRenderPointer(linkTypePointer3);
 
 //   expect(rpc.attributes()).toEqual({
 //     key1: "key1 value",
