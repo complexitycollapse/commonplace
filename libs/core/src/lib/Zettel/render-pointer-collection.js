@@ -4,6 +4,7 @@ import { RenderPointer } from "./render-pointer";
 
 export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   let obj = {};
+  // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
   let directPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
 
   function tryAddAll(renderLinks) {
