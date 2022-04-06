@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Link, Edl, Endset } from '../model';
-import { EdlZettel, makeTestEdlZettel } from './edl-zettel';
+import { EdlZettelFromPointer, makeTestEdlZettel } from './edl-zettel';
 import { Span, Box, EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
 
@@ -34,12 +34,12 @@ describe('outstandingRequests', () => {
   it('initially requests the EDL', () => {
     let edlPointer = EdlPointer("p");
     
-    expect(EdlZettel(edlPointer, undefined, "1").outstandingRequests().map(x => x[0])).toEqual([edlPointer]);
+    expect(EdlZettelFromPointer(edlPointer, undefined, "1").outstandingRequests().map(x => x[0])).toEqual([edlPointer]);
   });
 
   it('stops requesting the EDL once it has been resolved', () => {
     let edlPointer = EdlPointer("p");
-    let ez = EdlZettel(edlPointer, undefined, "1");
+    let ez = EdlZettelFromPointer(edlPointer, undefined, "1");
 
     resolve(ez.outstandingRequests()[0], makeEdl())
 

@@ -1,1 +1,1 @@
-export { EdlZettel } from './Zettel/edl-zettel';
+export { EdlZettelFromPointer } from './Zettel/edl-zettel';

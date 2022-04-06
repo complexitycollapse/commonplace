@@ -4,5 +4,5 @@ export { Span, Box, LinkPointer, LinkTypePointer, EdlPointer, emptyDocPointer } 
 export { Doc, Edl, leafDataToEdl, Link, leafDataToLink, Endset } from './lib/model';
 export { Part } from './lib/part';
 export { LeafCache } from './lib/leaf-cache';
-export { EdlZettel } from './lib/zettel';
+export { EdlZettelFromPointer } from './lib/zettel';
 export * as testing from './testing';
