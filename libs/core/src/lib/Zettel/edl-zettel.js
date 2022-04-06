@@ -3,17 +3,10 @@ import { ZettelSchneider } from './zettel-schneider';
 import { RenderLinkFactory } from './render-link-factory';
 import { RenderPointerCollection } from './render-pointer-collection';
 import { EdlPointer, LinkPointer } from '../pointers';
-import { Part } from '../part';
 import { Edl } from '../model';
 import { EdlTypePointer } from '../Pointers/edl-type-pointer';
 
-export function EdlZettelFromPointer(edlPointer, parent, key) {
-  let edlZ = EdlZettel(parent, edlPointer, key);
-  TransitionToResolveEdlState(edlZ);
-  return edlZ;
-}
-
-function EdlZettel(parent, edlPointer, key) {
+export function EdlZettel(edlPointer, parent, key, edl, links) {
   let obj = {
     edl: undefined,
     renderLinks: undefined,
@@ -34,6 +27,14 @@ function EdlZettel(parent, edlPointer, key) {
     nameLinkPairs: () => obj.state.nameLinkPairs()
   });
 
+  TransitionToResolveEdlState(obj);
+  if (edl) {
+    TransitionToResolveLinksState(obj, edl);
+    if (links && obj.state.resolveLink) {
+      links.forEach((l, i) => obj.state.resolveLink(l, i));
+    }
+  }
+
   return obj;
 }
 
@@ -41,9 +42,7 @@ function TransitionToResolveEdlState(harness) {
   let obj = { harness };
 
   function resolveEdl(part) {
-    let edl = part.content;
-    harness.edl = edl;
-    TransitionToResolveLinksState(harness);
+    TransitionToResolveLinksState(harness, part.content);
   }
 
   harness.state = finalObject(obj, {
@@ -53,15 +52,20 @@ function TransitionToResolveEdlState(harness) {
   });
 }
 
-function TransitionToResolveLinksState(harness) {
-  let unresolvedLinks = [...harness.edl.links];
+function TransitionToResolveLinksState(harness, edl) {
+  let unresolvedLinks = [...edl.links];
   let links = new Array(unresolvedLinks.length);
   
   let obj = {};
 
-  function resolveLink(part, index) {
+  function resolveLinkFromPart(part, index) {
+    let link = part.content;
+    resolveLink(link, index);
+  }
+
+  function resolveLink(link, index) {
     unresolvedLinks[index] = undefined;
-    links[index] = part.content;
+    links[index] = link;
 
     if (unresolvedLinks.some(x => x)) {
       return;
@@ -70,7 +74,9 @@ function TransitionToResolveLinksState(harness) {
     TransitionToResolveContentState(harness, links);
   }
 
-  if (harness.edl.links.length > 0) {
+  harness.edl = edl;
+
+  if (edl.links.length > 0) {
     harness.state = obj;
   } else {
     TransitionToResolveContentState(harness, []);
@@ -79,7 +85,8 @@ function TransitionToResolveLinksState(harness) {
   addMethods(obj, {
     attributes: {},
     nameLinkPairs: () => [],
-    outstandingRequests: () => unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLink(p, i)])
+    outstandingRequests: () => unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLinkFromPart(p, i)]),
+    resolveLink
   });
 }
 
@@ -101,7 +108,7 @@ function TransitionToResolveContentState(harness, links) {
       let newKey = harness.key + "." + index.toString();
       
       if (clip.pointerType === "edl") {
-        harness.children.push(EdlZettelFromPointer(clip, harness, newKey));
+        harness.children.push(EdlZettel(clip, harness, newKey));
       } else {
         let zettel = ZettelSchneider(clip, harness.renderLinks, newKey).zettel();
         zettel.forEach(z => harness.children.push(z));
@@ -142,18 +149,14 @@ function TransitionToResolveContentState(harness, links) {
 export function makeTestEdlZettel(edl, {edlPointer, parent, key} = {}) {
   key = key ?? "testKey";
   edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
-  let edlz = EdlZettelFromPointer(edlPointer, parent, key);
-  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
+  let edlz = EdlZettel(edlPointer, parent, key, edl);
   return edlz;
 }
 
 export function makeTestEdlZettelWithLinks(edl, links, {edlPointer, parent, key} = {}) {
   key = key ?? "testKey";
   edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
-  let edlz = EdlZettelFromPointer(edlPointer, parent, key);
-  edlz.outstandingRequests()[0][1](Part(edlPointer, edl));
-  let linkRequests = edlz.outstandingRequests();
-  links.forEach((link, i) => linkRequests[i][1](Part(linkRequests[i][0], link)));
+  let edlz = EdlZettel(edlPointer, parent, key, edl, links);
   return edlz;
 }
 

@@ -4,7 +4,7 @@ import { Endset, Link } from '../model';
 import { Span, spanTesting, LinkPointer, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
-import { EdlZettelFromPointer, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
+import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
 let toEqualSpan = spanTesting.toEqualSpan;
 let makeLinkPointer = () => LinkPointer("foo");
@@ -257,7 +257,7 @@ describe('tryAddPart', () => {
 
 describe('parent', () => {
   it('is set on the zettel', () => {
-    let expectedParent = EdlZettelFromPointer(EdlPointer("foo"), undefined, "1");
+    let expectedParent = EdlZettel(EdlPointer("foo"), undefined, "1");
     expect(Zettel(makeSpan(), expectedParent).parent).toBe(expectedParent);
   });
 });
