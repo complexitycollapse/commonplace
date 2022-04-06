@@ -37,7 +37,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
     endsets: link.endsets,
     type: link.type,
     linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
-    modifiers: RenderPointerCollection(homeEdl.nameLinkPairs().find(e => e[1] === link)[0], LinkTypePointer(link.type))
+    modifiers: RenderPointerCollection(homeEdl.nameLinkPairs.find(e => e[1] === link)[0], LinkTypePointer(link.type))
   });
 
   function style() {
@@ -67,7 +67,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
     allContentAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
     allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
-    getHomeEdl: () => homeEdl
+    getHomeEdl: () => homeEdl,
+    resolveContent
   });
 }
 

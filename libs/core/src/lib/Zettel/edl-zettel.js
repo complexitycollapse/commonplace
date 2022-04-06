@@ -6,11 +6,11 @@ import { EdlPointer, LinkPointer } from '../pointers';
 import { Edl } from '../model';
 import { EdlTypePointer } from '../Pointers/edl-type-pointer';
 
-export function EdlZettel(edlPointer, parent, key, edl, links) {
+export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
   let obj = {
     edl: undefined,
     renderLinks: undefined,
-    state: undefined,
+    state: undefined
   };
 
   addProperties(obj, {
@@ -18,13 +18,13 @@ export function EdlZettel(edlPointer, parent, key, edl, links) {
     clip: edlPointer,
     hashableName: edlPointer.hashableName,
     parent,
-    children: []
+    children: [],
+    nameLinkPairs: []
   });
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
     attributes: () => obj.state.attributes(),
-    nameLinkPairs: () => obj.state.nameLinkPairs()
   });
 
   TransitionToResolveEdlState(obj);
@@ -32,6 +32,16 @@ export function EdlZettel(edlPointer, parent, key, edl, links) {
     TransitionToResolveLinksState(obj, edl);
     if (links && obj.state.resolveLink) {
       links.forEach((l, i) => obj.state.resolveLink(l, i));
+    }
+
+    if (parts && obj.state.resolveContent) {
+      let state = obj.state;
+      parts.forEach(p => state.resolveContent(p));
+      // The state may transition from link content to EDL content,
+      // so need to resolve both kinds.
+      if (state != obj.state) {
+        parts.forEach(p => obj.state.resolveContent(p));
+      }
     }
   }
 
@@ -47,7 +57,6 @@ function TransitionToResolveEdlState(harness) {
 
   harness.state = finalObject(obj, {
     attributes: {},
-    nameLinkPairs: () => [],
     outstandingRequests: () => [[harness.clip, resolveEdl]]
   });
 }
@@ -71,7 +80,7 @@ function TransitionToResolveLinksState(harness, edl) {
       return;
     }
 
-    TransitionToResolveContentState(harness, links);
+    TransitionToResolveLinkContentState(harness, links);
   }
 
   harness.edl = edl;
@@ -79,23 +88,22 @@ function TransitionToResolveLinksState(harness, edl) {
   if (edl.links.length > 0) {
     harness.state = obj;
   } else {
-    TransitionToResolveContentState(harness, []);
+    TransitionToResolveLinkContentState(harness, []);
   }
 
   addMethods(obj, {
     attributes: {},
-    nameLinkPairs: () => [],
     outstandingRequests: () => unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLinkFromPart(p, i)]),
     resolveLink
   });
 }
 
-function TransitionToResolveContentState(harness, links) {
+function TransitionToResolveLinkContentState(harness, links) {
   let obj = {
   };
 
   harness.state = obj;
-  let nameLinkPairs = harness.edl.links.map((n, i) => [n, links[i]]);
+  harness.nameLinkPairs.push(...harness.edl.links.map((n, i) => [n, links[i]]));
   let renderPointers = undefined;
 
   function applyLinksToSelf() {
@@ -116,14 +124,26 @@ function TransitionToResolveContentState(harness, links) {
     });
   }
 
-  function outstandingRequests() {
+  function outstandingLinkContent() {
     let rps = renderPointers.renderPointers();
-    let linkContentRequests = rps.map(p => p.renderLink.outstandingRequests()).flat();
-    if (linkContentRequests.length > 0) {
-      return linkContentRequests;
-    } else {
-      return harness.children.map(z => z.outstandingRequests()).flat();
+    return rps.map(p => p.renderLink.outstandingRequests()).flat();
+  }
+
+  function resolveContent(part) {
+    renderPointers.forEach(p => p.resolveContent(part));
+  }
+
+  function tryStateTransition() {
+    if (outstandingLinkContent().length == 0) {
+      TransitionToResolveEdlContentState(harness, renderPointers);
     }
+  }
+
+  function wrapContentRequest([clip, callback]) {
+    return [clip, p => {
+      callback(p);
+      tryStateTransition();
+    }];
   }
 
   function attributes() {
@@ -133,17 +153,38 @@ function TransitionToResolveContentState(harness, links) {
   }
 
   addMethods(obj, {
-    outstandingRequests,
+    outstandingRequests: () => outstandingLinkContent().map(wrapContentRequest),
     attributes,
-    nameLinkPairs: () => nameLinkPairs ?? {}
+    resolveContent
   });
 
   harness.renderLinks = RenderLinkFactory(harness).renderLinks();
 
   applyLinksToSelf();
   createChildZettel();
+  tryStateTransition();
+}
 
-  return obj;
+function TransitionToResolveEdlContentState(harness, renderPointers) {
+  let obj = {};
+
+  function attributes() {
+    if (renderPointers) {
+      return renderPointers.attributes();
+    } else { return {}; }
+  }
+
+  function resolveContent(part) {
+    harness.children.forEach(c => c.tryAddPart(part));
+  }
+
+  addMethods(obj, {
+    outstandingRequests: () => harness.children.map(z => z.outstandingRequests()).flat(),
+    attributes,
+    resolveContent
+  });
+
+  harness.state = obj;
 }
 
 export function makeTestEdlZettel(edl, {edlPointer, parent, key} = {}) {
