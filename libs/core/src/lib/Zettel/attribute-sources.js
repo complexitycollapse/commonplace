@@ -1,14 +1,12 @@
 import { finalObject } from '../utils';
 
-export function AttributesSources(renderPointerCollection, containingEdl) {
+export function AttributesSources([specificPointers, typePointers, allTypePointers], containingEdl) {
   let obj = {};
 
   function* generateAttributeSources() {
-    let [directPointers, typePointers, allTypePointers] = renderPointerCollection.allPointers();
-    
-    yield decomposePointersAccordingToEdlHierarchy(allTypePointers);
-    yield decomposePointersAccordingToEdlHierarchy(typePointers);
-    yield decomposePointersAccordingToEdlHierarchy(directPointers);
+    yield* decomposePointersAccordingToEdlHierarchy(allTypePointers);
+    yield* decomposePointersAccordingToEdlHierarchy(typePointers);
+    yield* decomposePointersAccordingToEdlHierarchy(specificPointers);
   }
 
   return finalObject(obj, {
@@ -19,10 +17,10 @@ export function AttributesSources(renderPointerCollection, containingEdl) {
   // originate in that Edl that are found in the given pointer collection.
   // (So basically we are taking the RenderPointers in the collection and sorting and filtering
   // them according to the Edl hierarchy).
-  function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashname) {
+  function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashName) {
     for(let edl = containingEdl; edl !== undefined; edl = edl.parent) {
-      let pointers = renderPointersByEdlHashname[edl.hashableName];
-      yield { edl, pointers };
+      let pointers = renderPointersByEdlHashName[edl.hashableName];
+      if (pointers && pointers.length > 0) { yield { edl, pointers }; }
     }
   }
 }

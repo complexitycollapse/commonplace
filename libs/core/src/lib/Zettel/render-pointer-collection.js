@@ -5,7 +5,7 @@ import { RenderPointer } from "./render-pointer";
 export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
-  let directPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
+  let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
 
   function tryAddAll(renderLinks) {
     renderLinks.forEach(renderLink => {
@@ -34,7 +34,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
       }
     } else {
       if (pointer.overlaps(ownerPointer)) {
-        push(directPointers, renderPointerFn());
+        push(specificPointers, renderPointerFn());
         return true;
       } else {
         return false;
@@ -47,7 +47,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
   }
 
   function allPointers() {
-    return [directPointers, typePointers, allTypePointers];
+    return [specificPointers, typePointers, allTypePointers];
   }
 
   // function attributes() {
@@ -72,7 +72,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
       return [...map.values()].flat();
     }
 
-    let all = flatten(allTypePointers), type = flatten(typePointers), direct = flatten(directPointers);
+    let all = flatten(allTypePointers), type = flatten(typePointers), direct = flatten(specificPointers);
     return all.concat(type, direct);
   }
 
