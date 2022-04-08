@@ -33,6 +33,8 @@ export function listMap() {
   let obj = {};
   let table = new Map();
 
+  addProperties(obj, { table });
+
   function push(key, value) {
     if (table.has(key)) {
       table.get(key).push(value);
