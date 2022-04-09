@@ -201,9 +201,9 @@ export function makeTestEdlZettelWithLinks(edl, links, {edlPointer, parent, key}
   return edlz;
 }
 
-export function makeTestEdlAndEdlZettelFromLinks(links, linkNames, parent) {
+export function makeTestEdlAndEdlZettelFromLinks(links, linkNames, parent, edlPointer) {
   linkNames = linkNames ?? links.map((x, i) => LinkPointer(i.toString()));
   let edl = Edl(undefined, [], linkNames);
-  let edlZettel = makeTestEdlZettelWithLinks(edl, links, { parent });
+  let edlZettel = makeTestEdlZettelWithLinks(edl, links, { parent, edlPointer });
   return edlZettel;
 }

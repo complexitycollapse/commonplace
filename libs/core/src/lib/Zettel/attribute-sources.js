@@ -4,9 +4,9 @@ export function AttributesSources([specificPointers, typePointers, allTypePointe
   let obj = {};
 
   function* generateAttributeSources() {
-    yield* decomposePointersAccordingToEdlHierarchy(allTypePointers);
-    yield* decomposePointersAccordingToEdlHierarchy(typePointers);
     yield* decomposePointersAccordingToEdlHierarchy(specificPointers);
+    yield* decomposePointersAccordingToEdlHierarchy(typePointers);
+    yield* decomposePointersAccordingToEdlHierarchy(allTypePointers);
   }
 
   return finalObject(obj, {
@@ -19,8 +19,17 @@ export function AttributesSources([specificPointers, typePointers, allTypePointe
   // them according to the Edl hierarchy).
   function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashName) {
     for(let edl = containingEdl; edl !== undefined; edl = edl.parent) {
-      let pointers = renderPointersByEdlHashName[edl.hashableName];
-      if (pointers && pointers.length > 0) { yield { edl, pointers }; }
+      let pointers = renderPointersByEdlHashName.get(edl.hashableName);
+      if (pointers.length > 0) { yield { edl, pointers: buildPointerList(pointers, edl) }; }
     }
   }
+}
+
+function buildPointerList(pointers, edl) {
+  let sortedList = [];
+  edl.edl.links.forEach(pointer => {
+    let rp = pointers.find(p => p.renderLink.pointer == pointer);
+    if (rp) { sortedList.push(rp); }
+  });
+  return sortedList.reverse();
 }
