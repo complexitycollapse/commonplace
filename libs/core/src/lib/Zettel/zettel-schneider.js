@@ -1,7 +1,7 @@
 import { finalObject } from "../utils";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
+export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl) {
   let obj = {};
   let clipEndsetLinks = buildClipEndsetLinks(renderLinks);
   
@@ -12,7 +12,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
     if (clip.clipType === "span") {
       result = mapSpanToZettel(clip, overlappingEntries);
     } else {
-      let singleZettel = Zettel(clip);
+      let singleZettel = Zettel(clip, containingEdl);
       overlappingEntries.forEach(c => {
         singleZettel.addPointer(c.clip, c.endset, c.link);
       });
@@ -27,7 +27,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix) {
   }
 
   function mapSpanToZettel(span, overlappingEntries) {
-    if (overlappingEntries.length == 0) { return [Zettel(span, [])]; }
+    if (overlappingEntries.length == 0) { return [Zettel(span, containingEdl)]; }
 
     let overlappingClip = overlappingEntries[0].clip;
     let remainingEntries = overlappingEntries.slice(1);

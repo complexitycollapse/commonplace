@@ -2,7 +2,7 @@ import { finalObject, listMap } from "../utils";
 import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
 
-export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
+export function RenderPointerCollection(ownerPointer, ownerTypePointer, containingEdl) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
   let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
@@ -46,10 +46,6 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
   }
 
-  function allPointers() {
-    return [specificPointers, typePointers, allTypePointers];
-  }
-
   // function attributes() {
   //   let result = {};
 
@@ -76,11 +72,36 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer) {
     return all.concat(type, direct);
   }
 
+  function* pointerStack() {
+    yield* decomposePointersAccordingToEdlHierarchy(specificPointers);
+    yield* decomposePointersAccordingToEdlHierarchy(typePointers);
+    yield* decomposePointersAccordingToEdlHierarchy(allTypePointers);
+  }
+
+  // Runs through the containingEdl and its ancestors, yielding all RenderPointers that
+  // originate in that Edl that are found in the given pointer collection.
+  // (So basically we are taking the RenderPointers in the collection and sorting and filtering
+  // them according to the Edl hierarchy).
+  function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashName) {
+    for(let edl = containingEdl; edl !== undefined; edl = edl.parent) {
+      let pointers = renderPointersByEdlHashName.get(edl.hashableName);
+      if (pointers.length > 0) { yield { edl, pointers: buildPointerList(pointers, edl) }; }
+    }
+  }
+
   return finalObject(obj, {
     tryAddRenderPointer,
     tryAddAll,
-    allPointers,
-    renderPointers
+    renderPointers,
+    pointerStack
   });
 }
 
+function buildPointerList(pointers, edl) {
+  let sortedList = [];
+  edl.edl.links.forEach(pointer => {
+    let rp = pointers.find(p => p.renderLink.pointer == pointer);
+    if (rp) { sortedList.push(rp); }
+  });
+  return sortedList.reverse();
+}

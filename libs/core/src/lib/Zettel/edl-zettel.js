@@ -107,7 +107,7 @@ function TransitionToResolveLinkContentState(harness, links) {
   let renderPointers = undefined;
 
   function applyLinksToSelf() {
-    renderPointers = RenderPointerCollection(harness.clip, EdlTypePointer(harness.edl.type));
+    renderPointers = RenderPointerCollection(harness.clip, EdlTypePointer(harness.edl.type), harness);
     renderPointers.tryAddAll(harness.renderLinks);
   }
 

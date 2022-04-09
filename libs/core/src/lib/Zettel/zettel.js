@@ -5,7 +5,7 @@ import { RenderEndset } from './render-endset';
 import { RenderPointer } from './render-pointer';
 import { RenderPointerCollection } from './render-pointer-collection';
 
-export function Zettel(clip, parent) {
+export function Zettel(clip, containingEdl) {
   let obj = {};
   let onUpdate = undefined;
   let contentPart = undefined;
@@ -14,8 +14,8 @@ export function Zettel(clip, parent) {
   addProperties(obj, {
     clip,
     isSegment: false,
-    renderPointers: RenderPointerCollection(clip, ClipTypePointer(clip.clipType)),
-    parent
+    renderPointers: RenderPointerCollection(clip, ClipTypePointer(clip.clipType), containingEdl),
+    containingEdl
   });
 
   function addPointer(pointer, endset, link) {
@@ -25,7 +25,7 @@ export function Zettel(clip, parent) {
   }
 
   function addLink(link) {
-    let newZettel = ZettelSchneider(clip, [link], obj.key).zettel();
+    let newZettel = ZettelSchneider(clip, [link], obj.key, containingEdl).zettel();
 
     newZettel.forEach(z => {
       obj.renderPointers.renderPointers().forEach(p => z.renderPointers.tryAddRenderPointer(p));
