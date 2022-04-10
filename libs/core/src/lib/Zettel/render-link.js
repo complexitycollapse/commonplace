@@ -29,19 +29,25 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
   let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
+  {
+    let linkedContent = link.endsets
+          .map(e => e.pointers.filter(p => p.isClip)
+          .map(p => [p, e, undefined]))
+          .flat();
+    let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
+    let ownerTypePointer = LinkTypePointer(link.type);
+    let modifiers = RenderPointerCollection(ownerPointer, ownerTypePointer, homeEdl);
 
-  addProperties(renderLink, {
-    fragmentTag,
-    pointer,
-    link,
-    endsets: link.endsets,
-    type: link.type,
-    linkedContent: link.endsets.map(e => e.pointers.filter(p => p.isClip).map(p => [p, e, undefined])).flat(),
-    modifiers: RenderPointerCollection(
-      homeEdl.nameLinkPairs.find(e => e[1] === link)[0],
-      LinkTypePointer(link.type),
-      homeEdl)
-  });
+    addProperties(renderLink, {
+      fragmentTag,
+      pointer,
+      link,
+      endsets: link.endsets,
+      type: link.type,
+      linkedContent,
+      modifiers
+    });
+  }
 
   function style() {
     let mod = renderLink.modifiers.renderPointers().map(p => p.renderLink).find(l => l.style());

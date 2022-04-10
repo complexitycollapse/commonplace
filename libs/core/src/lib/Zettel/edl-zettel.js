@@ -25,6 +25,10 @@ export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
     attributes: () => obj.state.attributes(),
+    renderPointers: () => {
+      let fn = obj.state.renderPointers;
+      return fn ? fn() : [];
+    }
   });
 
   TransitionToResolveEdlState(obj);
@@ -155,7 +159,8 @@ function TransitionToResolveLinkContentState(harness, links) {
   addMethods(obj, {
     outstandingRequests: () => outstandingLinkContent().map(wrapContentRequest),
     attributes,
-    resolveContent
+    resolveContent,
+    renderPointers: () => renderPointers.renderPointers()
   });
 
   harness.renderLinks = RenderLinkFactory(harness).renderLinks();

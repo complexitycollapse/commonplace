@@ -1,4 +1,5 @@
 import { finalObject, listMap } from "../utils";
+import { AttributesSource } from "./attributes-source";
 import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
 
@@ -85,7 +86,7 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer, containi
   function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashName) {
     for(let edl = containingEdl; edl !== undefined; edl = edl.parent) {
       let pointers = renderPointersByEdlHashName.get(edl.hashableName);
-      if (pointers.length > 0) { yield { edl, pointers: buildPointerList(pointers, edl) }; }
+      if (pointers.length > 0) { yield AttributesSource(edl, buildPointerList(pointers, edl)); }
     }
   }
 
