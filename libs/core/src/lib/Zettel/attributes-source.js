@@ -1,6 +1,6 @@
 import { addProperties, finalObject } from "../utils";
 
-export function AttributesSource(edl, pointers) {
+export function AttributesSourceFromPointers(edl, pointers) {
   let obj = {};
 
   addProperties(obj, {

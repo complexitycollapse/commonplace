@@ -1,11 +1,11 @@
 import { describe, it, test, expect } from '@jest/globals';
 import { Endset, Link } from '../model';
 import { LinkPointer, Span } from '../pointers';
-import { AttributesSource } from './attributes-source';
+import { AttributesSourceFromPointers } from './attributes-source';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
-function make(edl, pointers) {
-  return AttributesSource(edl, pointers);
+function makeFromPointers(edl, pointers) {
+  return AttributesSourceFromPointers(edl, pointers);
 }
 
 function makeLinkWithPointer(i) {
@@ -25,16 +25,16 @@ function makeEdlZ() {
   return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
 }
 
-describe('basic properties', () => {
+describe('AttributesSourceFromPointers', () => {
   test('edl property set by constructor', () => {
     let edlZ = makeEdlZ();
-    expect(make(edlZ).edl).toBe(edlZ);
+    expect(makeFromPointers(edlZ).edl).toBe(edlZ);
   });
 
   test('pointers property set by constructor', () => {
     let edlZ = makeEdlZ();
     let allPointers = edlZ.renderPointers();
     let pointers = [allPointers[3], allPointers[1]];
-    expect(make(edlZ, pointers).pointers).toBe(pointers);
+    expect(makeFromPointers(edlZ, pointers).pointers).toBe(pointers);
   });
 });
