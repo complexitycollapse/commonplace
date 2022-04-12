@@ -22,22 +22,22 @@ export function RenderPointer(pointer, renderEndset) {
   });
 }
 
-export function mockLinkRenderPointer(linkName, attributes) {
+export function mockLinkRenderPointer(linkName, directAttributes = {}, contentAttributes = {}) {
   let pointer = LinkPointer(linkName);
-  return mockRenderPointer(pointer, attributes);
+  return mockRenderPointer(pointer, directAttributes, contentAttributes);
 }
 
-export function mockLinkTypeRenderPointer(linkType, attributes) {
+export function mockLinkTypeRenderPointer(linkType, attributes = {}) {
   let pointer = LinkTypePointer(linkType);
   return mockRenderPointer(pointer, attributes);
 }
 
-export function mockEdlRenderPointer(edlName, attributes) {
+export function mockEdlRenderPointer(edlName, attributes = {}) {
   let pointer = EdlPointer(edlName);
   return mockRenderPointer(pointer, attributes);
 }
 
-function mockRenderPointer(pointer, attributes) {
+function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let linkPointerForEdl = LinkPointer("unique type that will not be shared sdfsdfsdfsd");
   let link = Link(undefined, Endset(undefined, [pointer]));
   let edl = Edl(undefined, [], [linkPointerForEdl]);
@@ -47,7 +47,7 @@ function mockRenderPointer(pointer, attributes) {
     pointer,
     renderEndset: RenderEndset(link.endsets[0], rl),
     renderLink: rl,
-    getAttributeEndowment: name => attributes[name],
-    getAllAttributeEndowments: () => attributes
+    allDirectAttributeEndowments: () => directAttributes,
+    allContentAttributeEndowments: () => contentAttributes
   };
 }
