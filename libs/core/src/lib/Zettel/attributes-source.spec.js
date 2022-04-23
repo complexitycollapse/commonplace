@@ -1,29 +1,16 @@
 import { describe, it, test, expect } from '@jest/globals';
-import { Endset, Link } from '../model';
-import { LinkPointer, Span } from '../pointers';
 import { AttributesSourceFromPointers, DirectAttributeSource, ContentAttributeSource } from './attributes-source';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { mockLinkRenderPointer } from './render-pointer';
+import { links as linkTesting } from '../testing'
+
+function makeEdlZ(n = 10) {
+  let links = [...Array(n).keys()].map(linkTesting.makePointerAndLink);
+  return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
+}
 
 function makeFromPointers(edl, pointers) {
   return AttributesSourceFromPointers(edl, pointers);
-}
-
-function makeLinkWithPointer(i) {
-  let pointer = Span("x", 1, 1);
-  let endset = Endset(undefined, [pointer]);
-  let link = Link(i.toString(), endset);
-  let linkPointer = LinkPointer(i.toString());
-  return [linkPointer, link];
-}
-
-function makeLinks() {
-  return [...Array(10).keys()].map(makeLinkWithPointer);
-}
-
-function makeEdlZ() {
-  let links = makeLinks();
-  return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
 }
 
 function mockSource(...pointers) {

@@ -1,6 +1,6 @@
 import { addProperties, finalObject } from "../utils";
 import { Endset, leafDataToEndset } from "./endset";
-import { Span, ClipIterator } from "../pointers";
+import { Span, ClipIterator, LinkPointer } from "../pointers";
 
 export function Link(type, ...endsets) {
   let obj = {};
@@ -48,5 +48,14 @@ export let linkTesting = {
     });
   
     return Link(type ?? "typeA", ...endsets);
+  },
+
+  makePointerAndLink(uniqueKey = 1) {
+    let stringKey = uniqueKey.toString();
+    let pointer = Span(stringKey, 1, 1);
+    let endset = Endset(undefined, [pointer]);
+    let link = Link(stringKey, endset);
+    let linkPointer = LinkPointer(stringKey);
+    return [linkPointer, link];
   }
 };
