@@ -1,7 +1,7 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasClips, boxTesting, Span, spanTesting, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
 import { Endset } from './endset';
-import { Link, leafDataToLink } from './link';
+import { Link, leafDataToLink, DirectMetalink, directMetalinkType, ContentMetalink, contentMetalinkType } from './link';
 
 expect.extend({
   hasClips
@@ -87,5 +87,47 @@ describe('clipSource', () => {
     let link = Link();
     let source = link.clipSource();
     expect(source()).toBeUndefined();
+  });
+});
+
+describe('DirectMetalink', () => {
+  it('returns a link of the direct metalink type', () => {
+    expect(DirectMetalink().type).toBe(directMetalinkType);
+  });
+
+  it('sets endsets on the link from the endsets parameters', () => {
+    let endsets = [
+      Endset("foo", [makeSpan()]),
+      Endset("bar", [makeBox()]),
+      Endset(undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")])
+    ];
+  
+    let lk = DirectMetalink(...endsets);
+  
+    expect(lk.endsets.length).toBe(3);
+    expect(lk.endsets[0]).toEqual(endsets[0]);
+    expect(lk.endsets[1]).toEqual(endsets[1]);
+    expect(lk.endsets[2]).toEqual(endsets[2]);
+  });
+});
+
+describe('ContentMetalink', () => {
+  it('returns a link of the content metalink type', () => {
+    expect(ContentMetalink().type).toBe(contentMetalinkType);
+  });
+
+  it('sets endsets on the link from the endsets parameters', () => {
+    let endsets = [
+      Endset("foo", [makeSpan()]),
+      Endset("bar", [makeBox()]),
+      Endset(undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")])
+    ];
+  
+    let lk = ContentMetalink(...endsets);
+  
+    expect(lk.endsets.length).toBe(3);
+    expect(lk.endsets[0]).toEqual(endsets[0]);
+    expect(lk.endsets[1]).toEqual(endsets[1]);
+    expect(lk.endsets[2]).toEqual(endsets[2]);
   });
 });

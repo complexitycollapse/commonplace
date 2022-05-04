@@ -1,6 +1,7 @@
 import { LinkTypePointer } from "../pointers";
 import { addProperties, finalObject, mergeObjects } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
+import { directMetalinkType, contentMetalinkType } from './model';
 
 let typeMap = {
   paragraph: [null, "p"],
@@ -80,9 +81,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
     resolveContent
   });
 }
-
-const directMetalinkType = "endows direct attributes";
-const contentMetalinkType = "endows content attributes";
 
 function DirectMetalink(linkName, link, homeEdl) {
   function allDirectAttributeMetaEndowments(renderPointer, linkedContent) {

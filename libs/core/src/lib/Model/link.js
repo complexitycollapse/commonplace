@@ -25,6 +25,12 @@ export function Link(type, ...endsets) {
   });
 }
 
+export const directMetalinkType = "endows direct attributes";
+export const contentMetalinkType = "endows content attributes";
+
+export const DirectMetalink = (...endsets) => Link(directMetalinkType, ...endsets);
+export const ContentMetalink = (...endsets) => Link(contentMetalinkType, ...endsets);
+
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
   let es = leafData.es.map(leafDataToEndset);
