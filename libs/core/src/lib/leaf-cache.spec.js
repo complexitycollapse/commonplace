@@ -1,5 +1,5 @@
 import { expect, test, describe } from '@jest/globals';
-import { LinkPointer, EdlPointer, Span } from './pointers';
+import { LinkPointer, EdlPointer, Span, InlinePointer } from './pointers';
 import { LeafCache } from './leaf-cache';
 import { Part } from './part';
 import { Link, Doc } from './model';
@@ -94,5 +94,16 @@ describe('getPart/addPart', () => {
     cache.addPart(part);
 
     expect(cache.getPart(EdlPointer("doc name"))[1]).toBe(part);
+  });
+
+  test('getPart always returns inline content from InlinePointer', () => {
+    let cache = LeafCache();
+    let pointer = InlinePointer("some text");
+
+    let result = cache.getPart(pointer);
+
+    expect(result[0]).toBe(true);
+    expect(result[1].pointer).toBe(pointer);
+    expect(result[1].content).toBe("some text");
   });
 });

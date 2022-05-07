@@ -3,6 +3,7 @@ import { leafDataToClipTypePointer } from "./clip-type-pointer";
 import { leafDataToEdlPointer } from "./edl-pointer";
 import { leafDataToEdlTypePointer } from "./edl-type-pointer";
 import { leafDataToEndsetPointer } from "./endset-pointer";
+import { leafDataToInlinePointer } from "./inline-pointer";
 import { leafDataToLinkPointer } from "./link-pointer";
 import { leafDataToLinkTypePointer } from './link-type-pointer';
 
@@ -15,5 +16,6 @@ export function leafDataToPointer(data) {
   else if (type === "edl type") { return leafDataToEdlTypePointer(data); }
   else if (type === "endset") { return leafDataToEndsetPointer(data); }
   else if (type === "clip type") { return leafDataToClipTypePointer(data); }
+  else if (type === "inline") { return leafDataToInlinePointer(data); }
   else { return leafDataToClip(data); }
 }

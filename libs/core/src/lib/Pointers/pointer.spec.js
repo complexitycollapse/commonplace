@@ -8,6 +8,7 @@ import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
 import { EndsetPointer } from './endset-pointer';
+import { InlinePointer } from './inline-pointer';
 
 describe('pointerType', () => {
   it('equals "link" for LinkPointer', () => {
@@ -24,6 +25,10 @@ describe('pointerType', () => {
 
   it('equals "edl type" for EdlTypePointer', () => {
     expect(EdlTypePointer("name").pointerType).toBe("edl type");
+  });
+
+  it('equals "inline" for InlinePointer', () => {
+    expect(InlinePointer("text").pointerType).toBe("inline");
   });
 
   it('equals "clip" for Span', () => {
@@ -50,6 +55,10 @@ describe('isClip', () => {
 
   it('returns false for a EdlTypePointer', () => {
     expect(EdlTypePointer("edl").isClip).toBeFalsy();
+  });
+
+  it('returns false for an InlinePointer', () => {
+    expect(InlinePointer("txt").isClip).toBeFalsy();
   });
 
   it('returns true for a Span', () => {
@@ -90,6 +99,12 @@ describe('leafData', () => {
     let leafData = EdlTypePointer("the name").leafData();
 
     expect(leafData).toEqual({ typ: "edl type", name: "the name"});
+  });
+
+  it('returns object with typ "inline" and txt prop when called on InlinePointer', () => {
+    let leafData = InlinePointer("some text").leafData();
+
+    expect(leafData).toEqual({ typ: "inline", txt: "some text"});
   });
 });
 
@@ -146,6 +161,12 @@ describe('restoring leafData', () => {
     let edl = EdlPointer("test name");
 
     expect(leafDataToPointer(edl.leafData())).toEqual(edl);
+  });
+
+  test('leafDataToPointer is inverse of leafData for InlinePointer', () => {
+    let inline = InlinePointer("inline text");
+
+    expect(leafDataToPointer(inline.leafData())).toEqual(inline);
   });
 });
 

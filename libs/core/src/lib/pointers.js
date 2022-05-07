@@ -10,3 +10,4 @@ export { Span, spanTesting, leafDataToSpan } from './Pointers/span';
 export { ClipIterator } from './Pointers/clip-iterator';
 export { EndsetPointer } from './Pointers/endset-pointer';
 export { ClipTypePointer } from './Pointers/clip-type-pointer';
+export { InlinePointer, leafDataToInlinePointer } from './Pointers/inline-pointer';

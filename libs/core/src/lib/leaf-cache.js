@@ -1,3 +1,4 @@
+import { Part } from './part';
 import { finalObject, listMap } from './utils';
 
 export function LeafCache() {
@@ -5,6 +6,10 @@ export function LeafCache() {
   let cache = listMap();
 
   function getPart(pointer) {
+    if (pointer.pointerType === "inline") {
+      return [true, Part(pointer, pointer.inlineText)];
+    }
+
     let list = cache.get(pointer.origin);
 
     if (pointer.isClip) {
