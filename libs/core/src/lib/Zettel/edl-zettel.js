@@ -122,7 +122,7 @@ function TransitionToResolveLinkContentState(harness, links) {
       if (clip.pointerType === "edl") {
         harness.children.push(EdlZettel(clip, harness, newKey));
       } else {
-        let zettel = ZettelSchneider(clip, harness.renderLinks, newKey).zettel();
+        let zettel = ZettelSchneider(clip, harness.renderLinks, newKey, harness).zettel();
         zettel.forEach(z => harness.children.push(z));
       }
     });

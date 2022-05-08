@@ -84,7 +84,7 @@ describe('outstandingRequests', () => {
     });
   });
 
-  describe('after link downloaded', () => {
+  describe('after links downloaded', () => {
     it('requests content for all pointers in all endsets that point to content', () => {
       let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
       let clips = [Span("x", 1, 10), Box("y", 1, 1, 100, 100), Span("z", 10, 10)];
@@ -123,6 +123,27 @@ describe('outstandingRequests', () => {
       resolve(firstRequest, "0123456789");
   
       expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips.slice(1));
+    });
+  });
+
+  describe("child zettel", () => {
+    it('creates a child Zettel for each clip of content (in case where there are no links that split the clips)', () => {
+      let ez = make(makeEdl([Span("x", 1, 10), Box("y", 1, 2, 3, 4)]));
+  
+      expect(ez.children.length).toBe(2);
+    });
+
+    it('sets containingEdl on the child zettel to itself', () => {
+      let ez = make(makeEdl([Span("x", 1, 10)]));
+  
+      expect(ez.children[0].containingEdl).toBe(ez);
+    });
+
+    it('sets clip on the child zettel to the original clip', () => {
+      let clip = Span("x", 1, 10);
+      let ez = make(makeEdl([clip]));
+  
+      expect(ez.children[0].clip).toBe(clip);
     });
   });
 
