@@ -1,5 +1,5 @@
 import { LinkTypePointer } from "../pointers";
-import { addProperties, finalObject, mergeObjects } from "../utils";
+import { addProperties, finalObject, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from './model';
 
@@ -26,7 +26,7 @@ export function RenderLink(pointer, link, homeEdl) {
   else { return BaseRenderLink(pointer, link, homeEdl); }
 }
 
-function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return {}; }), contentMetaEndowments = (() => { return {}; })) {
+function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return new Map(); }), contentMetaEndowments = (() => { return new Map(); })) {
   let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
@@ -103,17 +103,17 @@ function ContentMetalink(linkName, link, homeEdl) {
 }
 
 function extractEndowments(link, renderPointer, linkedContent) {
-  if (renderPointer.renderEndset.endset.type !== undefined) {
-    return {};
-  }
+  let endowments = new Map();
 
-  let endowments = {};
+  if (renderPointer.renderEndset.endset.type !== undefined) {
+    return endowments;
+  }
 
   for(let i = 0; i < link.endsets.length - 1; ++i) {
     if (link.endsets[i].type === "attribute" && link.endsets[i+1].type === "value") {
       let attribute = findContent(linkedContent, link.Endsets[i]);
       let value = findContent(linkedContent, link.Endsets[i+1]);
-      endowments[attribute] = value;
+      endowments.set(attribute, value);
     }
   }
 
@@ -125,12 +125,12 @@ function findContent(linkedContent, endset) {
 }
 
 function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
-  let metaAttributes = {};
+  let metaAttributes = new Map();
 
   modifiers.renderPointers().forEach(p => {
     if (p.pointerType !== "endset" || p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
     {
-      mergeObjects(metaAttributes, extractFn(p));
+      mergeMaps(metaAttributes, extractFn(p));
     }
   });
 

@@ -57,8 +57,8 @@ describe('isClip', () => {
     expect(EdlTypePointer("edl").isClip).toBeFalsy();
   });
 
-  it('returns false for an InlinePointer', () => {
-    expect(InlinePointer("txt").isClip).toBeFalsy();
+  it('returns true for an InlinePointer', () => {
+    expect(InlinePointer("txt").isClip).toBeTruthy();
   });
 
   it('returns true for a Span', () => {

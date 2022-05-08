@@ -61,3 +61,7 @@ export function listMapFromList(keyFn, valueFn, list) {
 export function mergeObjects(target, source) {
   Object.entries(source).forEach(e => target[e[0]] = e[1]);
 }
+
+export function mergeMaps(target, source) {
+  [...source.entries()].forEach(e=> target.set(e[0], e[1]));
+}

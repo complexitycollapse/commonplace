@@ -3,7 +3,7 @@ import { Pointer } from "./pointer";
 export function InlinePointer(inlineText) {
   let obj = Pointer(
     "inline",
-    false,
+    true,
     () => undefined,
     undefined,
     () => `inline:${inlineText}}`,
