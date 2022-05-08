@@ -26,7 +26,7 @@ export function RenderLink(pointer, link, homeEdl) {
   else { return BaseRenderLink(pointer, link, homeEdl); }
 }
 
-function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMetaEndowments) {
+function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return {}; }), contentMetaEndowments = (() => { return {}; })) {
   let renderLink = {};
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
@@ -75,8 +75,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments, contentMet
     getContentForPointer,
     allDirectAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
     allContentAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
-    allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
-    allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent) ?? (() => { return {}; }),
+    allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent),
+    allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
     resolveContent
   });
