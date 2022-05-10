@@ -1,9 +1,50 @@
-import { expect, test } from '@jest/globals';
-// import { RenderPointerCollection } from './render-pointer-collection';
+import { expect, it, describe } from '@jest/globals';
+import { Attributes } from './attributes';
+import { links as linkTesting } from '../testing'
+import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
+import { RenderPointerCollection } from './render-pointer-collection';
 // import { mockLinkRenderPointer, mockLinkTypeRenderPointer } from './render-pointer';
-// import { LinkPointer, LinkTypePointer } from '../pointers';
+import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '../pointers';
+import { Edl, Endset, Link } from '../model';
+import { DirectMetalink } from '../Model/link';
+import { Part } from '../part';
 
-test('', () => { return; });
+function makeLinks(n = 10) {
+  return [...Array(n).keys()].map(linkTesting.makePointerAndLink);
+}
+
+function makeEdlZ(links) {
+  links = links ?? makeLinks();
+  return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
+}
+
+describe('values', () => {
+  it('returns no attributes if there are no pointers', () => {
+    let edlZ = makeEdlZ();
+    let a = Attributes(edlZ, undefined, [...RenderPointerCollection(LinkPointer("foo"), LinkTypePointer(undefined), edlZ).pointerStack()]);
+    expect([...a.values().keys()]).toHaveLength(0);
+  });
+
+  it('returns the value of a direct attribute', () => {
+    let target = Span("origin", 1, 10);
+    let endowingLink = Link("endowingLink", Endset(undefined, [target]));
+    let endowingLinkPointer = LinkPointer("endowingLink");
+    let metaLink = DirectMetalink(Endset(undefined, [endowingLinkPointer]), Endset("attribute", [InlinePointer("attr1")]), Endset("value", [InlinePointer("val1")]));
+    let metaLinkPointer = LinkPointer("metalink");
+    let edl = Edl(undefined, [target], [endowingLinkPointer, metaLinkPointer]);
+    let edlZ = EdlZettel(EdlPointer("foo"), undefined, "1", edl, [endowingLink, metaLink], [Part(target, "0123456789")]);
+    let targetZettel = edlZ.children[0];
+    let rps = targetZettel.renderPointers.renderPointers();
+    let meta = rps[0].renderLink.modifiers.renderPointers();
+    let a = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
+
+    let attributes = a.values();
+    
+    expect([...attributes.keys()]).toHaveLength(1);
+    expect(attributes.has("attr1"));
+    expect(attributes.get("attr1")).toBe("val1");
+  });
+});
 
 // function make(ownerName, ownerType) {
 //   return RenderPointerCollection(LinkPointer(ownerName), LinkTypePointer(ownerType));

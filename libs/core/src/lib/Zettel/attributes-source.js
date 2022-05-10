@@ -31,11 +31,14 @@ export function ContentAttributeSource(origin, sources) {
   return finalObject({}, { attributes });
 }
 
-function generateAttributesOfGivenType(origin, sources, fn) {
+function generateAttributesOfGivenType(origin, sources, endowmentsFn) {
   let contents = sources
     .map(source => source.pointers
-      .map(pointer => Object.entries(fn(pointer))
-        .map(function ([attribute, value]) { return { attribute, value, pointer, edl: source.edl }; }))
+      .map(pointer => {
+        let endowments = endowmentsFn(pointer);
+        let entries = [...endowments.entries()];
+        return entries.map(function ([attribute, value]) { return { attribute, value, pointer, edl: source.edl }; });
+      })
       .flat());
   
   return { origin, contents }

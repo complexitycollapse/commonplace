@@ -33,7 +33,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   {
     let linkedContent = link.endsets
           .map(e => e.pointers.filter(p => p.isClip)
-          .map(p => [p, e, undefined]))
+          .map(p => [p, e, p.inlineText])) // will be undefined except for inline pointers
           .flat();
     let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
     let ownerTypePointer = LinkTypePointer(link.type);
@@ -105,14 +105,14 @@ function ContentMetalink(linkName, link, homeEdl) {
 function extractEndowments(link, renderPointer, linkedContent) {
   let endowments = new Map();
 
-  if (renderPointer.renderEndset.endset.type !== undefined) {
+  if (renderPointer.renderEndset.endset.name !== undefined) {
     return endowments;
   }
 
   for(let i = 0; i < link.endsets.length - 1; ++i) {
-    if (link.endsets[i].type === "attribute" && link.endsets[i+1].type === "value") {
-      let attribute = findContent(linkedContent, link.Endsets[i]);
-      let value = findContent(linkedContent, link.Endsets[i+1]);
+    if (link.endsets[i].name === "attribute" && link.endsets[i+1].name === "value") {
+      let attribute = findContent(linkedContent, link.endsets[i]);
+      let value = findContent(linkedContent, link.endsets[i+1]);
       endowments.set(attribute, value);
     }
   }

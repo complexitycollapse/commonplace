@@ -43,11 +43,13 @@ function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let edl = Edl(undefined, [], [linkPointerForEdl]);
   let edlZettel = makeTestEdlZettelWithLinks(edl, [link]);
   let rl = RenderLink("mock", link, edlZettel);
+  let directMap = new Map(Object.entries(directAttributes));
+  let contentMap = new Map(Object.entries(contentAttributes));
   return {
     pointer,
     renderEndset: RenderEndset(link.endsets[0], rl),
     renderLink: rl,
-    allDirectAttributeEndowments: () => directAttributes,
-    allContentAttributeEndowments: () => contentAttributes
+    allDirectAttributeEndowments: () => directMap,
+    allContentAttributeEndowments: () => contentMap
   };
 }

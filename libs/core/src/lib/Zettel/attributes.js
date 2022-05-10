@@ -1,28 +1,30 @@
 import { finalObject } from "../utils";
-import { ContentAttributeSource } from "./attributes-source";
+import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
 
-export function Attributes(owner, parent, renderPointerCollection) {
+export function Attributes(owner, parent, pointerStack) {
   let obj = {};
 
   function content() {
-    let ourContentSource = ContentAttributeSource(owner, renderPointerCollection.pointerStack());
-    return [ourContentSource, ...(parent ? parent.content() : [])];
+    let ourContentSource = ContentAttributeSource(owner, pointerStack);
+    return [ourContentSource, (parent ? parent.content() : [])];
   }
 
-  function values(source) {
-    let attributes = Map();
+  function values() {
+    let attributes = new Map();
   
     function collapse(source) {
       if (Array.isArray(source)) {
         source.forEach(collapse);  
-      } else if (source.contents) {
-        collapse(source.contents);
-      } else if (!attributes.has(source.attribute)) {
+      } else if (source.attributes) {
+        collapse(source.attributes().contents);
+      } else if (source.attribute && !attributes.has(source.attribute)) {
         attributes.set(source.attribute, source.value);
       }
     }
   
-    collapse(source);
+    let directSource = DirectAttributeSource(owner, pointerStack);
+    let contentSource = content();
+    collapse([directSource, contentSource]);
     return attributes;
   }
 
