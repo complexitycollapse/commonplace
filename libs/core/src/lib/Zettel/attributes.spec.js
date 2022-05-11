@@ -8,6 +8,7 @@ import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '.
 import { Edl, Endset, Link } from '../model';
 import { DirectMetalink } from '../Model/link';
 import { Part } from '../part';
+import { DirectMetalinkBuilder, EdlBuilder, EndsetBuilder, LinkBuilder, SpanBuilder } from '../builders';
 
 function makeLinks(n = 10) {
   return [...Array(n).keys()].map(linkTesting.makePointerAndLink);
@@ -18,31 +19,62 @@ function makeEdlZ(links) {
   return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
 }
 
+function aSpan() {
+  return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
+}
+
+function anEndset(name) {
+  return EndsetBuilder().withName(name);
+}
+
+function aLink(name, target) {
+  let builder = LinkBuilder().withName(name).withType(name);
+  if (target) {
+    builder.withEndset(anEndset().withPointer(target));
+  }
+  return builder;
+}
+
+function aDirectMetalink(name) {
+  return DirectMetalinkBuilder().withName(name);
+}
+
+function anEdl() {
+  return EdlBuilder();
+}
+
+function anEdlZettel(edl, parent) {
+  return {
+    build: () => EdlZettel(EdlPointer("foo"), parent, "1", edl.build(), edl.links, edl.clips.map(c => c.defaultPart()))
+  };
+}
+
+function make(targetBuilder, edlZBuilder) {
+  let target = targetBuilder.build(), edlZ = edlZBuilder.build();
+  let targetZettel = edlZ.children.find(z => z.clip.hashableName === target.hashableName);
+  let a = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
+  return a;
+}
+
 describe('values', () => {
   it('returns no attributes if there are no pointers', () => {
-    let edlZ = makeEdlZ();
-    let a = Attributes(edlZ, undefined, [...RenderPointerCollection(LinkPointer("foo"), LinkTypePointer(undefined), edlZ).pointerStack()]);
-    expect([...a.values().keys()]).toHaveLength(0);
+    let target = aSpan();
+    let attributes = make(target, anEdlZettel(anEdl().withClip(target)));
+    expect([...attributes.values().keys()]).toHaveLength(0);
   });
 
   it('returns the value of a direct attribute', () => {
-    let target = Span("origin", 1, 10);
-    let endowingLink = Link("endowingLink", Endset(undefined, [target]));
-    let endowingLinkPointer = LinkPointer("endowingLink");
-    let metaLink = DirectMetalink(Endset(undefined, [endowingLinkPointer]), Endset("attribute", [InlinePointer("attr1")]), Endset("value", [InlinePointer("val1")]));
-    let metaLinkPointer = LinkPointer("metalink");
-    let edl = Edl(undefined, [target], [endowingLinkPointer, metaLinkPointer]);
-    let edlZ = EdlZettel(EdlPointer("foo"), undefined, "1", edl, [endowingLink, metaLink], [Part(target, "0123456789")]);
-    let targetZettel = edlZ.children[0];
-    let rps = targetZettel.renderPointers.renderPointers();
-    let meta = rps[0].renderLink.modifiers.renderPointers();
-    let a = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
+    let target = aSpan();
+    let endowingLink = aLink("endowing link", target);
+    let metaLink = aDirectMetalink("metalink").pointingTo(endowingLink).endowing("attr1", "val1");
+    let edlZ = anEdlZettel(anEdl().withClip(target).withLinks(endowingLink, metaLink));
+    let attributes = make(target, edlZ);
 
-    let attributes = a.values();
-    
-    expect([...attributes.keys()]).toHaveLength(1);
-    expect(attributes.has("attr1"));
-    expect(attributes.get("attr1")).toBe("val1");
+    let values = attributes.values();
+
+    expect([...values.keys()]).toHaveLength(1);
+    expect(values.has("attr1"));
+    expect(values.get("attr1")).toBe("val1");
   });
 });
 
