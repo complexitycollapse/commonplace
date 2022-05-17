@@ -8,7 +8,56 @@ import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '.
 import { Edl, Endset, Link } from '../model';
 import { DirectMetalink } from '../Model/link';
 import { Part } from '../part';
-import { DirectMetalinkBuilder, EdlBuilder, EndsetBuilder, LinkBuilder, SpanBuilder } from '../builders';
+import { DirectMetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder } from '../builders';
+
+function hasAttribute(values, attribute, expectedValue) {
+  if (!values.has(attribute)) {
+    return {
+      pass: false,
+      message: () => `expected attribute ${attribute} was not found`
+    };
+  }
+
+  if (values.get(attribute) !== expectedValue) {
+    return {
+      pass: false,
+      message: () => `expected attribute ${attribute} to have value ${expectedValue}, actually ${values.get(attribute)}`
+    };
+   } else {
+    return {
+    pass: true,
+      message: () => `expected attribute ${attribute} to have value different from ${expectedValue}`
+    };
+  }
+}
+
+function hasExactlyAttributes(values, ...attributeValuePairs) {
+  let keys = [...values.keys()];
+  for (let i = 0; i < attributeValuePairs.length; i += 2) {
+    let present = hasAttribute(values, attributeValuePairs[i], attributeValuePairs[i+1]);
+    if (!present.pass) {
+      return present;
+    }
+    keys = keys.filter(x => x !== attributeValuePairs[i]);
+  }
+
+  if (keys.length == 0) {
+    return {
+      pass: true,
+      message: () => "Expected additional keys"
+    };
+  } else {
+    return {
+      pass: false,
+      message: () => `Unexpected keys: ${JSON.stringify(keys)}`
+    };
+  }
+}
+
+expect.extend({
+ hasAttribute,
+ hasExactlyAttributes
+});
 
 function makeLinks(n = 10) {
   return [...Array(n).keys()].map(linkTesting.makePointerAndLink);
@@ -43,10 +92,28 @@ function anEdl() {
   return EdlBuilder();
 }
 
-function anEdlZettel(edl, parent) {
-  return {
-    build: () => EdlZettel(EdlPointer("foo"), parent, "1", edl.build(), edl.links, edl.clips.map(c => c.defaultPart()))
+function anEdlZettel(edl = anEdl(), parent) {
+  return EdlZettelBuilder(edl).withParent(parent);
+}
+
+function aLinkAndMetalinkPointingTo(target, ...attributePairs) {
+  let type = `${attributePairs[0]}:${attributePairs[1]}`;
+  let endowingLink = aLink(type, target);
+  let metaLink = aDirectMetalink(`metalink for ${type}`).pointingTo(endowingLink).endowing(...attributePairs);
+  return [endowingLink, metaLink];
+}
+
+function anEdlZettelWithSpan(edl = anEdl(), parent) {
+  let target = aSpan();
+  edl.withClip(target);
+  let builder = anEdlZettel(edl, parent);
+  builder.target = target;
+  builder.withLinkWithDirectAttributes = (attributeName, attributeValue) => {
+    let links = aLinkAndMetalinkPointingTo(target, attributeName, attributeValue);
+    edl.withLinks(...links);
+    return builder;
   };
+  return builder;
 }
 
 function make(targetBuilder, edlZBuilder) {
@@ -56,25 +123,68 @@ function make(targetBuilder, edlZBuilder) {
   return a;
 }
 
-describe('values', () => {
+describe('direct attributes', () => {
   it('returns no attributes if there are no pointers', () => {
     let target = aSpan();
     let attributes = make(target, anEdlZettel(anEdl().withClip(target)));
-    expect([...attributes.values().keys()]).toHaveLength(0);
+    expect(attributes.values()).hasExactlyAttributes();
   });
 
   it('returns the value of a direct attribute', () => {
-    let target = aSpan();
-    let endowingLink = aLink("endowing link", target);
-    let metaLink = aDirectMetalink("metalink").pointingTo(endowingLink).endowing("attr1", "val1");
-    let edlZ = anEdlZettel(anEdl().withClip(target).withLinks(endowingLink, metaLink));
-    let attributes = make(target, edlZ);
+    let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
+    let attributes = make(edlZ.target, edlZ);
 
     let values = attributes.values();
 
-    expect([...values.keys()]).toHaveLength(1);
-    expect(values.has("attr1"));
-    expect(values.get("attr1")).toBe("val1");
+    expect(values).hasAttribute("attr1", "val1");
+  });
+
+  it('returns all values of all attributes', () => {
+    let edlZ = anEdlZettelWithSpan()
+      .withLinkWithDirectAttributes("attr1", "val1")
+      .withLinkWithDirectAttributes("attr2", "val2")
+      .withLinkWithDirectAttributes("attr3", "val3");
+    let attributes = make(edlZ.target, edlZ);
+
+    let values = attributes.values();
+
+    expect(values).hasAttribute("attr1", "val1");
+    expect(values).hasAttribute("attr2", "val2");
+    expect(values).hasAttribute("attr3", "val3");
+  });
+
+  it('returns the later value in the Zettel rather than the earlier one', () => {
+    let edlZ = anEdlZettelWithSpan()
+      .withLinkWithDirectAttributes("attr1", "first")
+      .withLinkWithDirectAttributes("attr1", "second");
+    let attributes = make(edlZ.target, edlZ);
+
+    let values = attributes.values();
+
+    expect(values).hasAttribute("attr1", "second");
+  });
+
+  it('returns the value in the parent', () => {
+    let parent = anEdlZettel();
+    let child = anEdlZettelWithSpan(anEdl(), parent);
+    parent.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "val1"));
+    let attributes = make(child.target, child);
+
+    let values = attributes.values();
+
+    expect(values).hasAttribute("attr1", "val1");
+  });
+
+  it('returns the value in the child in preference to that in the parent', () => {
+    let parent = anEdlZettel();
+    let child = anEdlZettelWithSpan(anEdl(), parent);
+    parent.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "parent value"));
+    child.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "child value"));
+    let attributes = make(child.target, child);
+
+    let values = attributes.values();
+
+    expect(values).hasAttribute("attr1", "child value");
   });
 });
 

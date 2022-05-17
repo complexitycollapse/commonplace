@@ -1,6 +1,7 @@
 import { directMetalinkType, Edl, Endset, Link } from "./model";
 import { Part } from "./part";
-import { InlinePointer, LinkPointer, Span } from "./pointers";
+import { EdlPointer, InlinePointer, LinkPointer, Span } from "./pointers";
+import { EdlZettel } from "./zettel";
 
 function Builder(buildFn, extensions) {
   let obj = {
@@ -77,10 +78,12 @@ export function EndsetBuilder() {
 export function DirectMetalinkBuilder() {
   let builder = LinkBuilder().withType(directMetalinkType);
 
-  builder.endowing = (attributeName, attributeValue) => {
-    builder
-      .withEndset(EndsetBuilder().withName("attribute").withPointer(InlinePointer(attributeName)))
-      .withEndset(EndsetBuilder().withName("value").withPointer(InlinePointer(attributeValue)));
+  builder.endowing = (...attributePairs) => {
+    for (let i = 0; i < attributePairs.length; i += 2) {
+      builder
+        .withEndset(EndsetBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
+        .withEndset(EndsetBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
+    }
     return builder;
   };
 
@@ -104,6 +107,21 @@ export function EdlBuilder() {
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
     withClip: pointer => obj.pushTo("clips", pointer)
   });
+
+  return obj;
+}
+
+export function EdlZettelBuilder(edl) {
+  let obj = Builder(obj => {
+    edl.build();
+    return EdlZettel(
+      EdlPointer("foo"), obj.parent?.build(), "1", edl.builtObject, edl.links, edl.clips.map(c => c.defaultPart()));
+  }, {
+    withParent: parent => obj.withProperty("parent", parent),
+    withLinks: (...links) => { edl.withLinks(...links); return obj; }
+  });
+
+  obj.edl = edl;
 
   return obj;
 }
