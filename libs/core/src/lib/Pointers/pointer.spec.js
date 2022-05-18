@@ -1,9 +1,9 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
 import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
-import { LinkTypePointer, leafDataToLinkTypePointer } from './link-type-pointer';
-import { EdlTypePointer, leafDataToEdlTypePointer } from './edl-type-pointer';
-import { ClipTypePointer } from './clip-type-pointer';
+import { LinkTypePointer, leafDataToLinkTypePointer } from './type-pointer';
+import { EdlTypePointer, leafDataToEdlTypePointer } from './type-pointer';
+import { ClipTypePointer } from './type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';

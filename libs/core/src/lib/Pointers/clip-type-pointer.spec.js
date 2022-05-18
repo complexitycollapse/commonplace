@@ -1,5 +1,5 @@
 import { describe, it, expect, test } from '@jest/globals';
-import { ClipTypePointer, leafDataToClipTypePointer } from './clip-type-pointer';
+import { ClipTypePointer, leafDataToClipTypePointer } from './type-pointer';
 import { LinkPointer } from './link-pointer';
 
 test('pointerType equals "endset"', () => {

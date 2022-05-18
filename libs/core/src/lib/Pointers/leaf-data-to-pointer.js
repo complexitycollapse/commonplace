@@ -1,11 +1,11 @@
 import { leafDataToClip } from "../model";
-import { leafDataToClipTypePointer } from "./clip-type-pointer";
+import { leafDataToClipTypePointer } from "./type-pointer";
 import { leafDataToEdlPointer } from "./edl-pointer";
-import { leafDataToEdlTypePointer } from "./edl-type-pointer";
+import { leafDataToEdlTypePointer } from "./type-pointer";
 import { leafDataToEndsetPointer } from "./endset-pointer";
 import { leafDataToInlinePointer } from "./inline-pointer";
 import { leafDataToLinkPointer } from "./link-pointer";
-import { leafDataToLinkTypePointer } from './link-type-pointer';
+import { leafDataToLinkTypePointer } from './type-pointer';
 
 export function leafDataToPointer(data) {
   let type = data.typ;
