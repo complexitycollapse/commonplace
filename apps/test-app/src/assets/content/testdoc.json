@@ -21,9 +21,9 @@
     { "typ": "link", "name": "uppercaseLink.json" },
     { "typ": "link", "name": "lowercaseLink.json" },
     { "typ": "link", "name": "paragraphLink4.json" },
-    { "typ": "link", "name": "testLinks.json", "idx": 0 },
-    { "typ": "link", "name": "testLinks.json", "idx": 1 },
-    { "typ": "link", "name": "testLinks.json", "idx": 2 },
+    { "typ": "link", "name": "boldLink.json" },
+    { "typ": "link", "name": "capitalizeLink.json" },
+    { "typ": "link", "name": "italicLink.json" },
     { "typ": "link", "name": "rightAlignLink.json" }
   ]
 }

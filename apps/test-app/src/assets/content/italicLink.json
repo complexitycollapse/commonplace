@@ -1,0 +1,7 @@
+{
+  "typ": "italic",
+  "es": [{ "ptr": [
+    { "typ": "span", "ori": "origin", "st": 8, "ln": 10 },
+    { "typ": "span", "ori": "origin", "st": 35, "ln": 4 },
+    { "typ": "span", "ori": "origin", "st": 293, "ln": 5 }] }]
+}
