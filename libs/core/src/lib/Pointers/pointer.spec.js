@@ -77,12 +77,6 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name"});
   });
 
-  it('returns object with typ "link" and name and index props when called on LinkPointer with index', () => {
-    let leafData = LinkPointer("the name", 123).leafData();
-
-    expect(leafData).toEqual({ typ: "link", name: "the name", idx: 123 });
-  });
-
   it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
     let leafData = LinkTypePointer("the name").leafData();
 
@@ -171,12 +165,8 @@ describe('restoring leafData', () => {
 });
 
 describe('LinkPointer.hashableName', () => {
-  it('returns link and the link name suffixed with :N if there is no index specified', () => {
-    expect(LinkPointer("xyz").hashableName).toBe("link:xyz:N");
-  });
-
-  it('returns link and the link name suffixed with the index if there is an index specified', () => {
-    expect(LinkPointer("xyz", 123).hashableName).toBe("link:xyz:123");
+  it('returns link and the link name', () => {
+    expect(LinkPointer("xyz").hashableName).toBe("link:xyz");
   });
 });
 
@@ -190,25 +180,7 @@ describe('engulfs', () => {
       expect(LinkPointer("name").engulfs(LinkPointer("name2"))).toBeFalsy();
     });
 
-    it('returns true if the other pointer has an index but we dont', () => {
-      // in this case we represent the entire array of links and hence engulf
-      // the individual link pointer
-      expect(LinkPointer("name").engulfs(LinkPointer("name", 0))).toBeTruthy();
-    });
-
-    it('returns false if we have an index but the other does not', () => {
-      expect(LinkPointer("name", 0).engulfs(LinkPointer("name"))).toBeFalsy();
-    });
-
-    it('returns false if they both have indexes but they are different', () => {
-      expect(LinkPointer("name", 1).engulfs(LinkPointer("name", 2))).toBeFalsy();
-    });
-
-    it('returns true if they have the same name and index', () => {
-      expect(LinkPointer("name", 1).engulfs(LinkPointer("name", 1))).toBeTruthy();
-    });
-
-    it('returns true if they have the same name and neither has an index', () => {
+    it('returns true if they have the same name', () => {
       expect(LinkPointer("name").engulfs(LinkPointer("name"))).toBeTruthy();
     });
 
@@ -217,25 +189,7 @@ describe('engulfs', () => {
         expect(LinkPointer("name").engulfs(EndsetPointer("name2", undefined, "endset name", 100))).toBeFalsy();
       });
   
-      it('returns true if the other pointer has an index but we dont', () => {
-        // in this case we represent the entire array of links and hence engulf
-        // the individual link pointer
-        expect(LinkPointer("name").engulfs(EndsetPointer("name", 0, "endset name", 100))).toBeTruthy();
-      });
-  
-      it('returns false if we have an index but the other does not', () => {
-        expect(LinkPointer("name", 0).engulfs(EndsetPointer("name", undefined, "endset name", 100))).toBeFalsy();
-      });
-  
-      it('returns false if they both have indexes but they are different', () => {
-        expect(LinkPointer("name", 1).engulfs(EndsetPointer("name", 2, "endset name", 100))).toBeFalsy();
-      });
-  
-      it('returns true if they have the same name and index', () => {
-        expect(LinkPointer("name", 1).engulfs(EndsetPointer("name", 1, "endset name", 100))).toBeTruthy();
-      });
-  
-      it('returns true if they have the same name and neither has an index', () => {
+      it('returns true if they have the same name', () => {
         expect(LinkPointer("name").engulfs(EndsetPointer("name", undefined, "endset name", 100))).toBeTruthy();
       });
     });
@@ -250,25 +204,7 @@ describe('engulfs', () => {
       expect(EdlPointer("name").engulfs(EdlPointer("name2"))).toBeFalsy();
     });
 
-    it('returns true if the other pointer has an index but we dont', () => {
-      // in this case we represent the entire array of links and hence engulf
-      // the individual link pointer
-      expect(EdlPointer("name").engulfs(EdlPointer("name", 0))).toBeTruthy();
-    });
-
-    it('returns false if we have an index but the other does not', () => {
-      expect(EdlPointer("name", 0).engulfs(EdlPointer("name"))).toBeFalsy();
-    });
-
-    it('returns false if they both have indexes but they are different', () => {
-      expect(EdlPointer("name", 1).engulfs(EdlPointer("name", 2))).toBeFalsy();
-    });
-
-    it('returns true if they have the same name and index', () => {
-      expect(EdlPointer("name", 1).engulfs(EdlPointer("name", 1))).toBeTruthy();
-    });
-
-    it('returns true if they have the same name and neither has an index', () => {
+    it('returns true if they have the same name', () => {
       expect(EdlPointer("name").engulfs(EdlPointer("name"))).toBeTruthy();
     });
   });
