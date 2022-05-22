@@ -3,7 +3,7 @@ import { addProperties, addMethods } from "../utils";
 import { Pointer } from "./pointer";
 
 export function Clip(clipType, origin, partBuilder, hashableNameFn, originalContext) {
-  let obj = Pointer("clip", true, () => origin, partBuilder, hashableNameFn);
+  let obj = Pointer(clipType, true, () => origin, partBuilder, hashableNameFn);
 
   addProperties(obj, {
     clipType,
@@ -15,7 +15,8 @@ export function Clip(clipType, origin, partBuilder, hashableNameFn, originalCont
   addMethods(obj, {
     equalOrigin: clip => clip.origin == origin,
     clipSource: () => ClipIterator(x => x, [obj]),
-    sameType: clip => clip.clipType === clipType
+    sameType: clip => clip.clipType === clipType,
+    endowsTo: clip => obj.overlaps(clip)
   });
 
   return obj;

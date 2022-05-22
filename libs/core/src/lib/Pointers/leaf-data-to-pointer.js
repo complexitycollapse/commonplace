@@ -1,5 +1,5 @@
 import { leafDataToClip } from "../model";
-import { leafDataToClipTypePointer } from "./type-pointer";
+import { leafDataToPointerTypePointer } from "./type-pointer";
 import { leafDataToEdlPointer } from "./edl-pointer";
 import { leafDataToEdlTypePointer } from "./type-pointer";
 import { leafDataToEndsetPointer } from "./endset-pointer";
@@ -15,7 +15,7 @@ export function leafDataToPointer(data) {
   else if (type === "link type") { return leafDataToLinkTypePointer(data); }
   else if (type === "edl type") { return leafDataToEdlTypePointer(data); }
   else if (type === "endset") { return leafDataToEndsetPointer(data); }
-  else if (type === "clip type") { return leafDataToClipTypePointer(data); }
+  else if (type === "pointer type") { return leafDataToPointerTypePointer(data); }
   else if (type === "inline") { return leafDataToInlinePointer(data); }
   else { return leafDataToClip(data); }
 }

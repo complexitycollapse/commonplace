@@ -2,13 +2,14 @@ import { describe, it, expect } from '@jest/globals';
 import { RenderPointerCollection } from './render-pointer-collection';
 import { spans } from '../../testing';
 import { Endset, Link } from '../model';
-import { ClipTypePointer, EdlPointer, LinkPointer } from '../pointers';
+import { PointerTypePointer, EdlPointer, LinkPointer, LinkTypePointer } from '../pointers';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { RenderLink } from './render-link';
 
-let target = spans.makeSpan();
-let targetType = ClipTypePointer("span");
-let allType = ClipTypePointer("all");
+let targetPointer = LinkPointer("target");
+let targetSubject = Link("target link type");
+let targetLinkType = LinkTypePointer(targetSubject.type);
+let allLinkTypes = PointerTypePointer("link");
 
 function hasLinks(actualSource, ...expected) {
   let actualLinks = actualSource.pointers.map(rp => rp.renderLink.link);
@@ -29,12 +30,12 @@ let linkCounter = 1;
 
 function bunchOfLinks(target, targetType) {
   return [
-    [LinkPointer("foo", ++linkCounter), makeLink(target, linkCounter)],
-    [LinkPointer("foo", ++linkCounter), makeLink(target, linkCounter)],
-    [LinkPointer("foo", ++linkCounter), makeLink(targetType, linkCounter)],
-    [LinkPointer("foo", ++linkCounter), makeLink(targetType, linkCounter)],
-    [LinkPointer("foo", ++linkCounter), makeLink(allType, linkCounter)],
-    [LinkPointer("foo", ++linkCounter), makeLink(allType, linkCounter)]
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(target, linkCounter)],
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(target, linkCounter)],
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(targetType, linkCounter)],
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(targetType, linkCounter)],
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(allLinkTypes, linkCounter)],
+    [LinkPointer(`foo ${++linkCounter}`), makeLink(allLinkTypes, linkCounter)]
   ];
 }
 
@@ -51,7 +52,7 @@ function makeEdl(parent, pointerLinkPairs, name) {
 }
 
 function getStack(edlZ, linksInRenderPointerCollection) {
-  let rpc = RenderPointerCollection(target, targetType, edlZ);
+  let rpc = RenderPointerCollection(targetPointer, targetSubject, edlZ);
   let renderLinks = linksInRenderPointerCollection.map(l => RenderLink(l[0], l[1], l[2]));
   rpc.tryAddAll(renderLinks);
   let sources = [...rpc.pointerStack()];
@@ -59,17 +60,17 @@ function getStack(edlZ, linksInRenderPointerCollection) {
 }
 
 describe('pointerStack', () => {
-  let innerLinks = bunchOfLinks(target, targetType);
-  let parentLinks = bunchOfLinks(target, targetType);
-  let grandParentLinks = bunchOfLinks(target, targetType);
+  let innerLinks = bunchOfLinks(targetPointer, targetLinkType);
+  let parentLinks = bunchOfLinks(targetPointer, targetLinkType);
+  let grandParentLinks = bunchOfLinks(targetPointer, targetLinkType);
   
   let grandParentEdl = makeEdl(undefined, grandParentLinks, "inner");
   let parentEdl = makeEdl(grandParentEdl, parentLinks, "parent");
   let innerEdl = makeEdl(parentEdl, innerLinks, "grand parent");
 
-  let [specificLink1, specificLink2, spanLink1, spanLink2, allLink1, allLink2] = innerLinks;
-  let [specificLink1Parent, specificLink2Parent, spanLink1Parent, spanLink2Parent, allLink1Parent, allLink2Parent] = parentLinks;
-  let [specificLink1GrandParent, specificLink2GrandParent, spanLink1GrandParent, spanLink2GrandParent, allLink1GrandParent, allLink2GrandParent] = grandParentLinks;
+  let [specificLink1, specificLink2, typeLink1, typeLink2, allLink1, allLink2] = innerLinks;
+  let [specificLink1Parent, specificLink2Parent, typeLink1Parent, typeLink2Parent, allLink1Parent, allLink2Parent] = parentLinks;
+  let [specificLink1GrandParent, specificLink2GrandParent, typeLink1GrandParent, typeLink2GrandParent, allLink1GrandParent, allLink2GrandParent] = grandParentLinks;
 
   it('returns no sources if no links are passed in', () => {
     expect(getStack(innerEdl, [])).toEqual([]);
@@ -110,48 +111,48 @@ describe('pointerStack', () => {
   });
 
   it('separates links of different pointer specifities into different sources', () => {
-    let sources = getStack(innerEdl, [specificLink1, spanLink1, allLink1]);
+    let sources = getStack(innerEdl, [specificLink1, typeLink1, allLink1]);
     expect(sources.length).toBe(3);
   });
 
   it('returns more specific link sources before less specific ones', () => {
-    let sources = getStack(innerEdl, [specificLink1, allLink1, spanLink1]);
+    let sources = getStack(innerEdl, [specificLink1, allLink1, typeLink1]);
 
     hasLinks(sources[0], specificLink1);
-    hasLinks(sources[1], spanLink1);
+    hasLinks(sources[1], typeLink1);
     hasLinks(sources[2], allLink1);
   });
 
   it('returns multiple sources for an EDL if there are links of different specificity', () => {
-    let sources = getStack(innerEdl, [specificLink1, allLink1, spanLink1]);
+    let sources = getStack(innerEdl, [specificLink1, allLink1, typeLink1]);
 
     expect(sources.map(s => s.edl)).toEqual([innerEdl, innerEdl, innerEdl]);
   });
 
   it('sorts sources by specificity THEN EDL hierarchy', () => {
-    let sources = getStack(innerEdl, [allLink1Parent, spanLink1Parent, specificLink1, spanLink1, allLink1, specificLink1Parent]);
+    let sources = getStack(innerEdl, [allLink1Parent, typeLink1Parent, specificLink1, typeLink1, allLink1, specificLink1Parent]);
 
     hasEdlAndLinks(sources[0], innerEdl, specificLink1);
     hasEdlAndLinks(sources[1], parentEdl, specificLink1Parent);
-    hasEdlAndLinks(sources[2], innerEdl, spanLink1);
-    hasEdlAndLinks(sources[3], parentEdl, spanLink1Parent);
+    hasEdlAndLinks(sources[2], innerEdl, typeLink1);
+    hasEdlAndLinks(sources[3], parentEdl, typeLink1Parent);
     hasEdlAndLinks(sources[4], innerEdl, allLink1);
     hasEdlAndLinks(sources[5], parentEdl, allLink1Parent);
   });
 
   it('sorts sources by specificity THEN EDL hierarchy and then puts the links in reverse EDL order in each source', () => {
     let sources = getStack(innerEdl, [
-      specificLink1, specificLink2, spanLink1, spanLink2, allLink1, allLink2,
-      specificLink1Parent, specificLink2Parent, spanLink1Parent, spanLink2Parent, allLink1Parent, allLink2Parent,
-      specificLink1GrandParent, specificLink2GrandParent, spanLink1GrandParent, spanLink2GrandParent, allLink1GrandParent, allLink2GrandParent
+      specificLink1, specificLink2, typeLink1, typeLink2, allLink1, allLink2,
+      specificLink1Parent, specificLink2Parent, typeLink1Parent, typeLink2Parent, allLink1Parent, allLink2Parent,
+      specificLink1GrandParent, specificLink2GrandParent, typeLink1GrandParent, typeLink2GrandParent, allLink1GrandParent, allLink2GrandParent
     ]);
 
     hasLinks(sources[0], specificLink2, specificLink1);
     hasLinks(sources[1], specificLink2Parent, specificLink1Parent);
     hasLinks(sources[2], specificLink2GrandParent, specificLink1GrandParent);
-    hasLinks(sources[3], spanLink2, spanLink1);
-    hasLinks(sources[4], spanLink2Parent, spanLink1Parent);
-    hasLinks(sources[5], spanLink2GrandParent, spanLink1GrandParent);
+    hasLinks(sources[3], typeLink2, typeLink1);
+    hasLinks(sources[4], typeLink2Parent, typeLink1Parent);
+    hasLinks(sources[5], typeLink2GrandParent, typeLink1GrandParent);
     hasLinks(sources[6], allLink2, allLink1);
     hasLinks(sources[7], allLink2Parent, allLink1Parent);
     hasLinks(sources[8], allLink2GrandParent, allLink1GrandParent);

@@ -1,5 +1,5 @@
 import { addProperties, addMethods } from '../utils';
-import { ClipTypePointer, Span, toEqualClip } from '../pointers';
+import { Span, toEqualClip } from '../pointers';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';
 import { RenderPointer } from './render-pointer';
@@ -14,7 +14,7 @@ export function Zettel(clip, containingEdl) {
   addProperties(obj, {
     clip,
     isSegment: false,
-    renderPointers: RenderPointerCollection(clip, ClipTypePointer(clip.clipType), containingEdl),
+    renderPointers: RenderPointerCollection(clip, undefined, containingEdl),
     containingEdl
   });
 

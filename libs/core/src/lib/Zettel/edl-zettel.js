@@ -4,7 +4,6 @@ import { RenderLinkFactory } from './render-link-factory';
 import { RenderPointerCollection } from './render-pointer-collection';
 import { EdlPointer, LinkPointer } from '../pointers';
 import { Edl } from '../model';
-import { EdlTypePointer } from '../Pointers/type-pointer';
 
 export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
   let obj = {
@@ -111,7 +110,7 @@ function TransitionToResolveLinkContentState(harness, links) {
   let renderPointers = undefined;
 
   function applyLinksToSelf() {
-    renderPointers = RenderPointerCollection(harness.clip, EdlTypePointer(harness.edl.type), harness);
+    renderPointers = RenderPointerCollection(harness.clip, harness.edl, harness);
     renderPointers.tryAddAll(harness.renderLinks);
   }
 

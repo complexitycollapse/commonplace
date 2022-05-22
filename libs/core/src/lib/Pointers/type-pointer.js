@@ -1,9 +1,9 @@
 import { Pointer } from "./pointer";
 
-export function TypePointer(pointerTypeName, metaType, typeItPointsTo) {
+export function TypePointer(pointerTypeName, typeItPointsTo, endowsTo) {
   let obj = Pointer(pointerTypeName, false, () => Promise.resolve(undefined), undefined,
   () => `${pointerTypeName}:${typeItPointsTo}`,
-  { type: typeItPointsTo, isTypePointer: true, allTypes: typeItPointsTo === "all" },
+  { type: typeItPointsTo, isTypePointer: true },
   {
     leafData() { return { typ: pointerTypeName, name: typeItPointsTo }; },
     clipPart (part) {
@@ -12,18 +12,19 @@ export function TypePointer(pointerTypeName, metaType, typeItPointsTo) {
         : [false, undefined];
     },
     engulfs: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type,
-    overlaps: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type
+    overlaps: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type,
+    endowsTo
   });
 
   return obj;
 }
 
-export const ClipTypePointer = type => TypePointer("clip type", "clip", type);
-export const EdlTypePointer = type => TypePointer("edl type", "edl", type);
-export const LinkTypePointer = type => TypePointer("link type", "link", type);
+export const PointerTypePointer = type => TypePointer("pointer type", type, pointer => pointer.pointerType === type);
+export const EdlTypePointer = type => TypePointer("edl type", type, (pointer, subject) => pointer.pointerType === "edl" && subject.type === type);
+export const LinkTypePointer = type => TypePointer("link type", type, (pointer, subject) => pointer.pointerType === "link" && subject.type === type);
 
-export function leafDataToClipTypePointer(data) {
-  return ClipTypePointer(data.name);
+export function leafDataToPointerTypePointer(data) {
+  return PointerTypePointer(data.name);
 }
 
 export function leafDataToEdlTypePointer(data) {

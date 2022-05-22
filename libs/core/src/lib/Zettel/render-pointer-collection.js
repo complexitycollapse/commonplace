@@ -3,7 +3,7 @@ import { AttributesSourceFromPointers } from "./attributes-source";
 import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
 
-export function RenderPointerCollection(ownerPointer, ownerTypePointer, containingEdl) {
+export function RenderPointerCollection(ownerPointer, pointerSubject, containingEdl) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
   let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
@@ -23,28 +23,23 @@ export function RenderPointerCollection(ownerPointer, ownerTypePointer, containi
   }
 
   function internalTryAdd(pointer, renderPointerFn) {
-    if (pointer.isTypePointer) {
-      if (pointer.allTypes) {
-        push(allTypePointers, renderPointerFn());
-        return true
-      } else if (ownerTypePointer.engulfs(pointer)) {
-        push(typePointers, renderPointerFn());
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      if (pointer.overlaps(ownerPointer)) {
-        push(specificPointers, renderPointerFn());
-        return true;
-      } else {
-        return false;
-      }
-    } 
-  }
+    if (!pointer.endowsTo(ownerPointer, pointerSubject)) {
+      return false;
+    }
 
-  function push(collection, renderPointer) {
-    collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
+    function push(collection, renderPointer) {
+      collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
+    }
+
+    if (pointer.pointerType === "pointer type") {
+      push(allTypePointers, renderPointerFn());
+    } else if (pointer.isTypePointer) {
+      push(typePointers, renderPointerFn());
+    } else {
+      push(specificPointers, renderPointerFn());
+    }
+
+    return true;
   }
 
   // function attributes() {

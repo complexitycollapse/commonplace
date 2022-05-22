@@ -3,7 +3,7 @@ import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
 import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
 import { LinkTypePointer, leafDataToLinkTypePointer } from './type-pointer';
 import { EdlTypePointer, leafDataToEdlTypePointer } from './type-pointer';
-import { ClipTypePointer } from './type-pointer';
+import { PointerTypePointer } from './type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
@@ -31,12 +31,12 @@ describe('pointerType', () => {
     expect(InlinePointer("text").pointerType).toBe("inline");
   });
 
-  it('equals "clip" for Span', () => {
-    expect(Span("or", 1, 2).pointerType).toBe("clip");
+  it('equals "span" for Span', () => {
+    expect(Span("or", 1, 2).pointerType).toBe("span");
   });
 
-  it('equals "clip" for Box', () => {
-    expect(Box("or", 1, 2, 3, 4).pointerType).toBe("clip");
+  it('equals "box" for Box', () => {
+    expect(Box("or", 1, 2, 3, 4).pointerType).toBe("box");
   });
 });
 
@@ -139,8 +139,8 @@ describe('restoring leafData', () => {
     expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
   });
 
-  test('leafDataToPointer is inverse of leafData for ClipTypePointer', () => {
-    let pointer = ClipTypePointer("span");
+  test('leafDataToPointer is inverse of leafData for PointerTypePointer', () => {
+    let pointer = PointerTypePointer("span");
 
     expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
   });

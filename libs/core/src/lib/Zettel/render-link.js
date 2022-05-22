@@ -1,4 +1,3 @@
-import { LinkTypePointer } from "../pointers";
 import { addProperties, finalObject, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from './model';
@@ -36,8 +35,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
           .map(p => [p, e, p.inlineText])) // will be undefined except for inline pointers
           .flat();
     let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
-    let ownerTypePointer = LinkTypePointer(link.type);
-    let modifiers = RenderPointerCollection(ownerPointer, ownerTypePointer, homeEdl);
+    let modifiers = RenderPointerCollection(ownerPointer, link, homeEdl);
 
     addProperties(renderLink, {
       fragmentTag,
