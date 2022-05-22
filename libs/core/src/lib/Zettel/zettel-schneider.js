@@ -6,7 +6,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
   let clipEndsetLinks = buildClipEndsetLinks(renderLinks);
   
   function zettel() {
-    let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps(clip));
+    let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps && s.clip.overlaps(clip));
     let result = undefined;
 
     if (clip.pointerType === "span") {

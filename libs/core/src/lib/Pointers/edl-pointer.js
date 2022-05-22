@@ -25,7 +25,6 @@ export function EdlPointer(edlName) {
         }
       },
       engulfs: other => engulfs(obj, other),
-      overlaps: other => engulfs(obj, other),
       endowsTo: other => engulfs(obj, other)
   });
 

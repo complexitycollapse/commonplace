@@ -12,7 +12,6 @@ export function TypePointer(pointerTypeName, typeItPointsTo, endowsTo) {
         : [false, undefined];
     },
     engulfs: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type,
-    overlaps: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type,
     endowsTo
   });
 

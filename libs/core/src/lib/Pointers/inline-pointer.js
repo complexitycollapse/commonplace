@@ -12,7 +12,6 @@ export function InlinePointer(inlineText) {
       leafData() { return { typ: "inline", txt: inlineText }; },
       clipPart: () => false,
       engulfs: () => false,
-      overlaps: () => false,
       endowsTo: () => false
     });
 
