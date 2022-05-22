@@ -68,7 +68,7 @@ describe('basic span functions', () => {
   });
   
   test('clip type returns span', () => {
-    expect(make().clipType).toBe("span");
+    expect(make().pointerType).toBe("span");
   });
 
   test('same type returns true for another span', () => {

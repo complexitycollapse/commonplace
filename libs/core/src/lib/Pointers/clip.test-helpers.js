@@ -3,23 +3,23 @@ import { boxTesting } from "./box";
 import { ClipIterator } from "./clip-iterator";
 
 export function toEqualClip(actualClip, expectedClip) {
-  if (actualClip.clipType !== expectedClip.clipType) {
+  if (actualClip.pointerType !== expectedClip.pointerType) {
     return {
       message: () => `Expected '${JSON.stringify(expectedClip)}', received '${JSON.stringify(actualClip)}'`,
       pass: false
     };
   }
 
-  if (expectedClip.clipType == "span") {
+  if (expectedClip.pointerType == "span") {
     return spanTesting.toEqualSpan(actualClip, expectedClip);
   }
 
-  if (expectedClip.clipType == "box") {
+  if (expectedClip.pointerType == "box") {
     return boxTesting.toEqualBox(actualClip, expectedClip);
   }
 
   return {
-    message: () => `Clip type '${expectedClip.clipType}' not understood`,
+    message: () => `Clip type '${expectedClip.pointerType}' not understood`,
     pass: false
   };
 }

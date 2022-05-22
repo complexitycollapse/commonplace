@@ -2,8 +2,8 @@ import { BoxComponent } from "./box-component";
 import { SpanComponent } from "./span-component";
 
 export function ZettelComponent(props) {
-  let clipType = props.zettel.clip.clipType;
+  let pointerType = props.zettel.clip.pointerType;
 
-  if (clipType === "span") { return SpanComponent(props); }
-  if (clipType === "box") { return BoxComponent(props); }
+  if (pointerType === "span") { return SpanComponent(props); }
+  if (pointerType === "box") { return BoxComponent(props); }
 }

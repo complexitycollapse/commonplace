@@ -78,7 +78,7 @@ export function Box(origin, x, y, width, height, originalContext)
   }
 
   function leafData() {
-    return {typ: obj.clipType, ori: origin, x, y, wd: width, ht: height, ctx: obj.originalContext?.leafData() };
+    return {typ: obj.pointerType, ori: origin, x, y, wd: width, ht: height, ctx: obj.originalContext?.leafData() };
   }
 
   function contains(pointX, pointY) {

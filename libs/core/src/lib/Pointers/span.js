@@ -89,7 +89,7 @@ export function Span(origin, start, length, originalContext) {
 
 
   function leafData() {
-    return { typ: obj.clipType, ori: origin, st: start, ln: length, ctx: originalContext?.leafData() };
+    return { typ: obj.pointerType, ori: origin, st: start, ln: length, ctx: originalContext?.leafData() };
   }
 
   return finalObject(obj, {

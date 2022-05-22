@@ -83,7 +83,7 @@ describe('basic box functions', () => {
   });
 
   test('clip type returns box', () => {
-    expect(make().clipType).toBe("box");
+    expect(make().pointerType).toBe("box");
   });
 
   test('same type returns true for another box', () => {

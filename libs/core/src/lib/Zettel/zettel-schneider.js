@@ -9,7 +9,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
     let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps(clip));
     let result = undefined;
 
-    if (clip.clipType === "span") {
+    if (clip.pointerType === "span") {
       result = mapSpanToZettel(clip, overlappingEntries);
     } else {
       let singleZettel = Zettel(clip, containingEdl);
