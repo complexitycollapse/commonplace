@@ -11,7 +11,6 @@ export function TypePointer(pointerTypeName, typeItPointsTo, endowsTo) {
         ? [true, part] 
         : [false, undefined];
     },
-    engulfs: other => obj.hasSamePointerType(other) && typeItPointsTo === other.type,
     endowsTo
   });
 

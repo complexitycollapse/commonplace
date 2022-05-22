@@ -9,6 +9,7 @@ import { Span } from './span';
 import { Box } from './box';
 import { EndsetPointer } from './endset-pointer';
 import { InlinePointer } from './inline-pointer';
+import { Edl, Link } from '../model';
 
 describe('pointerType', () => {
   it('equals "link" for LinkPointer', () => {
@@ -208,32 +209,72 @@ describe('engulfs', () => {
       expect(EdlPointer("name").engulfs(EdlPointer("name"))).toBeTruthy();
     });
   });
+});
 
-  describe('EdlTypePointer', () => {
-    it('returns false if the other pointer is not an EdlTypePointer', () => {
-      expect(EdlTypePointer("name").engulfs(LinkPointer("name"))).toBeFalsy();
+describe('endowsTo', () => {
+  describe('LinkPointer', () => {
+    it('returns false if the other pointer is not a link pointer', () => {
+      expect(LinkPointer("name").endowsTo(EdlPointer("name"))).toBeFalsy();
     });
 
-    it('returns false if the other pointer has a different type name', () => {
-      expect(EdlTypePointer("name").engulfs(EdlTypePointer("name2"))).toBeFalsy();
+    it('returns false if the other pointer has a different link name', () => {
+      expect(LinkPointer("name").endowsTo(LinkPointer("name2"))).toBeFalsy();
     });
 
     it('returns true if they have the same name', () => {
-      expect(EdlTypePointer("name").engulfs(EdlTypePointer("name"))).toBeTruthy();
+      expect(LinkPointer("name").endowsTo(LinkPointer("name"))).toBeTruthy();
+    });
+
+    describe('called on EndsetPointer', () => {
+      it('returns false if the other pointer has a different link name', () => {
+        expect(LinkPointer("name").endowsTo(EndsetPointer("name2", undefined, "endset name", 100))).toBeFalsy();
+      });
+  
+      it('returns true if they have the same name', () => {
+        expect(LinkPointer("name").endowsTo(EndsetPointer("name", undefined, "endset name", 100))).toBeTruthy();
+      });
+    });
+  });
+
+  describe('EdlPointer', () => {
+    it('returns false if the other pointer is not an Edl pointer', () => {
+      expect(EdlPointer("name").endowsTo(LinkPointer("name"))).toBeFalsy();
+    });
+
+    it('returns false if the other pointer has a different Edl name', () => {
+      expect(EdlPointer("name").endowsTo(EdlPointer("name2"))).toBeFalsy();
+    });
+
+    it('returns true if they have the same name', () => {
+      expect(EdlPointer("name").endowsTo(EdlPointer("name"))).toBeTruthy();
+    });
+  });
+
+  describe('EdlTypePointer', () => {
+    it('returns false if the other pointer is not an EdlPointer', () => {
+      expect(EdlTypePointer("test type").endowsTo(LinkPointer("test type"), Edl("test type"))).toBeFalsy();
+    });
+
+    it('returns false if the edl does not have the given type', () => {
+      expect(EdlTypePointer("test type").endowsTo(EdlPointer("name"), Edl("test type 2"))).toBeFalsy();
+    });
+
+    it('returns true if the pointer is a edl pointer and the edl has the given type', () => {
+      expect(EdlTypePointer("test type").endowsTo(EdlPointer("name"), Edl("test type"))).toBeTruthy();
     });
   });
 
   describe('LinkTypePointer', () => {
-    it('returns false if the other pointer is not an LinkTypePointer', () => {
-      expect(LinkTypePointer("name").engulfs(LinkPointer("name"))).toBeFalsy();
+    it('returns false if the other pointer is not an LinkPointer', () => {
+      expect(LinkTypePointer("test type").endowsTo(EdlPointer("test type"), Link("test type"))).toBeFalsy();
     });
 
-    it('returns false if the other pointer has a different type name', () => {
-      expect(LinkTypePointer("name").engulfs(LinkTypePointer("name2"))).toBeFalsy();
+    it('returns false if the link does not have the given type', () => {
+      expect(LinkTypePointer("test type").endowsTo(LinkPointer("name"), Link("test type 2"))).toBeFalsy();
     });
 
-    it('returns true if they have the same name', () => {
-      expect(LinkTypePointer("name").engulfs(LinkTypePointer("name"))).toBeTruthy();
+    it('returns true if the pointer is a link pointer and the link has the given type', () => {
+      expect(LinkTypePointer("test type").endowsTo(LinkPointer("name"), Link("test type"))).toBeTruthy();
     });
   });
 });
