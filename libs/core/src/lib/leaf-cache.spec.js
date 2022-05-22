@@ -1,5 +1,5 @@
 import { expect, test, describe } from '@jest/globals';
-import { LinkPointer, EdlPointer, Span, InlinePointer } from './pointers';
+import { LinkPointer, EdlPointer, Span, InlinePointer, LinkTypePointer } from './pointers';
 import { LeafCache } from './leaf-cache';
 import { Part } from './part';
 import { Link, Doc } from './model';
@@ -105,5 +105,12 @@ describe('getPart/addPart', () => {
     expect(result[0]).toBe(true);
     expect(result[1].pointer).toBe(pointer);
     expect(result[1].content).toBe("some text");
+  });
+
+  test('getPart throw an exception when passed a type pointer', () => {
+    let cache = LeafCache();
+    let pointer = LinkTypePointer("type");
+
+    expect(() => cache.getPart(pointer)).toThrow();
   });
 });
