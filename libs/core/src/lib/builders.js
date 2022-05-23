@@ -1,6 +1,6 @@
 import { directMetalinkType, Edl, Endset, Link } from "./model";
 import { Part } from "./part";
-import { EdlPointer, InlinePointer, LinkPointer, Span } from "./pointers";
+import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from "./pointers";
 import { EdlZettel } from "./zettel";
 
 function Builder(buildFn, extensions) {
@@ -62,6 +62,8 @@ export function EndsetBuilder() {
     if (p.build) {
       let built = p.build();
       return p.pointer ?? built;
+    } else if (typeof p === "string") {
+      return LinkTypePointer(p);
     }
     return p;
   }

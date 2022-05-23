@@ -4,7 +4,7 @@ import { links as linkTesting } from '../testing'
 import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { RenderPointerCollection } from './render-pointer-collection';
 // import { mockLinkRenderPointer, mockLinkTypeRenderPointer } from './render-pointer';
-import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '../pointers';
+import { PointerTypePointer, EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '../pointers';
 import { Edl, Endset, Link } from '../model';
 import { DirectMetalink } from '../Model/link';
 import { Part } from '../part';
@@ -116,23 +116,34 @@ function anEdlZettelWithSpan(edl = anEdl(), parent) {
   return builder;
 }
 
-function make(targetBuilder, edlZBuilder) {
-  let target = targetBuilder.build(), edlZ = edlZBuilder.build();
-  let targetZettel = edlZ.children.find(z => z.clip.hashableName === target.hashableName);
-  let a = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
-  return a;
+function make(targetOrTargetBuilder, edlZBuilder) {
+  let target = targetOrTargetBuilder.build ? targetOrTargetBuilder.build() : PointerTypePointer(targetOrTargetBuilder);
+  let edlZ = edlZBuilder.build();
+  let targetZettel = edlZ.children.find(z => target.endowsTo(z.clip));
+  if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
+  let attributes = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
+  return attributes;
 }
 
-describe('direct attributes', () => {
-  it('returns no attributes if there are no pointers', () => {
-    let target = aSpan();
-    let attributes = make(target, anEdlZettel(anEdl().withClip(target)));
-    expect(attributes.values()).hasExactlyAttributes();
-  });
+it('returns no attributes if there are no pointers', () => {
+  let target = aSpan();
+  let attributes = make(target, anEdlZettel(anEdl().withClip(target)));
+  expect(attributes.values()).hasExactlyAttributes();
+});
 
-  it('returns the value of a direct attribute', () => {
+describe('direct attributes', () => {
+  it('returns the value endowed by a specific pointer', () => {
     let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
     let attributes = make(edlZ.target, edlZ);
+
+    let values = attributes.values();
+
+    expect(values).hasAttribute("attr1", "val1");
+  });
+
+  it('returns the value endowed by a pointer type pointer', () => {
+    let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
+    let attributes = make("span", edlZ);
 
     let values = attributes.values();
 
@@ -164,7 +175,7 @@ describe('direct attributes', () => {
     expect(values).hasAttribute("attr1", "second");
   });
 
-  it('returns the value in the parent', () => {
+  it('returns the value endowed by a link in the parent', () => {
     let parent = anEdlZettel();
     let child = anEdlZettelWithSpan(anEdl(), parent);
     parent.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "val1"));
