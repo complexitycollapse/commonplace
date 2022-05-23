@@ -1,7 +1,7 @@
 import { Pointer } from "./pointer";
 
 export function TypePointer(pointerTypeName, typeItPointsTo, endowsTo) {
-  let obj = Pointer(pointerTypeName, false, () => Promise.resolve(undefined), undefined,
+  let obj = Pointer(pointerTypeName, false, false, () => Promise.resolve(undefined), undefined,
   () => `${pointerTypeName}:${typeItPointsTo}`,
   { type: typeItPointsTo, isTypePointer: true },
   {

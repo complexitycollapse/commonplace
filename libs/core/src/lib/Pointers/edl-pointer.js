@@ -10,6 +10,7 @@ export function EdlPointer(edlName) {
   let obj = Pointer(
     "edl",
     false,
+    false,
     x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
     () => `edl:${edlName}`,

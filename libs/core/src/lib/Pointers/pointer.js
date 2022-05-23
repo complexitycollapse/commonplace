@@ -1,11 +1,12 @@
 import { addProperties, addMethods } from "../utils";
 
-export function Pointer(pointerType, isClip, originFn, partBuilder, hashableNameFn, properties, methods) {
+export function Pointer(pointerType, isClip, specifiesContent, originFn, partBuilder, hashableNameFn, properties, methods) {
   let obj = {};
 
   addProperties(obj, {
     pointerType,
-    isClip
+    isClip,
+    specifiesContent
   });
 
   addProperties(obj, properties);

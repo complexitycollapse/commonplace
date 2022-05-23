@@ -30,8 +30,11 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
   inlineStyle = inlineStyle ?? {};
   {
+    // TODO: this doesn't work at all. If the link points to an EDL or other link then they need
+    // to be pursued recursively to get all content. specifiesContent is therefore a bad property.
+    // For now it's just a hack that makes sure inline pointers are treated correctly.
     let linkedContent = link.endsets
-          .map(e => e.pointers.filter(p => p.isClip)
+          .map(e => e.pointers.filter(p => p.specifiesContent)
           .map(p => [p, e, p.inlineText])) // will be undefined except for inline pointers
           .flat();
     let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];

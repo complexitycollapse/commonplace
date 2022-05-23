@@ -22,6 +22,7 @@ export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
   let obj = Pointer(
     "endset",
     false,
+    false,
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     () => `endset:${linkName}:${linkIndex ?? "N"}:${endsetName ?? ""}:${endsetIndex ?? "N"}`,

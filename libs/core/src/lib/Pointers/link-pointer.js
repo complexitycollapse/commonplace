@@ -16,6 +16,7 @@ export function LinkPointer(linkName) {
   let obj = Pointer(
     "link",
     false,
+    false,
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     () => `link:${linkName}`,

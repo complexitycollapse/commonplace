@@ -3,7 +3,7 @@ import { addProperties, addMethods } from "../utils";
 import { Pointer } from "./pointer";
 
 export function Clip(pointerType, origin, partBuilder, hashableNameFn, originalContext) {
-  let obj = Pointer(pointerType, true, () => origin, partBuilder, hashableNameFn);
+  let obj = Pointer(pointerType, true, true, () => origin, partBuilder, hashableNameFn);
 
   addProperties(obj, {
     isLink: false,
