@@ -93,6 +93,7 @@ function anEdl() {
 }
 
 function anEdlZettel(edl = anEdl(), parent) {
+  if (parent) { parent.edl.withClip(edl); }
   return EdlZettelBuilder(edl).withParent(parent);
 }
 
