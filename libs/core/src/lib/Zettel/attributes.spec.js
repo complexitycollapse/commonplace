@@ -96,9 +96,11 @@ function anEdlZettel(edl = anEdl(), parent) {
   return EdlZettelBuilder(edl).withParent(parent);
 }
 
-function aLinkAndMetalinkPointingTo(target, ...attributePairs) {
+function aLinkAndMetalinkPointingTo(pointerType, targetBuilder, ...attributePairs) {
   let type = `${attributePairs[0]}:${attributePairs[1]}`;
-  let endowingLink = aLink(type, target);
+  let target = targetBuilder.build();
+  let pointer = pointerType == "specific" ? target : PointerTypePointer(target.pointerType);
+  let endowingLink = aLink(type, pointer);
   let metaLink = aDirectMetalink(`metalink for ${type}`).pointingTo(endowingLink).endowing(...attributePairs);
   return [endowingLink, metaLink];
 }
@@ -108,16 +110,16 @@ function anEdlZettelWithSpan(edl = anEdl(), parent) {
   edl.withClip(target);
   let builder = anEdlZettel(edl, parent);
   builder.target = target;
-  builder.withLinkWithDirectAttributes = (attributeName, attributeValue) => {
-    let links = aLinkAndMetalinkPointingTo(target, attributeName, attributeValue);
+  builder.withLinkWithDirectAttributes = (pointerType, attributeName, attributeValue) => {
+    let links = aLinkAndMetalinkPointingTo(pointerType, target, attributeName, attributeValue);
     edl.withLinks(...links);
     return builder;
   };
   return builder;
 }
 
-function make(targetOrTargetBuilder, edlZBuilder) {
-  let target = targetOrTargetBuilder.build ? targetOrTargetBuilder.build() : PointerTypePointer(targetOrTargetBuilder);
+function make(targetBuilder, edlZBuilder) {
+  let target = targetBuilder.build();
   let edlZ = edlZBuilder.build();
   let targetZettel = edlZ.children.find(z => target.endowsTo(z.clip));
   if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
@@ -131,19 +133,13 @@ it('returns no attributes if there are no pointers', () => {
   expect(attributes.values()).hasExactlyAttributes();
 });
 
-describe('direct attributes', () => {
+describe.each(
+  [["specific"], ["pointer type"]]
+)("direct attributes", (pointerKind) => {
+
   it('returns the value endowed by a specific pointer', () => {
-    let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
+    let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes(pointerKind, "attr1", "val1");
     let attributes = make(edlZ.target, edlZ);
-
-    let values = attributes.values();
-
-    expect(values).hasAttribute("attr1", "val1");
-  });
-
-  it('returns the value endowed by a pointer type pointer', () => {
-    let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
-    let attributes = make("span", edlZ);
 
     let values = attributes.values();
 
@@ -152,9 +148,9 @@ describe('direct attributes', () => {
 
   it('returns all values of all attributes', () => {
     let edlZ = anEdlZettelWithSpan()
-      .withLinkWithDirectAttributes("attr1", "val1")
-      .withLinkWithDirectAttributes("attr2", "val2")
-      .withLinkWithDirectAttributes("attr3", "val3");
+      .withLinkWithDirectAttributes(pointerKind, "attr1", "val1")
+      .withLinkWithDirectAttributes(pointerKind, "attr2", "val2")
+      .withLinkWithDirectAttributes(pointerKind, "attr3", "val3");
     let attributes = make(edlZ.target, edlZ);
 
     let values = attributes.values();
@@ -166,8 +162,8 @@ describe('direct attributes', () => {
 
   it('returns the later value in the Zettel rather than the earlier one', () => {
     let edlZ = anEdlZettelWithSpan()
-      .withLinkWithDirectAttributes("attr1", "first")
-      .withLinkWithDirectAttributes("attr1", "second");
+      .withLinkWithDirectAttributes(pointerKind, "attr1", "first")
+      .withLinkWithDirectAttributes(pointerKind, "attr1", "second");
     let attributes = make(edlZ.target, edlZ);
 
     let values = attributes.values();
@@ -178,7 +174,7 @@ describe('direct attributes', () => {
   it('returns the value endowed by a link in the parent', () => {
     let parent = anEdlZettel();
     let child = anEdlZettelWithSpan(anEdl(), parent);
-    parent.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "val1"));
+    parent.withLinks(...aLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "val1"));
     let attributes = make(child.target, child);
 
     let values = attributes.values();
@@ -189,8 +185,8 @@ describe('direct attributes', () => {
   it('returns the value in the child in preference to that in the parent', () => {
     let parent = anEdlZettel();
     let child = anEdlZettelWithSpan(anEdl(), parent);
-    parent.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "parent value"));
-    child.withLinks(...aLinkAndMetalinkPointingTo(child.target, "attr1", "child value"));
+    parent.withLinks(...aLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "parent value"));
+    child.withLinks(...aLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "child value"));
     let attributes = make(child.target, child);
 
     let values = attributes.values();

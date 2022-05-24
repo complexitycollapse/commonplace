@@ -3,9 +3,9 @@ import { Zettel } from "./zettel";
 
 export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl) {
   let obj = {};
-  let clipEndsetLinks = buildClipEndsetLinks(renderLinks);
   
   function zettel() {
+    let [clipEndsetLinks, typePointerEndsetLinks] = buildClipEndsetLinks(renderLinks);
     let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps && s.clip.overlaps(clip));
     let result = undefined;
 
@@ -18,6 +18,12 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
       });
       result = [singleZettel];
     }
+
+    typePointerEndsetLinks.forEach(({typePointer, endset, link}) => {
+      if (typePointer.endowsTo(clip)) {
+        result.forEach(z => z.addPointer(typePointer, endset, link));
+      }
+    });
 
     if (keyPrefix) {
       result.forEach((z, index) => z.key = keyPrefix + "." + index.toString());
@@ -75,24 +81,24 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
 }
 
 function buildClipEndsetLinks(links) {
-  let list = [];
-  forEachClipPointer(links, (p, e, l) => {
-    if (p.isClip) { list.push(buildClipEndsetLink(p, e, l)) };
+  let clipList = [];
+  let typePointerList = [];
+  forEachPointer(links, (p, e, l) => {
+    if (p.isClip) {
+      clipList.push({ clip: p, endset: e, link: l });
+    }
+    if (p.isTypePointer) {
+      typePointerList.push({ typePointer: p, endset: e, link: l });
+    }
   });
-  return list;
+  return [clipList, typePointerList];
 }
 
-function buildClipEndsetLink(clip, endset, link) {
-  return { clip, endset, link };
-}
-
-function forEachClipPointer(links, callback) {
+function forEachPointer(links, callback) {
   links.forEach(link => {
     link.endsets.forEach(endset => {
       endset.pointers.forEach(pointer => {
-        if (pointer.isClip) {
-          callback(pointer, endset, link);
-        }
+        callback(pointer, endset, link);
       });
     });
   });
