@@ -194,6 +194,15 @@ describe.each(
 
     expect(values).hasAttribute("attr1", "child value");
   });
+
+  it('does not return direct attributes of containing objects', () => {
+    let edlZ = anEdlZettelWithSpan();
+    edlZ.withLinks(...aLinkAndMetalinkPointingTo(pointerKind, edlZ, "attr", "val"));
+
+    let values = make(edlZ.target, edlZ).values();
+
+    expect(values).hasExactlyAttributes();
+  });
 });
 
 // function make(ownerName, ownerType) {
