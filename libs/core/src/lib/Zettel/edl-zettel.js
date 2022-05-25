@@ -30,9 +30,9 @@ export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
     }
   });
 
-  TransitionToResolveEdlState(obj);
+  TransitionToResolveEdlState(obj, parts);
   if (edl) {
-    TransitionToResolveLinksState(obj, edl);
+    TransitionToResolveLinksState(obj, edl, parts);
     if (links && obj.state.resolveLink) {
       links.forEach((l, i) => obj.state.resolveLink(l, i));
     }
@@ -51,11 +51,11 @@ export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
   return obj;
 }
 
-function TransitionToResolveEdlState(harness) {
+function TransitionToResolveEdlState(harness, parts) {
   let obj = { harness };
 
   function resolveEdl(part) {
-    TransitionToResolveLinksState(harness, part.content);
+    TransitionToResolveLinksState(harness, part.content, parts);
   }
 
   harness.state = finalObject(obj, {
@@ -64,7 +64,7 @@ function TransitionToResolveEdlState(harness) {
   });
 }
 
-function TransitionToResolveLinksState(harness, edl) {
+function TransitionToResolveLinksState(harness, edl, parts) {
   let unresolvedLinks = [...edl.links];
   let links = new Array(unresolvedLinks.length);
   
@@ -83,7 +83,7 @@ function TransitionToResolveLinksState(harness, edl) {
       return;
     }
 
-    TransitionToResolveLinkContentState(harness, links);
+    TransitionToResolveLinkContentState(harness, links, parts);
   }
 
   harness.edl = edl;
@@ -91,7 +91,7 @@ function TransitionToResolveLinksState(harness, edl) {
   if (edl.links.length > 0) {
     harness.state = obj;
   } else {
-    TransitionToResolveLinkContentState(harness, []);
+    TransitionToResolveLinkContentState(harness, [], parts);
   }
 
   addMethods(obj, {
@@ -101,7 +101,7 @@ function TransitionToResolveLinksState(harness, edl) {
   });
 }
 
-function TransitionToResolveLinkContentState(harness, links) {
+function TransitionToResolveLinkContentState(harness, links, parts) {
   let obj = {
   };
 
@@ -119,7 +119,8 @@ function TransitionToResolveLinkContentState(harness, links) {
       let newKey = harness.key + "." + index.toString();
       
       if (clip.pointerType === "edl") {
-        harness.children.push(EdlZettel(clip, harness, newKey));
+        let childEdl = parts?.find(p => clip.denotesSame(p.pointer));
+        harness.children.push(EdlZettel(clip, harness, newKey, childEdl, links, parts));
       } else {
         let zettel = ZettelSchneider(clip, harness.renderLinks, newKey, harness).zettel();
         zettel.forEach(z => harness.children.push(z));
