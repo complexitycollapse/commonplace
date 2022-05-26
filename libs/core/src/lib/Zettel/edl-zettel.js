@@ -37,6 +37,10 @@ export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
       links.forEach((l, i) => obj.state.resolveLink(l, i));
     }
 
+    if (parts && obj.state.resolveLinkFromPartWithoutIndex) {
+      parts.forEach(obj.state.resolveLinkFromPartWithoutIndex);
+    }
+
     if (parts && obj.state.resolveContent) {
       let state = obj.state;
       parts.forEach(p => state.resolveContent(p));
@@ -75,6 +79,11 @@ function TransitionToResolveLinksState(harness, edl, parts) {
     resolveLink(link, index);
   }
 
+  function resolveLinkFromPartWithoutIndex(part) {
+    let index = edl.links.findIndex(p => p.denotesSame(part.pointer));
+    if (index >= 0) { resolveLinkFromPart(part, index); }
+  }
+
   function resolveLink(link, index) {
     unresolvedLinks[index] = undefined;
     links[index] = link;
@@ -97,7 +106,8 @@ function TransitionToResolveLinksState(harness, edl, parts) {
   addMethods(obj, {
     attributes: {},
     outstandingRequests: () => unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLinkFromPart(p, i)]),
-    resolveLink
+    resolveLink,
+    resolveLinkFromPartWithoutIndex
   });
 }
 
@@ -119,8 +129,8 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
       let newKey = harness.key + "." + index.toString();
       
       if (clip.pointerType === "edl") {
-        let childEdl = parts?.find(p => clip.denotesSame(p.pointer));
-        harness.children.push(EdlZettel(clip, harness, newKey, childEdl, links, parts));
+        let childEdl = parts?.find(p => clip.denotesSame(p.pointer)).content;
+        harness.children.push(EdlZettel(clip, harness, newKey, childEdl, undefined, parts));
       } else {
         let zettel = ZettelSchneider(clip, harness.renderLinks, newKey, harness).zettel();
         zettel.forEach(z => harness.children.push(z));
@@ -180,7 +190,7 @@ function TransitionToResolveEdlContentState(harness, renderPointers) {
   }
 
   function resolveContent(part) {
-    harness.children.forEach(c => c.tryAddPart(part));
+    harness.children.forEach(c => c.tryAddPart && c.tryAddPart(part));
   }
 
   addMethods(obj, {

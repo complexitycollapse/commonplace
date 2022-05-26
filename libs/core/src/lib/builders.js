@@ -1,4 +1,4 @@
-import { directMetalinkType, Edl, Endset, Link } from "./model";
+import { contentMetalinkType, directMetalinkType, Edl, Endset, Link } from "./model";
 import { Part } from "./part";
 import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from "./pointers";
 import { EdlZettel } from "./zettel";
@@ -34,7 +34,10 @@ function Builder(buildFn, extensions) {
 
 export function SpanBuilder() {
   let obj = Builder(
-    b => Span(b.origin ?? "origin", b.start ?? 1, b.length ?? 10), {
+    b => {
+      obj.pointer = Span(b.origin ?? "origin", b.start ?? 1, b.length ?? 10);
+      return obj.pointer;
+    }, {
       withLength: len => obj.withProperty("length", len),
       withContent: content => obj.withProperty("content", content),
       defaultPart: () => Part(obj.builtObject, obj.content)
@@ -51,7 +54,8 @@ export function LinkBuilder() {
     endsets: [],
     withType: type => obj.withProperty("type", type),
     withEndset: e => obj.pushTo("endsets", e),
-    withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString()))
+    withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString())),
+    defaultPart: () => Part(obj.pointer, obj.builtObject)
     });
 
   return obj;
@@ -77,8 +81,8 @@ export function EndsetBuilder() {
   return obj;
 }
 
-export function DirectMetalinkBuilder() {
-  let builder = LinkBuilder().withType(directMetalinkType);
+export function MetalinkBuilder(directOrContent) {
+  let builder = LinkBuilder().withType(directOrContent === "direct" ? directMetalinkType : contentMetalinkType);
 
   builder.endowing = (...attributePairs) => {
     for (let i = 0; i < attributePairs.length; i += 2) {
@@ -97,18 +101,35 @@ export function DirectMetalinkBuilder() {
   return builder;
 }
 
-export function EdlBuilder() {
+export function EdlBuilder(name = "foo") {
   let obj = Builder(obj => {
-    obj.links = obj.linkBuilders.map(x => x.build());
-    let edl = Edl(obj.type, obj.clips.map(x => x.build()), obj.linkBuilders.map(x => x.pointer));
+    obj.links.map(x => x.build());
+    let edl = Edl(obj.type, obj.clips.map(x => {x.build(); return x.pointer;}), obj.links.map(x => x.pointer));
     return edl;
   }, {
-    linkBuilders: [],
+    links: [],
     clips: [],
-    withLink: link => obj.pushTo("linkBuilders", link),
+    isEdl: true,
+    withLink: link => obj.pushTo("links", link),
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
-    withClip: pointer => obj.pushTo("clips", pointer),
-    defaultPart: () => Part(EdlPointer("this", obj.build()))
+    withClip: clip => obj.pushTo("clips", clip),
+    defaultPart: () => { obj.build(); return Part(obj.pointer, obj.builtObject); },
+    pointer: EdlPointer(name),
+    withTarget: clip => { obj.target = clip; return obj.withClip(clip); },
+    allLinkParts: function* () {
+      obj.build();
+      yield* obj.links.map(b => b.defaultPart());
+      for (let b of obj.clips) {
+        if (b.isEdl) { yield* b.allLinkParts(); }
+      }
+    },
+    allClipParts: function* () {
+      obj.build();
+      for (let b of obj.clips) {
+        yield b.defaultPart();
+        if (b.isEdl) { yield* b.allClipParts(); }
+      }
+    }
   });
 
   return obj;
@@ -116,15 +137,13 @@ export function EdlBuilder() {
 
 export function EdlZettelBuilder(edl) {
   let obj = Builder(obj => {
-    edl.build();
+    let edl = obj.edl.build();
     return EdlZettel(
-      EdlPointer("foo"), obj.parent?.build(), "1", edl.builtObject, edl.links, edl.clips.map(c => c.defaultPart()));
+      obj.edl.pointer, undefined, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
   }, {
-    withParent: parent => obj.withProperty("parent", parent),
+    edl,
     withLinks: (...links) => { edl.withLinks(...links); return obj; }
   });
-
-  obj.edl = edl;
 
   return obj;
 }
