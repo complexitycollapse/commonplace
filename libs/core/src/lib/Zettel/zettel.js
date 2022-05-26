@@ -4,6 +4,7 @@ import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';
 import { RenderPointer } from './render-pointer';
 import { RenderPointerCollection } from './render-pointer-collection';
+import { Attributes } from './attributes';
 
 export function Zettel(clip, containingEdl) {
   let obj = {};
@@ -66,6 +67,10 @@ export function Zettel(clip, containingEdl) {
     return outstanding;
   }
 
+  function attributes() {
+    return Attributes(obj, containingEdl.attributes(), obj.renderPointers.pointerStack());
+  }
+
   addMethods(obj, {
     addLink,
     tryAddPart,
@@ -73,7 +78,8 @@ export function Zettel(clip, containingEdl) {
     part: () => contentPart,
     outstandingRequests,
     setOnUpdate,
-    addPointer
+    addPointer,
+    attributes
   });
 
   return obj;

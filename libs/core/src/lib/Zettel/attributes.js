@@ -3,9 +3,17 @@ import { ContentAttributeSource, DirectAttributeSource } from "./attributes-sour
 
 export function Attributes(owner, parent, pointerStack) {
   let obj = {};
+  let materializedPointerStack = undefined;
+
+  function pointerList() {
+    if (!materializedPointerStack) {
+      materializedPointerStack = [...pointerStack];
+    }
+    return materializedPointerStack;
+  }
 
   function content() {
-    let ourContentSource = ContentAttributeSource(owner, pointerStack);
+    let ourContentSource = ContentAttributeSource(owner, pointerList());
     return [ourContentSource, (parent ? parent.content() : [])];
   }
 
@@ -22,7 +30,7 @@ export function Attributes(owner, parent, pointerStack) {
       }
     }
   
-    let directSource = DirectAttributeSource(owner, pointerStack);
+    let directSource = DirectAttributeSource(owner, pointerList());
     let contentSource = content();
     collapse([directSource, contentSource]);
     return attributes;
