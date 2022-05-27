@@ -1,6 +1,7 @@
 import { addProperties, finalObject, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from './model';
+import { Attributes } from "./attributes";
 
 let typeMap = {
   paragraph: [null, "p"],
@@ -70,6 +71,10 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     return renderLink.linkedContent.filter(x => !x[2]).map(x => [x[0], resolveContent]);
   }
 
+  function attributes() {
+    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack());
+  }
+
   return finalObject(renderLink, {
     style,
     outstandingRequests,
@@ -79,7 +84,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent),
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
-    resolveContent
+    resolveContent,
+    attributes
   });
 }
 

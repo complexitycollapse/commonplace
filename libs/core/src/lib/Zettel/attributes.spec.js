@@ -1,72 +1,11 @@
 import { expect, it, describe } from '@jest/globals';
-import { Attributes } from './attributes';
-import { links as linkTesting } from '../testing'
-import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
-import { RenderPointerCollection } from './render-pointer-collection';
-// import { mockLinkRenderPointer, mockLinkTypeRenderPointer } from './render-pointer';
-import { PointerTypePointer, EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from '../pointers';
-import { Edl, Endset, Link } from '../model';
-import { DirectMetalink } from '../Model/link';
-import { Part } from '../part';
+import { attributeTesting } from './attributes';
 import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder, Builder, PointerTypePointerBuilder, PointerBuilder } from '../builders';
 
-function hasAttribute(values, attribute, expectedValue) {
-  if (!values.has(attribute)) {
-    return {
-      pass: false,
-      message: () => `expected attribute ${attribute} was not found`
-    };
-  }
-
-  if (values.get(attribute) !== expectedValue) {
-    return {
-      pass: false,
-      message: () => `expected attribute ${attribute} to have value ${expectedValue}, actually ${values.get(attribute)}`
-    };
-   } else {
-    return {
-    pass: true,
-      message: () => `expected attribute ${attribute} to have value different from ${expectedValue}`
-    };
-  }
-}
-
-function hasExactlyAttributes(values, ...attributeValuePairs) {
-  let keys = [...values.keys()];
-  for (let i = 0; i < attributeValuePairs.length; i += 2) {
-    let present = hasAttribute(values, attributeValuePairs[i], attributeValuePairs[i+1]);
-    if (!present.pass) {
-      return present;
-    }
-    keys = keys.filter(x => x !== attributeValuePairs[i]);
-  }
-
-  if (keys.length == 0) {
-    return {
-      pass: true,
-      message: () => "Expected additional keys"
-    };
-  } else {
-    return {
-      pass: false,
-      message: () => `Unexpected keys: ${JSON.stringify(keys)}`
-    };
-  }
-}
-
 expect.extend({
- hasAttribute,
- hasExactlyAttributes
+ hasAttribute: attributeTesting.hasAttribute,
+ hasExactlyAttributes: attributeTesting.hasExactlyAttributes
 });
-
-function makeLinks(n = 10) {
-  return [...Array(n).keys()].map(linkTesting.makePointerAndLink);
-}
-
-function makeEdlZ(links) {
-  links = links ?? makeLinks();
-  return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
-}
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));

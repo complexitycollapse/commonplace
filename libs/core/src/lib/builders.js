@@ -38,6 +38,7 @@ export function SpanBuilder() {
       obj.pointer = Span(b.origin ?? "origin", b.start ?? 1, b.length ?? 10);
       return obj.pointer;
     }, {
+      content: "##########",
       withLength: len => obj.withProperty("length", len),
       withContent: content => obj.withProperty("content", content),
       defaultPart: () => Part(obj.builtObject, obj.content)

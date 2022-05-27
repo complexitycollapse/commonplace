@@ -41,3 +41,49 @@ export function Attributes(owner, parent, pointerStack) {
     values
   });
 }
+
+export let attributeTesting = {
+  hasAttribute(values, attribute, expectedValue) {
+    if (!values.has(attribute)) {
+      return {
+        pass: false,
+        message: () => `expected attribute ${attribute} was not found`
+      };
+    }
+  
+    if (values.get(attribute) !== expectedValue) {
+      return {
+        pass: false,
+        message: () => `expected attribute ${attribute} to have value ${expectedValue}, actually ${values.get(attribute)}`
+      };
+     } else {
+      return {
+      pass: true,
+        message: () => `expected attribute ${attribute} to have value different from ${expectedValue}`
+      };
+    }
+  },
+  
+  hasExactlyAttributes(values, ...attributeValuePairs) {
+    let keys = [...values.keys()];
+    for (let i = 0; i < attributeValuePairs.length; i += 2) {
+      let present = attributeTesting.hasAttribute(values, attributeValuePairs[i], attributeValuePairs[i+1]);
+      if (!present.pass) {
+        return present;
+      }
+      keys = keys.filter(x => x !== attributeValuePairs[i]);
+    }
+  
+    if (keys.length == 0) {
+      return {
+        pass: true,
+        message: () => "Expected additional keys"
+      };
+    } else {
+      return {
+        pass: false,
+        message: () => `Unexpected keys: ${JSON.stringify(keys)}`
+      };
+    }
+  }
+};

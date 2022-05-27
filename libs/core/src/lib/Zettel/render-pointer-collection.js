@@ -42,23 +42,6 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
     return true;
   }
 
-  // function attributes() {
-  //   let result = {};
-
-  //   function addAllValues(pointers) {
-  //     for(let i = 0; i <= pointers.length - 1; ++i) {
-  //       Object.entries(pointers[i].getAllAttributeEndowments()).forEach( kv => {
-  //         result[kv[0]] = kv[1];
-  //       });
-  //     };
-  //   }
-
-    // addAllValues(typePointers);
-    // addAllValues(directPointers);
-
-    // return result;
-  // }
-
   function renderPointers() {
     function flatten(map) {
       return [...map.values()].flat();

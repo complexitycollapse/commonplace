@@ -1,9 +1,16 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
 import { LinkPointer, Span } from '../pointers';
-import { Link, Endset } from '../model';
+import { Link, Endset, directMetalinkType } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
+import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder, SpanBuilder } from '../builders';
+import { attributeTesting } from './attributes';
+
+expect.extend({
+  hasAttribute: attributeTesting.hasAttribute,
+  hasExactlyAttributes: attributeTesting.hasExactlyAttributes
+ });
 
 function make(link) {
   return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
@@ -38,6 +45,17 @@ test('if the type has a style then it is returned by style', () => {
   let link = make(Link("bold"));
 
   expect(link.style()).toEqual({bold: true});
+});
+
+test('attributes returns attribute values derived from modifiers', () => {
+  let link = LinkBuilder().withName("target");
+  let endowingLink = LinkBuilder().withName("endowing link").withEndset(EndsetBuilder().withPointer(link));
+  let metalink = MetalinkBuilder(directMetalinkType).withName("metalink").pointingTo(endowingLink).endowing("attr1", "val1");
+  let edl = EdlBuilder().withLinks(link, endowingLink, metalink);
+  let edlZ = EdlZettelBuilder(edl).build();
+  let renderLink = edlZ.renderLinks[0];
+  
+  expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "val1");
 });
 
 describe('outstandingRequests/getContentForPointer', () => {
