@@ -8,7 +8,7 @@ import { PointerTypePointer, EdlPointer, InlinePointer, LinkPointer, LinkTypePoi
 import { Edl, Endset, Link } from '../model';
 import { DirectMetalink } from '../Model/link';
 import { Part } from '../part';
-import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder } from '../builders';
+import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder, Builder, PointerTypePointerBuilder, PointerBuilder } from '../builders';
 
 function hasAttribute(values, attribute, expectedValue) {
   if (!values.has(attribute)) {
@@ -115,8 +115,7 @@ function aContentLinkAndMetalinkPointingTo(pointerType, targetBuilder, ...attrib
 
 function aLinkAndMetalink(pointerType, metalinkFn, targetBuilder, ...attributePairs) {
   let type = `${attributePairs[0]}:${attributePairs[1]}`;
-  let target = targetBuilder.build();
-  let pointer = pointerType == "specific" ? target.pointer : PointerTypePointer(target.pointerType);
+  let pointer = pointerType == "specific" ? PointerBuilder(targetBuilder) : PointerTypePointerBuilder(targetBuilder);
   let endowingLink = aLink(type, pointer);
   let metaLink = metalinkFn(`metalink for ${type}`).pointingTo(endowingLink).endowing(...attributePairs);
   return [endowingLink, metaLink];
@@ -134,29 +133,35 @@ function anEdlZettelWithSpan() {
   return builder;
 }
 
-function make(targetBuilder, rootEdlZ) {
-  let target = targetBuilder.build();
-  let targetZettel = getZettel(rootEdlZ.build(), target);
-  if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
-  let attributes = Attributes(targetZettel, undefined, [...targetZettel.renderPointers.pointerStack()]);
-  return attributes;
-}
-
 function getZettel(hierarchy, clip) {
   let zettel = hierarchy.children.find(z => clip.endowsTo(z.clip));
   if (zettel) { return zettel; }
   return hierarchy.children.filter(z => z.clip.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
 }
 
+function make(targetBuilder, rootEdlZ) {
+  let target = targetBuilder.build();
+  let targetZettel = getZettel(rootEdlZ.build(), target);
+  if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
+  let attributes = targetZettel.attributes();
+  return attributes;
+}
+
+function makeZ(target, edl) {
+  let edlZ = anEdlZettel({edl});
+  let attributes = make(target, edlZ);
+  return attributes;
+}
+
 it('returns no attributes if there are no pointers', () => {
   let target = aSpan();
-  let attributes = make(target, anEdlZettel({edl: anEdl().withClip(target)}));
+  let attributes = makeZ(target, anEdl().withClip(target));
   expect(attributes.values()).hasExactlyAttributes();
 });
 
 describe("direct attributes", () => {
   describe.each(
-    [/*["specific"],*/ ["pointer type"]]
+    [["specific"], ["pointer type"]]
   )("%s pointer", pointerKind => {
   
     it('returns the value endowed by a pointer', () => {
@@ -220,11 +225,80 @@ describe("direct attributes", () => {
   
     it('does not return direct attributes of containing objects', () => {
       let edlZ = anEdlZettelWithSpan();
-      edlZ.withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, edlZ, "attr", "val"));
+      edlZ.withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, edlZ.edl, "attr", "val"));
   
       let values = make(edlZ.target, edlZ).values();
   
       expect(values).hasExactlyAttributes();
+    });
+  });
+});
+
+describe("content attributes", () => {
+  describe.each(
+    [["specific"], ["pointer type"]]
+  )("%s pointer", pointerKind => {
+    describe.each(
+      [["span"], ["edl"], ["parent edl"]]
+    )("%s level", level => {
+    
+      function anEdlHierarchy() { 
+        let child = anEdlWithSpan({name: "child"});
+        let parent = anEdl({name: "parent"}).withClip(child);
+
+        let builder = Builder(() => parent.build(), {
+          parent,
+          child,
+          target: child.target,
+          pointerBuilderForLevel: () => 
+            builder.level === "span" ? builder.target : level === "edl" ? builder.child : builder.parent,
+          withContentLink(attributeName, attributeValue) {
+            let links = aContentLinkAndMetalinkPointingTo(pointerKind, builder.pointerBuilderForLevel(level), attributeName, attributeValue);
+            builder.parent.withLinks(...links);
+            return builder;
+          }
+        });
+
+        return builder;
+      };
+
+      function make(hierarchy) {
+        return makeZ(hierarchy.target, hierarchy.parent);
+      }
+
+      it('returns the value endowed by a pointer', () => {
+        let hierarchy = anEdlHierarchy().withContentLink("attr1", "val1");
+        let attributes = make(hierarchy);
+    
+        let values = attributes.values();
+    
+        expect(values).hasAttribute("attr1", "val1");
+      });
+
+      it('returns all values of all attributes', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "val1")
+          .withContentLink("attr2", "val2")
+          .withContentLink("attr3", "val3");
+        let attributes = make(hierarchy);
+    
+        let values = attributes.values();
+    
+        expect(values).hasAttribute("attr1", "val1");
+        expect(values).hasAttribute("attr2", "val2");
+        expect(values).hasAttribute("attr3", "val3");
+      });
+    
+      it('returns the later value in the Zettel rather than the earlier one', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "first")
+          .withContentLink("attr1", "second");
+        let attributes = make(hierarchy);
+    
+        let values = attributes.values();
+    
+        expect(values).hasAttribute("attr1", "second");
+      });
     });
   });
 });

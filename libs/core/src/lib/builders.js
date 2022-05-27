@@ -1,9 +1,9 @@
 import { contentMetalinkType, directMetalinkType, Edl, Endset, Link } from "./model";
 import { Part } from "./part";
-import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, Span } from "./pointers";
+import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer, Span } from "./pointers";
 import { EdlZettel } from "./zettel";
 
-function Builder(buildFn, extensions) {
+export function Builder(buildFn, extensions) {
   let obj = {
     builtObject: undefined,
     withProperty: (propName, value) => {
@@ -79,6 +79,19 @@ export function EndsetBuilder() {
   });
 
   return obj;
+}
+
+export function PointerTypePointerBuilder(pointerType) {
+  function getPointerType(obj) {
+    if (obj.pointerType.pointer) { return obj.pointerType.pointer.pointerType; }
+    else if (obj.pointerType.build) { obj.PointerType.build(); return obj.pointerType.pointer.pointerType; }
+    else { return obj.pointerType; }
+  }
+  return Builder(obj => PointerTypePointer(getPointerType(obj)), { pointerType });
+}
+
+export function PointerBuilder(builder) {
+  return Builder(() => builder.pointer, {});
 }
 
 export function MetalinkBuilder(directOrContent) {
