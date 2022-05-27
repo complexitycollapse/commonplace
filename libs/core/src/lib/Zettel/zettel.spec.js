@@ -1,13 +1,12 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
 import { Endset, Link } from '../model';
-import { Span, spanTesting, LinkPointer, EdlPointer } from '../pointers';
+import { Span, spanTesting, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
 import { EdlZettel, makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 
 let toEqualSpan = spanTesting.toEqualSpan;
-let makeLinkPointer = () => LinkPointer("foo");
 let makeSpan = start => Span("x", start ?? 1, 10);
 
 expect.extend({
@@ -15,7 +14,7 @@ expect.extend({
 });
 
 function make(clip = Span("origin", 1, 10)) {
-  return Zettel(clip);
+  return Zettel(clip, makeTestEdlAndEdlZettelFromLinks([]));
 }
 
 function makeLink(type, ...endsets) {

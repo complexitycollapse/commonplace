@@ -13,6 +13,10 @@ let makeSpanLink = (...args) => {
 
 let hasEndset = zettelTesting.hasEndset;
 
+function make(clip, renderLinks, key) {
+  return ZettelSchneider(clip, renderLinks, key, makeTestEdlAndEdlZettelFromLinks([]));
+}
+
 expect.extend({
   toEqualClip,
   hasEndset,
@@ -57,34 +61,34 @@ describe('ZettelSchneider.zettel', () => {
     let box = Box("origin", 0, 0, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    expect(ZettelSchneider(box, [l]).zettel()).toHaveLength(1);
+    expect(make(box, [l]).zettel()).toHaveLength(1);
   });
 
   it('assigns a key to the returned zettel if a keyPrefix is passed', () => {
     let box = Box("origin", 0, 0, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    expect(ZettelSchneider(box, [l], "abc").zettel()[0].key).toBe("abc.0");
+    expect(make(box, [l], "abc").zettel()[0].key).toBe("abc.0");
   });
 
   it('does not assign a key to the returned zettel if no keyPrefix is passed', () => {
     let box = Box("origin", 0, 0, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    expect(ZettelSchneider(box, [l], undefined).zettel()[0].key).toBe(undefined);
+    expect(make(box, [l], undefined).zettel()[0].key).toBe(undefined);
   });
 
   it('returns a single zettel if the clip is a span and there are no links', () => {
     let s = Span("origin", 0, 10);
 
-    expect(ZettelSchneider(s, []).zettel()).toHaveLength(1);
+    expect(make(s, []).zettel()).toHaveLength(1);
   });
 
   it('attaches an endset to a box that overlaps with it', () => {
     let box = Box("origin", 0, 0, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    let zettel = ZettelSchneider(box, [l]).zettel();
+    let zettel = make(box, [l]).zettel();
 
     expect(zettel[0]).hasEndset(l, 0);
   });
@@ -93,7 +97,7 @@ describe('ZettelSchneider.zettel', () => {
     let box = Box("origin", 100, 100, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
-    let zettel = ZettelSchneider(box, [l]).zettel();
+    let zettel = make(box, [l]).zettel();
 
     expect(zettel[0]).not.hasEndset(l, 0);
   });
@@ -102,7 +106,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 20)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel[0]).hasEndset(l, 0);
   });
@@ -111,7 +115,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 100, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 20)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel[0]).not.hasEndset(l, 0);
   });
@@ -120,7 +124,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 5, 5)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).not.hasEndset(l, 0);
@@ -132,7 +136,7 @@ describe('ZettelSchneider.zettel', () => {
     let endsetSpan = Span("origin", 6, 20);
     let l = makeSpanLink({ clipLists: [[endsetSpan]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 5));
@@ -144,7 +148,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 5)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).hasEndset(l, 0);
@@ -156,7 +160,7 @@ describe('ZettelSchneider.zettel', () => {
     let endsetSpan = Span("origin", 0, 6);
     let l = makeSpanLink({ clipLists: [[endsetSpan]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 5));
@@ -168,7 +172,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 1, 8)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).not.hasEndset(l, 0);
@@ -181,7 +185,7 @@ describe('ZettelSchneider.zettel', () => {
     let endsetSpan = Span("origin", 2, 8);
     let l = makeSpanLink({ clipLists: [[endsetSpan]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 1));
@@ -194,7 +198,7 @@ describe('ZettelSchneider.zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 10)], [Span("origin", 0, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l]).zettel();
+    let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l, 0);
@@ -206,7 +210,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 0, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l1, 0);
@@ -218,7 +222,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 10)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 20, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(1);
     expect(zettel[0]).hasEndset(l1, 0);
@@ -229,7 +233,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 10)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -241,7 +245,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 10)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 12, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -254,7 +258,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 15)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -267,7 +271,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 15)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 10)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2], "1").zettel();
+    let zettel = make(s, [l1, l2], "1").zettel();
 
     expect(zettel[0].key).toBe("1.0");
     expect(zettel[1].key).toBe("1.1");
@@ -279,7 +283,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 2, 15)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 9)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(5);
     expect(zettel[0]).hasZettelProperties(1, 1);
@@ -294,7 +298,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 1, 20)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 5)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0]).hasZettelProperties(1, 10, [l1, 0]);
@@ -307,7 +311,7 @@ describe('ZettelSchneider.zettel', () => {
     let l1 = makeSpanLink({ clipLists: [[Span("origin", 2, 18)]] });
     let l2 = makeSpanLink({ clipLists: [[Span("origin", 11, 4)]] });
 
-    let zettel = ZettelSchneider(s, [l1, l2]).zettel();
+    let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(5);
     expect(zettel[0]).hasZettelProperties(1, 1);
