@@ -95,11 +95,5 @@ function buildClipEndsetLinks(links) {
 }
 
 function forEachPointer(links, callback) {
-  links.forEach(link => {
-    link.endsets.forEach(endset => {
-      endset.pointers.forEach(pointer => {
-        callback(pointer, endset, link);
-      });
-    });
-  });
+  links.forEach(link => { link.forEachPointer(callback); });
 }

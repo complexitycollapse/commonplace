@@ -10,11 +10,8 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
 
   function tryAddAll(renderLinks) {
     renderLinks.forEach(renderLink => {
-      renderLink.endsets.forEach(e => {
-        e.pointers.forEach(p => {
-          internalTryAdd(p, () => RenderPointer(p, RenderEndset(e, renderLink)));
-        });
-      });
+      renderLink.forEachPointer((p, e) =>
+        internalTryAdd(p, () => RenderPointer(p, RenderEndset(e, renderLink))));
     });
   }
 

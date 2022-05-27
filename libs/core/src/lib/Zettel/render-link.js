@@ -75,6 +75,10 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack());
   }
 
+  function forEachPointer(fn) {
+    link.forEachPointer((p, e) => fn(p, e, renderLink));
+  }
+
   return finalObject(renderLink, {
     style,
     outstandingRequests,
@@ -85,7 +89,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
     resolveContent,
-    attributes
+    attributes,
+    forEachPointer
   });
 }
 

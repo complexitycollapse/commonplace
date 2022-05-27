@@ -19,9 +19,18 @@ export function Link(type, ...endsets) {
     };
   }
 
+  function forEachPointer(fn) {
+    endsets.forEach(e => {
+      e.pointers.forEach(p => {
+        fn(p, e, obj);
+      });
+    });
+  }
+
   return finalObject(obj, {
     leafData,
     clipSource: () => ClipIterator(x => x, []),
+    forEachPointer
   });
 }
 
