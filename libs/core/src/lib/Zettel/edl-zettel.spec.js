@@ -34,12 +34,12 @@ describe('outstandingRequests', () => {
   it('initially requests the EDL', () => {
     let edlPointer = EdlPointer("p");
     
-    expect(EdlZettel(edlPointer, undefined, "1").outstandingRequests().map(x => x[0])).toEqual([edlPointer]);
+    expect(EdlZettel(edlPointer, undefined, undefined, "1").outstandingRequests().map(x => x[0])).toEqual([edlPointer]);
   });
 
   it('stops requesting the EDL once it has been resolved', () => {
     let edlPointer = EdlPointer("p");
-    let ez = EdlZettel(edlPointer, undefined, "1");
+    let ez = EdlZettel(edlPointer, undefined, undefined, "1");
 
     resolve(ez.outstandingRequests()[0], makeEdl())
 

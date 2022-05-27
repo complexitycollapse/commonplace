@@ -257,7 +257,7 @@ describe('tryAddPart', () => {
 
 describe('containingEdl', () => {
   it('is set on the zettel', () => {
-    let expectedContainingEdl = EdlZettel(EdlPointer("foo"), undefined, "1");
+    let expectedContainingEdl = EdlZettel(EdlPointer("foo"), undefined, undefined, "1");
     expect(Zettel(makeSpan(), expectedContainingEdl).containingEdl).toBe(expectedContainingEdl);
   });
 });

@@ -153,7 +153,7 @@ export function EdlZettelBuilder(edl) {
   let obj = Builder(obj => {
     let edl = obj.edl.build();
     return EdlZettel(
-      obj.edl.pointer, undefined, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
+      obj.edl.pointer, undefined, undefined, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
   }, {
     edl,
     withLinks: (...links) => { edl.withLinks(...links); return obj; }

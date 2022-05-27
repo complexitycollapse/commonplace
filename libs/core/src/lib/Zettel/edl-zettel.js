@@ -6,7 +6,7 @@ import { EdlPointer, LinkPointer } from '../pointers';
 import { Edl } from '../model';
 import { Attributes } from './attributes';
 
-export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
+export function EdlZettel(edlPointer, parent, defaults = Edl(), key, edl, links, parts) {
   let obj = {
     edl: undefined,
     renderLinks: undefined,
@@ -19,7 +19,8 @@ export function EdlZettel(edlPointer, parent, key, edl, links, parts) {
     hashableName: edlPointer.hashableName,
     parent,
     children: [],
-    nameLinkPairs: []
+    nameLinkPairs: [],
+    defaults
   });
 
   addMethods(obj, {
@@ -131,7 +132,7 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
       
       if (clip.pointerType === "edl") {
         let childEdl = parts?.find(p => clip.denotesSame(p.pointer)).content;
-        harness.children.push(EdlZettel(clip, harness, newKey, childEdl, undefined, parts));
+        harness.children.push(EdlZettel(clip, harness, harness.defaults, newKey, childEdl, undefined, parts));
       } else {
         let zettel = ZettelSchneider(clip, harness.renderLinks, newKey, harness).zettel();
         zettel.forEach(z => harness.children.push(z));
@@ -206,14 +207,14 @@ function TransitionToResolveEdlContentState(harness, renderPointers) {
 export function makeTestEdlZettel(edl, {edlPointer, parent, key} = {}) {
   key = key ?? "testKey";
   edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
-  let edlz = EdlZettel(edlPointer, parent, key, edl);
+  let edlz = EdlZettel(edlPointer, parent, undefined, key, edl);
   return edlz;
 }
 
 export function makeTestEdlZettelWithLinks(edl, links, {edlPointer, parent, key} = {}) {
   key = key ?? "testKey";
   edlPointer = edlPointer ?? EdlPointer("an arbitrary name");
-  let edlz = EdlZettel(edlPointer, parent, key, edl, links);
+  let edlz = EdlZettel(edlPointer, parent, undefined, key, edl, links);
   return edlz;
 }
 

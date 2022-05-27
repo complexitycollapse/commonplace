@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ docPointer, repository }) {
 
-  let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, "1"));
+  let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, undefined, "1"));
 
   useEffect(() => {
     Pouncer(repository).fetchDoc(docPointer).then(tree => setZettelTreeState(tree));
