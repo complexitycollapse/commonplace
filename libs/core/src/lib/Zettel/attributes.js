@@ -13,8 +13,13 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
   }
 
   function content() {
-    let ourContentSource = ContentAttributeSource(owner, pointerList());
+    let ourContentSource = ContentAttributeSource("defaults", pointerList());
     return [ourContentSource, (parent ? parent.content() : [])];
+  }
+
+  function defaultContent() {
+    let ourDefaultContentSource = ContentAttributeSource(owner, defaultsStack);
+    return [ourDefaultContentSource, (parent ? parent.defaultContent() : [])];
   }
 
   function values() {
@@ -32,13 +37,15 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
   
     let directSource = DirectAttributeSource(owner, pointerList());
     let contentSource = content();
-    let defaultsSource = DefaultsAttributeSource(defaultsStack);
-    collapse([directSource, contentSource, defaultsSource]);
+    let directDefaultsSource = DirectAttributeSource("defaults", defaultsStack);
+    let contentDefaultsSource = defaultContent();
+    collapse([directSource, contentSource, directDefaultsSource, contentDefaultsSource]);
     return attributes;
   }
 
   return finalObject(obj, {
     content,
+    defaultContent,
     values
   });
 }

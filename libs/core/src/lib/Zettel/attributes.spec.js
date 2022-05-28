@@ -98,9 +98,39 @@ it('returns no attributes if there are no pointers', () => {
   expect(attributes.values()).hasExactlyAttributes();
 });
 
-it('returns the default value if there are no links', () => {
+it('returns the default direct value if there are no links', () => {
+  let edlZ = anEdlZettelWithSpan();
+  edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo("pointer Type", edlZ.target, "attr1", "val1"));
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
+});
+
+it('does not return the default direct value from the containing EDL', () => {
+  let edlZ = anEdlZettelWithSpan();
+  edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "val1"));
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasExactlyAttributes();
+});
+
+it('returns the default content value if there are no links', () => {
   let edlZ = anEdlZettelWithSpan();
   edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.target, "attr1", "val1"));
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
+});
+
+it('returns the default content value from the containing EDL if there are no links', () => {
+  let edlZ = anEdlZettelWithSpan();
+  edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "val1"));
   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
 
   let values = attributes.values();
@@ -183,7 +213,7 @@ describe("direct attributes", () => {
 
     it('prefers a value from the links to a default value', () => {
       let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes(pointerKind, "attr1", "link value");
-      edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "default value"));
+      edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "default value"));
       let attributes = makeFromEdlZettel(edlZ.target, edlZ);
     
       let values = attributes.values();
