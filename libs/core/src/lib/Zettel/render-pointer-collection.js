@@ -6,7 +6,20 @@ import { RenderPointer } from "./render-pointer";
 export function RenderPointerCollection(ownerPointer, pointerSubject, containingEdl) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
-  let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap();
+  let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap(), defaultsStack;
+
+  function addDefaults(defaultRenderLinks) {
+    let relevantPointers = [];
+    defaultRenderLinks.forEach(renderLink => {
+      renderLink.forEachPointer((p, e) => {
+        if(p.endowsTo(ownerPointer, pointerSubject)) {
+          relevantPointers.push(RenderPointer(p, RenderEndset(e, renderLink)));
+        }
+      });
+    });
+
+    defaultsStack = [AttributesSourceFromPointers("defaults", relevantPointers.reverse())];
+  }
 
   function tryAddAll(renderLinks) {
     renderLinks.forEach(renderLink => {
@@ -69,7 +82,9 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
     tryAddRenderPointer,
     tryAddAll,
     renderPointers,
-    pointerStack
+    pointerStack,
+    addDefaults,
+    defaultsStack: () => defaultsStack
   });
 }
 

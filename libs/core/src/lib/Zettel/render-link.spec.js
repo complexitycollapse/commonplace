@@ -1,16 +1,25 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
 import { LinkPointer, Span } from '../pointers';
-import { Link, Endset, directMetalinkType } from '../model';
+import { Link, Endset, contentMetalinkType } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
-import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder, SpanBuilder } from '../builders';
+import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
 import { attributeTesting } from './attributes';
 
 expect.extend({
   hasAttribute: attributeTesting.hasAttribute,
   hasExactlyAttributes: attributeTesting.hasExactlyAttributes
  });
+
+function makeLinkAndMetalink(target, attributeName, attributeValue) {
+  let endowingLink = LinkBuilder().withName("endowing link").withEndset(EndsetBuilder().withPointer(target));
+  let metalink = MetalinkBuilder(contentMetalinkType)
+    .withName("metalink")
+    .pointingTo(endowingLink)
+    .endowing(attributeName, attributeValue);
+  return [endowingLink, metalink];
+}
 
 function make(link) {
   return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
@@ -49,13 +58,29 @@ test('if the type has a style then it is returned by style', () => {
 
 test('attributes returns attribute values derived from modifiers', () => {
   let link = LinkBuilder().withName("target");
-  let endowingLink = LinkBuilder().withName("endowing link").withEndset(EndsetBuilder().withPointer(link));
-  let metalink = MetalinkBuilder(directMetalinkType).withName("metalink").pointingTo(endowingLink).endowing("attr1", "val1");
-  let edl = EdlBuilder().withLinks(link, endowingLink, metalink);
+  let edl = EdlBuilder().withLinks(link, ...makeLinkAndMetalink(link, "attr1", "val1"));
   let edlZ = EdlZettelBuilder(edl).build();
   let renderLink = edlZ.renderLinks[0];
   
   expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "val1");
+});
+
+test('attributes returns default values if there are no modifiers', () => {
+  let link = LinkBuilder().withName("target");
+  let edl = EdlBuilder().withLink(link);
+  let edlZ = EdlZettelBuilder(edl).withDefaults(...makeLinkAndMetalink(link, "attr1", "default value")).build();
+  let renderLink = edlZ.renderLinks[0];
+  
+  expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "default value");
+});
+
+test('attributes returns values from links in preference to defaults', () => {
+  let link = LinkBuilder().withName("target");
+  let edl = EdlBuilder().withLinks(link, ...makeLinkAndMetalink(link, "attr1", "override value"));
+  let edlZ = EdlZettelBuilder(edl).withDefaults(...makeLinkAndMetalink(link, "attr1", "default value")).build();
+  let renderLink = edlZ.renderLinks[0];
+  
+  expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "override value");
 });
 
 describe('outstandingRequests/getContentForPointer', () => {

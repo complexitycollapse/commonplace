@@ -1,7 +1,7 @@
 import { finalObject } from "../utils";
-import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
+import { ContentAttributeSource, DefaultsAttributeSource, DirectAttributeSource } from "./attributes-source";
 
-export function Attributes(owner, parent, pointerStack) {
+export function Attributes(owner, parent, pointerStack, defaultsStack) {
   let obj = {};
   let materializedPointerStack = undefined;
 
@@ -32,7 +32,8 @@ export function Attributes(owner, parent, pointerStack) {
   
     let directSource = DirectAttributeSource(owner, pointerList());
     let contentSource = content();
-    collapse([directSource, contentSource]);
+    let defaultsSource = DefaultsAttributeSource(defaultsStack);
+    collapse([directSource, contentSource, defaultsSource]);
     return attributes;
   }
 

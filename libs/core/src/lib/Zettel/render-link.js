@@ -40,6 +40,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
           .flat();
     let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
     let modifiers = RenderPointerCollection(ownerPointer, link, homeEdl);
+    modifiers.addDefaults(homeEdl.defaults);
 
     addProperties(renderLink, {
       fragmentTag,
@@ -72,7 +73,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   }
 
   function attributes() {
-    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack());
+    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack(), renderLink.modifiers.defaultsStack());
   }
 
   function forEachPointer(fn) {

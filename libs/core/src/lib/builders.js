@@ -152,11 +152,16 @@ export function EdlBuilder(name = "foo") {
 export function EdlZettelBuilder(edl) {
   let obj = Builder(obj => {
     let edl = obj.edl.build();
+    let defaultEdl = EdlBuilder("defaults").withLinks(...obj.defaults);
+    let defaultLinks = obj.defaults.map(d => d.build());
+    let defaultEdlZ = EdlZettel(defaultEdl.pointer, undefined, [], "1", defaultEdl.build(), defaultLinks, []);
     return EdlZettel(
-      obj.edl.pointer, undefined, undefined, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
+      obj.edl.pointer, undefined, defaultEdlZ.renderLinks, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
   }, {
     edl,
-    withLinks: (...links) => { edl.withLinks(...links); return obj; }
+    defaults: [],
+    withLinks: (...links) => { edl.withLinks(...links); return obj; },
+    withDefaults: (...links) => { links.forEach(link => obj.pushTo("defaults", link)); return obj; }
   });
 
   return obj;

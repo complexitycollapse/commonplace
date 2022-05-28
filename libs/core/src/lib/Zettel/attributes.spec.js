@@ -78,7 +78,7 @@ function getZettel(hierarchy, clip) {
   return hierarchy.children.filter(z => z.clip.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
 }
 
-function make(targetBuilder, rootEdlZ) {
+function makeFromEdlZettel(targetBuilder, rootEdlZ) {
   let target = targetBuilder.build();
   let targetZettel = getZettel(rootEdlZ.build(), target);
   if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
@@ -86,16 +86,26 @@ function make(targetBuilder, rootEdlZ) {
   return attributes;
 }
 
-function makeZ(target, edl) {
+function make(target, edl) {
   let edlZ = anEdlZettel({edl});
-  let attributes = make(target, edlZ);
+  let attributes = makeFromEdlZettel(target, edlZ);
   return attributes;
 }
 
 it('returns no attributes if there are no pointers', () => {
   let target = aSpan();
-  let attributes = makeZ(target, anEdl().withClip(target));
+  let attributes = make(target, anEdl().withClip(target));
   expect(attributes.values()).hasExactlyAttributes();
+});
+
+it('returns the default value if there are no links', () => {
+  let edlZ = anEdlZettelWithSpan();
+  edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.target, "attr1", "val1"));
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
 });
 
 describe("direct attributes", () => {
@@ -105,7 +115,7 @@ describe("direct attributes", () => {
   
     it('returns the value endowed by a pointer', () => {
       let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes(pointerKind, "attr1", "val1");
-      let attributes = make(edlZ.target, edlZ);
+      let attributes = makeFromEdlZettel(edlZ.target, edlZ);
   
       let values = attributes.values();
   
@@ -117,7 +127,7 @@ describe("direct attributes", () => {
         .withLinkWithDirectAttributes(pointerKind, "attr1", "val1")
         .withLinkWithDirectAttributes(pointerKind, "attr2", "val2")
         .withLinkWithDirectAttributes(pointerKind, "attr3", "val3");
-      let attributes = make(edlZ.target, edlZ);
+      let attributes = makeFromEdlZettel(edlZ.target, edlZ);
   
       let values = attributes.values();
   
@@ -130,7 +140,7 @@ describe("direct attributes", () => {
       let edlZ = anEdlZettelWithSpan()
         .withLinkWithDirectAttributes(pointerKind, "attr1", "first")
         .withLinkWithDirectAttributes(pointerKind, "attr1", "second");
-      let attributes = make(edlZ.target, edlZ);
+      let attributes = makeFromEdlZettel(edlZ.target, edlZ);
   
       let values = attributes.values();
   
@@ -142,7 +152,7 @@ describe("direct attributes", () => {
       let parent = anEdl({name: "parent"})
         .withClip(child)
         .withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "val1"));
-      let attributes = make(child.target, anEdlZettel({edl: parent}));
+      let attributes = makeFromEdlZettel(child.target, anEdlZettel({edl: parent}));
 
       let values = attributes.values();
   
@@ -155,7 +165,7 @@ describe("direct attributes", () => {
       let parent = anEdl({ name: "parent" })
         .withClip(child)
         .withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "parent value"));
-      let attributes = make(child.target, anEdlZettel({edl: parent}));
+      let attributes = makeFromEdlZettel(child.target, anEdlZettel({edl: parent}));
   
       let values = attributes.values();
   
@@ -166,9 +176,19 @@ describe("direct attributes", () => {
       let edlZ = anEdlZettelWithSpan();
       edlZ.withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, edlZ.edl, "attr", "val"));
   
-      let values = make(edlZ.target, edlZ).values();
+      let values = makeFromEdlZettel(edlZ.target, edlZ).values();
   
       expect(values).hasExactlyAttributes();
+    });
+
+    it('prefers a value from the links to a default value', () => {
+      let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes(pointerKind, "attr1", "link value");
+      edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "default value"));
+      let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+    
+      let values = attributes.values();
+    
+      expect(values).hasAttribute("attr1", "link value");
     });
   });
 
@@ -178,7 +198,7 @@ describe("direct attributes", () => {
       .withLinks(...aDirectLinkAndMetalinkPointingTo("specific", edl.target, "attr1", "specific"))
       .withLinks(...aDirectLinkAndMetalinkPointingTo("pointer type", edl.target, "attr1", "pointer type"));
 
-     let values = makeZ(edl.target, edl).values();
+     let values = make(edl.target, edl).values();
   
     expect(values).hasAttribute("attr1", "specific");
   });
@@ -200,11 +220,16 @@ describe("content attributes", () => {
           parent,
           child,
           target: child.target,
+          defaults: undefined,
           pointerBuilderForLevel: () => 
             builder.level === "span" ? builder.target : level === "edl" ? builder.child : builder.parent,
           withContentLink(attributeName, attributeValue) {
             let links = aContentLinkAndMetalinkPointingTo(pointerKind, builder.pointerBuilderForLevel(level), attributeName, attributeValue);
             builder.parent.withLinks(...links);
+            return builder;
+          },
+          withDefaults(attributeName, attributeValue) {
+            builder.defaults = aContentLinkAndMetalinkPointingTo(pointerKind, builder.pointerBuilderForLevel(level), attributeName, attributeValue);
             return builder;
           }
         });
@@ -213,7 +238,9 @@ describe("content attributes", () => {
       };
 
       function make(hierarchy) {
-        return makeZ(hierarchy.target, hierarchy.parent);
+        let edlZ = anEdlZettel({edl: hierarchy.parent})
+        if (hierarchy.defaults) { edlZ.withDefaults(...hierarchy.defaults); }
+        return makeFromEdlZettel(hierarchy.target, edlZ);
       }
 
       it('returns the value endowed by a pointer', () => {
@@ -249,6 +276,17 @@ describe("content attributes", () => {
     
         expect(values).hasAttribute("attr1", "second");
       });
+
+      it('prefers a value from the links to a default value', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "content link value")
+          .withDefaults("attr1", "default");
+        let attributes = make(hierarchy);
+    
+        let values = attributes.values();
+    
+        expect(values).hasAttribute("attr1", "content link value");
+      });
     });
 
     it('returns the value in the child in preference to that in the parent', () => {
@@ -258,7 +296,7 @@ describe("content attributes", () => {
         .withClip(child)
         .withLinks(...aContentLinkAndMetalinkPointingTo(pointerKind, child.target, "attr1", "parent value"));
   
-      let values = makeZ(child.target, parent).values();
+      let values = make(child.target, parent).values();
   
       expect(values).hasAttribute("attr1", "child value");
     });
@@ -269,7 +307,7 @@ describe("content attributes", () => {
         .withLinks(...aDirectLinkAndMetalinkPointingTo(pointerKind, edl.target, "attr1", "direct value"))
         .withLinks(...aContentLinkAndMetalinkPointingTo(pointerKind, edl.target, "attr1", "content value"));
   
-      let values = makeZ(edl.target, edl).values();
+      let values = make(edl.target, edl).values();
   
       expect(values).hasAttribute("attr1", "direct value");
     });
@@ -281,7 +319,7 @@ describe("content attributes", () => {
       .withLinks(...aContentLinkAndMetalinkPointingTo("specific", edl.target, "attr1", "specific"))
       .withLinks(...aContentLinkAndMetalinkPointingTo("pointer type", edl.target, "attr1", "pointer type"));
 
-     let values = makeZ(edl.target, edl).values();
+     let values = make(edl.target, edl).values();
   
     expect(values).hasAttribute("attr1", "specific");
   });

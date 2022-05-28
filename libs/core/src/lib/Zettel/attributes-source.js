@@ -31,6 +31,15 @@ export function ContentAttributeSource(origin, sources) {
   return finalObject({}, { attributes });
 }
 
+export function DefaultsAttributeSource(sources) {
+
+  function attributes() {
+    return generateAttributesOfGivenType("defaults", sources, p => p.allContentAttributeEndowments());
+  }
+
+  return finalObject({}, { attributes });
+}
+
 function generateAttributesOfGivenType(origin, sources, endowmentsFn) {
   let contents = sources
     .map(source => source.pointers

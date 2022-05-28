@@ -6,7 +6,7 @@ import { EdlPointer, LinkPointer } from '../pointers';
 import { Edl } from '../model';
 import { Attributes } from './attributes';
 
-export function EdlZettel(edlPointer, parent, defaults = Edl(), key, edl, links, parts) {
+export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, parts) {
   let obj = {
     edl: undefined,
     renderLinks: undefined,
@@ -123,6 +123,7 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
 
   function applyLinksToSelf() {
     renderPointers = RenderPointerCollection(harness.clip, harness.edl, harness);
+    renderPointers.addDefaults(harness.defaults);
     renderPointers.tryAddAll(harness.renderLinks);
   }
 
@@ -164,7 +165,7 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
 
   function attributes() {
     if (renderPointers) {
-      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack());
+      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack(), renderPointers.defaultsStack());
     } else { return {}; }
   }
 
@@ -187,7 +188,7 @@ function TransitionToResolveEdlContentState(harness, renderPointers) {
 
   function attributes() {
     if (renderPointers) {
-      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack());
+      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack(), renderPointers.defaultsStack());
     } else { return {}; }
   }
 

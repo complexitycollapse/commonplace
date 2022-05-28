@@ -68,8 +68,10 @@ export function Zettel(clip, containingEdl) {
   }
 
   function attributes() {
-    return Attributes(obj, containingEdl.attributes(), obj.renderPointers.pointerStack());
+    return Attributes(obj, containingEdl.attributes(), obj.renderPointers.pointerStack(), obj.renderPointers.defaultsStack());
   }
+
+  obj.renderPointers.addDefaults(containingEdl.defaults);
 
   addMethods(obj, {
     addLink,
