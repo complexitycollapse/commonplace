@@ -5,4 +5,5 @@ export { Doc, Edl, leafDataToEdl, Link, leafDataToLink, Endset } from './lib/mod
 export { Part } from './lib/part';
 export { LeafCache } from './lib/leaf-cache';
 export { EdlZettel } from './lib/zettel';
+export { DefaultsEdlZettel } from './lib/defaults';
 export * as testing from './testing';
