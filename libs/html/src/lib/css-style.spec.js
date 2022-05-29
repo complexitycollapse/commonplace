@@ -1,38 +1,29 @@
 import { test, expect } from '@jest/globals';
 import { CssStyle } from './css-style';
 
+function make(object) {
+  let attributes = new Map(Object.entries(object));
+  return [...CssStyle(attributes).css().entries()];
+}
+
 test('If there are no styles input then no css styles are returned', () => {
-  expect(CssStyle([{}]).css()).toEqual({});
+  expect(make({})).toEqual([]);
 });
 
 test('Styles with string values that are not understood are returned "as-is"', () => {
-  let style = {randomName: "a value"};
-  expect(CssStyle([style]).css()).toEqual(style);
+  let styles = {randomName: "a value"};
+  expect(make(styles)).toEqual(Object.entries(styles));
 });
-
-test('Styles from multiple style objects are combined', () => {
-  let styles = [{randomName: "a value"}, {randomName2: "another value"}];
-  expect(CssStyle(styles).css()).toEqual({randomName: "a value", randomName2: "another value"});
-});
-
 
 test('Styles with false values that are not understood are not returned', () => {
-  let styles = {randomName: "a value"};
-  expect(CssStyle([styles]).css()).toEqual(styles);
+  let styles = {randomName: false};
+  expect(make(styles)).toEqual([]);
 });
 
-test('A boolean true style that has a mapping will be mapped to the style in the mapping, with the original name as the value', () => {
-  expect(CssStyle([{italic: true}]).css()).toEqual({fontStyle: "italic"});
-});
-
-test('A boolean false style that has a mapping is not returned', () => {
-  expect(CssStyle([{randomName: false}]).css()).toEqual({});
+test('A value with a mapping will be mapped to the CSS equivalent', () => {
+  expect(make({italic: true})).toEqual([["fontStyle", "italic"]]);
 });
 
 test('If two different properties map to the same CSS property then the values are combined as a space-separated list', () => {
-  expect(CssStyle([{italic: true, bold: true}]).css()).toEqual({fontStyle: "italic bold"});
-});
-
-test('If two different style sets properties map to the same CSS property then the values are combined as a space-separated list', () => {
-  expect(CssStyle([{italic: true}, {bold: true}]).css()).toEqual({fontStyle: "italic bold"});
+  expect(make({italic: true, bold: true})).toEqual([["fontStyle", "italic bold"]]);
 });

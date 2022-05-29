@@ -31,31 +31,6 @@ test('The getHomeEdl method should return the EDL that the link resides in', () 
   expect(RenderLink("foo", link, edlZettel).getHomeEdl()).toBe(edlZettel);
 });
 
-test('if the type is unknown then the innerTag and fragmentTag properties are falsy', () => {
-  let link = make(Link("some unknown type"));
-
-  expect(link.innerTag).toBeFalsy();
-  expect(link.fragmentTag).toBeFalsy();
-});
-
-test('if the type is unknown then style returns an empty object', () => {
-  let link = make(Link("some unknown type"));
-
-  expect(link.style()).toEqual({});
-});
-
-test('if the type has a fragmentTag then this is set on the RenderLink', () => {
-  let link = make(Link("paragraph"));
-
-  expect(link.fragmentTag).toBe("p");
-});
-
-test('if the type has a style then it is returned by style', () => {
-  let link = make(Link("bold"));
-
-  expect(link.style()).toEqual({bold: true});
-});
-
 test('attributes returns attribute values derived from modifiers', () => {
   let link = LinkBuilder().withName("target");
   let edl = EdlBuilder().withLinks(link, ...makeLinkAndMetalink(link, directMetalinkType, "attr1", "val1"));

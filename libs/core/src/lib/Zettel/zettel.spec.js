@@ -198,33 +198,6 @@ describe('addLink', () => {
   });
 });
 
-// describe('style', () => {
-//   it('returns an empty array if there are no endsets', () => {
-//     expect(make().style()).toEqual([]);
-//   });
-
-//   it('returns the style of the endset', () => {
-//     let zettel = make();
-//     let span = makeSpan();
-//     let endset = Endset(undefined, []);
-//     let link = makeLink("bold", endset);
-//     zettel.addPointer(span, endset, link);
-//     expect(zettel.style()[0]).toEqual({ bold: true });
-//   });
-
-//   it('returns an item for each endset', () => {
-//     let zettel = make();
-//     let span1 = makeSpan(1), span2 = makeSpan(100);
-//     let endset1 = Endset(undefined, [span1]), endset2 = Endset(undefined, [span2]);
-//     let link1 = makeLink("bold", endset1);
-//     let link2 = makeLink("italic", endset2);
-//     zettel.addPointer(span1, endset1, link1);
-//     zettel.addPointer(span2, endset2, link2);
-//     expect(zettel.style()[0]).toEqual({ bold: true });
-//     expect(zettel.style()[1]).toEqual({ italic: true });
-//   });
-// });
-
 describe('tryAddPart', () => {
   it('leaves the content undefined if the part does not engulf the zettel', () => {
     let zettel = make(Span("x", 1, 100));

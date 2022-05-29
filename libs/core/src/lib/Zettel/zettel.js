@@ -47,11 +47,6 @@ export function Zettel(clip, containingEdl) {
     onUpdate = callback;
   }
 
-  function style() {
-    let styles = obj.renderPointers.renderPointers().map(e => e.renderLink.style());
-    return styles;
-  }
-
   function outstandingRequests() {
     let outstanding = [];
     
@@ -76,7 +71,6 @@ export function Zettel(clip, containingEdl) {
   addMethods(obj, {
     addLink,
     tryAddPart,
-    style,
     part: () => contentPart,
     outstandingRequests,
     setOnUpdate,

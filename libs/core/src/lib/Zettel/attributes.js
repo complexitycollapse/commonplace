@@ -1,5 +1,5 @@
 import { finalObject } from "../utils";
-import { ContentAttributeSource, DefaultsAttributeSource, DirectAttributeSource } from "./attributes-source";
+import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
 
 export function Attributes(owner, parent, pointerStack, defaultsStack) {
   let obj = {};

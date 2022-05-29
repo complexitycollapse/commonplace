@@ -17,12 +17,12 @@ function directAttribute(type, attribute, value) {
 }
 
 let defaultsLinks =[
-  contentAttribute("bold", "bold", "true"),
-  directAttribute("paragraph", "paragraph", "true"),
-  contentAttribute("italic", "italic", "true"),
-  directAttribute("title", "title", "true"),
-  contentAttribute("underline", "underline", "true"),
-  contentAttribute("strike through", "strike through", "true"),
+  contentAttribute("bold", "bold", true),
+  directAttribute("paragraph", "paragraph", true),
+  contentAttribute("italic", "italic", true),
+  directAttribute("title", "title", true),
+  contentAttribute("underline", "underline", true),
+  contentAttribute("strike through", "strike through", true),
   contentAttribute("capitalize", "capitalization", "capitalized"),
   contentAttribute("uppercase", "capitalization", "uppercase"),
   contentAttribute("lowercase", "capitalization", "lowercase"),

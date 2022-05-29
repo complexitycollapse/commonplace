@@ -3,22 +3,6 @@ import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from './model';
 import { Attributes } from "./attributes";
 
-let typeMap = {
-  paragraph: [null, "p"],
-  italic: [{italic: true}],
-  bold: [{bold: true}],
-  title: [null, "h1"],
-  underline: [{underline: true}],
-  "strike through": [{"line-through": true}],
-  capitalize: [{textTransform: "capitalize"}],
-  uppercase: [{textTransform: "uppercase"}],
-  lowercase: [{textTransform: "lowercase"}],
-  "left aligned text": [{textAlign: "left"}],
-  "right aligned text": [{textAlign: "right"}],
-  "centre aligned text": [{textAlign: "center"}],
-  "justified text": [{textAlign: "justify"}]
-};
-
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
   if (type === directMetalinkType) { return DirectMetalink(pointer, link, homeEdl); }
@@ -28,8 +12,6 @@ export function RenderLink(pointer, link, homeEdl) {
 
 function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return new Map(); }), contentMetaEndowments = (() => { return new Map(); })) {
   let renderLink = {};
-  let [inlineStyle, fragmentTag] = typeMap[link.type] ?? [null, null];
-  inlineStyle = inlineStyle ?? {};
   {
     // TODO: this doesn't work at all. If the link points to an EDL or other link then they need
     // to be pursued recursively to get all content. specifiesContent is therefore a bad property.
@@ -43,7 +25,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     modifiers.addDefaults(homeEdl.defaults);
 
     addProperties(renderLink, {
-      fragmentTag,
       pointer,
       link,
       endsets: link.endsets,
@@ -51,11 +32,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
       linkedContent,
       modifiers
     });
-  }
-
-  function style() {
-    let mod = renderLink.modifiers.renderPointers().map(p => p.renderLink).find(l => l.style());
-    return mod ? mod.style() : inlineStyle;
   }
 
   function resolveContent(part) {
@@ -81,7 +57,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   }
 
   return finalObject(renderLink, {
-    style,
     outstandingRequests,
     getContentForPointer,
     allDirectAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
