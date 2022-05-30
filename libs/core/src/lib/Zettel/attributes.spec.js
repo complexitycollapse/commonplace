@@ -1,10 +1,10 @@
 import { expect, it, describe } from '@jest/globals';
-import { attributeTesting } from './attributes';
+import { attributesTesting } from './attributes';
 import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder, Builder, PointerTypePointerBuilder, PointerBuilder } from '../builders';
 
 expect.extend({
- hasAttribute: attributeTesting.hasAttribute,
- hasExactlyAttributes: attributeTesting.hasExactlyAttributes
+ hasAttribute: attributesTesting.hasAttribute,
+ hasExactlyAttributes: attributesTesting.hasExactlyAttributes
 });
 
 function aSpan() {

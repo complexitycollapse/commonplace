@@ -5,11 +5,11 @@ import { Link, Endset, contentMetalinkType, directMetalinkType } from '../model'
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
-import { attributeTesting } from './attributes';
+import { attributesTesting } from './attributes';
 
 expect.extend({
-  hasAttribute: attributeTesting.hasAttribute,
-  hasExactlyAttributes: attributeTesting.hasExactlyAttributes
+  hasAttribute: attributesTesting.hasAttribute,
+  hasExactlyAttributes: attributesTesting.hasExactlyAttributes
  });
 
 function makeLinkAndMetalink(target, metalinkType, attributeName, attributeValue) {

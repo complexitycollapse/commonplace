@@ -50,7 +50,7 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
   });
 }
 
-export let attributeTesting = {
+export let attributesTesting = {
   hasAttribute(values, attribute, expectedValue) {
     if (!values.has(attribute)) {
       return {
@@ -75,7 +75,7 @@ export let attributeTesting = {
   hasExactlyAttributes(values, ...attributeValuePairs) {
     let keys = [...values.keys()];
     for (let i = 0; i < attributeValuePairs.length; i += 2) {
-      let present = attributeTesting.hasAttribute(values, attributeValuePairs[i], attributeValuePairs[i+1]);
+      let present = attributesTesting.hasAttribute(values, attributeValuePairs[i], attributeValuePairs[i+1]);
       if (!present.pass) {
         return present;
       }

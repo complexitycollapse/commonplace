@@ -1,6 +1,6 @@
 import { addProperties, finalObject, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
-import { directMetalinkType, contentMetalinkType } from './model';
+import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
 
 export function RenderLink(pointer, link, homeEdl) {
