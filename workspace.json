@@ -19,7 +19,8 @@
           "outputs": ["coverage/libs/components"],
           "options": {
             "jestConfig": "libs/components/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "watch": true
           }
         }
       }
@@ -41,7 +42,8 @@
           "outputs": ["coverage/libs/core"],
           "options": {
             "jestConfig": "libs/core/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "watch": true
           }
         }
       },
@@ -64,7 +66,8 @@
           "outputs": ["coverage/libs/html"],
           "options": {
             "jestConfig": "libs/html/jest.config.js",
-            "passWithNoTests": true
+            "passWithNoTests": true,
+            "watch": true
           }
         }
       },
