@@ -15,14 +15,6 @@ function anEndset(name) {
   return EndsetBuilder().withName(name);
 }
 
-function aLink(name, target) {
-  let builder = LinkBuilder().withName(name).withType(name);
-  if (target) {
-    builder.withEndset(anEndset().withPointer(target));
-  }
-  return builder;
-}
-
 function aDirectMetalink(name) {
   return MetalinkBuilder("direct").withName(name);
 }
@@ -52,11 +44,24 @@ function aContentLinkAndMetalinkPointingTo(pointerType, targetBuilder, ...attrib
   return aLinkAndMetalink(pointerType, aContentMetalink, targetBuilder, ...attributePairs);
 }
 
-function aLinkAndMetalink(pointerType, metalinkFn, targetBuilder, ...attributePairs) {
+function aLink(pointerType, targetBuilder, ...attributePairs) {
   let type = `${attributePairs[0]}:${attributePairs[1]}`;
-  let pointer = pointerType == "specific" ? PointerBuilder(targetBuilder) : PointerTypePointerBuilder(targetBuilder);
-  let endowingLink = aLink(type, pointer);
-  let metaLink = metalinkFn(`metalink for ${type}`).pointingTo(endowingLink).endowing(...attributePairs);
+  let target = pointerType == "specific" ? PointerBuilder(targetBuilder) : PointerTypePointerBuilder(targetBuilder);
+  let builder = LinkBuilder().withName(type).withType(type);
+  if (target) {
+    builder.withEndset(anEndset().withPointer(target));
+  }
+  return builder;
+}
+
+function aMetalink(endowingLink, metalinkFn, ...attributePairs) {
+  let metalink = metalinkFn(`metalink for ${endowingLink.type}`).pointingTo(endowingLink).endowing(...attributePairs);
+  return metalink;
+}
+
+function aLinkAndMetalink(pointerType, metalinkFn, targetBuilder, ...attributePairs) {
+  let endowingLink = aLink(pointerType, targetBuilder, ...attributePairs);
+  let metaLink = aMetalink(endowingLink, metalinkFn, ...attributePairs);
   return [endowingLink, metaLink];
 }
 
@@ -131,6 +136,19 @@ it('returns the default content value if there are no links', () => {
 it('returns the default content value from the containing EDL if there are no links', () => {
   let edlZ = anEdlZettelWithSpan();
   edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo("pointer Type", edlZ.edl, "attr1", "val1"));
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
+});
+
+it('returns the value when the link is in the Edl but the metalink is in the defaults', () => {
+  let edlZ = anEdlZettelWithSpan();
+  let link = aLink("pointer type", edlZ.target, "attr1", "val1");
+  let metalink = aMetalink(link, aDirectMetalink, "attr1", "val1");
+  edlZ.withDefaults(metalink);
+  edlZ.edl.withLink(link);
   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
 
   let values = attributes.values();

@@ -6,19 +6,18 @@ export function EdlComponent({ edl }) {
     ? (<EdlComponent key={f.key} segment={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
-  let style = CssStyle([edl.attributes()]);
+  let cssStyle = CssStyle(edl.attributes().values());
+  let fragmentTags = cssStyle.fragmentTags();
+  let style = cssStyle.css();
 
-  // function wrap(i) {
-  //   if (edl.renderPointers.length <= i) {
-  //     return innerComponents;
-  //   } else {
-  //     let link = edl.renderPointers[i].renderLink;
-  //     let Tag = link.fragmentTag;
-  //     let style = link.style();
-  //     return (<Tag style={style}>{wrap(i + 1)}</Tag>);
-  //   }
-  // }
+  function wrap(i) {
+    if (fragmentTags.length <= i) {
+      return innerComponents;
+    } else {
+      let Tag = fragmentTags[i];
+      return (<Tag style={style}>{wrap(i + 1)}</Tag>);
+    }
+  }
 
-  //return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
-  return (<cpla-edl key={edl.key} style={style}>{innerComponents}</cpla-edl>);
+  return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
 }

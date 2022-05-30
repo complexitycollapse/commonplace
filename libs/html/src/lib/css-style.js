@@ -20,7 +20,7 @@ export function CssStyle(attributes) {
   calculate();
 
   return finalObject({}, {
-    css: () => styles,
+    css: () => Object.fromEntries(styles),
     fragmentTags: () => fragmentTags
   });
 }

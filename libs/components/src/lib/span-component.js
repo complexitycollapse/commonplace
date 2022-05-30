@@ -9,7 +9,7 @@ export function SpanComponent({ zettel }) {
     zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
   }, []);
 
-  let style = CssStyle(zettel.style()).css();
+  let style = CssStyle(zettel.attributes().values()).css();
   let content = zettelPartState ? zettelPartState.content : "";
 
   return (

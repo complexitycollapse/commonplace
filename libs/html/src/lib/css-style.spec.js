@@ -3,7 +3,7 @@ import { CssStyle } from './css-style';
 
 function make(object) {
   let attributes = new Map(Object.entries(object));
-  return [...CssStyle(attributes).css().entries()];
+  return Object.entries(CssStyle(attributes).css());
 }
 
 test('If there are no styles input then no css styles are returned', () => {

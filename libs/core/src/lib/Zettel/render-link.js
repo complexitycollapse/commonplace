@@ -115,12 +115,15 @@ function findContent(linkedContent, endset) {
 function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   let metaAttributes = new Map();
 
-  modifiers.renderPointers().forEach(p => {
+  function merge(p) {
     if (p.pointerType !== "endset" || p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
     {
       mergeMaps(metaAttributes, extractFn(p));
     }
-  });
+  }
+
+  modifiers.allDefaults.forEach(merge);
+  modifiers.renderPointers().forEach(merge);
 
   return metaAttributes;
 }

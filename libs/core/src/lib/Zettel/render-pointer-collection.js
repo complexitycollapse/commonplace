@@ -1,4 +1,4 @@
-import { finalObject, listMap } from "../utils";
+import { addProperties, finalObject, listMap } from "../utils";
 import { AttributesSourceFromPointers } from "./attributes-source";
 import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
@@ -13,7 +13,9 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
     defaultRenderLinks.forEach(renderLink => {
       renderLink.forEachPointer((p, e) => {
         if(p.endowsTo(ownerPointer, pointerSubject)) {
-          relevantPointers.push(RenderPointer(p, RenderEndset(e, renderLink)));
+          let pointer = RenderPointer(p, RenderEndset(e, renderLink));
+          relevantPointers.push(pointer);
+          obj.allDefaults.push(pointer);
         }
       });
     });
@@ -39,6 +41,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
 
     function push(collection, renderPointer) {
       collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
+      obj.allPointers.push(renderPointer);
     }
 
     if (pointer.pointerType === "pointer type") {
@@ -77,6 +80,11 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
       if (pointers.length > 0) { yield AttributesSourceFromPointers(edl, buildPointerList(pointers, edl)); }
     }
   }
+
+  addProperties(obj, {
+    allDefaults: [],
+    allPointers: []
+  });
 
   return finalObject(obj, {
     tryAddRenderPointer,

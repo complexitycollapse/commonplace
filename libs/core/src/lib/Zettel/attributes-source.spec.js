@@ -9,7 +9,7 @@ function makeEdlZ(n = 10) {
   return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
 }
 
-function makeFromPointers(edl, pointers) {
+function make(edl, pointers) {
   return AttributesSourceFromPointers(edl, pointers);
 }
 
@@ -22,14 +22,14 @@ function mockSource(...pointers) {
 describe('AttributesSourceFromPointers', () => {
   test('edl property set by constructor', () => {
     let edlZ = makeEdlZ();
-    expect(makeFromPointers(edlZ).edl).toBe(edlZ);
+    expect(make(edlZ).edl).toBe(edlZ);
   });
 
   test('pointers property set by constructor', () => {
     let edlZ = makeEdlZ();
-    let allPointers = edlZ.renderPointers();
+    let allPointers = edlZ.renderLinks;
     let pointers = [allPointers[3], allPointers[1]];
-    expect(makeFromPointers(edlZ, pointers).pointers).toBe(pointers);
+    expect(make(edlZ, pointers).pointers).toBe(pointers);
   });
 });
 
@@ -96,20 +96,6 @@ describe('DirectAttributeSource', () => {
     expect(entry.attribute).toBe("attr");
     expect(entry.value).toBe("v1");
     expect(entry.edl).toBe(source.edl);
-  });
-});
-
-describe('AttributesSourceFromPointers', () => {
-  test('edl property set by constructor', () => {
-    let edlZ = makeEdlZ();
-    expect(makeFromPointers(edlZ).edl).toBe(edlZ);
-  });
-
-  test('pointers property set by constructor', () => {
-    let edlZ = makeEdlZ();
-    let allPointers = edlZ.renderPointers();
-    let pointers = [allPointers[3], allPointers[1]];
-    expect(makeFromPointers(edlZ, pointers).pointers).toBe(pointers);
   });
 });
 

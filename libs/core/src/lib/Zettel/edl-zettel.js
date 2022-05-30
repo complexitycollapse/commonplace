@@ -10,7 +10,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
   let obj = {
     edl: undefined,
     renderLinks: undefined,
-    state: undefined
+    state: undefined,
+    renderPointerCollection: undefined
   };
 
   addProperties(obj, {
@@ -25,10 +26,20 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
-    attributes: () => obj.state.attributes(),
+    attributes() {
+      let pointerStack, defaultsStack;
+      if (obj.renderPointerCollection) {
+        pointerStack = obj.renderPointerCollection.pointerStack();
+        defaultsStack = obj.renderPointerCollection.defaultsStack();
+      } else {
+        pointerStack = [];
+        defaultsStack = [];
+      }
+
+      return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
+    },
     renderPointers: () => {
-      let fn = obj.state.renderPointers;
-      return fn ? fn() : [];
+      return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
     }
   });
 
@@ -65,7 +76,6 @@ function TransitionToResolveEdlState(harness, parts) {
   }
 
   harness.state = finalObject(obj, {
-    attributes: () => { return {}; },
     outstandingRequests: () => [[harness.clip, resolveEdl]]
   });
 }
@@ -106,7 +116,6 @@ function TransitionToResolveLinksState(harness, edl, parts) {
   }
 
   addMethods(obj, {
-    attributes: () => { return {}; },
     outstandingRequests: () => unresolvedLinks.filter(x => x).map((x, i) => [x, p => resolveLinkFromPart(p, i)]),
     resolveLink,
     resolveLinkFromPartWithoutIndex
@@ -119,12 +128,11 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
 
   harness.state = obj;
   harness.nameLinkPairs.push(...harness.edl.links.map((n, i) => [n, links[i]]));
-  let renderPointers = undefined;
 
   function applyLinksToSelf() {
-    renderPointers = RenderPointerCollection(harness.clip, harness.edl, harness);
-    renderPointers.addDefaults(harness.defaults);
-    renderPointers.tryAddAll(harness.renderLinks);
+    harness.renderPointerCollection = RenderPointerCollection(harness.clip, harness.edl, harness);
+    harness.renderPointerCollection.addDefaults(harness.defaults);
+    harness.renderPointerCollection.tryAddAll(harness.renderLinks);
   }
 
   function createChildZettel() {
@@ -142,17 +150,17 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
   }
 
   function outstandingLinkContent() {
-    let rps = renderPointers.renderPointers();
+    let rps = harness.renderPointerCollection.renderPointers();
     return rps.map(p => p.renderLink.outstandingRequests()).flat();
   }
 
   function resolveContent(part) {
-    renderPointers.forEach(p => p.resolveContent(part));
+    harness.renderPointerCollection.forEach(p => p.resolveContent(part));
   }
 
   function tryStateTransition() {
     if (outstandingLinkContent().length == 0) {
-      TransitionToResolveEdlContentState(harness, renderPointers);
+      TransitionToResolveEdlContentState(harness);
     }
   }
 
@@ -163,17 +171,9 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
     }];
   }
 
-  function attributes() {
-    if (renderPointers) {
-      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack(), renderPointers.defaultsStack());
-    } else { return {}; }
-  }
-
   addMethods(obj, {
     outstandingRequests: () => outstandingLinkContent().map(wrapContentRequest),
-    attributes,
-    resolveContent,
-    renderPointers: () => renderPointers.renderPointers()
+    resolveContent
   });
 
   harness.renderLinks = RenderLinkFactory(harness).renderLinks();
@@ -183,14 +183,8 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
   tryStateTransition();
 }
 
-function TransitionToResolveEdlContentState(harness, renderPointers) {
+function TransitionToResolveEdlContentState(harness) {
   let obj = {};
-
-  function attributes() {
-    if (renderPointers) {
-      return Attributes(harness, harness.parent?.attributes(), renderPointers.pointerStack(), renderPointers.defaultsStack());
-    } else { return {}; }
-  }
 
   function resolveContent(part) {
     harness.children.forEach(c => c.tryAddPart && c.tryAddPart(part));
@@ -198,7 +192,6 @@ function TransitionToResolveEdlContentState(harness, renderPointers) {
 
   addMethods(obj, {
     outstandingRequests: () => harness.children.map(z => z.outstandingRequests()).flat(),
-    attributes,
     resolveContent
   });
 

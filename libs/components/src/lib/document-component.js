@@ -3,12 +3,12 @@ import { EdlZettel, emptyDocPointer } from '@commonplace/core';
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
-export function DocumentComponent({ docPointer, repository }) {
+export function DocumentComponent({ docPointer, repository, defaults }) {
 
-  let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, undefined, "1"));
+  let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, defaults, "1"));
 
   useEffect(() => {
-    Pouncer(repository).fetchDoc(docPointer).then(tree => setZettelTreeState(tree));
+    Pouncer(repository).fetchDoc(docPointer, defaults).then(tree => setZettelTreeState(tree));
   }, []);
 
   return (
