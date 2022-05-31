@@ -26,10 +26,10 @@ let defaultsLinks =[
   contentAttribute("capitalize", "capitalization", "capitalize"),
   contentAttribute("uppercase", "capitalization", "uppercase"),
   contentAttribute("lowercase", "capitalization", "lowercase"),
-  contentAttribute("left aligned text", "text alignment", "left"),
-  contentAttribute("right aligned text", "text alignment", "left"),
-  contentAttribute("centre aligned text", "text alignment", "center"),
-  contentAttribute("justified aligned text", "text alignment", "justify")
+  contentAttribute("left aligned text", "textAlign", "left"),
+  contentAttribute("right aligned text", "textAlign", "right"),
+  contentAttribute("centre aligned text", "textAlign", "center"),
+  contentAttribute("justified aligned text", "textAlign", "justify")
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));

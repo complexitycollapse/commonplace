@@ -45,7 +45,7 @@ function aContentLinkAndMetalinkPointingTo(pointerType, targetBuilder, ...attrib
 }
 
 function aLink(pointerType, targetBuilder, ...attributePairs) {
-  let type = `${attributePairs[0]}:${attributePairs[1]}`;
+  let type = attributePairs.length >= 2 ? `${attributePairs[0]}:${attributePairs[1]}` : "unspecified type";
   let target = pointerType == "specific" ? PointerBuilder(targetBuilder) : PointerTypePointerBuilder(targetBuilder);
   let builder = LinkBuilder().withName(type).withType(type);
   if (target) {
@@ -154,6 +154,32 @@ it('returns the value when the link is in the Edl but the metalink is in the def
   let values = attributes.values();
 
   expect(values).hasAttribute("attr1", "val1");
+});
+
+it('returns a content attribute value inherited through a link', () => {
+  let edlZ = anEdlZettelWithSpan();
+  let link = aLink("specific", edlZ.target, "attr1", "val1");
+  let intermediateLink = aLink("specific", link);
+  let metalink = aMetalink(intermediateLink, aContentMetalink, "attr1", "val1");
+  edlZ.edl.withLinks(link, intermediateLink, metalink);
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
+});
+
+it('does not return a direct attribute value inherited through a link', () => {
+  let edlZ = anEdlZettelWithSpan();
+  let link = aLink("specific", edlZ.target, "attr1", "val1");
+  let intermediateLink = aLink("specific", link);
+  let metalink = aMetalink(intermediateLink, aDirectMetalink, "attr1", "val1");
+  edlZ.edl.withLinks(link, intermediateLink, metalink);
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasExactlyAttributes();
 });
 
 describe("direct attributes", () => {

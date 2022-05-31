@@ -59,10 +59,18 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   return finalObject(renderLink, {
     outstandingRequests,
     getContentForPointer,
-    allDirectAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
-    allContentAttributeEndowments: renderPointer => mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allContentAttributeMetaEndowments()),
-    allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent),
-    allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
+    allDirectAttributeEndowments: renderPointer => 
+      mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
+    allContentAttributeEndowments: 
+      renderPointer => mergeAllMetaAttributes(
+        renderPointer,
+        renderLink.modifiers,
+        p => p.allContentAttributeMetaEndowments(),
+        p => p.allContentAttributeEndowments()),
+    allDirectAttributeMetaEndowments: 
+      renderPointer => directMetaEndowments(renderPointer, renderLink.linkedContent),
+    allContentAttributeMetaEndowments: 
+      renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
     resolveContent,
     attributes,
@@ -112,7 +120,7 @@ function findContent(linkedContent, endset) {
   return linkedContent.find(x => x[1] === endset)[2];
 }
 
-function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
+function mergeAllMetaAttributes(renderPointer, modifiers, extractFn, recursiveFn) {
   let metaAttributes = new Map();
 
   function merge(p) {
@@ -123,6 +131,9 @@ function mergeAllMetaAttributes(renderPointer, modifiers, extractFn) {
   }
 
   modifiers.allDefaults.forEach(merge);
+  if (recursiveFn) {
+    modifiers.renderPointers().forEach(p => mergeMaps(metaAttributes, recursiveFn(p)));
+  }
   modifiers.renderPointers().forEach(merge);
 
   return metaAttributes;
