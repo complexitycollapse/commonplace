@@ -1,14 +1,13 @@
 {
   "typ": "doc",
   "cps": [
-    {"typ": "span", "ori": "origin", "st": 0, "ln": 18},
-    {"typ": "span", "ori": "origin", "st": 20, "ln": 256},
+    {"typ": "edl", "name": "titleEdl1.json"},
+    {"typ": "edl", "name": "paragraphEdl1.json"},
     {"typ": "span", "ori": "origin", "st": 281, "ln": 28},
-    {"typ": "span", "ori": "origin", "st": 357, "ln": 103},
-    {"typ": "span", "ori": "origin", "st": 514, "ln": 37},
-    {"typ": "span", "ori": "origin", "st": 460, "ln": 54},
-    {"typ": "span", "ori": "origin", "st": 553, "ln": 59},
-    {"typ": "span", "ori": "origin", "st": 613, "ln": 34},
+    {"typ": "edl", "name": "paragraphEdl2.json"},
+    {"typ": "edl", "name": "paragraphEdl3.json"},
+    {"typ": "span", "ori": "origin", "st": 556, "ln": 59},
+    {"typ": "edl", "name": "paragraphEdl4.json"},
     {"typ": "box", "ori": "TestImage.jpg", "x": 1070, "y": 650, "wd": 770, "ht": 300}
   ],
   "lks": [

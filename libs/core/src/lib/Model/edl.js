@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "../utils";
-import { leafDataToBox, leafDataToSpan, leafDataToLinkPointer } from '../pointers';
+import { leafDataToBox, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer } from '../pointers';
 
 export function Edl(type, clips, links) {
   let obj = {};
@@ -38,6 +38,8 @@ export function leafDataToClip(leafData) {
     return leafDataToSpan(leafData);
   } else if (leafData.typ === "box") {
     return leafDataToBox(leafData);
+  } else if (leafData.typ === "edl") {
+    return leafDataToEdlPointer(leafData);
   } else {
     throw `leafDataToClip does not understand '${JSON.stringify(leafData)}'`;
   }

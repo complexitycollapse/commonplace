@@ -3,7 +3,7 @@ import { ZettelComponent } from './zettel-component';
 
 export function EdlComponent({ edl }) {
   let innerComponents = edl.children.map(f => f.clip.pointerType === "edl"
-    ? (<EdlComponent key={f.key} segment={f}/>)
+    ? (<EdlComponent key={f.key} edl={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
   let cssStyle = CssStyle(edl.attributes().values());
@@ -19,5 +19,5 @@ export function EdlComponent({ edl }) {
     }
   }
 
-  return (<cpla-edl key={edl.key}>{wrap(0)}</cpla-edl>);
+  return (<cpla-edl cpla-key={edl.key}>{wrap(0)}</cpla-edl>);
 }

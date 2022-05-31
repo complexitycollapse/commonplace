@@ -13,7 +13,7 @@ export function SpanComponent({ zettel }) {
   let content = zettelPartState ? zettelPartState.content : "";
 
   return (
-    <cpla-span cpla-key={zettel.key}>
+    <cpla-span cpla-key={zettel.key} cpla-start={zettel.clip.start} cpla-length={zettel.clip.length}>
       <span style={style ?? {}}>{content}</span>
     </cpla-span>
   );

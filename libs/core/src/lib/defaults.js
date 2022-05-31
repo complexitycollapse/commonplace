@@ -23,7 +23,7 @@ let defaultsLinks =[
   directAttribute("title", "title", true),
   contentAttribute("underline", "underline", true),
   contentAttribute("strike through", "strike through", true),
-  contentAttribute("capitalize", "capitalization", "capitalized"),
+  contentAttribute("capitalize", "capitalization", "capitalize"),
   contentAttribute("uppercase", "capitalization", "uppercase"),
   contentAttribute("lowercase", "capitalization", "lowercase"),
   contentAttribute("left aligned text", "text alignment", "left"),
