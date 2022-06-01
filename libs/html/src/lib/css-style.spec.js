@@ -1,29 +1,46 @@
-import { test, expect } from '@jest/globals';
+import { test, expect, describe, it } from '@jest/globals';
 import { CssStyle } from './css-style';
 
-function make(object) {
+function makeCss(object) {
   let attributes = new Map(Object.entries(object));
   return Object.entries(CssStyle(attributes).css());
 }
 
-test('If there are no styles input then no css styles are returned', () => {
-  expect(make({})).toEqual([]);
+function makeFragmentTags(object) {
+  let attributes = new Map(Object.entries(object));
+  return CssStyle(attributes).fragmentTags();
+}
+
+describe("css", () => {
+  test('If there are no properties input then no css styles are returned', () => {
+    expect(makeCss({})).toEqual([]);
+  });
+
+  test('Properties that are not understood are ignored', () => {
+    let styles = {randomName: "a value"};
+    expect(makeCss(styles)).toEqual([]);
+  });
+
+  test('Properties with false values that are not understood are not returned', () => {
+    let styles = {randomName: false};
+    expect(makeCss(styles)).toEqual([]);
+  });
+
+  test('A property with a mapping will be mapped to the CSS equivalent', () => {
+    expect(makeCss({italic: true})).toEqual([["fontStyle", "italic"]]);
+  });
+
+  test('If two different properties map to the same CSS property then the values are combined as a space-separated list', () => {
+    expect(makeCss({italic: true, bold: true})).toEqual([["fontStyle", "italic bold"]]);
+  });
 });
 
-test('Styles with string values that are not understood are returned "as-is"', () => {
-  let styles = {randomName: "a value"};
-  expect(make(styles)).toEqual(Object.entries(styles));
-});
+describe('fragmentTags', () => {
+  it('returns a fragment tag if one is defined', () => {
+    expect(makeFragmentTags({paragraph: true})).toEqual(["p"]);
+  });
 
-test('Styles with false values that are not understood are not returned', () => {
-  let styles = {randomName: false};
-  expect(make(styles)).toEqual([]);
-});
-
-test('A value with a mapping will be mapped to the CSS equivalent', () => {
-  expect(make({italic: true})).toEqual([["fontStyle", "italic"]]);
-});
-
-test('If two different properties map to the same CSS property then the values are combined as a space-separated list', () => {
-  expect(make({italic: true, bold: true})).toEqual([["fontStyle", "italic bold"]]);
+  it('returns no fragment tags if none are defined', () => {
+    expect(makeFragmentTags({italics: true})).toEqual([]);
+  });
 });
