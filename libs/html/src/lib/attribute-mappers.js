@@ -9,6 +9,7 @@ export function registerAllMappers() {
     StyleMapper("strike through", "textDecoration", "line-through"),
     StyleMapper("capitalization", "textTransform"),
     StyleMapper("text align", "textAlign"),
+    StyleMapper("colour", "color"),
     FragmentMapper("paragraph", "p"),
     FragmentMapper("title", "h1")
   ].forEach(registerMapper);

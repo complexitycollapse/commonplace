@@ -12,6 +12,7 @@
   ],
   "lks": [
     { "typ": "link", "name": "titleLink.json" },
+    { "typ": "link", "name": "redLink.json"},
     { "typ": "link", "name": "paragraphLink1.json" },
     { "typ": "link", "name": "paragraphLink2.json" },
     { "typ": "link", "name": "paragraphLink3.json" },

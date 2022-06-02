@@ -29,7 +29,8 @@ let defaultsLinks =[
   contentAttribute("left aligned text", "text align", "left"),
   contentAttribute("right aligned text", "text align", "right"),
   contentAttribute("centre aligned text", "text align", "center"),
-  contentAttribute("justified aligned text", "text align", "justify")
+  contentAttribute("justified aligned text", "text align", "justify"),
+  contentAttribute("red", "colour", "red")
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));
