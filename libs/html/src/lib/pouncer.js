@@ -1,10 +1,9 @@
-import { finalObject, EdlZettel } from "@commonplace/core";
+import { finalObject } from "@commonplace/core";
 
 export function Pouncer(repository) {
   let obj = {};
 
-  async function fetchDoc(docPointer, defaults) {
-    let edlZettel = EdlZettel(docPointer, undefined, defaults, "1");
+  async function fetchDoc(edlZettel) {
     for(let requests = edlZettel.outstandingRequests(); requests.length > 0; requests = edlZettel.outstandingRequests()) {
       await repository.getManyParts(requests);
     }

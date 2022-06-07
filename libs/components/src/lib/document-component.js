@@ -8,7 +8,8 @@ export function DocumentComponent({ docPointer, repository, defaults }) {
   let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, defaults, "1"));
 
   useEffect(() => {
-    Pouncer(repository).fetchDoc(docPointer, defaults).then(tree => setZettelTreeState(tree));
+    let root = EdlZettel(docPointer, undefined, defaults, "1");
+    Pouncer(repository).fetchDoc(root).then(tree => setZettelTreeState(tree));
   }, []);
 
   return (
