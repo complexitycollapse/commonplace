@@ -1,4 +1,4 @@
-import { addProperties, addMethods, finalObject } from '../utils';
+import { addProperties, addMethods, finalObject, memoize } from '../utils';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderLinkFactory } from './render-link-factory';
 import { RenderPointerCollection } from './render-pointer-collection';
@@ -14,6 +14,19 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     renderPointerCollection: undefined
   };
 
+  function attributes() {
+    let pointerStack, defaultsStack;
+    if (obj.renderPointerCollection) {
+      pointerStack = obj.renderPointerCollection.pointerStack();
+      defaultsStack = obj.renderPointerCollection.defaultsStack();
+    } else {
+      pointerStack = [];
+      defaultsStack = [];
+    }
+
+    return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
+  }
+
   addProperties(obj, {
     key,
     clip: edlPointer,
@@ -21,23 +34,12 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     parent,
     children: [],
     nameLinkPairs: [],
-    defaults
+    defaults,
+    attributes: memoize(attributes)
   });
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
-    attributes() {
-      let pointerStack, defaultsStack;
-      if (obj.renderPointerCollection) {
-        pointerStack = obj.renderPointerCollection.pointerStack();
-        defaultsStack = obj.renderPointerCollection.defaultsStack();
-      } else {
-        pointerStack = [];
-        defaultsStack = [];
-      }
-
-      return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
-    },
     renderPointers: () => {
       return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
     }

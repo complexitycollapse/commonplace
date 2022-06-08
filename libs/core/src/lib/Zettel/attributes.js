@@ -1,4 +1,4 @@
-import { finalObject } from "../utils";
+import { addProperties, finalObject, memoize } from "../utils";
 import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
 
 export function Attributes(owner, parent, pointerStack, defaultsStack) {
@@ -43,10 +43,13 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
     return attributes;
   }
 
+  addProperties(obj, {
+    values: memoize(values)
+  });
+
   return finalObject(obj, {
     content,
-    defaultContent,
-    values
+    defaultContent
   });
 }
 

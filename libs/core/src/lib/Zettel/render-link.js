@@ -1,4 +1,4 @@
-import { addProperties, finalObject, mergeMaps } from "../utils";
+import { addProperties, finalObject, memoize, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
@@ -12,6 +12,11 @@ export function RenderLink(pointer, link, homeEdl) {
 
 function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return new Map(); }), contentMetaEndowments = (() => { return new Map(); })) {
   let renderLink = {};
+
+  function attributes() {
+    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack(), renderLink.modifiers.defaultsStack());
+  }
+
   {
     // TODO: this doesn't work at all. If the link points to an EDL or other link then they need
     // to be pursued recursively to get all content. specifiesContent is therefore a bad property.
@@ -30,7 +35,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
       endsets: link.endsets,
       type: link.type,
       linkedContent,
-      modifiers
+      modifiers,
+      attributes: memoize(attributes)
     });
   }
 
@@ -46,10 +52,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
 
   function outstandingRequests() {
     return renderLink.linkedContent.filter(x => !x[2]).map(x => [x[0], resolveContent]);
-  }
-
-  function attributes() {
-    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack(), renderLink.modifiers.defaultsStack());
   }
 
   function forEachPointer(fn) {
@@ -73,7 +75,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
       renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
     resolveContent,
-    attributes,
     forEachPointer
   });
 }

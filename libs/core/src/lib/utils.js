@@ -65,3 +65,24 @@ export function mergeObjects(target, source) {
 export function mergeMaps(target, source) {
   [...source.entries()].forEach(e=> target.set(e[0], e[1]));
 }
+
+export function memoize(initFn) {
+  let value = undefined, memoized = false;
+
+  return () => {
+    if (!memoized) {
+      value = initFn();
+      memoized = true;
+    }
+    return value;
+  }
+}
+
+export function memoizedProperty(host, name, initFn) {
+  Object.defineProperty(host, name, {
+    configurable: true,
+    enumerable: true,
+    get: memoize(() => initFn.apply(host)),
+    writable: true
+  });
+}

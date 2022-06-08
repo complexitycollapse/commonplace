@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from '../utils';
+import { addProperties, addMethods, memoizedProperty, memoize } from '../utils';
 import { Span, toEqualClip } from '../pointers';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';
@@ -12,11 +12,16 @@ export function Zettel(clip, containingEdl) {
   let contentPart = undefined;
   obj.key = undefined;
 
+  function attributes() {
+    return Attributes(obj, containingEdl.attributes(), obj.renderPointers.pointerStack(), obj.renderPointers.defaultsStack());
+  }
+
   addProperties(obj, {
     clip,
     isSegment: false,
     renderPointers: RenderPointerCollection(clip, undefined, containingEdl),
-    containingEdl
+    containingEdl,
+    attributes: memoize(attributes)
   });
 
   function addPointer(pointer, endset, link) {
@@ -62,10 +67,6 @@ export function Zettel(clip, containingEdl) {
     return outstanding;
   }
 
-  function attributes() {
-    return Attributes(obj, containingEdl.attributes(), obj.renderPointers.pointerStack(), obj.renderPointers.defaultsStack());
-  }
-
   obj.renderPointers.addDefaults(containingEdl.defaults);
 
   addMethods(obj, {
@@ -74,8 +75,7 @@ export function Zettel(clip, containingEdl) {
     part: () => contentPart,
     outstandingRequests,
     setOnUpdate,
-    addPointer,
-    attributes
+    addPointer
   });
 
   return obj;
