@@ -1,5 +1,5 @@
 import { contentMetalinkType, directMetalinkType, Edl, Endset, Link } from "./model";
-import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "./pointers";
+import { EdlPointer, EdlTypePointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "./pointers";
 import { EdlZettel } from "./zettel";
 
 function contentAttribute(type, attribute, value) {
@@ -16,7 +16,7 @@ function directAttribute(type, attribute, value) {
    Endset("value", [InlinePointer(value)]));
 }
 
-let defaultsLinks =[
+let defaultsLinks = [
   contentAttribute("bold", "bold", true),
   directAttribute("paragraph", "paragraph", true),
   contentAttribute("italic", "italic", true),
@@ -31,8 +31,11 @@ let defaultsLinks =[
   contentAttribute("centre aligned text", "text align", "center"),
   contentAttribute("justified aligned text", "text align", "justify"),
   contentAttribute("red", "colour", "red"),
-  directAttribute("inline", "inline", true),
-  Link("inline", Endset(undefined, [PointerTypePointer("span")])) 
+  directAttribute("inline", "layout mode", "inline"),
+  directAttribute("block", "layout mode", "block"),
+  directAttribute("break", "break", true),
+  Link("inline", Endset(undefined, [PointerTypePointer("span")])),
+  Link("block", Endset(undefined, [EdlTypePointer("paragraph")]))
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));
