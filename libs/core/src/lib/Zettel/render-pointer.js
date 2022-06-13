@@ -1,6 +1,5 @@
 import { addProperties, finalObject } from '../utils';
 import { EdlPointer, LinkPointer, LinkTypePointer } from '../pointers';
-import { RenderEndset } from './render-endset';
 import { Edl, Link } from '../model';
 import { RenderLink } from './render-link';
 import { makeTestEdlZettelWithLinks } from './edl-zettel';
@@ -47,7 +46,7 @@ function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let contentMap = new Map(Object.entries(contentAttributes));
   return {
     pointer,
-    renderEndset: RenderEndset(link.endsets[0], rl),
+    renderEndset: rl.getRenderEndset(link.endsets[0]),
     renderLink: rl,
     allDirectAttributeEndowments: () => directMap,
     allContentAttributeEndowments: () => contentMap

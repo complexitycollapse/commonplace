@@ -1,6 +1,5 @@
 import { addProperties, finalObject, listMap } from "../utils";
 import { AttributesSourceFromPointers } from "./attributes-source";
-import { RenderEndset } from "./render-endset";
 import { RenderPointer } from "./render-pointer";
 
 export function RenderPointerCollection(ownerPointer, pointerSubject, containingEdl) {
@@ -13,7 +12,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
     defaultRenderLinks.forEach(renderLink => {
       renderLink.forEachPointer((p, e) => {
         if(p.endowsTo(ownerPointer, pointerSubject)) {
-          let pointer = RenderPointer(p, RenderEndset(e, renderLink));
+          let pointer = RenderPointer(p, renderLink.getRenderEndset(e));
           relevantPointers.push(pointer);
           obj.allDefaults.push(pointer);
         }
@@ -26,7 +25,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
   function tryAddAll(renderLinks) {
     renderLinks.forEach(renderLink => {
       renderLink.forEachPointer((p, e) =>
-        internalTryAdd(p, () => RenderPointer(p, RenderEndset(e, renderLink))));
+        internalTryAdd(p, () => RenderPointer(p, renderLink.getRenderEndset(e))));
     });
   }
 

@@ -1,7 +1,7 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
 import { LinkPointer, Span } from '../pointers';
-import { Link, contentMetalinkType, directMetalinkType } from '../model';
+import { Link, Endset, contentMetalinkType, directMetalinkType } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
@@ -89,5 +89,31 @@ describe('outstandingRequests', () => {
     request[1].call(undefined, part);
 
     expect(renderLink.outstandingRequests()).toEqual([]);
+  });
+});
+
+describe('getRenderEndset', () => {
+  it('returns undefined if the endset cannot be found amongst the links endsets', () => {
+    let endset = Endset(undefined, [], 0);
+    let link = Link(undefined);
+    let renderLink = make(link);
+
+    expect(renderLink.getRenderEndset(endset)).toBe(undefined);
+  });
+
+  it('returns the correct endset if it exists on the link', () => {
+    let endset = Endset(undefined, [], 0);
+    let link = Link(undefined, [undefined, []]);
+    let renderLink = make(link);
+
+    expect(renderLink.getRenderEndset(endset).endset).toEqual(endset);
+  });
+
+  it('returns the correct endset and not another endset', () => {
+    let endset = Endset(undefined, [], 1);
+    let link = Link(undefined, ["name A", []], [undefined, []], ["name B", []]);
+    let renderLink = make(link);
+
+    expect(renderLink.getRenderEndset(endset).endset).toEqual(endset);
   });
 });

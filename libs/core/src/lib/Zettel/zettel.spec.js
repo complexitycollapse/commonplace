@@ -38,8 +38,8 @@ describe('addPointer', () => {
     let l1 = makeLink("type1", e1), l2 = makeLink("type2", e2);
 
     let z = make(p1);
-    z.addPointer(p1, e1, l1);
-    z.addPointer(p2, e2, l2);
+    z.addPointer(p1, l1.endsets[0], l1);
+    z.addPointer(p2, l2.endsets[0], l2);
 
     let renderPointers = getRenderPointers(z);
     expect(renderPointers[0].pointer).toBe(p1);
@@ -52,9 +52,9 @@ describe('addPointer', () => {
     let l1 = makeLink("type1", e1);
 
     let z = make(p1);
-    z.addPointer(p1, e1, l1);
+    z.addPointer(p1, l1.endsets[0], l1);
 
-    expect(getRenderPointers(z)[0].renderEndset).toEqual(expect.objectContaining({name: e1.name, pointers: e1.pointers}));
+    expect(getRenderPointers(z)[0].renderEndset).toEqual(expect.objectContaining({name: e1[0], pointers: e1[1]}));
   });
 
   it('adds the links as properties to copies of the endsets', () => {
@@ -63,7 +63,7 @@ describe('addPointer', () => {
     let l1 = makeLink("type1", e1);
 
     let z = make(p1);
-    z.addPointer(p1, e1, l1);
+    z.addPointer(p1, l1.endsets[0], l1);
 
     expect(getRenderPointers(z)[0].renderLink).toBe(l1);
   });
@@ -88,8 +88,8 @@ describe('addPointer', () => {
     let l1 = makeLink("type1", e1);
 
     let z = make(Span("x", 1, 20));
-    z.addPointer(p1, e1, l1);
-    z.addPointer(p2, e1, l1);
+    z.addPointer(p1, l1.endsets[0], l1);
+    z.addPointer(p2, l1.endsets[0], l1);
 
     expect(getRenderPointers(z).length).toBe(2);
   });
@@ -100,8 +100,8 @@ describe('addPointer', () => {
     let l1 = makeLink("type1", e1, e2);
 
     let z = make(Span("x", 1, 20));
-    z.addPointer(p1, e1, l1);
-    z.addPointer(p2, e2, l1);
+    z.addPointer(p1, l1.endsets[0], l1);
+    z.addPointer(p2, l1.endsets[1], l1);
 
     expect(getRenderPointers(z).length).toBe(2);
   });
@@ -114,7 +114,7 @@ describe('addLink', () => {
     let l1 = makeLink("type1", e1);
     let l2 = makeLink("type2", ["name2", [s]]);
     let zettel = make();
-    zettel.addPointer(s, e1, l1);
+    zettel.addPointer(s, l1.endsets[0], l1);
 
     let newZettel = zettel.addLink(l2);
 
@@ -131,7 +131,7 @@ describe('addLink', () => {
     let l1 = makeLink("type1", e1);
     let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
-    zettel.addPointer(s, e1, l1);
+    zettel.addPointer(s, l1.endsets[0], l1);
 
     let newZettel = zettel.addLink(l2);
 
@@ -157,7 +157,7 @@ describe('addLink', () => {
     let l2 = makeLink("type2", ["name2", [s2]]);
     let content = "This is some content";
     let zettel = make(s1);
-    zettel.addPointer(s1, e1, l1);
+    zettel.addPointer(s1, l1.endsets[0], l1);
     zettel.tryAddPart(Part(s1, content));
 
     let newZettel = zettel.addLink(l2);
@@ -174,7 +174,7 @@ describe('addLink', () => {
     let l1 = makeLink("type1", e1);
     let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
-    zettel.addPointer(s, e1, l1);
+    zettel.addPointer(s, l1.endsets[0], l1);
     zettel.key = "xyz";
 
     let newZettel = zettel.addLink(l2);
@@ -189,7 +189,7 @@ describe('addLink', () => {
     let l1 = makeLink("type1", e1);
     let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
-    zettel.addPointer(s, e1, l1);
+    zettel.addPointer(s, l1.endsets[0], l1);
 
     let newZettel = zettel.addLink(l2);
 

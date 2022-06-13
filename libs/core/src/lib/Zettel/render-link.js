@@ -2,6 +2,7 @@ import { addProperties, finalObject, memoize, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
+import { RenderEndset } from "./render-endset";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
@@ -36,7 +37,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
       type: link.type,
       linkedContent,
       modifiers,
-      attributes: memoize(attributes)
+      attributes: memoize(attributes),
+      renderEndsets: link.endsets.map(e => RenderEndset(e, renderLink))
     });
   }
 
@@ -51,6 +53,10 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
 
   function forEachPointer(fn) {
     link.forEachPointer((p, e) => fn(p, e, renderLink));
+  }
+
+  function getRenderEndset(endset) {
+    return renderLink.renderEndsets.find(re => re.endset.index === endset.index);
   }
 
   return finalObject(renderLink, {
@@ -69,7 +75,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
       renderPointer => contentMetaEndowments(renderPointer, renderLink.linkedContent),
     getHomeEdl: () => homeEdl,
     resolveContent,
-    forEachPointer
+    forEachPointer,
+    getRenderEndset
   });
 }
 
