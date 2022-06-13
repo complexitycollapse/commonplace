@@ -1,4 +1,4 @@
-import { contentMetalinkType, directMetalinkType, Edl, Endset, Link } from "./model";
+import { contentMetalinkType, directMetalinkType, Edl, Link } from "./model";
 import { Part } from "./part";
 import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer, Span } from "./pointers";
 import { EdlZettel } from "./zettel";
@@ -73,7 +73,7 @@ export function EndsetBuilder() {
     return p;
   }
 
-  let obj = Builder(obj => Endset(obj.name, obj.pointers.map(getPointer)), {
+  let obj = Builder(obj => [obj.name, obj.pointers.map(getPointer)], {
     pointers: [],
     withPointer: p => obj.pushTo("pointers", p),
     withName: name => obj.withProperty("name", name)

@@ -1,4 +1,4 @@
-import { addProperties, addMethods, memoizedProperty, memoize } from '../utils';
+import { addProperties, addMethods, memoize } from '../utils';
 import { Span, toEqualClip } from '../pointers';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderEndset } from './render-endset';

@@ -1,19 +1,19 @@
-import { contentMetalinkType, directMetalinkType, Edl, Endset, Link } from "./model";
+import { contentMetalinkType, directMetalinkType, Edl, Link } from "./model";
 import { EdlPointer, EdlTypePointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "./pointers";
 import { EdlZettel } from "./zettel";
 
 function contentAttribute(type, attribute, value) {
   return Link(contentMetalinkType,
-   Endset(undefined, [LinkTypePointer(type)]),
-   Endset("attribute", [InlinePointer(attribute)]),
-   Endset("value", [InlinePointer(value)]));
+   [undefined, [LinkTypePointer(type)]],
+   ["attribute", [InlinePointer(attribute)]],
+   ["value", [InlinePointer(value)]]);
 }
 
 function directAttribute(type, attribute, value) {
   return Link(directMetalinkType,
-   Endset(undefined, [LinkTypePointer(type)]),
-   Endset("attribute", [InlinePointer(attribute)]),
-   Endset("value", [InlinePointer(value)]));
+   [undefined, [LinkTypePointer(type)]],
+   ["attribute", [InlinePointer(attribute)]],
+   ["value", [InlinePointer(value)]]);
 }
 
 let defaultsLinks = [
@@ -34,8 +34,8 @@ let defaultsLinks = [
   contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
   directAttribute("break", "break", true),
-  Link("inline", Endset(undefined, [PointerTypePointer("span")])),
-  Link("block", Endset(undefined, [EdlTypePointer("paragraph")]))
+  Link("inline", [undefined, [PointerTypePointer("span")]]),
+  Link("block", [undefined, [EdlTypePointer("paragraph")]])
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));

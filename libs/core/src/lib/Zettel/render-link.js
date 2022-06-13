@@ -45,11 +45,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     entry[2] = part.content;
   }
 
-  function getContentForPointer(pointer, endset) {
-    let entry = renderLink.linkedContent.find(x => x[0] === pointer && x[1] === endset);
-    return entry ? entry[2] : undefined;
-  }
-
   function outstandingRequests() {
     return renderLink.linkedContent.filter(x => !x[2]).map(x => [x[0], resolveContent]);
   }
@@ -60,7 +55,6 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
 
   return finalObject(renderLink, {
     outstandingRequests,
-    getContentForPointer,
     allDirectAttributeEndowments: renderPointer => 
       mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
     allContentAttributeEndowments: 

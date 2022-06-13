@@ -1,7 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { RenderPointerCollection } from './render-pointer-collection';
-import { spans } from '../../testing';
-import { Endset, Link } from '../model';
+import { Link } from '../model';
 import { PointerTypePointer, EdlPointer, LinkPointer, LinkTypePointer } from '../pointers';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { RenderLink } from './render-link';
@@ -23,7 +22,7 @@ function hasEdlAndLinks(actualSource, expectedEdl, ...expectedLinks) {
 }
 
 function makeLink(target, type) {
-  return Link(type.toString(), Endset(undefined, [target]));
+  return Link(type.toString(), [undefined, [target]]);
 }
 
 let linkCounter = 1;

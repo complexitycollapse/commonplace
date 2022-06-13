@@ -2,7 +2,12 @@ import { addProperties, finalObject } from "../utils";
 import { Endset, leafDataToEndset } from "./endset";
 import { Span, ClipIterator, LinkPointer } from "../pointers";
 
-export function Link(type, ...endsets) {
+export function Link(type, ...endsetSpecs) {
+  let endsets = endsetSpecs.map((e, i) => Endset(e[0], e[1], i));
+  return makeLinkInternal(type, endsets);
+}
+
+function makeLinkInternal(type, endsets) {
   let obj = {};
 
   addProperties(obj, {
@@ -42,8 +47,8 @@ export const ContentMetalink = (...endsets) => Link(contentMetalinkType, ...ends
 
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
-  let es = leafData.es.map(leafDataToEndset);
-  return Link(leafData.typ, ...es);
+  let es = leafData.es.map((e, i) => leafDataToEndset(e, i));
+  return makeLinkInternal(leafData.typ, es);
 }
 
 export let linkTesting = {
@@ -58,7 +63,7 @@ export let linkTesting = {
     let endsets = [], i = 0;
   
     clipLists.forEach(ss => {
-      endsets.push(Endset("name" + i.toString(), ss));
+      endsets.push(["name" + i.toString(), ss]);
       i += 1;
     });
   
@@ -68,7 +73,7 @@ export let linkTesting = {
   makePointerAndLink(uniqueKey = 1) {
     let stringKey = uniqueKey.toString();
     let pointer = Span(stringKey, 1, 1);
-    let endset = Endset(undefined, [pointer]);
+    let endset = [undefined, [pointer]];
     let link = Link(stringKey, endset);
     let linkPointer = LinkPointer(stringKey);
     return [linkPointer, link];

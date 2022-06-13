@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { Link, Endset } from '../model';
+import { Link } from '../model';
 import { LinkPointer } from '../pointers';
 import { RenderLinkFactory } from './render-link-factory';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
@@ -77,7 +77,7 @@ describe('renderLinks', () => {
 
   it('attaches a link to the link it points to', () => {
     let links = [
-      [LinkPointer("a"), Link("foo", Endset("x", [LinkPointer("b")]))],
+      [LinkPointer("a"), Link("foo", ["x", [LinkPointer("b")]])],
       [LinkPointer("b"), Link("bar")]
     ];
 
@@ -92,8 +92,8 @@ describe('renderLinks', () => {
 
   it('attaches a link to the link it points to, two levels', () => {
     let links = [
-      [LinkPointer("a"), Link("foo1", Endset("x", [LinkPointer("b")]))],
-      [LinkPointer("b"), Link("foo2", Endset(undefined, [LinkPointer("c")]))],
+      [LinkPointer("a"), Link("foo1", ["x", [LinkPointer("b")]])],
+      [LinkPointer("b"), Link("foo2", [undefined, [LinkPointer("c")]])],
       [LinkPointer("c"), Link("foo3")]
     ];
 

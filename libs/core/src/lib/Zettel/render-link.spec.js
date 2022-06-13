@@ -1,7 +1,7 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
 import { LinkPointer, Span } from '../pointers';
-import { Link, Endset, contentMetalinkType, directMetalinkType } from '../model';
+import { Link, contentMetalinkType, directMetalinkType } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
@@ -67,10 +67,10 @@ test('attributes returns values from links in preference to defaults', () => {
   expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "override value");
 });
 
-describe('outstandingRequests/getContentForPointer', () => {
+describe('outstandingRequests', () => {
   it('returns a request for any clip in an endset', () => {
     let clip = Span("x", 1, 10);
-    let endset = Endset(undefined, [clip, LinkPointer("foo")]);
+    let endset = [undefined, [clip, LinkPointer("foo")]];
     let link = Link(undefined, endset);
     
     let renderLink = make(link);
@@ -78,20 +78,10 @@ describe('outstandingRequests/getContentForPointer', () => {
     expect(renderLink.outstandingRequests().map(x => x[0])).toEqual([clip]);
   });
 
-  it('returns undefined if the pointer has not yet been resolved', () => {
-    let clip = Span("x", 1, 10);
-    let endset = Endset(undefined, [clip, LinkPointer("foo")]);
-    let link = Link(undefined, endset);
-    
-    let renderLink = make(link);
-
-    expect(renderLink.getContentForPointer(clip, endset)).toBe(undefined);
-  });
-
   it('stops requesting a pointer once it has been resolved', () => {
     let clip = Span("x", 1, 10);
     let part = Part(clip, "0123456789");
-    let endset = Endset(undefined, [clip, LinkPointer("foo")]);
+    let endset = [undefined, [clip, LinkPointer("foo")]];
     let link = Link(undefined, endset);
     let renderLink = make(link);
     let request = renderLink.outstandingRequests()[0];
@@ -99,18 +89,5 @@ describe('outstandingRequests/getContentForPointer', () => {
     request[1].call(undefined, part);
 
     expect(renderLink.outstandingRequests()).toEqual([]);
-  });
-
-  it('returns the content for the pointer once it has been resolved', () => {
-    let clip = Span("x", 1, 10);
-    let part = Part(clip, "0123456789");
-    let endset = Endset(undefined, [clip, LinkPointer("foo")]);
-    let link = Link(undefined, endset);
-    let renderLink = make(link);
-    let request = renderLink.outstandingRequests()[0];
-
-    request[1].call(undefined, part);
-
-    expect(renderLink.getContentForPointer(clip, endset)).toBe("0123456789");
   });
 });

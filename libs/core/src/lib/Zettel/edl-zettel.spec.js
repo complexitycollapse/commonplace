@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link, Edl, Endset } from '../model';
+import { Link, Edl } from '../model';
 import { EdlZettel, makeTestEdlZettel } from './edl-zettel';
 import { Span, Box, EdlPointer, LinkPointer } from '../pointers';
 import { Part } from '../part';
@@ -78,7 +78,7 @@ describe('outstandingRequests', () => {
       let ez = make(makeEdl([], [LinkPointer("1")]));
       let initialRequests = ez.outstandingRequests();
 
-      resolve(initialRequests[0], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clip])));
+      resolve(initialRequests[0], Link(undefined, [undefined, [ez.clip]], [undefined, [clip]]));
 
       expect(ez.outstandingRequests().map(x => x[0])).toEqual([clip]);
     });
@@ -90,9 +90,9 @@ describe('outstandingRequests', () => {
       let clips = [Span("x", 1, 10), Box("y", 1, 1, 100, 100), Span("z", 10, 10)];
       let ez = make(makeEdl([], links));
       let initialRequests = ez.outstandingRequests();
-      resolve(initialRequests[0], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clips[0], clips[1]])));
-      resolve(initialRequests[1], Link(undefined, Endset(undefined, [ez.clip])));
-      resolve(initialRequests[2], Link(undefined, Endset(undefined, [ez.clip]), Endset(undefined, [clips[2]])));
+      resolve(initialRequests[0], Link(undefined, [undefined, [ez.clip]], [undefined, [clips[0], clips[1]]]));
+      resolve(initialRequests[1], Link(undefined, [undefined, [ez.clip]]));
+      resolve(initialRequests[2], Link(undefined, [undefined, [ez.clip]], [undefined, [clips[2]]]));
 
       let requestedContent = ez.outstandingRequests().map(x => x[0]);
 
@@ -229,7 +229,7 @@ describe('key', () => {
 //     let edlPointer = EdlPointer("name");
 //     let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }), { edlPointer: edlPointer });
 
-//     resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [edlPointer])));
+//     resolve(ez.outstandingRequests()[0], Link(undefined, [undefined, [edlPointer])));
 
 //     expect(ez.renderPointers.map(p => p.pointer)).toEqual([edlPointer]);
 //   });
@@ -238,7 +238,7 @@ describe('key', () => {
 //     let edlPointer = EdlPointer("name");
 //     let ez = make(makeEdl([], [LinkPointer("foo")], { name: edlPointer }));
 
-//     resolve(ez.outstandingRequests()[0], Link(undefined, Endset(undefined, [EdlPointer("something else")])));
+//     resolve(ez.outstandingRequests()[0], Link(undefined, [undefined, [EdlPointer("something else")])));
 
 //     expect(ez.renderPointers).toEqual([]);
 //   });
@@ -246,7 +246,7 @@ describe('key', () => {
 //   it('will create a render pointer for links in the parent that point to the EDL', () => {
 //     let childPointer = EdlPointer("child");
 //     let parent = make(makeEdl([childPointer], [LinkPointer("foo")]));
-//     resolve(parent.outstandingRequests()[0], Link(undefined, Endset(undefined, [childPointer])));
+//     resolve(parent.outstandingRequests()[0], Link(undefined, [undefined, [childPointer])));
 
 //     let child = make(makeEdl([], [], { name: childPointer }), { parent: parent, edlPointer: childPointer });
 

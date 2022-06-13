@@ -1,6 +1,6 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { Zettel } from './zettel';
-import { Endset, Link } from '../model';
+import { Link } from '../model';
 import { Span, spanTesting, EdlPointer } from '../pointers';
 import { Part } from '../part';
 import { RenderLink } from './render-link';
@@ -34,7 +34,7 @@ test('clip returns the passed clip', () => {
 describe('addPointer', () => {
   it('adds the given pointers as RenderPointers', () => {
     let p1 = Span("x", 1, 10), p2 = Span("x", 1, 10);
-    let e1 = Endset("name1", [p1]), e2 = Endset("name2", [p2]);
+    let e1 = ["name1", [p1]], e2 = ["name2", [p2]];
     let l1 = makeLink("type1", e1), l2 = makeLink("type2", e2);
 
     let z = make(p1);
@@ -48,7 +48,7 @@ describe('addPointer', () => {
 
   it('adds RenderEndsets to the RenderPointers', () => {
     let p1 = Span("x", 1, 10);
-    let e1 = Endset("name1", [p1]);
+    let e1 = ["name1", [p1]];
     let l1 = makeLink("type1", e1);
 
     let z = make(p1);
@@ -59,7 +59,7 @@ describe('addPointer', () => {
 
   it('adds the links as properties to copies of the endsets', () => {
     let p1 = Span("x", 1, 10);
-    let e1 = Endset("name1", [p1]);
+    let e1 = ["name1", [p1]];
     let l1 = makeLink("type1", e1);
 
     let z = make(p1);
@@ -70,12 +70,12 @@ describe('addPointer', () => {
 
   it('adds the endset index property to copies of the endsets', () => {
     let p1 = Span("x", 1, 10), p2 = Span("x", 10, 10);
-    let e1 = Endset("name1", [p1]), e2 = Endset("name2", [p2]);
+    let e1 = ["name1", [p1]], e2 = ["name2", [p2]];
     let l1 = makeLink("type1", e1, e2);
 
     let z = make(Span("x", 1, 20));
-    z.addPointer(p1, e1, l1);
-    z.addPointer(p2, e2, l1);
+    z.addPointer(p1, l1.endsets[0], l1);
+    z.addPointer(p2, l1.endsets[1], l1);
 
     let renderPointers = getRenderPointers(z);
     expect(renderPointers[0].renderEndset.index).toBe(0);
@@ -84,7 +84,7 @@ describe('addPointer', () => {
 
   it('will only add an endset twice if it is added under different pointers', () => {
     let p1 = Span("x", 1, 10), p2 = Span("x", 10, 10);
-    let e1 = Endset("name1", [p1, p2]);
+    let e1 = ["name1", [p1, p2]];
     let l1 = makeLink("type1", e1);
 
     let z = make(Span("x", 1, 20));
@@ -96,7 +96,7 @@ describe('addPointer', () => {
 
   it('will add a link twice if it is under different endsets', () => {
     let p1 = Span("x", 1, 10), p2 = Span("x", 10, 10);
-    let e1 = Endset("name1", [p1]), e2 = Endset("name2", [p2]);
+    let e1 = ["name1", [p1]], e2 = ["name2", [p2]];
     let l1 = makeLink("type1", e1, e2);
 
     let z = make(Span("x", 1, 20));
@@ -110,9 +110,9 @@ describe('addPointer', () => {
 describe('addLink', () => {
   it('creates a new zettel with the new link added', () => {
     let s = Span("origin", 1, 10);
-    let e1 = Endset("name1", [s]);
+    let e1 = ["name1", [s]];
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s]));
+    let l2 = makeLink("type2", ["name2", [s]]);
     let zettel = make();
     zettel.addPointer(s, e1, l1);
 
@@ -127,9 +127,9 @@ describe('addLink', () => {
 
   it('will split the zettel according to the link spans', () => {
     let s = Span("origin", 1, 10);
-    let e1 = Endset("name1", [s]);
+    let e1 = ["name1", [s]];
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s.crop(1)]));
+    let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
     zettel.addPointer(s, e1, l1);
 
@@ -152,9 +152,9 @@ describe('addLink', () => {
   it('will split the zettel content to all the new zettel', () => {
     let s1 = Span("origin", 1, 20);
     let s2 = s1.crop(1);
-    let e1 = Endset("name1", [s1]);
+    let e1 = ["name1", [s1]];
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s2]));
+    let l2 = makeLink("type2", ["name2", [s2]]);
     let content = "This is some content";
     let zettel = make(s1);
     zettel.addPointer(s1, e1, l1);
@@ -170,9 +170,9 @@ describe('addLink', () => {
 
   it('will assign keys to the new zettel if the original has a key', () => {
     let s = Span("origin", 1, 10);
-    let e1 = Endset("name1", [s]);
+    let e1 = ["name1", [s]];
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s.crop(1)]));
+    let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
     zettel.addPointer(s, e1, l1);
     zettel.key = "xyz";
@@ -185,9 +185,9 @@ describe('addLink', () => {
 
   it('will not assign keys to the new zettel if the original does not have a key', () => {
     let s = Span("origin", 1, 10);
-    let e1 = Endset("name1", [s]);
+    let e1 = ["name1", [s]];
     let l1 = makeLink("type1", e1);
-    let l2 = makeLink("type2", Endset("name2", [s.crop(1)]));
+    let l2 = makeLink("type2", ["name2", [s.crop(1)]]);
     let zettel = make();
     zettel.addPointer(s, e1, l1);
 

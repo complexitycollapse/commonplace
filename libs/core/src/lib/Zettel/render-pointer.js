@@ -1,7 +1,7 @@
 import { addProperties, finalObject } from '../utils';
 import { EdlPointer, LinkPointer, LinkTypePointer } from '../pointers';
 import { RenderEndset } from './render-endset';
-import { Edl, Endset, Link } from '../model';
+import { Edl, Link } from '../model';
 import { RenderLink } from './render-link';
 import { makeTestEdlZettelWithLinks } from './edl-zettel';
 
@@ -39,7 +39,7 @@ export function mockEdlRenderPointer(edlName, attributes = {}) {
 
 function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let linkPointerForEdl = LinkPointer("unique type that will not be shared sdfsdfsdfsd");
-  let link = Link(undefined, Endset(undefined, [pointer]));
+  let link = Link(undefined, [undefined, [pointer]]);
   let edl = Edl(undefined, [], [linkPointerForEdl]);
   let edlZettel = makeTestEdlZettelWithLinks(edl, [link]);
   let rl = RenderLink("mock", link, edlZettel);
