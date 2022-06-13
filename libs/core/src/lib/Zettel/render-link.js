@@ -3,6 +3,7 @@ import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
 import { RenderEndset } from "./render-endset";
+import { RenderPointer } from "./render-pointer";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
@@ -59,6 +60,14 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     return renderLink.renderEndsets.find(re => re.endset.index === endset.index);
   }
 
+  function createRenderPointer(pointer, endset) {
+    let renderEndset = getRenderEndset(endset);
+    if (!renderEndset) {
+      throw "Endset not valid for this link";
+    }
+    return RenderPointer(pointer, renderEndset);
+  }
+
   return finalObject(renderLink, {
     outstandingRequests,
     allDirectAttributeEndowments: renderPointer => 
@@ -76,7 +85,8 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     getHomeEdl: () => homeEdl,
     resolveContent,
     forEachPointer,
-    getRenderEndset
+    getRenderEndset,
+    createRenderPointer
   });
 }
 

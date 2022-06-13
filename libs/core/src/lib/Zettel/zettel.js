@@ -1,7 +1,6 @@
 import { addProperties, addMethods, memoize } from '../utils';
 import { Span, toEqualClip } from '../pointers';
 import { ZettelSchneider } from './zettel-schneider';
-import { RenderPointer } from './render-pointer';
 import { RenderPointerCollection } from './render-pointer-collection';
 import { Attributes } from './attributes';
 
@@ -24,11 +23,7 @@ export function Zettel(clip, containingEdl) {
   });
 
   function addPointer(pointer, endset, link) {
-    let renderEndset = link.getRenderEndset(endset);
-    if (!renderEndset) {
-      throw "Could not find RenderEndset";
-    }
-    let renderPointer = RenderPointer(pointer, renderEndset);
+    let renderPointer = link.createRenderPointer(pointer, endset);
     obj.renderPointers.tryAddRenderPointer(renderPointer);
   }
 

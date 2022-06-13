@@ -117,3 +117,31 @@ describe('getRenderEndset', () => {
     expect(renderLink.getRenderEndset(endset).endset).toEqual(endset);
   });
 });
+
+describe('createRenderPointer', () => {
+  it('returns a RenderPointer for the given pointer', () => {
+    let pointer = Span("z", 1, 10);
+    let link = Link(undefined, [undefined, [pointer]]);
+    let renderLink = make(link);
+
+    expect(renderLink.createRenderPointer(pointer, link.endsets[0]).pointer.denotesSame(pointer)).toBeTruthy();
+  });
+
+  it('returns a RenderPointer for the given endset', () => {
+    let pointer = Span("z", 1, 10);
+    let link = Link(undefined, [undefined, [pointer]]);
+    let renderLink = make(link);
+    let expectedRenderEndset = renderLink.renderEndsets[0];
+
+    expect(renderLink.createRenderPointer(pointer, link.endsets[0]).renderEndset).toBe(expectedRenderEndset);
+  });
+
+  it('throws an exception if the endset is not in the link', () => {
+    let pointer = Span("z", 1, 10);
+    let link = Link(undefined, [undefined, [pointer]]);
+    let badEndset = Endset("bad", [pointer], 1);
+    let renderLink = make(link);
+
+    expect(() => renderLink.createRenderPointer(pointer, badEndset)).toThrow();
+  });
+});
