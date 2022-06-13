@@ -31,7 +31,7 @@ let defaultsLinks = [
   contentAttribute("centre aligned text", "text align", "center"),
   contentAttribute("justified aligned text", "text align", "justify"),
   contentAttribute("red", "colour", "red"),
-  directAttribute("inline", "layout mode", "inline"),
+  contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
   directAttribute("break", "break", true),
   Link("inline", Endset(undefined, [PointerTypePointer("span")])),
