@@ -104,15 +104,10 @@ function extractMetaEndowments(renderPointer) {
 
   let allRenderEndsets = renderPointer.renderLink.renderEnds;
 
-  // TODO: the below assumes that the attribute and value ends contain a single pointer, which is why
-  // they can use [0] to just grab the first (only) piece of content for the end. In reality these
-  // ends should actually be endlists and the content from all pointers should be combined linearly into
-  // a single string.
-
   for (let i = 0; i < allRenderEndsets.length - 1; ++i) {
     if (allRenderEndsets[i].end.name === "attribute" && allRenderEndsets[i+1].end.name === "value") {
-      let attribute = allRenderEndsets[i].linkedContent[0][1];
-      let value = allRenderEndsets[i+1].linkedContent[0][1];
+      let attribute = allRenderEndsets[i].concatatext();
+      let value = allRenderEndsets[i+1].concatatext();
       endowments.set(attribute, value);
     }
   }

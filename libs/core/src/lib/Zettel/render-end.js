@@ -16,6 +16,14 @@ export function RenderEnd(end, renderLink) {
   function outstandingRequests() {
     return obj.linkedContent.filter(x => !x[1]).map(x => [x[0], resolveContent]);
   }
+
+  function concatatext() {
+    if (linkedContent.findIndex(c => typeof c[1] != "string") != -1) {
+      return undefined;
+    }
+
+    return linkedContent.map(c => c[1]).join("");
+  }
   
   addProperties(obj, {
     index: end.index,
@@ -27,6 +35,8 @@ export function RenderEnd(end, renderLink) {
   });
 
   return finalObject(obj, {
-    outstandingRequests
+    outstandingRequests,
+    concatatext,
+    resolveContent
   });
 }
