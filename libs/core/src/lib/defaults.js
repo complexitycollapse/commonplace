@@ -2,18 +2,27 @@ import { contentMetalinkType, directMetalinkType, Edl, Link } from "./model";
 import { EdlPointer, EdlTypePointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "./pointers";
 import { EdlZettel } from "./zettel";
 
-function contentAttribute(type, attribute, value) {
-  return Link(contentMetalinkType,
-   [undefined, [LinkTypePointer(type)]],
-   ["attribute", [InlinePointer(attribute)]],
-   ["value", [InlinePointer(value)]]);
+function makeEnds(type, attribute, value, hasValueEnd, valueEnd) {
+  let ends = [[undefined, [LinkTypePointer(type)]], ["attribute", [InlinePointer(attribute)]]];
+  if (value !== undefined) {
+    ends.push(["value", [InlinePointer(value)]]);
+  }
+
+  if (hasValueEnd) {
+    ends.push(["value end", [InlinePointer(valueEnd)]]);
+  }
+
+  return ends;
 }
 
-function directAttribute(type, attribute, value) {
-  return Link(directMetalinkType,
-   [undefined, [LinkTypePointer(type)]],
-   ["attribute", [InlinePointer(attribute)]],
-   ["value", [InlinePointer(value)]]);
+function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
+  let ends = makeEnds(type, attribute, value, hasValueEnd, valueEnd);
+  return Link(contentMetalinkType, ...ends);
+}
+
+function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
+  let ends = makeEnds(type, attribute, value, hasValueEnd, valueEnd);
+  return Link(directMetalinkType, ...ends);
 }
 
 let defaultsLinks = [
@@ -31,6 +40,7 @@ let defaultsLinks = [
   contentAttribute("centre aligned text", "text align", "center"),
   contentAttribute("justified aligned text", "text align", "justify"),
   contentAttribute("red", "colour", "red"),
+  contentAttribute("colour", "colour", undefined, true, "value"),
   contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
   directAttribute("break", "break", true),

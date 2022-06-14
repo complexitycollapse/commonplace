@@ -108,11 +108,28 @@ function extractMetaEndowments(renderPointer) {
 
   let allRenderEndsets = renderPointer.renderLink.renderEnds;
 
-  for (let i = 0; i < allRenderEndsets.length - 1; ++i) {
-    if (allRenderEndsets[i].end.name === "attribute" && allRenderEndsets[i+1].end.name === "value") {
-      let attribute = allRenderEndsets[i].concatatext();
-      let value = allRenderEndsets[i+1].concatatext();
-      metaEndowments.push(MetaEndowment(attribute, value));
+  function buildMetaEndowment(i, max) {
+    let attribute = allRenderEndsets[i].concatatext();
+    let defaultValue, hasValueEnd = false, valueEndName;
+    for(let j = 1; j < 2 && i + j <= max; ++j) {
+      if (allRenderEndsets[i+j].end.name === "value") {
+        defaultValue = allRenderEndsets[i+j].concatatext();
+      }
+      if (allRenderEndsets[i+j].end.name === "value end") {
+        hasValueEnd = true;
+        valueEndName = allRenderEndsets[i+j].concatatext();
+      }
+    }
+        
+    return MetaEndowment(attribute, defaultValue, hasValueEnd, valueEndName);
+  }
+
+  let max = allRenderEndsets.length - 1;
+
+  for (let i = 0; i < max; ++i) {
+    if (allRenderEndsets[i].end.name === "attribute") {
+      let me = buildMetaEndowment(i, max);
+      if (me) { metaEndowments.push(me); }
     }
   }
 

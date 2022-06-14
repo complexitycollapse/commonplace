@@ -1,0 +1,7 @@
+{
+  "typ": "colour",
+  "es": [
+    { "ptr": [{ "typ": "span", "ori": "origin", "st": 0, "ln": 4 }] },
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "blue"}] }
+  ]
+}
