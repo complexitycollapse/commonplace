@@ -3,7 +3,7 @@ import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { RenderEnd } from './render-end';
 import { RenderLink } from './render-link';
 import { Link } from '../model';
-import { Span } from '../pointers';
+import { Span, InlinePointer } from '../pointers';
 import { Part } from '../part';
 
 function make(...pointersAndContent) {
@@ -30,5 +30,9 @@ describe('concatatext', () => {
 
   it('returns the concatenation of the string content of all pointers in the given order', () => {
     expect(make([Span("a", 1, 1), "A"], [Span("b", 1, 1), "B"], [Span("c", 1, 1), "C"]).concatatext()).toBe("ABC");
+  });
+
+  it('returns a boolean value, not a string, if the end has a single inline pointer with that value', () => {
+    expect(make([InlinePointer(true)]).concatatext()).toBe(true);
   });
 });

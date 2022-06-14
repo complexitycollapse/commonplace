@@ -4,6 +4,7 @@ import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
 import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
+import { MetaEndowment } from "./meta-endowment";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
@@ -58,9 +59,12 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
   return finalObject(renderLink, {
     outstandingRequests,
     allDirectAttributeEndowments: renderPointer => 
-      mergeAllMetaAttributes(renderPointer, renderLink.modifiers, p => p.allDirectAttributeMetaEndowments()),
-    allContentAttributeEndowments: 
-      renderPointer => mergeAllMetaAttributes(
+      mergeAllMetaAttributes(
+        renderPointer,
+        renderLink.modifiers,
+        p => p.allDirectAttributeMetaEndowments()),
+    allContentAttributeEndowments: renderPointer =>
+      mergeAllMetaAttributes(
         renderPointer,
         renderLink.modifiers,
         p => p.allContentAttributeMetaEndowments(),
@@ -95,11 +99,11 @@ function ContentMetalink(linkName, link, homeEdl) {
 }
 
 function extractMetaEndowments(renderPointer) {
-  let endowments = new Map();
+  let metaEndowments = [];
 
   // We only endow meta-endowments through the unnamed ends
   if (renderPointer.renderEnd.end.name !== undefined) {
-    return endowments;
+    return metaEndowments;
   }
 
   let allRenderEndsets = renderPointer.renderLink.renderEnds;
@@ -108,20 +112,23 @@ function extractMetaEndowments(renderPointer) {
     if (allRenderEndsets[i].end.name === "attribute" && allRenderEndsets[i+1].end.name === "value") {
       let attribute = allRenderEndsets[i].concatatext();
       let value = allRenderEndsets[i+1].concatatext();
-      endowments.set(attribute, value);
+      metaEndowments.push(MetaEndowment(attribute, value));
     }
   }
 
-  return endowments;
+  return metaEndowments;
 }
 
-function mergeAllMetaAttributes(renderPointer, modifiers, extractFn, recursiveFn) {
+function mergeAllMetaAttributes(renderPointer, modifiers, metaEndowmentFn, recursiveFn) {
   let metaAttributes = new Map();
 
   function merge(p) {
-    if (p.pointerType !== "end" || p.endName === undefined || p.endName === renderPointer.renderEnd.name)
-    {
-      mergeMaps(metaAttributes, extractFn(p));
+    if (p.pointerType !== "end" || p.endName === undefined || p.endName === renderPointer.renderEnd.name) {
+      let metaEndowmentsToMerge = metaEndowmentFn(p);
+      metaEndowmentsToMerge.forEach(m => {
+          let [present, value] = m.calculateValueForPointer(renderPointer);
+          if (present) { metaAttributes.set(m.attributeName, value); }
+        });
     }
   }
 

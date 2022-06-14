@@ -18,6 +18,13 @@ export function RenderEnd(end, renderLink) {
   }
 
   function concatatext() {
+    // TODO: this is an ugly hack to get around the fact that I am currently using boolean and
+    // string as attribute values, when really the endowed values should be strings that get
+    // parsed into meaningful values when they are assigned to the attribute.
+    if (end.pointers.length === 1 && end.pointers[0].inlineText !== undefined) {
+      return end.pointers[0].inlineText;
+    }
+
     if (linkedContent.findIndex(c => typeof c[1] != "string") != -1) {
       return undefined;
     }
