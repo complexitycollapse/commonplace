@@ -22,8 +22,8 @@ export function Zettel(clip, containingEdl) {
     attributes: memoize(attributes)
   });
 
-  function addPointer(pointer, endset, link) {
-    let renderPointer = link.createRenderPointer(pointer, endset);
+  function addPointer(pointer, end, link) {
+    let renderPointer = link.createRenderPointer(pointer, end);
     obj.renderPointers.tryAddRenderPointer(renderPointer);
   }
 
@@ -93,8 +93,8 @@ function clipArraysEqual(actual, expected) {
 
 export let zettelTesting = {
   hasEndset(zettel, link, index = 0) {
-    let expectedEndset = link.endsets[index];
-    let actualEndsets = zettel.renderPointers.renderPointers().map(p => p.renderEndset);
+    let expectedEndset = link.ends[index];
+    let actualEndsets = zettel.renderPointers.renderPointers().map(p => p.renderEnd);
 
     for(let i = 0; i < actualEndsets.length; ++i) {
       let candidate = actualEndsets[i];
@@ -111,7 +111,7 @@ export let zettelTesting = {
     }
 
     return {
-      message: () => `did not find endset ${JSON.stringify(expectedEndset)}`,
+      message: () => `did not find end ${JSON.stringify(expectedEndset)}`,
       pass: false
     };
   },

@@ -1,10 +1,10 @@
 import { test, expect, describe, it } from '@jest/globals';
 import { RenderLink } from './render-link';
 import { LinkPointer, Span } from '../pointers';
-import { Link, Endset, contentMetalinkType, directMetalinkType } from '../model';
+import { Link, End, contentMetalinkType, directMetalinkType } from '../model';
 import { Part } from '../part';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
-import { EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
+import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
 import { attributesTesting } from './attributes';
 
 expect.extend({
@@ -13,7 +13,7 @@ expect.extend({
  });
 
 function makeLinkAndMetalink(target, metalinkType, attributeName, attributeValue) {
-  let endowingLink = LinkBuilder().withName("endowing link").withEndset(EndsetBuilder().withPointer(target));
+  let endowingLink = LinkBuilder().withName("endowing link").withEndset(EndBuilder().withPointer(target));
   let metalink = MetalinkBuilder(metalinkType)
     .withName("metalink")
     .pointingTo(endowingLink)
@@ -68,10 +68,10 @@ test('attributes returns values from links in preference to defaults', () => {
 });
 
 describe('outstandingRequests', () => {
-  it('returns a request for any clip in an endset', () => {
+  it('returns a request for any clip in an end', () => {
     let clip = Span("x", 1, 10);
-    let endset = [undefined, [clip, LinkPointer("foo")]];
-    let link = Link(undefined, endset);
+    let end = [undefined, [clip, LinkPointer("foo")]];
+    let link = Link(undefined, end);
     
     let renderLink = make(link);
 
@@ -81,8 +81,8 @@ describe('outstandingRequests', () => {
   it('stops requesting a pointer once it has been resolved', () => {
     let clip = Span("x", 1, 10);
     let part = Part(clip, "0123456789");
-    let endset = [undefined, [clip, LinkPointer("foo")]];
-    let link = Link(undefined, endset);
+    let end = [undefined, [clip, LinkPointer("foo")]];
+    let link = Link(undefined, end);
     let renderLink = make(link);
     let request = renderLink.outstandingRequests()[0];
 
@@ -93,28 +93,28 @@ describe('outstandingRequests', () => {
 });
 
 describe('getRenderEndset', () => {
-  it('returns undefined if the endset cannot be found amongst the links endsets', () => {
-    let endset = Endset(undefined, [], 0);
+  it('returns undefined if the end cannot be found amongst the links ends', () => {
+    let end = End(undefined, [], 0);
     let link = Link(undefined);
     let renderLink = make(link);
 
-    expect(renderLink.getRenderEndset(endset)).toBe(undefined);
+    expect(renderLink.getRenderEndset(end)).toBe(undefined);
   });
 
-  it('returns the correct endset if it exists on the link', () => {
-    let endset = Endset(undefined, [], 0);
+  it('returns the correct end if it exists on the link', () => {
+    let end = End(undefined, [], 0);
     let link = Link(undefined, [undefined, []]);
     let renderLink = make(link);
 
-    expect(renderLink.getRenderEndset(endset).endset).toEqual(endset);
+    expect(renderLink.getRenderEndset(end).end).toEqual(end);
   });
 
-  it('returns the correct endset and not another endset', () => {
-    let endset = Endset(undefined, [], 1);
+  it('returns the correct end and not another end', () => {
+    let end = End(undefined, [], 1);
     let link = Link(undefined, ["name A", []], [undefined, []], ["name B", []]);
     let renderLink = make(link);
 
-    expect(renderLink.getRenderEndset(endset).endset).toEqual(endset);
+    expect(renderLink.getRenderEndset(end).end).toEqual(end);
   });
 });
 
@@ -124,22 +124,22 @@ describe('createRenderPointer', () => {
     let link = Link(undefined, [undefined, [pointer]]);
     let renderLink = make(link);
 
-    expect(renderLink.createRenderPointer(pointer, link.endsets[0]).pointer.denotesSame(pointer)).toBeTruthy();
+    expect(renderLink.createRenderPointer(pointer, link.ends[0]).pointer.denotesSame(pointer)).toBeTruthy();
   });
 
-  it('returns a RenderPointer for the given endset', () => {
+  it('returns a RenderPointer for the given end', () => {
     let pointer = Span("z", 1, 10);
     let link = Link(undefined, [undefined, [pointer]]);
     let renderLink = make(link);
-    let expectedRenderEndset = renderLink.renderEndsets[0];
+    let expectedRenderEndset = renderLink.renderEnds[0];
 
-    expect(renderLink.createRenderPointer(pointer, link.endsets[0]).renderEndset).toBe(expectedRenderEndset);
+    expect(renderLink.createRenderPointer(pointer, link.ends[0]).renderEnd).toBe(expectedRenderEndset);
   });
 
-  it('throws an exception if the endset is not in the link', () => {
+  it('throws an exception if the end is not in the link', () => {
     let pointer = Span("z", 1, 10);
     let link = Link(undefined, [undefined, [pointer]]);
-    let badEndset = Endset("bad", [pointer], 1);
+    let badEndset = End("bad", [pointer], 1);
     let renderLink = make(link);
 
     expect(() => renderLink.createRenderPointer(pointer, badEndset)).toThrow();

@@ -3,16 +3,16 @@ import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
 import { LinkPointer } from "./link-pointer";
 
-export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
+export function EndsetPointer(linkName, linkIndex, endName, endIndex) {
   function engulfs(obj, other) {
-    // If we don't have an endset index but other does then we may still match as we
-    // represent all endsets with that name.
+    // If we don't have an end index but other does then we may still match as we
+    // represent all ends with that name.
 
     if (obj.hasSamePointerType(other)
         && linkName === other.linkName
         && linkIndex === other.linkIndex
-        && endsetName === other.endsetName) {
-      let indexMatches = endsetIndex === undefined || endsetIndex === other.endsetIndex;
+        && endName === other.endName) {
+      let indexMatches = endIndex === undefined || endIndex === other.endIndex;
       return indexMatches;
     }
 
@@ -20,15 +20,15 @@ export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
   }
 
   let obj = Pointer(
-    "endset",
+    "end",
     false,
     false,
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
-    () => `endset:${linkName}:${linkIndex ?? "N"}:${endsetName ?? ""}:${endsetIndex ?? "N"}`,
-    { linkName, linkIndex, endsetName, endsetIndex, isTypePointer: false },
+    () => `end:${linkName}:${linkIndex ?? "N"}:${endName ?? ""}:${endIndex ?? "N"}`,
+    { linkName, linkIndex, endName, endIndex: endIndex, isTypePointer: false },
     {
-      leafData() { return { typ: "endset", lnk: linkName, lx: linkIndex, es: endsetName, ex: endsetIndex }; },
+      leafData() { return { typ: "end", lnk: linkName, lx: linkIndex, end: endName, ex: endIndex }; },
       clipPart(part) { 
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {
@@ -45,5 +45,5 @@ export function EndsetPointer(linkName, linkIndex, endsetName, endsetIndex) {
 }
 
 export function leafDataToEndsetPointer(data) {
-  return EndsetPointer(data.lnk, data["lx"], data["es"], data["ex"]);
+  return EndsetPointer(data.lnk, data["lx"], data["end"], data["ex"]);
 }

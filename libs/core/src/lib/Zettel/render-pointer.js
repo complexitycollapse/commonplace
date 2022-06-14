@@ -4,20 +4,20 @@ import { Edl, Link } from '../model';
 import { RenderLink } from './render-link';
 import { makeTestEdlZettelWithLinks } from './edl-zettel';
 
-export function RenderPointer(pointer, renderEndset) {
+export function RenderPointer(pointer, renderEnd) {
   let obj = {};
 
   addProperties(obj, {
     pointer,
-    renderEndset,
-    renderLink: renderEndset.renderLink
+    renderEnd,
+    renderLink: renderEnd.renderLink
   });
 
   return finalObject(obj, {
-    allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEndset.endset),
-    allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEndset.endset),
-    allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEndset.endset),
-    allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEndset.endset),
+    allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
+    allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
+    allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
+    allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),
   });
 }
 
@@ -46,7 +46,7 @@ function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let contentMap = new Map(Object.entries(contentAttributes));
   return {
     pointer,
-    renderEndset: rl.getRenderEndset(link.endsets[0]),
+    renderEnd: rl.getRenderEndset(link.ends[0]),
     renderLink: rl,
     allDirectAttributeEndowments: () => directMap,
     allContentAttributeEndowments: () => contentMap

@@ -85,8 +85,8 @@ describe('renderLinks', () => {
     let actual = renderLinks[1].modifiers.renderPointers();
 
     expect(actual).toHaveLength(1);
-    expect(actual[0].pointer).toEqual(links[0][1].endsets[0].pointers[0]);
-    expect(actual[0].renderEndset.endset).toEqual(links[0][1].endsets[0]);
+    expect(actual[0].pointer).toEqual(links[0][1].ends[0].pointers[0]);
+    expect(actual[0].renderEnd.end).toEqual(links[0][1].ends[0]);
     expect(actual[0].renderLink.link).toEqual(links[0][1]);
   });
 

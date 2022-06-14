@@ -1,6 +1,6 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasClips, boxTesting, Span, spanTesting, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
-import { Endset } from './endset';
+import { End } from './end';
 import { Link, leafDataToLink, DirectMetalink, directMetalinkType, ContentMetalink, contentMetalinkType } from './link';
 
 expect.extend({
@@ -10,8 +10,8 @@ expect.extend({
 let makeSpan = spanTesting.makeSpan;
 let makeBox = boxTesting.makeBox;
 
-function toSpec(endset) {
-  return [endset.name, endset.pointers];
+function toSpec(end) {
+  return [end.name, end.pointers];
 }
 
 test('type is set on the link', () => {
@@ -26,36 +26,36 @@ test('isClip is false', () => {
   expect(Link("myType").isClip).toBeFalsy();
 });
 
-test('endsets is set on the link', () => {
-  let endsets = [
+test('ends is set on the link', () => {
+  let ends = [
     ["foo", [makeSpan()]],
     ["bar", [makeBox()]],
     [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
   ];
 
-  let lk = Link("my type", ...endsets);
+  let lk = Link("my type", ...ends);
 
-  expect(lk.endsets.length).toBe(3);
-  expect(toSpec(lk.endsets[0])).toEqual(endsets[0]);
-  expect(toSpec(lk.endsets[1])).toEqual(endsets[1]);
-  expect(toSpec(lk.endsets[2])).toEqual(endsets[2]);
+  expect(lk.ends.length).toBe(3);
+  expect(toSpec(lk.ends[0])).toEqual(ends[0]);
+  expect(toSpec(lk.ends[1])).toEqual(ends[1]);
+  expect(toSpec(lk.ends[2])).toEqual(ends[2]);
 });
 
 describe('leafData', () => {
-  it('has the type and endsets properties', () => {
+  it('has the type and ends properties', () => {
     expect(Link("type").leafData()).toEqual({
       typ: "type",
       es: []
     });
   });
 
-  it('has no own properties other than type and endset', () => {
+  it('has no own properties other than type and end', () => {
     expect(Object.getOwnPropertyNames(Link("type").leafData())).toHaveLength(2);
   });
 
-  it('converts the endsets to their serialized form', () => {
-    let es = Endset("Name", [], 0);
-    expect(Link("type", toSpec(es)).leafData().es[0]).toEqual(es.leafData());
+  it('converts the ends to their serialized form', () => {
+    let end = End("Name", [], 0);
+    expect(Link("type", toSpec(end)).leafData().es[0]).toEqual(end.leafData());
   });
 });
 
@@ -99,19 +99,19 @@ describe('DirectMetalink', () => {
     expect(DirectMetalink().type).toBe(directMetalinkType);
   });
 
-  it('sets endsets on the link from the endsets parameters', () => {
-    let endsets = [
+  it('sets ends on the link from the ends parameters', () => {
+    let ends = [
       ["foo", [makeSpan()]],
       ["bar", [makeBox()]],
       [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
     ];
   
-    let lk = DirectMetalink(...endsets);
+    let lk = DirectMetalink(...ends);
   
-    expect(lk.endsets.length).toBe(3);
-    expect(toSpec(lk.endsets[0])).toEqual(endsets[0]);
-    expect(toSpec(lk.endsets[1])).toEqual(endsets[1]);
-    expect(toSpec(lk.endsets[2])).toEqual(endsets[2]);
+    expect(lk.ends.length).toBe(3);
+    expect(toSpec(lk.ends[0])).toEqual(ends[0]);
+    expect(toSpec(lk.ends[1])).toEqual(ends[1]);
+    expect(toSpec(lk.ends[2])).toEqual(ends[2]);
   });
 });
 
@@ -120,18 +120,18 @@ describe('ContentMetalink', () => {
     expect(ContentMetalink().type).toBe(contentMetalinkType);
   });
 
-  it('sets endsets on the link from the endsets parameters', () => {
-    let endsets = [
+  it('sets ends on the link from the ends parameters', () => {
+    let ends = [
       ["foo", [makeSpan()]],
       ["bar", [makeBox()]],
       [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
     ];
   
-    let lk = ContentMetalink(...endsets);
+    let lk = ContentMetalink(...ends);
   
-    expect(lk.endsets.length).toBe(3);
-    expect(toSpec(lk.endsets[0])).toEqual(endsets[0]);
-    expect(toSpec(lk.endsets[1])).toEqual(endsets[1]);
-    expect(toSpec(lk.endsets[2])).toEqual(endsets[2]);
+    expect(lk.ends.length).toBe(3);
+    expect(toSpec(lk.ends[0])).toEqual(ends[0]);
+    expect(toSpec(lk.ends[1])).toEqual(ends[1]);
+    expect(toSpec(lk.ends[2])).toEqual(ends[2]);
   });
 });

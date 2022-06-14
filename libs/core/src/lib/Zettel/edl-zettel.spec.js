@@ -85,7 +85,7 @@ describe('outstandingRequests', () => {
   });
 
   describe('after links downloaded', () => {
-    it('requests content for all pointers in all endsets that point to content', () => {
+    it('requests content for all pointers in all ends that point to content', () => {
       let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
       let clips = [Span("x", 1, 10), Box("y", 1, 1, 100, 100), Span("z", 10, 10)];
       let ez = make(makeEdl([], links));

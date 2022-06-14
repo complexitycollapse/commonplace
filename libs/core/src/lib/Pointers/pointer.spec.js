@@ -7,7 +7,7 @@ import { PointerTypePointer } from './type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
-import { EndsetPointer } from './endset-pointer';
+import { EndsetPointer } from './end-pointer';
 import { InlinePointer } from './inline-pointer';
 import { Edl, Link } from '../model';
 
@@ -135,7 +135,7 @@ describe('restoring leafData', () => {
   });
 
   test('leafDataToPointer is inverse of leafData for EndsetPointer', () => {
-    let pointer = EndsetPointer("link name", 123, "endset name", 100);
+    let pointer = EndsetPointer("link name", 123, "end name", 100);
 
     expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
   });
@@ -187,11 +187,11 @@ describe('engulfs', () => {
 
     describe('called on EndsetPointer', () => {
       it('returns false if the other pointer has a different link name', () => {
-        expect(LinkPointer("name").engulfs(EndsetPointer("name2", undefined, "endset name", 100))).toBeFalsy();
+        expect(LinkPointer("name").engulfs(EndsetPointer("name2", undefined, "end name", 100))).toBeFalsy();
       });
   
       it('returns true if they have the same name', () => {
-        expect(LinkPointer("name").engulfs(EndsetPointer("name", undefined, "endset name", 100))).toBeTruthy();
+        expect(LinkPointer("name").engulfs(EndsetPointer("name", undefined, "end name", 100))).toBeTruthy();
       });
     });
   });
@@ -227,11 +227,11 @@ describe('endowsTo', () => {
 
     describe('called on EndsetPointer', () => {
       it('returns false if the other pointer has a different link name', () => {
-        expect(LinkPointer("name").endowsTo(EndsetPointer("name2", undefined, "endset name", 100))).toBeFalsy();
+        expect(LinkPointer("name").endowsTo(EndsetPointer("name2", undefined, "end name", 100))).toBeFalsy();
       });
   
       it('returns true if they have the same name', () => {
-        expect(LinkPointer("name").endowsTo(EndsetPointer("name", undefined, "endset name", 100))).toBeTruthy();
+        expect(LinkPointer("name").endowsTo(EndsetPointer("name", undefined, "end name", 100))).toBeTruthy();
       });
     });
   });

@@ -2,7 +2,7 @@ import { addProperties, finalObject, memoize, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
 import { directMetalinkType, contentMetalinkType } from '../model';
 import { Attributes } from "./attributes";
-import { RenderEndset } from "./render-endset";
+import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
 
 export function RenderLink(pointer, link, homeEdl) {
@@ -27,32 +27,32 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     addProperties(renderLink, {
       pointer,
       link,
-      endsets: link.endsets,
+      ends: link.ends,
       type: link.type,
       modifiers,
       attributes: memoize(attributes),
-      renderEndsets: link.endsets.map(e => RenderEndset(e, renderLink))
+      renderEnds: link.ends.map(e => RenderEnd(e, renderLink))
     });
   }
 
   function outstandingRequests() {
-    return renderLink.renderEndsets.map(e => e.outstandingRequests()).flat();
+    return renderLink.renderEnds.map(e => e.outstandingRequests()).flat();
   }
 
   function forEachPointer(fn) {
     link.forEachPointer((p, e) => fn(p, e, renderLink));
   }
 
-  function getRenderEndset(endset) {
-    return renderLink.renderEndsets.find(re => re.endset.index === endset.index);
+  function getRenderEndset(end) {
+    return renderLink.renderEnds.find(re => re.end.index === end.index);
   }
 
-  function createRenderPointer(pointer, endset) {
-    let renderEndset = getRenderEndset(endset);
-    if (!renderEndset) {
-      throw "Endset not valid for this link";
+  function createRenderPointer(pointer, end) {
+    let renderEnd = getRenderEndset(end);
+    if (!renderEnd) {
+      throw "End not valid for this link";
     }
-    return RenderPointer(pointer, renderEndset);
+    return RenderPointer(pointer, renderEnd);
   }
 
   return finalObject(renderLink, {
@@ -97,20 +97,20 @@ function ContentMetalink(linkName, link, homeEdl) {
 function extractMetaEndowments(renderPointer) {
   let endowments = new Map();
 
-  // We only endow meta-endowments through the unnamed endsets
-  if (renderPointer.renderEndset.endset.name !== undefined) {
+  // We only endow meta-endowments through the unnamed ends
+  if (renderPointer.renderEnd.end.name !== undefined) {
     return endowments;
   }
 
-  let allRenderEndsets = renderPointer.renderLink.renderEndsets;
+  let allRenderEndsets = renderPointer.renderLink.renderEnds;
 
-  // TODO: the below assumes that the attribute and value endsets contain a single pointer, which is why
-  // they can use [0] to just grab the first (only) piece of content for the endset. In reality these
-  // endsets should actually be endlists and the content from all pointers should be combined linearly into
+  // TODO: the below assumes that the attribute and value ends contain a single pointer, which is why
+  // they can use [0] to just grab the first (only) piece of content for the end. In reality these
+  // ends should actually be endlists and the content from all pointers should be combined linearly into
   // a single string.
 
   for (let i = 0; i < allRenderEndsets.length - 1; ++i) {
-    if (allRenderEndsets[i].endset.name === "attribute" && allRenderEndsets[i+1].endset.name === "value") {
+    if (allRenderEndsets[i].end.name === "attribute" && allRenderEndsets[i+1].end.name === "value") {
       let attribute = allRenderEndsets[i].linkedContent[0][1];
       let value = allRenderEndsets[i+1].linkedContent[0][1];
       endowments.set(attribute, value);
@@ -124,7 +124,7 @@ function mergeAllMetaAttributes(renderPointer, modifiers, extractFn, recursiveFn
   let metaAttributes = new Map();
 
   function merge(p) {
-    if (p.pointerType !== "endset" || p.endsetName === undefined || p.endsetName === renderPointer.renderEndset.name)
+    if (p.pointerType !== "end" || p.endName === undefined || p.endName === renderPointer.renderEnd.name)
     {
       mergeMaps(metaAttributes, extractFn(p));
     }

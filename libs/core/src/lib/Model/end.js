@@ -1,15 +1,15 @@
 import { leafDataToPointer } from "../pointers";
 import { addProperties, addMethods } from "../utils";
 
-export function Endset(name, pointers, index) {
+export function End(name, pointers, index) {
   let obj = {};
 
   if (!Array.isArray(pointers)) {
-    throw "Pointers argument to Endset must be an array";
+    throw "Pointers argument to End must be an array";
   }
 
   if (index != 0 && !index) {
-    throw "Missing index argument to Endset";
+    throw "Missing index argument to End";
   }
 
   addProperties(obj, { 
@@ -35,5 +35,5 @@ export function leafDataToEndset(leafData, index) {
   let ptr = leafData.ptr;
   let pointers = ptr.map(leafDataToPointer);
   
-  return Endset(leafData?.name, pointers, index);
+  return End(leafData?.name, pointers, index);
 }

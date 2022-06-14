@@ -20,8 +20,8 @@ function make(clip, renderLinks, key) {
 expect.extend({
   toEqualClip,
   hasEndset,
-  hasZettelProperties(zettel, start, length, ...endsets) {
-    endsets = endsets ?? [];
+  hasZettelProperties(zettel, start, length, ...ends) {
+    ends = ends ?? [];
 
     if (zettel.clip.start !== start) {
       return {
@@ -37,14 +37,14 @@ expect.extend({
       };
     }
 
-    endsets.forEach(e => {
+    ends.forEach(e => {
       let result = hasEndset(zettel, e[0], e[1]);
       if (!result.pass) { return result; }
     });
 
-    if (endsets.length !== zettel.renderPointers.renderPointers().length) {
+    if (ends.length !== zettel.renderPointers.renderPointers().length) {
       return {
-        message: () => `expected ${endsets.length} endsets, received ${zettel.renderPointers.length}`,
+        message: () => `expected ${ends.length} ends, received ${zettel.renderPointers.length}`,
         pass: false
       }
     }
@@ -84,7 +84,7 @@ describe('ZettelSchneider.zettel', () => {
     expect(make(s, []).zettel()).toHaveLength(1);
   });
 
-  it('attaches an endset to a box that overlaps with it', () => {
+  it('attaches an end to a box that overlaps with it', () => {
     let box = Box("origin", 0, 0, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
@@ -93,7 +93,7 @@ describe('ZettelSchneider.zettel', () => {
     expect(zettel[0]).hasEndset(l, 0);
   });
 
-  it('does not attach an endset to a box that does not overlap with it', () => {
+  it('does not attach an end to a box that does not overlap with it', () => {
     let box = Box("origin", 100, 100, 10, 10);
     let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
 
@@ -102,7 +102,7 @@ describe('ZettelSchneider.zettel', () => {
     expect(zettel[0]).not.hasEndset(l, 0);
   });
 
-  it('attaches an endset to a span that overlaps with it', () => {
+  it('attaches an end to a span that overlaps with it', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 20)]] });
 
@@ -111,7 +111,7 @@ describe('ZettelSchneider.zettel', () => {
     expect(zettel[0]).hasEndset(l, 0);
   });
 
-  it('does not attach an endset to a span that does not overlap with it', () => {
+  it('does not attach an end to a span that does not overlap with it', () => {
     let s = Span("origin", 100, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 20)]] });
 
@@ -133,14 +133,14 @@ describe('ZettelSchneider.zettel', () => {
 
   it('splits a span at link start if only the end is covered by a link', () => {
     let s = Span("origin", 1, 10);
-    let endsetSpan = Span("origin", 6, 20);
-    let l = makeSpanLink({ clipLists: [[endsetSpan]] });
+    let endSpan = Span("origin", 6, 20);
+    let l = makeSpanLink({ clipLists: [[endSpan]] });
 
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
     expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 5));
-    expect(zettel[1].clip).toEqualClip(Span(s.origin, endsetSpan.start, 5));
+    expect(zettel[1].clip).toEqualClip(Span(s.origin, endSpan.start, 5));
     expect(zettel.reduce((n, z) => n + z.clip.length, 0)).toBe(s.length);
   });
 
@@ -157,8 +157,8 @@ describe('ZettelSchneider.zettel', () => {
 
   it('splits a span at span start if only the end is covered by a link', () => {
     let s = Span("origin", 1, 10);
-    let endsetSpan = Span("origin", 0, 6);
-    let l = makeSpanLink({ clipLists: [[endsetSpan]] });
+    let endSpan = Span("origin", 0, 6);
+    let l = makeSpanLink({ clipLists: [[endSpan]] });
 
     let zettel = make(s, [l]).zettel();
 
@@ -182,19 +182,19 @@ describe('ZettelSchneider.zettel', () => {
 
   it('splits a span at the link points if the link is contained in the span', () => {
     let s = Span("origin", 1, 10);
-    let endsetSpan = Span("origin", 2, 8);
-    let l = makeSpanLink({ clipLists: [[endsetSpan]] });
+    let endSpan = Span("origin", 2, 8);
+    let l = makeSpanLink({ clipLists: [[endSpan]] });
 
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
     expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 1));
-    expect(zettel[1].clip).toEqualClip(Span(s.origin, endsetSpan.start, endsetSpan.length));
-    expect(zettel[2].clip).toEqualClip(Span(s.origin, endsetSpan.next, 1));
+    expect(zettel[1].clip).toEqualClip(Span(s.origin, endSpan.start, endSpan.length));
+    expect(zettel[2].clip).toEqualClip(Span(s.origin, endSpan.next, 1));
     expect(zettel.reduce((n, z) => n + z.clip.length, 0)).toBe(s.length);
   });
 
-  it('assigns all endsets that overlap the zettel', () => {
+  it('assigns all ends that overlap the zettel', () => {
     let s = Span("origin", 0, 10);
     let l = makeSpanLink({ clipLists: [[Span("origin", 0, 10)], [Span("origin", 0, 10)]] });
 

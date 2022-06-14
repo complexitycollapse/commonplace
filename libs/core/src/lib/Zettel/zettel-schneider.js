@@ -14,14 +14,14 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
     } else {
       let singleZettel = Zettel(clip, containingEdl);
       overlappingEntries.forEach(c => {
-        singleZettel.addPointer(c.clip, c.endset, c.link);
+        singleZettel.addPointer(c.clip, c.end, c.link);
       });
       result = [singleZettel];
     }
 
-    typePointerEndsetLinks.forEach(({typePointer, endset, link}) => {
+    typePointerEndsetLinks.forEach(({typePointer, end, link}) => {
       if (typePointer.endowsTo(clip)) {
-        result.forEach(z => z.addPointer(typePointer, endset, link));
+        result.forEach(z => z.addPointer(typePointer, end, link));
       }
     });
 
@@ -68,7 +68,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
 
     if (coveringSpan) {
       zettel.forEach(z => {
-        z.addPointer(span, coveringSpan.endset, coveringSpan.link);
+        z.addPointer(span, coveringSpan.end, coveringSpan.link);
       });
     }
 
@@ -85,10 +85,10 @@ function buildClipEndsetLinks(links) {
   let typePointerList = [];
   forEachPointer(links, (p, e, l) => {
     if (p.isClip) {
-      clipList.push({ clip: p, endset: e, link: l });
+      clipList.push({ clip: p, end: e, link: l });
     }
     if (p.isTypePointer) {
-      typePointerList.push({ typePointer: p, endset: e, link: l });
+      typePointerList.push({ typePointer: p, end: e, link: l });
     }
   });
   return [clipList, typePointerList];

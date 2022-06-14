@@ -1,6 +1,6 @@
 import { expect, it, describe } from '@jest/globals';
 import { attributesTesting } from './attributes';
-import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndsetBuilder, LinkBuilder, SpanBuilder, Builder, PointerTypePointerBuilder, PointerBuilder } from '../builders';
+import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerTypePointerBuilder, PointerBuilder } from '../builders';
 
 expect.extend({
  hasAttribute: attributesTesting.hasAttribute,
@@ -12,7 +12,7 @@ function aSpan() {
 }
 
 function anEndset(name) {
-  return EndsetBuilder().withName(name);
+  return EndBuilder().withName(name);
 }
 
 function aDirectMetalink(name) {

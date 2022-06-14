@@ -1,18 +1,18 @@
 import { addProperties, finalObject } from "../utils";
-import { Endset, leafDataToEndset } from "./endset";
+import { End, leafDataToEndset } from "./end";
 import { Span, ClipIterator, LinkPointer } from "../pointers";
 
-export function Link(type, ...endsetSpecs) {
-  let endsets = endsetSpecs.map((e, i) => Endset(e[0], e[1], i));
-  return makeLinkInternal(type, endsets);
+export function Link(type, ...endSpecs) {
+  let ends = endSpecs.map((e, i) => End(e[0], e[1], i));
+  return makeLinkInternal(type, ends);
 }
 
-function makeLinkInternal(type, endsets) {
+function makeLinkInternal(type, ends) {
   let obj = {};
 
   addProperties(obj, {
     type,
-    endsets,
+    ends,
     isClip: false,
     isLink: true
   });
@@ -20,12 +20,12 @@ function makeLinkInternal(type, endsets) {
   function leafData() {
     return {
       typ: type,
-      es: endsets.map(e => e.leafData())
+      es: ends.map(e => e.leafData())
     };
   }
 
   function forEachPointer(fn) {
-    endsets.forEach(e => {
+    ends.forEach(e => {
       e.pointers.forEach(p => {
         fn(p, e, obj);
       });
@@ -42,8 +42,8 @@ function makeLinkInternal(type, endsets) {
 export const directMetalinkType = "endows direct attributes";
 export const contentMetalinkType = "endows content attributes";
 
-export const DirectMetalink = (...endsets) => Link(directMetalinkType, ...endsets);
-export const ContentMetalink = (...endsets) => Link(contentMetalinkType, ...endsets);
+export const DirectMetalink = (...ends) => Link(directMetalinkType, ...ends);
+export const ContentMetalink = (...ends) => Link(contentMetalinkType, ...ends);
 
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
@@ -60,21 +60,21 @@ export let linkTesting = {
       ];
     }
   
-    let endsets = [], i = 0;
+    let ends = [], i = 0;
   
     clipLists.forEach(ss => {
-      endsets.push(["name" + i.toString(), ss]);
+      ends.push(["name" + i.toString(), ss]);
       i += 1;
     });
   
-    return Link(type ?? "typeA", ...endsets);
+    return Link(type ?? "typeA", ...ends);
   },
 
   makePointerAndLink(uniqueKey = 1) {
     let stringKey = uniqueKey.toString();
     let pointer = Span(stringKey, 1, 1);
-    let endset = [undefined, [pointer]];
-    let link = Link(stringKey, endset);
+    let end = [undefined, [pointer]];
+    let link = Link(stringKey, end);
     let linkPointer = LinkPointer(stringKey);
     return [linkPointer, link];
   }

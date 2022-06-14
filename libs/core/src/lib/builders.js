@@ -51,10 +51,10 @@ export function SpanBuilder() {
 export function LinkBuilder() {
   let unique = 0;
 
-  let obj = Builder(obj => Link(obj.type, ...obj.endsets.map(e => e.build())), {
-    endsets: [],
+  let obj = Builder(obj => Link(obj.type, ...obj.ends.map(e => e.build())), {
+    ends: [],
     withType: type => obj.withProperty("type", type),
-    withEndset: e => obj.pushTo("endsets", e),
+    withEndset: e => obj.pushTo("ends", e),
     withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString())),
     defaultPart: () => Part(obj.pointer, obj.builtObject)
     });
@@ -62,7 +62,7 @@ export function LinkBuilder() {
   return obj;
 }
 
-export function EndsetBuilder() {
+export function EndBuilder() {
   function getPointer(p) {
     if (p.build) {
       let built = p.build();
@@ -101,14 +101,14 @@ export function MetalinkBuilder(directOrContent) {
   builder.endowing = (...attributePairs) => {
     for (let i = 0; i < attributePairs.length; i += 2) {
       builder
-        .withEndset(EndsetBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
-        .withEndset(EndsetBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
+        .withEndset(EndBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
+        .withEndset(EndBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
     }
     return builder;
   };
 
   builder.pointingTo = pointer => {
-    builder.withEndset(EndsetBuilder().withPointer(pointer));
+    builder.withEndset(EndBuilder().withPointer(pointer));
     return builder;
   };
   

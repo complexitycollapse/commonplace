@@ -4,9 +4,9 @@ import { leafDataToLink } from "../model";
 
 export function LinkPointer(linkName) {
   function engulfs(obj, other) {
-    // We can engulf an endset pointer, as that is more specific.
+    // We can engulf an end pointer, as that is more specific.
 
-    if (other.pointerType === "endset") {
+    if (other.pointerType === "end") {
       return linkName === other.linkName;
     }
 
