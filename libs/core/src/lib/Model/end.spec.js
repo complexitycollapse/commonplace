@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { End, leafDataToEndset } from './end';
+import { End, leafDataToEnd } from './end';
 import { Span, spanTesting, Box, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
 
 let makeSpans = spanTesting.makeSpans;
@@ -76,11 +76,11 @@ describe('leafData', () => {
   });
 });
 
-describe('leafDataToEndset', () => {
+describe('leafDataToEnd', () => {
   test('is the inverse of leafData() when the end has a name', () => {
     let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), EdlPointer("edl name")];
 
-    let actual = leafDataToEndset(End("the name", clips, 0).leafData(), 0);
+    let actual = leafDataToEnd(End("the name", clips, 0).leafData(), 0);
 
     expect(actual.name).toBe("the name");
     expect(actual.pointers).toEqual(clips);
@@ -89,7 +89,7 @@ describe('leafDataToEndset', () => {
   test('is the inverse of leafData() when the end has no name', () => {
     let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), LinkTypePointer("lnk typ"), EdlPointer("edl name")];
 
-    let actual = leafDataToEndset(End(undefined, clips, 0).leafData(), 0);
+    let actual = leafDataToEnd(End(undefined, clips, 0).leafData(), 0);
 
     expect(actual.name).toBeFalsy();
     expect(actual.pointers).toEqual(clips);

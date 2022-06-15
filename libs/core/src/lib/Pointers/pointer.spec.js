@@ -7,7 +7,7 @@ import { PointerTypePointer } from './type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
-import { EndsetPointer } from './end-pointer';
+import { EndPointer } from './end-pointer';
 import { InlinePointer } from './inline-pointer';
 import { Edl, Link } from '../model';
 
@@ -134,8 +134,8 @@ describe('restoring leafData', () => {
     expect(leafDataToPointer(link.leafData())).toEqual(link);
   });
 
-  test('leafDataToPointer is inverse of leafData for EndsetPointer', () => {
-    let pointer = EndsetPointer("link name", 123, "end name", 100);
+  test('leafDataToPointer is inverse of leafData for EndPointer', () => {
+    let pointer = EndPointer("link name", 123, "end name", 100);
 
     expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
   });
@@ -185,13 +185,13 @@ describe('engulfs', () => {
       expect(LinkPointer("name").engulfs(LinkPointer("name"))).toBeTruthy();
     });
 
-    describe('called on EndsetPointer', () => {
+    describe('called on EndPointer', () => {
       it('returns false if the other pointer has a different link name', () => {
-        expect(LinkPointer("name").engulfs(EndsetPointer("name2", undefined, "end name", 100))).toBeFalsy();
+        expect(LinkPointer("name").engulfs(EndPointer("name2", undefined, "end name", 100))).toBeFalsy();
       });
   
       it('returns true if they have the same name', () => {
-        expect(LinkPointer("name").engulfs(EndsetPointer("name", undefined, "end name", 100))).toBeTruthy();
+        expect(LinkPointer("name").engulfs(EndPointer("name", undefined, "end name", 100))).toBeTruthy();
       });
     });
   });
@@ -225,13 +225,13 @@ describe('endowsTo', () => {
       expect(LinkPointer("name").endowsTo(LinkPointer("name"))).toBeTruthy();
     });
 
-    describe('called on EndsetPointer', () => {
+    describe('called on EndPointer', () => {
       it('returns false if the other pointer has a different link name', () => {
-        expect(LinkPointer("name").endowsTo(EndsetPointer("name2", undefined, "end name", 100))).toBeFalsy();
+        expect(LinkPointer("name").endowsTo(EndPointer("name2", undefined, "end name", 100))).toBeFalsy();
       });
   
       it('returns true if they have the same name', () => {
-        expect(LinkPointer("name").endowsTo(EndsetPointer("name", undefined, "end name", 100))).toBeTruthy();
+        expect(LinkPointer("name").endowsTo(EndPointer("name", undefined, "end name", 100))).toBeTruthy();
       });
     });
   });

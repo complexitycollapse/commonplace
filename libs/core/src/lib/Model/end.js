@@ -31,7 +31,7 @@ export function End(name, pointers, index) {
   return obj;
 }
 
-export function leafDataToEndset(leafData, index) {
+export function leafDataToEnd(leafData, index) {
   let ptr = leafData.ptr;
   let pointers = ptr.map(leafDataToPointer);
   

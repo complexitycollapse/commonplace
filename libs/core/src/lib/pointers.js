@@ -8,5 +8,5 @@ export { LinkTypePointer, PointerTypePointer, EdlTypePointer, leafDataToLinkType
 export { EdlPointer, leafDataToEdlPointer, emptyDocPointer } from './Pointers/edl-pointer';
 export { Span, spanTesting, leafDataToSpan } from './Pointers/span';
 export { ClipIterator } from './Pointers/clip-iterator';
-export { EndsetPointer } from './Pointers/end-pointer';
+export { EndPointer } from './Pointers/end-pointer';
 export { InlinePointer, leafDataToInlinePointer } from './Pointers/inline-pointer';

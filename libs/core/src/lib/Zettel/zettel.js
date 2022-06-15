@@ -92,18 +92,18 @@ function clipArraysEqual(actual, expected) {
 }
 
 export let zettelTesting = {
-  hasEndset(zettel, link, index = 0) {
-    let expectedEndset = link.ends[index];
-    let actualEndsets = zettel.renderPointers.renderPointers().map(p => p.renderEnd);
+  hasEnd(zettel, link, index = 0) {
+    let expectedEnd = link.ends[index];
+    let actualEnds = zettel.renderPointers.renderPointers().map(p => p.renderEnd);
 
-    for(let i = 0; i < actualEndsets.length; ++i) {
-      let candidate = actualEndsets[i];
-      if (candidate.name === expectedEndset.name
+    for(let i = 0; i < actualEnds.length; ++i) {
+      let candidate = actualEnds[i];
+      if (candidate.name === expectedEnd.name
           && candidate.index === index
           && candidate.renderLink.type === link.type) {
-        if (clipArraysEqual(candidate.pointers, expectedEndset.pointers)) {
+        if (clipArraysEqual(candidate.pointers, expectedEnd.pointers)) {
           return {
-            message: () => `did not expect zettel to contain ${JSON.stringify(expectedEndset)}`,
+            message: () => `did not expect zettel to contain ${JSON.stringify(expectedEnd)}`,
             pass: true
           };
         }
@@ -111,7 +111,7 @@ export let zettelTesting = {
     }
 
     return {
-      message: () => `did not find end ${JSON.stringify(expectedEndset)}`,
+      message: () => `did not find end ${JSON.stringify(expectedEnd)}`,
       pass: false
     };
   },

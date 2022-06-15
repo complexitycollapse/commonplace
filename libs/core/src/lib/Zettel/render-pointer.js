@@ -46,7 +46,7 @@ function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let contentMap = new Map(Object.entries(contentAttributes));
   return {
     pointer,
-    renderEnd: rl.getRenderEndset(link.ends[0]),
+    renderEnd: rl.getRenderEnd(link.ends[0]),
     renderLink: rl,
     allDirectAttributeEndowments: () => directMap,
     allContentAttributeEndowments: () => contentMap

@@ -3,7 +3,7 @@ import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
 import { LinkPointer } from "./link-pointer";
 
-export function EndsetPointer(linkName, linkIndex, endName, endIndex) {
+export function EndPointer(linkName, linkIndex, endName, endIndex) {
   function engulfs(obj, other) {
     // If we don't have an end index but other does then we may still match as we
     // represent all ends with that name.
@@ -44,6 +44,6 @@ export function EndsetPointer(linkName, linkIndex, endName, endIndex) {
   return obj;
 }
 
-export function leafDataToEndsetPointer(data) {
-  return EndsetPointer(data.lnk, data["lx"], data["end"], data["ex"]);
+export function leafDataToEndPointer(data) {
+  return EndPointer(data.lnk, data["lx"], data["end"], data["ex"]);
 }

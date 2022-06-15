@@ -5,8 +5,8 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
   let obj = {};
   
   function zettel() {
-    let [clipEndsetLinks, typePointerEndsetLinks] = buildClipEndsetLinks(renderLinks);
-    let overlappingEntries = clipEndsetLinks.filter(s => s.clip.overlaps && s.clip.overlaps(clip));
+    let [clipEndLinks, typePointerEndLinks] = buildClipEndLinks(renderLinks);
+    let overlappingEntries = clipEndLinks.filter(s => s.clip.overlaps && s.clip.overlaps(clip));
     let result = undefined;
 
     if (clip.pointerType === "span") {
@@ -19,7 +19,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
       result = [singleZettel];
     }
 
-    typePointerEndsetLinks.forEach(({typePointer, end, link}) => {
+    typePointerEndLinks.forEach(({typePointer, end, link}) => {
       if (typePointer.endowsTo(clip)) {
         result.forEach(z => z.addPointer(typePointer, end, link));
       }
@@ -80,7 +80,7 @@ export function ZettelSchneider(clip, renderLinks = [], keyPrefix, containingEdl
   });
 }
 
-function buildClipEndsetLinks(links) {
+function buildClipEndLinks(links) {
   let clipList = [];
   let typePointerList = [];
   forEachPointer(links, (p, e, l) => {

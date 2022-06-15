@@ -44,12 +44,12 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     link.forEachPointer((p, e) => fn(p, e, renderLink));
   }
 
-  function getRenderEndset(end) {
+  function getRenderEnd(end) {
     return renderLink.renderEnds.find(re => re.end.index === end.index);
   }
 
   function createRenderPointer(pointer, end) {
-    let renderEnd = getRenderEndset(end);
+    let renderEnd = getRenderEnd(end);
     if (!renderEnd) {
       throw "End not valid for this link";
     }
@@ -73,7 +73,7 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer),
     getHomeEdl: () => homeEdl,
     forEachPointer,
-    getRenderEndset,
+    getRenderEnd,
     createRenderPointer
   });
 }
@@ -106,28 +106,28 @@ function extractMetaEndowments(renderPointer) {
     return metaEndowments;
   }
 
-  let allRenderEndsets = renderPointer.renderLink.renderEnds;
+  let allRenderEnds = renderPointer.renderLink.renderEnds;
 
   function buildMetaEndowment(i, max) {
-    let attribute = allRenderEndsets[i].concatatext();
+    let attribute = allRenderEnds[i].concatatext();
     let defaultValue, hasValueEnd = false, valueEndName;
     for(let j = 1; j < 2 && i + j <= max; ++j) {
-      if (allRenderEndsets[i+j].end.name === "value") {
-        defaultValue = allRenderEndsets[i+j].concatatext();
+      if (allRenderEnds[i+j].end.name === "value") {
+        defaultValue = allRenderEnds[i+j].concatatext();
       }
-      if (allRenderEndsets[i+j].end.name === "value end") {
+      if (allRenderEnds[i+j].end.name === "value end") {
         hasValueEnd = true;
-        valueEndName = allRenderEndsets[i+j].concatatext();
+        valueEndName = allRenderEnds[i+j].concatatext();
       }
     }
         
     return MetaEndowment(attribute, defaultValue, hasValueEnd, valueEndName);
   }
 
-  let max = allRenderEndsets.length - 1;
+  let max = allRenderEnds.length - 1;
 
   for (let i = 0; i < max; ++i) {
-    if (allRenderEndsets[i].end.name === "attribute") {
+    if (allRenderEnds[i].end.name === "attribute") {
       let me = buildMetaEndowment(i, max);
       if (me) { metaEndowments.push(me); }
     }

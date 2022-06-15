@@ -11,7 +11,7 @@ function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
 }
 
-function anEndset(name) {
+function anEnd(name) {
   return EndBuilder().withName(name);
 }
 
@@ -49,7 +49,7 @@ function aLink(pointerType, targetBuilder, ...attributePairs) {
   let target = pointerType == "specific" ? PointerBuilder(targetBuilder) : PointerTypePointerBuilder(targetBuilder);
   let builder = LinkBuilder().withName(type).withType(type);
   if (target) {
-    builder.withEndset(anEndset().withPointer(target));
+    builder.withEnd(anEnd().withPointer(target));
   }
   return builder;
 }

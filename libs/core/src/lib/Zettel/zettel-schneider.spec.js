@@ -11,7 +11,7 @@ let makeSpanLink = (...args) => {
   return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
 }
 
-let hasEndset = zettelTesting.hasEndset;
+let hasEnd = zettelTesting.hasEnd;
 
 function make(clip, renderLinks, key) {
   return ZettelSchneider(clip, renderLinks, key, makeTestEdlAndEdlZettelFromLinks([]));
@@ -19,7 +19,7 @@ function make(clip, renderLinks, key) {
 
 expect.extend({
   toEqualClip,
-  hasEndset,
+  hasEnd: hasEnd,
   hasZettelProperties(zettel, start, length, ...ends) {
     ends = ends ?? [];
 
@@ -38,7 +38,7 @@ expect.extend({
     }
 
     ends.forEach(e => {
-      let result = hasEndset(zettel, e[0], e[1]);
+      let result = hasEnd(zettel, e[0], e[1]);
       if (!result.pass) { return result; }
     });
 
@@ -90,7 +90,7 @@ describe('ZettelSchneider.zettel', () => {
 
     let zettel = make(box, [l]).zettel();
 
-    expect(zettel[0]).hasEndset(l, 0);
+    expect(zettel[0]).hasEnd(l, 0);
   });
 
   it('does not attach an end to a box that does not overlap with it', () => {
@@ -99,7 +99,7 @@ describe('ZettelSchneider.zettel', () => {
 
     let zettel = make(box, [l]).zettel();
 
-    expect(zettel[0]).not.hasEndset(l, 0);
+    expect(zettel[0]).not.hasEnd(l, 0);
   });
 
   it('attaches an end to a span that overlaps with it', () => {
@@ -108,7 +108,7 @@ describe('ZettelSchneider.zettel', () => {
 
     let zettel = make(s, [l]).zettel();
 
-    expect(zettel[0]).hasEndset(l, 0);
+    expect(zettel[0]).hasEnd(l, 0);
   });
 
   it('does not attach an end to a span that does not overlap with it', () => {
@@ -117,7 +117,7 @@ describe('ZettelSchneider.zettel', () => {
 
     let zettel = make(s, [l]).zettel();
 
-    expect(zettel[0]).not.hasEndset(l, 0);
+    expect(zettel[0]).not.hasEnd(l, 0);
   });
 
   it('splits a span if only the end is covered by a link', () => {
@@ -127,8 +127,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0]).not.hasEndset(l, 0);
-    expect(zettel[1]).hasEndset(l, 0);
+    expect(zettel[0]).not.hasEnd(l, 0);
+    expect(zettel[1]).hasEnd(l, 0);
   });
 
   it('splits a span at link start if only the end is covered by a link', () => {
@@ -151,8 +151,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0]).hasEndset(l, 0);
-    expect(zettel[1]).not.hasEndset(l, 0);
+    expect(zettel[0]).hasEnd(l, 0);
+    expect(zettel[1]).not.hasEnd(l, 0);
   });
 
   it('splits a span at span start if only the end is covered by a link', () => {
@@ -175,9 +175,9 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
-    expect(zettel[0]).not.hasEndset(l, 0);
-    expect(zettel[1]).hasEndset(l, 0);
-    expect(zettel[2]).not.hasEndset(l, 0);
+    expect(zettel[0]).not.hasEnd(l, 0);
+    expect(zettel[1]).hasEnd(l, 0);
+    expect(zettel[2]).not.hasEnd(l, 0);
   });
 
   it('splits a span at the link points if the link is contained in the span', () => {
@@ -201,8 +201,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(1);
-    expect(zettel[0]).hasEndset(l, 0);
-    expect(zettel[0]).hasEndset(l, 1);
+    expect(zettel[0]).hasEnd(l, 0);
+    expect(zettel[0]).hasEnd(l, 1);
   });
 
   it('assigns all links that overlap the zettel', () => {
@@ -213,8 +213,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(1);
-    expect(zettel[0]).hasEndset(l1, 0);
-    expect(zettel[0]).hasEndset(l2, 0);
+    expect(zettel[0]).hasEnd(l1, 0);
+    expect(zettel[0]).hasEnd(l2, 0);
   });
 
   it('assigns links only to the spans that overlap them', () => {
@@ -225,7 +225,7 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l1, l2]).zettel();
 
     expect(zettel).toHaveLength(1);
-    expect(zettel[0]).hasEndset(l1, 0);
+    expect(zettel[0]).hasEnd(l1, 0);
   });
 
   it('will split a span by two different abutting links', () => {

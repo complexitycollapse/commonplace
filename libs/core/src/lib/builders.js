@@ -54,7 +54,7 @@ export function LinkBuilder() {
   let obj = Builder(obj => Link(obj.type, ...obj.ends.map(e => e.build())), {
     ends: [],
     withType: type => obj.withProperty("type", type),
-    withEndset: e => obj.pushTo("ends", e),
+    withEnd: e => obj.pushTo("ends", e),
     withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString())),
     defaultPart: () => Part(obj.pointer, obj.builtObject)
     });
@@ -101,14 +101,14 @@ export function MetalinkBuilder(directOrContent) {
   builder.endowing = (...attributePairs) => {
     for (let i = 0; i < attributePairs.length; i += 2) {
       builder
-        .withEndset(EndBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
-        .withEndset(EndBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
+        .withEnd(EndBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
+        .withEnd(EndBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
     }
     return builder;
   };
 
   builder.pointingTo = pointer => {
-    builder.withEndset(EndBuilder().withPointer(pointer));
+    builder.withEnd(EndBuilder().withPointer(pointer));
     return builder;
   };
   

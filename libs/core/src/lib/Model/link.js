@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "../utils";
-import { End, leafDataToEndset } from "./end";
+import { End, leafDataToEnd } from "./end";
 import { Span, ClipIterator, LinkPointer } from "../pointers";
 
 export function Link(type, ...endSpecs) {
@@ -47,7 +47,7 @@ export const ContentMetalink = (...ends) => Link(contentMetalinkType, ...ends);
 
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
-  let es = leafData.es.map((e, i) => leafDataToEndset(e, i));
+  let es = leafData.es.map((e, i) => leafDataToEnd(e, i));
   return makeLinkInternal(leafData.typ, es);
 }
 
