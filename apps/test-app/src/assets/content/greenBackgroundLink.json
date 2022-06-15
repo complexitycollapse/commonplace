@@ -1,0 +1,7 @@
+{
+  "typ": "background colour",
+  "es": [
+    { "ptr": [{ "typ": "edl", "name": "testdoc.json" }] },
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "green"}] }
+  ]
+}

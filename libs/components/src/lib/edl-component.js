@@ -12,7 +12,7 @@ export function EdlComponent({ edl }) {
 
   function wrap(i) {
     if (fragmentTags.length <= i) {
-      return innerComponents;
+      return (<div style={style}>{innerComponents}</div>);
     } else {
       let Tag = fragmentTags[i];
       return (<Tag style={style}>{wrap(i + 1)}</Tag>);

@@ -42,7 +42,7 @@ let defaultsLinks = [
   contentAttribute("centre aligned text", "text align", "center"),
   contentAttribute("justified aligned text", "text align", "justify"),
   contentAttribute(["colour", "color"], "colour", undefined, true, "value"),
-  contentAttribute(["background colour", "background color"], "background colour", undefined, true, "value"),
+  directAttribute(["background colour", "background color"], "background colour", undefined, true, "value"),
   contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
   directAttribute("break", "break", true),
