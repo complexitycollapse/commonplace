@@ -6,6 +6,7 @@ export function registerAllMappers() {
     StyleMapper("bold", "fontStyle", "bold"),
     StyleMapper("italic", "fontStyle", "italic"),
     StyleMapper("underline", "textDecoration", "underline"),
+    StyleMapper("overline", "textDecoration", "overline"),
     StyleMapper("strike through", "textDecoration", "line-through"),
     StyleMapper("capitalization", "textTransform"),
     StyleMapper("text align", "textAlign"),
