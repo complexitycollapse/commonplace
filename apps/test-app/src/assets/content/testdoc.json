@@ -25,6 +25,7 @@
     { "typ": "link", "name": "boldLink.json" },
     { "typ": "link", "name": "capitalizeLink.json" },
     { "typ": "link", "name": "italicLink.json" },
-    { "typ": "link", "name": "rightAlignLink.json" }
+    { "typ": "link", "name": "rightAlignLink.json" },
+    { "typ": "link", "name": "backgroundColourLink.json" }
   ]
 }

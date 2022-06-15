@@ -10,6 +10,7 @@ export function registerAllMappers() {
     StyleMapper("capitalization", "textTransform"),
     StyleMapper("text align", "textAlign"),
     StyleMapper("colour", "color"),
+    StyleMapper("background colour", "background-color"),
     FragmentMapper("paragraph", "p"),
     FragmentMapper("title", "h1")
   ].forEach(registerMapper);
