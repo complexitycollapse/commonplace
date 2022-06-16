@@ -13,7 +13,14 @@ export function RenderLink(pointer, link, homeEdl) {
   else { return BaseRenderLink(pointer, link, homeEdl); }
 }
 
-function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { return new Map(); }), contentMetaEndowments = (() => { return new Map(); })) {
+function BaseRenderLink(
+  pointer,
+  link,
+  homeEdl,
+  {
+    directMetaEndowments = () => { return new Map(); },
+    contentMetaEndowments = () => { return new Map(); }
+  } = {}) {
   let renderLink = {};
 
   function attributes() {
@@ -79,21 +86,21 @@ function BaseRenderLink(pointer, link, homeEdl, directMetaEndowments = (() => { 
 }
 
 function DirectMetalink(linkName, link, homeEdl) {
-  function allDirectAttributeMetaEndowments(renderPointer) {
+  function directMetaEndowments(renderPointer) {
     return extractMetaEndowments(renderPointer);
   }
 
-  let obj = BaseRenderLink(linkName, link, homeEdl, allDirectAttributeMetaEndowments);
+  let obj = BaseRenderLink(linkName, link, homeEdl, { directMetaEndowments });
 
   return obj;
 }
 
 function ContentMetalink(linkName, link, homeEdl) {
-  function allContentAttributeMetaEndowments(renderPointer) {
+  function contentMetaEndowments(renderPointer) {
     return extractMetaEndowments(renderPointer);
   }
 
-  let obj = BaseRenderLink(linkName, link, homeEdl, undefined, allContentAttributeMetaEndowments);
+  let obj = BaseRenderLink(linkName, link, homeEdl, { contentMetaEndowments });
 
   return obj;
 }
