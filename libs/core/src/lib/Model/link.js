@@ -41,6 +41,7 @@ function makeLinkInternal(type, ends) {
 
 export const directMetalinkType = "endows direct attributes";
 export const contentMetalinkType = "endows content attributes";
+export const groupMetalinkType = "defines group";
 
 export const DirectMetalink = (...ends) => Link(directMetalinkType, ...ends);
 export const ContentMetalink = (...ends) => Link(contentMetalinkType, ...ends);

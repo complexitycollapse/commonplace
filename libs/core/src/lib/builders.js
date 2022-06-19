@@ -48,7 +48,7 @@ export function SpanBuilder() {
   return obj;
 }
 
-export function LinkBuilder() {
+export function LinkBuilder(type, ...endSpecs) {
   let unique = 0;
 
   let obj = Builder(obj => Link(obj.type, ...obj.ends.map(e => e.build())), {
@@ -59,10 +59,15 @@ export function LinkBuilder() {
     defaultPart: () => Part(obj.pointer, obj.builtObject)
     });
 
+    obj.withType(type);
+    if (endSpecs) {
+      endSpecs.forEach(e => obj.withEnd(EndBuilder(e)));
+    }
+
   return obj;
 }
 
-export function EndBuilder() {
+export function EndBuilder(endSpec) {
   function getPointer(p) {
     if (p.build) {
       let built = p.build();
@@ -78,6 +83,11 @@ export function EndBuilder() {
     withPointer: p => obj.pushTo("pointers", p),
     withName: name => obj.withProperty("name", name)
   });
+
+  if (endSpec) {
+    obj.withName(endSpec[0]);
+    endSpec[1].forEach(p => obj.withPointer(p.build ? p : PointerBuilder({ pointer: p })));
+  }
 
   return obj;
 }

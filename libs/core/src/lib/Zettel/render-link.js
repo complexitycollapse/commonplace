@@ -1,25 +1,28 @@
 import { addProperties, finalObject, memoize, mergeMaps } from "../utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
-import { directMetalinkType, contentMetalinkType } from '../model';
+import { directMetalinkType, contentMetalinkType, groupMetalinkType } from '../model';
 import { Attributes } from "./attributes";
 import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
 import { MetaEndowment } from "./meta-endowment";
+import { GroupMetalink } from "./group-metalink";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
   if (type === directMetalinkType) { return DirectMetalink(pointer, link, homeEdl); }
   else if (type === contentMetalinkType) { return ContentMetalink(pointer, link, homeEdl); }
+  else if (type === groupMetalinkType) { return GroupMetalink(pointer, link, homeEdl); }
   else { return BaseRenderLink(pointer, link, homeEdl); }
 }
 
-function BaseRenderLink(
+export function BaseRenderLink(
   pointer,
   link,
   homeEdl,
   {
     directMetaEndowments = () => { return new Map(); },
-    contentMetaEndowments = () => { return new Map(); }
+    contentMetaEndowments = () => { return new Map(); },
+    metaGroupletBuilderFor = () => undefined
   } = {}) {
   let renderLink = {};
 
@@ -81,7 +84,9 @@ function BaseRenderLink(
     getHomeEdl: () => homeEdl,
     forEachPointer,
     getRenderEnd,
-    createRenderPointer
+    createRenderPointer,
+    groupletBuilders: renderPointer => renderLink.modifiers.allPointers.map(m => m.metaGroupletBuilderFor(renderPointer)).filter(x => x),
+    metaGroupletBuilderFor
   });
 }
 
