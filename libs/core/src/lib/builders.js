@@ -41,6 +41,8 @@ export function SpanBuilder() {
       content: "##########",
       withLength: len => obj.withProperty("length", len),
       withContent: content => obj.withProperty("content", content),
+      withOrigin: origin => obj.withProperty("origin", origin),
+      withStart: start => obj.withProperty("start", start),
       defaultPart: () => Part(obj.builtObject, obj.content)
     }
   );

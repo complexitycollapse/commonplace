@@ -23,7 +23,7 @@ export function GroupMetalink(pointer, link, homeEdl) {
           type = r.concatatext();
           break;
         case undefined:
-          groupletEndNames.push(r.concatatext());
+          if (r.end.pointers.length > 0) { groupletEndNames.push(r.concatatext()); }
           break;
       }
     });
@@ -38,20 +38,31 @@ function GroupletBuilder(type, end) {
   let obj = {};
   let remaining = [...end.pointers];
   let current = undefined;
-  let invalidated = false;
+  let validSoFar = true;
 
   function consumePointer(pointer) {
+    if (validSoFar === false) { return false; }
+    if (isComplete()) { return true; }
+
     if (current === undefined) { current = remaining.shift(); }
-    if (current.denotesSame(pointer)) {
-      current = undefined;
+    
+    let { nibbled, remainder } = current.nibble(pointer);
+
+    if (nibbled) {
+      current = remainder;
     } else {
-      invalidated = true;
+      validSoFar = false;
     }
 
-    return invalidated;
+    return validSoFar;
+  }
+
+  function isComplete() {
+    return validSoFar && current === undefined && remaining.length === 0;
   }
 
   return finalObject(obj, {
-    consumePointer
+    consumePointer,
+    isComplete
   });
 }
