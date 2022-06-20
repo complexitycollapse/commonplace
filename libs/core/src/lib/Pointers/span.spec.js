@@ -703,3 +703,33 @@ describe('denotesSame', () => {
     expect(Span("x", 10, 100, EdlPointer("foo")).denotesSame(Span("x", 10, 100))).toBeTruthy();
   });
 });
+
+describe('nibble', () => {
+  it('returns nibbled=false if the two spans do not share the same origin', () => {
+    expect(Span("x", 1, 10).nibble(Span("y", 1, 5)).nibbled).toBe(false);
+  });
+
+  it('returns nibbled=false if other starts before this', () => {
+    expect(Span("x", 2, 10).nibble(Span("x", 1, 5)).nibbled).toBe(false);
+  });
+
+  it('returns nibbled=false if other starts after this', () => {
+    expect(Span("x", 1, 10).nibble(Span("x", 2, 5)).nibbled).toBe(false);
+  });
+
+  it('returns nibbled=true if other has the same origin and start', () => {
+    expect(Span("x", 1, 10).nibble(Span("x", 1, 5)).nibbled).toBe(true);
+  });
+
+  it('returns the remainder if other is shorter than this', () => {
+    expect(Span("x", 1, 10).nibble(Span("x", 1, 9)).remainder).toEqualSpan(Span("x", 10, 1));
+  });
+
+  it('returns undefined remainder if other is longer than this', () => {
+    expect(Span("x", 1, 10).nibble(Span("x", 1, 11)).remainder).toBe(undefined);
+  });
+
+  it('returns undefined remainder if other is of equal length to this', () => {
+    expect(Span("x", 1, 10).nibble(Span("x", 1, 10)).remainder).toBe(undefined);
+  });
+});

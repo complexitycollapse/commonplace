@@ -29,7 +29,7 @@ export function Span(origin, start, length, originalContext) {
   }
 
   function engulfs(span) {
-    return  obj.sameType(span) && obj.equalOrigin(span) && contains(span.start) && contains(span.end);
+    return obj.sameType(span) && obj.equalOrigin(span) && contains(span.start) && contains(span.end);
   }
 
   function abuts(span) {
@@ -87,6 +87,14 @@ export function Span(origin, start, length, originalContext) {
       part.content.substring(newSpan.start - s.start, newSpan.next - s.start))];
   }
 
+  function nibble(s) {
+    if (!obj.sameType(s) || !obj.equalOrigin(s) || obj.start !== s.start) {
+      return { nibbled: false, remainder: undefined };
+    }
+
+    let newLength = length - s.length;
+    return { nibbled: true, remainder: newLength > 0 ? Span(origin, s.next, newLength) : undefined};
+  }
 
   function leafData() {
     return { typ: obj.pointerType, ori: origin, st: start, ln: length, ctx: originalContext?.leafData() };
@@ -108,7 +116,8 @@ export function Span(origin, start, length, originalContext) {
     leafData,
     intersect,
     clipPart,
-    overlappingButNotEngulfing
+    overlappingButNotEngulfing,
+    nibble
   });
 }
 
