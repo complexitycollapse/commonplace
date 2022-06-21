@@ -39,14 +39,15 @@ function GroupletBuilder(type, end) {
   let remaining = [...end.pointers];
   let current = undefined;
   let validSoFar = true;
+  let collected = [];
 
-  function consumePointer(pointer) {
+  function consumePointer(zettel) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
     if (current === undefined) { current = remaining.shift(); }
     
-    let { nibbled, remainder } = current.nibble(pointer);
+    let { nibbled, remainder } = current.nibble(zettel.clip);
 
     if (nibbled) {
       current = remainder;
@@ -54,6 +55,7 @@ function GroupletBuilder(type, end) {
       validSoFar = false;
     }
 
+    collected.push(zettel);
     return validSoFar;
   }
 

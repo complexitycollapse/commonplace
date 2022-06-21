@@ -18,7 +18,14 @@ function make(content, links) {
   content.forEach(c => edl.withClip(c));
   links.forEach(l => edl.withLink(l));
   let edlZ = EdlZettelBuilder(edl).build();
+  content.forEach(x => x.edlZ = edlZ);
   return edlZ.children[0].renderPointers.allPointers[0].groupletBuilders();
+}
+
+function consumePointer(groupletBuilder, clipBuilder) {
+  let clip = clipBuilder.build();
+  let zettel = clipBuilder.edlZ.children.find(z => z.clip.denotesSame(clip));
+  return groupletBuilder.consumePointer(zettel);
 }
 
 describe('groupletBuilders', () => {
@@ -55,31 +62,31 @@ describe('GroupletBuilder', () => {
       let span1 = aSpan(1), span2 = aSpan(2);
       let target = aTargetLink([span1, span2]);
   
-      expect(make([span1, span2], [target, aMetalink(target)])[0].consumePointer(span1.build())).toBe(true);
+      expect(consumePointer(make([span1, span2], [target, aMetalink(target)])[0], span1)).toBe(true);
     });
 
     it('returns false if clip does not match the first pointer in the end', () => {
-      let span = aSpan();
-      let target = aTargetLink([span]);
+      let span1 = aSpan(1), span2 = aSpan(2);
+      let target = aTargetLink([span1]);
   
-      expect(make([span], [target, aMetalink(target)])[0].consumePointer(Span("not matching", 1, 1))).toBe(false);
+      expect(consumePointer(make([span1, span2], [target, aMetalink(target)])[0], span2)).toBe(false);
     });
 
     it('returns false if clip matches second, not first, pointer in the end', () => {
       let span1 = aSpan(1), span2 = aSpan(2);
       let target = aTargetLink([span1, span2]);
   
-      expect(make([span1, span2], [target, aMetalink(target)])[0].consumePointer(span2.build())).toBe(false);
+      expect(consumePointer(make([span1, span2], [target, aMetalink(target)])[0], span2)).toBe(false);
     });
 
     it('returns false on the second call if the second pointer does not match the end', () => {
       let span1 = aSpan(1), span2 = aSpan(2), span3 = aSpan(3);
       let target = aTargetLink([span1, span2]);
   
-      let builder = make([span1, span2], [target, aMetalink(target)])[0];
-      builder.consumePointer(span2.build());
-
-      expect(builder.consumePointer(span3.build())).toBe(false);
+      let builder = make([span1, span2, span3], [target, aMetalink(target)])[0];
+      
+      expect(consumePointer(builder, span1)).toBe(true);
+      expect(consumePointer(builder, span3)).toBe(false);
     });
 
     it('returns true on the second call if the second pointer matches the end', () => {
@@ -87,37 +94,35 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([span1, span2]);
   
       let builder = make([span1, span2], [target, aMetalink(target)])[0];
-      builder.consumePointer(span2.build());
-
-      expect(builder.consumePointer(span2.build())).toBe(false);
+      
+      expect(consumePointer(builder, span1)).toBe(true);
+      expect(consumePointer(builder, span2)).toBe(true);
     });
 
     it('returns true if clip matches the beginning of the first pointer in the end', () => {
       let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
       let target = aTargetLink([wholeSpan]);
   
-      expect(make([prefix], [target, aMetalink(target)])[0].consumePointer(prefix.build())).toBe(true);
+      expect(consumePointer(make([prefix], [target, aMetalink(target)])[0], prefix)).toBe(true);
     });
 
     it('returns false if clip matches the beginning of the first pointer but not the second', () => {
       let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20), nextSpan = aSpan(2);
       let target = aTargetLink([wholeSpan, nextSpan]);
-      let builder = make([prefix], [target, aMetalink(target)])[0];
+      let builder = make([prefix, wholeSpan, nextSpan], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(prefix.build());
-
-      expect(builder.consumePointer(nextSpan.build())).toBe(false);
+      expect(consumePointer(builder, prefix)).toBe(true);
+      expect(consumePointer(builder, nextSpan)).toBe(false);
     });
 
     it('returns true if clip matches the beginning of the first pointer and then the rest of the first pointer', () => {
       let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
       let remaining = aSpan(1, 10).withStart(prefix.build().next);
       let target = aTargetLink([wholeSpan]);
-      let builder = make([prefix], [target, aMetalink(target)])[0];
+      let builder = make([prefix, remaining, wholeSpan], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(prefix.build());
-
-      expect(builder.consumePointer(remaining.build())).toBe(true);
+      expect(consumePointer(builder, prefix)).toBe(true);
+      expect(consumePointer(builder, remaining)).toBe(true);
     });
   });
 
@@ -134,8 +139,8 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([span1]);
       let builder = make([span1, span2], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(span2.build());
-  
+      consumePointer(builder, span2);
+      
       expect(builder.isComplete()).toBe(false);
     });
 
@@ -144,7 +149,7 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([span]);
       let builder = make([span], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(span.build());
+      consumePointer(builder, span);
   
       expect(builder.isComplete()).toBe(true);
     });
@@ -154,7 +159,7 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([span1, span2]);
       let builder = make([span1, span2], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(span1.build());
+      consumePointer(builder, span1);
   
       expect(builder.isComplete()).toBe(false);
     });
@@ -164,7 +169,7 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([wholeSpan]);
       let builder = make([prefix], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(prefix.build());
+      consumePointer(builder, prefix);
 
       expect(builder.isComplete()).toBe(false);
     });
@@ -174,8 +179,8 @@ describe('GroupletBuilder', () => {
       let target = aTargetLink([span1, span2]);
       let builder = make([span1, span2], [target, aMetalink(target)])[0];
 
-      builder.consumePointer(span1.build());
-      builder.consumePointer(span2.build());
+      consumePointer(builder, span1);
+      consumePointer(builder, span2);
   
       expect(builder.isComplete()).toBe(true);
     });
