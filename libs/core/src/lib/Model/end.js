@@ -1,5 +1,5 @@
 import { leafDataToPointer } from "../pointers";
-import { addProperties, addMethods } from "../utils";
+import { addProperties, addMethods } from "@commonplace/utils";
 
 export function End(name, pointers, index) {
   let obj = {};

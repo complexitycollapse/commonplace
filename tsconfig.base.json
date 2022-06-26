@@ -17,7 +17,9 @@
     "paths": {
       "@commonplace/components": ["libs/components/src/index.js"],
       "@commonplace/core": ["libs/core/src/index.js"],
-      "@commonplace/html": ["libs/html/src/index.js"]
+      "@commonplace/document-model": ["libs/document-model/src/index.js"],
+      "@commonplace/html": ["libs/html/src/index.js"],
+      "@commonplace/utils": ["libs/utils/src/index.js"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,5 +1,5 @@
 import { ClipIterator } from "./clip-iterator";
-import { addProperties, addMethods } from "../utils";
+import { addProperties, addMethods } from "@commonplace/utils";
 import { Pointer } from "./pointer";
 
 export function Clip(pointerType, origin, partBuilder, hashableNameFn, originalContext) {

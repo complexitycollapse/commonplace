@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from "../utils";
+import { addProperties, finalObject } from "@commonplace/utils";
 import { leafDataToBox, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer } from '../pointers';
 
 export function Edl(type, clips, links) {

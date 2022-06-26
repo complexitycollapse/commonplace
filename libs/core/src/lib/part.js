@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from './utils';
+import { addProperties, finalObject } from "@commonplace/utils";
 
 export function Part(pointer, content) {
   let obj = {};

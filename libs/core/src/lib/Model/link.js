@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from "../utils";
+import { addProperties, finalObject } from "@commonplace/utils";
 import { End, leafDataToEnd } from "./end";
 import { Span, ClipIterator, LinkPointer } from "../pointers";
 

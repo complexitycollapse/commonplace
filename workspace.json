@@ -49,6 +49,30 @@
       },
       "tags": []
     },
+    "document-model": {
+      "root": "libs/document-model",
+      "sourceRoot": "libs/document-model/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/document-model/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/document-model"],
+          "options": {
+            "jestConfig": "libs/document-model/jest.config.js",
+            "passWithNoTests": true,
+            "watch": true
+          }
+        }
+      },
+      "tags": []
+    },
     "html": {
       "root": "libs/html",
       "sourceRoot": "libs/html/src",
@@ -172,6 +196,30 @@
       },
       "tags": [],
       "implicitDependencies": ["test-app"]
+    },
+    "utils": {
+      "root": "libs/utils",
+      "sourceRoot": "libs/utils/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/utils/**/*.js"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils"],
+          "options": {
+            "jestConfig": "libs/utils/jest.config.js",
+            "passWithNoTests": true,
+            "watch": true
+          }
+        }
+      },
+      "tags": []
     }
   }
 }

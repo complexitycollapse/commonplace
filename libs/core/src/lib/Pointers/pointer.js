@@ -1,4 +1,4 @@
-import { addProperties, addMethods } from "../utils";
+import { addProperties, addMethods } from "@commonplace/utils";
 
 export function Pointer(pointerType, isClip, specifiesContent, originFn, partBuilder, hashableNameFn, properties, methods) {
   let obj = {};

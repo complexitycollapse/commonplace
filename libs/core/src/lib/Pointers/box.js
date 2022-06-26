@@ -1,4 +1,4 @@
-import { addProperties, finalObject } from "../utils";
+import { addProperties, finalObject } from "@commonplace/utils";
 import { spanTesting } from "./span";
 import { Clip, compareOriginalContexts } from "./clip";
 import { Part } from "../part";

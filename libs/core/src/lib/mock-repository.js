@@ -1,4 +1,4 @@
-import { addMethods } from "./utils";
+import { addMethods } from "@commonplace/utils";
 
 export function MockRepository() {
   let uniqueKey = 0;

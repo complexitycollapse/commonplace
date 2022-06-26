@@ -1,5 +1,5 @@
 import { Part } from './part';
-import { finalObject, listMap } from './utils';
+import { finalObject, listMap } from "@commonplace/utils";
 
 export function LeafCache() {
   let obj = {};
