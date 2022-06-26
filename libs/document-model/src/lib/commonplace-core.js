@@ -1,4 +1,4 @@
-import { MockRepository } from "@commonplace/core";
+import { MockRepository } from "./mock-repository";
 import { finalObject, addProperties } from "@commonplace/utils";
 
 export function CommonplaceCore(repository) {
