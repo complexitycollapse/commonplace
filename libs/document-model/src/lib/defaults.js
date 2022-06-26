@@ -1,4 +1,5 @@
-import { contentMetalinkType, directMetalinkType, Edl, Link } from "@commonplace/core";
+import { Edl, Link } from "@commonplace/core";
+import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
 import { EdlPointer, EdlTypePointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "@commonplace/core";
 import { EdlZettel } from "./Model/edl-zettel";
 

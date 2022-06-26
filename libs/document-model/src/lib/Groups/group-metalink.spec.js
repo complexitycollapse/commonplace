@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { EdlBuilder, EdlZettelBuilder, LinkBuilder, SpanBuilder } from '../builders';
-import { groupMetalinkType } from '@commonplace/core';
+import { groupMetalinkType } from '../Model/render-link';
 import { InlinePointer, LinkPointer } from '@commonplace/core';
 
 function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }

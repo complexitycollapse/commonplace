@@ -1,7 +1,7 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasClips, boxTesting, Span, spanTesting, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
 import { End } from './end';
-import { Link, leafDataToLink, DirectMetalink, directMetalinkType, ContentMetalink, contentMetalinkType } from './link';
+import { Link, leafDataToLink } from './link';
 
 expect.extend({
   hasClips
@@ -91,47 +91,5 @@ describe('clipSource', () => {
     let link = Link();
     let source = link.clipSource();
     expect(source()).toBeUndefined();
-  });
-});
-
-describe('DirectMetalink', () => {
-  it('returns a link of the direct metalink type', () => {
-    expect(DirectMetalink().type).toBe(directMetalinkType);
-  });
-
-  it('sets ends on the link from the ends parameters', () => {
-    let ends = [
-      ["foo", [makeSpan()]],
-      ["bar", [makeBox()]],
-      [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
-    ];
-  
-    let lk = DirectMetalink(...ends);
-  
-    expect(lk.ends.length).toBe(3);
-    expect(toSpec(lk.ends[0])).toEqual(ends[0]);
-    expect(toSpec(lk.ends[1])).toEqual(ends[1]);
-    expect(toSpec(lk.ends[2])).toEqual(ends[2]);
-  });
-});
-
-describe('ContentMetalink', () => {
-  it('returns a link of the content metalink type', () => {
-    expect(ContentMetalink().type).toBe(contentMetalinkType);
-  });
-
-  it('sets ends on the link from the ends parameters', () => {
-    let ends = [
-      ["foo", [makeSpan()]],
-      ["bar", [makeBox()]],
-      [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
-    ];
-  
-    let lk = ContentMetalink(...ends);
-  
-    expect(lk.ends.length).toBe(3);
-    expect(toSpec(lk.ends[0])).toEqual(ends[0]);
-    expect(toSpec(lk.ends[1])).toEqual(ends[1]);
-    expect(toSpec(lk.ends[2])).toEqual(ends[2]);
   });
 });

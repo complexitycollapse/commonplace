@@ -39,13 +39,6 @@ function makeLinkInternal(type, ends) {
   });
 }
 
-export const directMetalinkType = "endows direct attributes";
-export const contentMetalinkType = "endows content attributes";
-export const groupMetalinkType = "defines group";
-
-export const DirectMetalink = (...ends) => Link(directMetalinkType, ...ends);
-export const ContentMetalink = (...ends) => Link(contentMetalinkType, ...ends);
-
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
   let es = leafData.es.map((e, i) => leafDataToEnd(e, i));

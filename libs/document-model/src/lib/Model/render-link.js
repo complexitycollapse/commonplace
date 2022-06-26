@@ -1,11 +1,14 @@
 import { addProperties, finalObject, memoize, mergeMaps } from "@commonplace/utils";
 import { RenderPointerCollection } from "./render-pointer-collection";
-import { directMetalinkType, contentMetalinkType, groupMetalinkType } from '@commonplace/core';
 import { Attributes } from "../Attributes/attributes";
 import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
 import { MetaEndowment } from "../Attributes/meta-endowment";
 import { GroupMetalink } from "../Groups/group-metalink";
+
+export const directMetalinkType = "endows direct attributes";
+export const contentMetalinkType = "endows content attributes";
+export const groupMetalinkType = "defines group";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;

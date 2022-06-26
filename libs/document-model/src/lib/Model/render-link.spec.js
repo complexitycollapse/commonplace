@@ -1,7 +1,7 @@
 import { test, expect, describe, it } from '@jest/globals';
-import { RenderLink } from './render-link';
+import { RenderLink, contentMetalinkType, directMetalinkType } from './render-link';
 import { LinkPointer, Span } from '@commonplace/core';
-import { Link, End, contentMetalinkType, directMetalinkType } from '@commonplace/core';
+import { Link, End } from '@commonplace/core';
 import { Part } from '@commonplace/core';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
 import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
