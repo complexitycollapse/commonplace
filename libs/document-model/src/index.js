@@ -1,1 +1,2 @@
-export * from './lib/document-model';
+export { DefaultsEdlZettel } from './lib/defaults';
+export { EdlZettel } from './lib/Model/edl-zettel';

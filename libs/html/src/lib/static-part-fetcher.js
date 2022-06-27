@@ -1,4 +1,4 @@
-import { finalObject } from '@commonplace/core';
+import { finalObject } from '@commonplace/utils';
 
 export function StaticPartFetcher(origin, fetch) {
   let obj = {};

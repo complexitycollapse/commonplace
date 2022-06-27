@@ -1,4 +1,5 @@
-import { DefaultsEdlZettel, EdlPointer } from '@commonplace/core';
+import { EdlPointer } from '@commonplace/core';
+import { DefaultsEdlZettel } from '@commonplace/document-model';
 import { FlightComponent } from '@commonplace/components';
 import { StaticPartFetcher, PartRepository } from '@commonplace/html';
 

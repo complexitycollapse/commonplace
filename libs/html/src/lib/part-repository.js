@@ -1,4 +1,5 @@
-import { finalObject, LeafCache, listMapFromList } from "@commonplace/core";
+import { LeafCache } from "@commonplace/core";
+import { finalObject, listMapFromList } from "@commonplace/utils";
 
 export function PartRepository(fetcher) {
   let obj = {};

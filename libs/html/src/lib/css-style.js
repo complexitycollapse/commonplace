@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/core";
+import { finalObject } from "@commonplace/utils";
 import { getMapper } from "./attribute-mapper";
 import { registerAllMappers } from "./attribute-mappers";
 

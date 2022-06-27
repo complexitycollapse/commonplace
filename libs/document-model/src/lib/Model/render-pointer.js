@@ -2,7 +2,7 @@ import { addProperties, finalObject } from '@commonplace/utils';
 import { EdlPointer, LinkPointer, LinkTypePointer } from '@commonplace/core';
 import { Edl, Link } from '@commonplace/core';
 import { RenderLink } from './render-link';
-import { makeTestEdlZettelWithLinks } from './Model/edl-zettel';
+import { makeTestEdlZettelWithLinks } from './edl-zettel';
 
 export function RenderPointer(pointer, renderEnd) {
   let obj = {};
