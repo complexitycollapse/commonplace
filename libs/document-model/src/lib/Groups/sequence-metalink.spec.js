@@ -1,7 +1,8 @@
 import { it, describe, expect } from '@jest/globals';
 import { EdlBuilder, EdlZettelBuilder, LinkBuilder, SpanBuilder } from '../builders';
-import { groupMetalinkType } from '../Model/render-link';
+import { sequenceMetalinkType } from '../Model/render-link';
 import { InlinePointer, LinkPointer } from '@commonplace/core';
+import { SequenceBuilder } from './sequence-builder';
 
 function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
 
@@ -10,7 +11,7 @@ function aTargetLink(spans, { endName = "grouping end", name = "target" } = {}) 
 }
 
 function aMetalink(target) {
-  return LinkBuilder(groupMetalinkType, ["target", [target]], [undefined, [InlinePointer("grouping end")]]).withName("metalink");
+  return LinkBuilder(sequenceMetalinkType, ["target", [target]], [undefined, [InlinePointer("grouping end")]]).withName("metalink");
 }
 
 function make(content, links) {
@@ -19,7 +20,7 @@ function make(content, links) {
   links.forEach(l => edl.withLink(l));
   let edlZ = EdlZettelBuilder(edl).build();
   content.forEach(x => x.edlZ = edlZ);
-  return edlZ.children[0].renderPointers.allPointers[0].groupletBuilders();
+  return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails().map(d => SequenceBuilder(d.type, d.end, d.signature));
 }
 
 function consumePointer(groupletBuilder, clipBuilder) {
@@ -28,7 +29,7 @@ function consumePointer(groupletBuilder, clipBuilder) {
   return groupletBuilder.consumePointer(zettel);
 }
 
-describe('groupletBuilders', () => {
+describe('sequenceDetails', () => {
   it ('return undefined if there are no metalinks', () => {
     let span = aSpan();
     expect(make([span], [aTargetLink([span])])).toHaveLength(0);
@@ -56,7 +57,7 @@ describe('groupletBuilders', () => {
   });
 });
 
-describe('GroupletBuilder', () => {
+describe('SequenceBuilder', () => {
   describe('consumePointer', () => {
     it('returns true if clip matches the first pointer in the endset', () => {
       let span1 = aSpan(1), span2 = aSpan(2);

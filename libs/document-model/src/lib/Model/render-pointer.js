@@ -16,10 +16,10 @@ export function RenderPointer(pointer, renderEnd) {
   return finalObject(obj, {
     allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
     allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
-    groupletBuilders: () => obj.renderLink.groupletBuilders(obj),
+    sequenceDetails: () => obj.renderLink.sequenceDetails(obj),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),
-    metaGroupletBuilderFor: renderPointer => obj.renderLink.metaGroupletBuilderFor(renderPointer, obj)
+    metaSequenceDetailsFor: renderPointer => obj.renderLink.metaSequenceDetailsFor(renderPointer, obj)
   });
 }
 

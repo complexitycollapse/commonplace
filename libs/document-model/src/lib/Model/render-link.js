@@ -4,17 +4,17 @@ import { Attributes } from "../Attributes/attributes";
 import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
 import { MetaEndowment } from "../Attributes/meta-endowment";
-import { GroupMetalink } from "../Groups/group-metalink";
+import { SequenceMetalink } from "../Groups/sequence-metalink";
 
 export const directMetalinkType = "endows direct attributes";
 export const contentMetalinkType = "endows content attributes";
-export const groupMetalinkType = "defines group";
+export const sequenceMetalinkType = "defines sequence";
 
 export function RenderLink(pointer, link, homeEdl) {
   let type = link.type;
   if (type === directMetalinkType) { return DirectMetalink(pointer, link, homeEdl); }
   else if (type === contentMetalinkType) { return ContentMetalink(pointer, link, homeEdl); }
-  else if (type === groupMetalinkType) { return GroupMetalink(pointer, link, homeEdl); }
+  else if (type === sequenceMetalinkType) { return SequenceMetalink(pointer, link, homeEdl); }
   else { return BaseRenderLink(pointer, link, homeEdl); }
 }
 
@@ -25,7 +25,7 @@ export function BaseRenderLink(
   {
     directMetaEndowments = () => { return new Map(); },
     contentMetaEndowments = () => { return new Map(); },
-    metaGroupletBuilderFor = () => undefined
+    metaSequenceDetailsFor = () => undefined
   } = {}) {
   let renderLink = {};
 
@@ -88,27 +88,29 @@ export function BaseRenderLink(
     forEachPointer,
     getRenderEnd,
     createRenderPointer,
-    groupletBuilders: renderPointer => renderLink.modifiers.allPointers.map(m => m.metaGroupletBuilderFor(renderPointer)).filter(x => x),
-    metaGroupletBuilderFor
+    sequenceDetails: renderPointer => renderLink.modifiers.allPointers
+      .map(m => m.metaSequenceDetailsFor(renderPointer))
+      .filter(x => x !== undefined),
+    metaSequenceDetailsFor
   });
 }
 
-function DirectMetalink(linkName, link, homeEdl) {
+function DirectMetalink(pointer, link, homeEdl) {
   function directMetaEndowments(renderPointer) {
     return extractMetaEndowments(renderPointer);
   }
 
-  let obj = BaseRenderLink(linkName, link, homeEdl, { directMetaEndowments });
+  let obj = BaseRenderLink(pointer, link, homeEdl, { directMetaEndowments });
 
   return obj;
 }
 
-function ContentMetalink(linkName, link, homeEdl) {
+function ContentMetalink(pointer, link, homeEdl) {
   function contentMetaEndowments(renderPointer) {
     return extractMetaEndowments(renderPointer);
   }
 
-  let obj = BaseRenderLink(linkName, link, homeEdl, { contentMetaEndowments });
+  let obj = BaseRenderLink(pointer, link, homeEdl, { contentMetaEndowments });
 
   return obj;
 }
