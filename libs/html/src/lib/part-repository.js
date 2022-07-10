@@ -33,7 +33,9 @@ export function PartRepository(fetcher) {
       let request = requests[i];
       results.push(request[0]);
       let part = await getPart(request[0]);
-      request[1](part);
+      // TODO: need to handle the error case too. An ignored request will
+      // simply be repeated in an infinite loop.
+      if (part) { request[1](part); }
     }
     return results;
   }

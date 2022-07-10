@@ -1,9 +1,14 @@
 import { render } from '@testing-library/react';
 import { FlightComponent } from './flight-component';
-import { Doc } from '@commonplace/core';
+import { Edl, EdlPointer } from '@commonplace/core';
+import { PartRepository, StaticPartFetcher } from '@commonplace/html';
+import { DefaultsEdlZettel } from '@commonplace/document-model';
+
 describe('FlightComponent', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<FlightComponent docs={[Doc()]} />);
+    let repository = PartRepository(StaticPartFetcher("/assets/content/", async () => { return { ok: true, json: () =>{ return {"cps":[],"lks":[]}; } }; }));
+    let defaults = DefaultsEdlZettel().renderLinks;
+    const { baseElement } = render(<FlightComponent docPointers={[EdlPointer("test")]} repository={repository} defaults = {defaults} />);
     expect(baseElement).toBeTruthy();
   });
 });

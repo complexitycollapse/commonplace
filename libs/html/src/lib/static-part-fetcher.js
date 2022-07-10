@@ -11,7 +11,8 @@ export function StaticPartFetcher(origin, fetch) {
       return [true, part];
     }
     else {
-      return [false, `Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`];
+      let msg = `Failed to load ${JSON.stringify(pointer)} from URL "${url}". Status: ${response.status}`;
+      return [false, msg];
     }
   }
 
