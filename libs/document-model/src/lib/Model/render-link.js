@@ -27,10 +27,10 @@ export function BaseRenderLink(
     contentMetaEndowments = () => { return new Map(); },
     metaSequenceDetailsFor = () => undefined
   } = {}) {
-  let renderLink = {};
+  let obj = {};
 
   function attributes() {
-    return Attributes(renderLink, homeEdl.attributes(), renderLink.modifiers.pointerStack(), renderLink.modifiers.defaultsStack());
+    return Attributes(obj, homeEdl.attributes(), obj.modifiers.pointerStack(), obj.modifiers.defaultsStack());
   }
 
   {
@@ -38,27 +38,27 @@ export function BaseRenderLink(
     let modifiers = RenderPointerCollection(ownerPointer, link, homeEdl);
     modifiers.addDefaults(homeEdl.defaults);
 
-    addProperties(renderLink, {
+    addProperties(obj, {
       pointer,
       link,
       ends: link.ends,
       type: link.type,
       modifiers,
       attributes: memoize(attributes),
-      renderEnds: link.ends.map(e => RenderEnd(e, renderLink))
+      renderEnds: link.ends.map(e => RenderEnd(e, obj))
     });
   }
 
   function outstandingRequests() {
-    return renderLink.renderEnds.map(e => e.outstandingRequests()).flat();
+    return obj.renderEnds.map(e => e.outstandingRequests()).flat();
   }
 
   function forEachPointer(fn) {
-    link.forEachPointer((p, e) => fn(p, e, renderLink));
+    link.forEachPointer((p, e) => fn(p, e, obj));
   }
 
   function getRenderEnd(end) {
-    return renderLink.renderEnds.find(re => re.end.index === end.index);
+    return obj.renderEnds.find(re => re.end.index === end.index);
   }
 
   function createRenderPointer(pointer, end) {
@@ -69,26 +69,32 @@ export function BaseRenderLink(
     return RenderPointer(pointer, renderEnd);
   }
 
-  return finalObject(renderLink, {
+  function allDirectAttributeEndowments(renderPointer) {
+    return mergeAllMetaAttributes(
+      renderPointer,
+      obj.modifiers,
+      p => p.allDirectAttributeMetaEndowments());
+  }
+
+  function allContentAttributeEndowments(renderPointer) {
+    return mergeAllMetaAttributes(
+      renderPointer,
+      obj.modifiers,
+      p => p.allContentAttributeMetaEndowments(),
+      p => p.allContentAttributeEndowments());
+  }
+
+  return finalObject(obj, {
     outstandingRequests,
-    allDirectAttributeEndowments: renderPointer => 
-      mergeAllMetaAttributes(
-        renderPointer,
-        renderLink.modifiers,
-        p => p.allDirectAttributeMetaEndowments()),
-    allContentAttributeEndowments: renderPointer =>
-      mergeAllMetaAttributes(
-        renderPointer,
-        renderLink.modifiers,
-        p => p.allContentAttributeMetaEndowments(),
-        p => p.allContentAttributeEndowments()),
+    allDirectAttributeEndowments,
+    allContentAttributeEndowments,
     allDirectAttributeMetaEndowments: renderPointer => directMetaEndowments(renderPointer),
     allContentAttributeMetaEndowments: renderPointer => contentMetaEndowments(renderPointer),
     getHomeEdl: () => homeEdl,
     forEachPointer,
     getRenderEnd,
     createRenderPointer,
-    sequenceDetails: renderPointer => renderLink.modifiers.allPointers
+    sequenceDetails: renderPointer => obj.modifiers.allPointers
       .map(m => m.metaSequenceDetailsFor(renderPointer))
       .filter(x => x !== undefined),
     metaSequenceDetailsFor
