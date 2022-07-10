@@ -10,7 +10,13 @@ export function SequenceMetalink(pointer, link, homeEdl) {
     let details = groupDetails();
     if (details.sequenceEndNames.findIndex(n => n === endName) === -1) { return undefined; }
     else {
-      let signature = [pointer.renderLink.pointer, pointer];
+      let linkPointer = pointer.renderLink.pointer;
+      let metalinkPointer = pointer.renderLink.pointer;
+      let signature = {
+        linkPointer,
+        metalinkPointer,
+        equals: s => linkPointer.denotesSame(s.linkPointer) && metalinkPointer.denotesSame(s.metalinkPointer)
+      };
       return {
         type: details.type, 
         end: pointer.renderEnd.end,

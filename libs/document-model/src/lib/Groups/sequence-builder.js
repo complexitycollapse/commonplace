@@ -11,6 +11,12 @@ export function SequenceBuilder(type, end, signature) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
+    let zettelSignatures = zettel.sequenceDetails().map(d => d.signature);
+    if (!zettelSignatures.some(d => signature.equals(d))) {
+      validSoFar = false;
+      return false;
+    }
+
     if (current === undefined) { current = remaining.shift(); }
     
     let { nibbled, remainder } = current.nibble(zettel.clip);

@@ -128,6 +128,7 @@ export function EdlBuilder(name = "foo") {
     withLink: link => obj.pushTo("links", link),
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
     withClip: clip => obj.pushTo("clips", clip),
+    withClips: (...clips) => { clips.forEach(clip => obj.withClip(clip)); return obj; },
     defaultPart: () => { obj.build(); return Part(obj.pointer, obj.builtObject); },
     pointer: EdlPointer(name),
     withTarget: clip => { obj.target = clip; return obj.withClip(clip); },

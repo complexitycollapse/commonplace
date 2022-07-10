@@ -15,9 +15,7 @@ function aMetalink(target) {
 }
 
 function make(content, links) {
-  let edl = EdlBuilder();
-  content.forEach(c => edl.withClip(c));
-  links.forEach(l => edl.withLink(l));
+  let edl = EdlBuilder().withClips(...content).withLinks(...links);
   let edlZ = EdlZettelBuilder(edl).build();
   content.forEach(x => x.edlZ = edlZ);
   return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails().map(d => SequenceBuilder(d.type, d.end, d.signature));
