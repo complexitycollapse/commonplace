@@ -1,11 +1,11 @@
 import { Edl, Link } from "@commonplace/core";
 import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
-import { EdlPointer, EdlTypePointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer } from "@commonplace/core";
+import { EdlPointer, InlinePointer, LinkPointer } from "@commonplace/core";
 import { EdlZettel } from "./Model/edl-zettel";
 
 function makeEnds(types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
-  let ends = [...types.map(type => [undefined, [LinkTypePointer(type)]]), ["attribute", [InlinePointer(attribute)]]];
+  let ends = []; // [...types.map(type => [undefined, [LinkTypePointer(type)]]), ["attribute", [InlinePointer(attribute)]]];
   if (value !== undefined) {
     ends.push(["value", [InlinePointer(value)]]);
   }
@@ -46,9 +46,9 @@ let defaultsLinks = [
   directAttribute(["background colour", "background color"], "background colour", undefined, true, "value"),
   contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
-  directAttribute("break", "break", true),
-  Link("inline", [undefined, [PointerTypePointer("span")]]),
-  Link("block", [undefined, [EdlTypePointer("paragraph")]])
+  directAttribute("break", "break", true)
+  //Link("inline", [undefined, [PointerTypePointer("span")]]),
+  //Link("block", [undefined, [EdlTypePointer("paragraph")]])
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));

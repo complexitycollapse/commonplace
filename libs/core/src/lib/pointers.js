@@ -4,7 +4,6 @@ export { toEqualClip, hasClips } from './Pointers/clip.test-helpers';
 export { leafDataToPointer } from './Pointers/leaf-data-to-pointer';
 export { Pointer } from './Pointers/pointer';
 export { LinkPointer, leafDataToLinkPointer } from './Pointers/link-pointer';
-export { LinkTypePointer, PointerTypePointer, EdlTypePointer, leafDataToLinkTypePointer } from './Pointers/type-pointer';
 export { EdlPointer, leafDataToEdlPointer, emptyDocPointer } from './Pointers/edl-pointer';
 export { Span, spanTesting, leafDataToSpan } from './Pointers/span';
 export { ClipIterator } from './Pointers/clip-iterator';

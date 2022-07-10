@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from '@commonplace/utils';
-import { EdlPointer, LinkPointer, LinkTypePointer } from '@commonplace/core';
+import { EdlPointer, LinkPointer } from '@commonplace/core';
 import { Edl, Link } from '@commonplace/core';
 import { RenderLink } from './render-link';
 import { makeTestEdlZettelWithLinks } from './edl-zettel';
@@ -28,10 +28,10 @@ export function mockLinkRenderPointer(linkName, directAttributes = {}, contentAt
   return mockRenderPointer(pointer, directAttributes, contentAttributes);
 }
 
-export function mockLinkTypeRenderPointer(linkType, attributes = {}) {
-  let pointer = LinkTypePointer(linkType);
-  return mockRenderPointer(pointer, attributes);
-}
+// export function mockLinkTypeRenderPointer(linkType, attributes = {}) {
+//   let pointer = LinkTypePointer(linkType);
+//   return mockRenderPointer(pointer, attributes);
+// }
 
 export function mockEdlRenderPointer(edlName, attributes = {}) {
   let pointer = EdlPointer(edlName);

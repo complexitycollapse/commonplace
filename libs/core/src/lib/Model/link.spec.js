@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, boxTesting, Span, spanTesting, LinkPointer, LinkTypePointer, EdlPointer } from "../pointers";
+import { hasClips, boxTesting, Span, spanTesting, LinkPointer, EdlPointer } from "../pointers";
 import { End } from './end';
 import { Link, leafDataToLink } from './link';
 
@@ -30,7 +30,7 @@ test('ends is set on the link', () => {
   let ends = [
     ["foo", [makeSpan()]],
     ["bar", [makeBox()]],
-    [undefined, [LinkPointer("foo"), EdlPointer("bar"), LinkTypePointer("baz")]]
+    [undefined, [LinkPointer("foo"), EdlPointer("bar")]]
   ];
 
   let lk = Link("my type", ...ends);
@@ -38,7 +38,6 @@ test('ends is set on the link', () => {
   expect(lk.ends.length).toBe(3);
   expect(toSpec(lk.ends[0])).toEqual(ends[0]);
   expect(toSpec(lk.ends[1])).toEqual(ends[1]);
-  expect(toSpec(lk.ends[2])).toEqual(ends[2]);
 });
 
 describe('leafData', () => {

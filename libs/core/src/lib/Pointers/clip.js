@@ -7,8 +7,7 @@ export function Clip(pointerType, origin, partBuilder, hashableNameFn, originalC
 
   addProperties(obj, {
     isLink: false,
-    originalContext,
-    isTypePointer: false
+    originalContext
   });
 
   addMethods(obj, {

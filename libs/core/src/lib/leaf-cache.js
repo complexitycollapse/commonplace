@@ -6,10 +6,6 @@ export function LeafCache() {
   let cache = listMap();
 
   function getPart(pointer) {
-    if (pointer.isTypePointer) {
-      throw `LeafCache cannot resolve type pointer: '${pointer}'`;
-    }
-
     if (pointer.pointerType === "inline") {
       return [true, Part(pointer, pointer.inlineText)];
     }

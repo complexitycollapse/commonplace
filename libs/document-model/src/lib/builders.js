@@ -1,6 +1,6 @@
 import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
 import { Part, Edl, Link } from "@commonplace/core";
-import { EdlPointer, InlinePointer, LinkPointer, LinkTypePointer, PointerTypePointer, Span } from "@commonplace/core";
+import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
 import { EdlZettel } from "./Model/edl-zettel";
 
 export function Builder(buildFn, extensions) {
@@ -74,9 +74,7 @@ export function EndBuilder(endSpec) {
     if (p.build) {
       let built = p.build();
       return p.pointer ?? built;
-    } else if (typeof p === "string") {
-      return LinkTypePointer(p);
-    }
+    } 
     return p;
   }
 
@@ -92,15 +90,6 @@ export function EndBuilder(endSpec) {
   }
 
   return obj;
-}
-
-export function PointerTypePointerBuilder(pointerType) {
-  function getPointerType(obj) {
-    if (obj.pointerType.pointer) { return obj.pointerType.pointer.pointerType; }
-    else if (obj.pointerType.build) { obj.PointerType.build(); return obj.pointerType.pointer.pointerType; }
-    else { return obj.pointerType; }
-  }
-  return Builder(obj => PointerTypePointer(getPointerType(obj)), { pointerType });
 }
 
 export function PointerBuilder(builder) {

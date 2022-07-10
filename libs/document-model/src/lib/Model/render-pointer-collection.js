@@ -4,7 +4,7 @@ import { AttributesSourceFromPointers } from "../Attributes/attributes-source";
 export function RenderPointerCollection(ownerPointer, pointerSubject, containingEdl) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
-  let specificPointers = listMap(), typePointers = listMap(), allTypePointers = listMap(), defaultsStack;
+  let pointers = listMap(), defaultsStack;
 
   function addDefaults(defaultRenderLinks) {
     let relevantPointers = [];
@@ -37,35 +37,19 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
       return false;
     }
 
-    function push(collection, renderPointer) {
-      collection.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
-      obj.allPointers.push(renderPointer);
-    }
-
-    if (pointer.pointerType === "pointer type") {
-      push(allTypePointers, renderPointerFn());
-    } else if (pointer.isTypePointer) {
-      push(typePointers, renderPointerFn());
-    } else {
-      push(specificPointers, renderPointerFn());
-    }
+    let renderPointer = renderPointerFn();
+    pointers.push(renderPointer.renderLink.getHomeEdl().hashableName, renderPointer);
+    obj.allPointers.push(renderPointer);
 
     return true;
   }
 
   function renderPointers() {
-    function flatten(map) {
-      return [...map.values()].flat();
-    }
-
-    let all = flatten(allTypePointers), type = flatten(typePointers), direct = flatten(specificPointers);
-    return all.concat(type, direct);
+    return [...pointers.values()].flat();
   }
 
   function* pointerStack() {
-    yield* decomposePointersAccordingToEdlHierarchy(specificPointers);
-    yield* decomposePointersAccordingToEdlHierarchy(typePointers);
-    yield* decomposePointersAccordingToEdlHierarchy(allTypePointers);
+    yield* decomposePointersAccordingToEdlHierarchy(pointers);
   }
 
   // Runs through the containingEdl and its ancestors, yielding all RenderPointers that

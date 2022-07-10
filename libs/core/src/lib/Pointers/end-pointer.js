@@ -26,7 +26,7 @@ export function EndPointer(linkName, linkIndex, endName, endIndex) {
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     () => `end:${linkName}:${linkIndex ?? "N"}:${endName ?? ""}:${endIndex ?? "N"}`,
-    { linkName, linkIndex, endName, endIndex: endIndex, isTypePointer: false },
+    { linkName, linkIndex, endName, endIndex: endIndex },
     {
       leafData() { return { typ: "end", lnk: linkName, lx: linkIndex, end: endName, ex: endIndex }; },
       clipPart(part) { 

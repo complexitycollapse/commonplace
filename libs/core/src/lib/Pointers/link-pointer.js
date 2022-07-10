@@ -20,7 +20,7 @@ export function LinkPointer(linkName) {
     x => x.linkName,
     async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
     () => `link:${linkName}`,
-    { linkName, isTypePointer: false },
+    { linkName },
     {
       leafData() { return { typ: "link", name: linkName }; },
       clipPart(part) { 

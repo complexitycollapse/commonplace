@@ -1,9 +1,6 @@
 import { describe, it, expect, test } from '@jest/globals';
 import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
 import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
-import { LinkTypePointer, leafDataToLinkTypePointer } from './type-pointer';
-import { EdlTypePointer, leafDataToEdlTypePointer } from './type-pointer';
-import { PointerTypePointer } from './type-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
 import { Box } from './box';
@@ -16,16 +13,8 @@ describe('pointerType', () => {
     expect(LinkPointer("name").pointerType).toBe("link");
   });
 
-  it('equals "link type" for LinkTypePointer', () => {
-    expect(LinkTypePointer("name").pointerType).toBe("link type");
-  });
-
   it('equals "edl" for EdlPointer', () => {
     expect(EdlPointer("name").pointerType).toBe("edl");
-  });
-
-  it('equals "edl type" for EdlTypePointer', () => {
-    expect(EdlTypePointer("name").pointerType).toBe("edl type");
   });
 
   it('equals "inline" for InlinePointer', () => {
@@ -46,16 +35,8 @@ describe('isClip', () => {
     expect(LinkPointer("link").isClip).toBeFalsy();
   });
 
-  it('returns false for a LinkTypePointer', () => {
-    expect(LinkTypePointer("link").isClip).toBeFalsy();
-  });
-
   it('returns false for a EdlPointer', () => {
     expect(EdlPointer("edl").isClip).toBeFalsy();
-  });
-
-  it('returns false for a EdlTypePointer', () => {
-    expect(EdlTypePointer("edl").isClip).toBeFalsy();
   });
 
   it('returns false for an InlinePointer', () => {
@@ -78,22 +59,10 @@ describe('leafData', () => {
     expect(leafData).toEqual({ typ: "link", name: "the name"});
   });
 
-  it('returns object with typ "link type" and name prop when called on LinkTypePointer', () => {
-    let leafData = LinkTypePointer("the name").leafData();
-
-    expect(leafData).toEqual({ typ: "link type", name: "the name"});
-  });
-
   it('returns object with typ "edl" and name prop when called on EdlPointer', () => {
     let leafData = EdlPointer("the name").leafData();
 
     expect(leafData).toEqual({ typ: "edl", name: "the name"});
-  });
-
-  it('returns object with typ "edl type" and name prop when called on EdlTypePointer', () => {
-    let leafData = EdlTypePointer("the name").leafData();
-
-    expect(leafData).toEqual({ typ: "edl type", name: "the name"});
   });
 
   it('returns object with typ "inline" and txt prop when called on InlinePointer', () => {
@@ -110,22 +79,10 @@ describe('restoring leafData', () => {
     expect(leafDataToLinkPointer(link.leafData())).toEqual(link);
   });
 
-  test('leafDataToLinkTypePointer is inverse of leafData', () => {
-    let link = LinkTypePointer("test name");
-
-    expect(leafDataToLinkTypePointer(link.leafData())).toEqual(link);
-  });
-
   test('leafDataToEdlPointer is inverse of leafData', () => {
     let edl = EdlPointer("test name");
 
     expect(leafDataToEdlPointer(edl.leafData())).toEqual(edl);
-  });
-
-  test('leafDataToEdlTypePointer is inverse of leafData', () => {
-    let edl = EdlTypePointer("test name");
-
-    expect(leafDataToEdlTypePointer(edl.leafData())).toEqual(edl);
   });
 
   test('leafDataToPointer is inverse of leafData for LinkPointer', () => {
@@ -138,18 +95,6 @@ describe('restoring leafData', () => {
     let pointer = EndPointer("link name", 123, "end name", 100);
 
     expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
-  });
-
-  test('leafDataToPointer is inverse of leafData for PointerTypePointer', () => {
-    let pointer = PointerTypePointer("span");
-
-    expect(leafDataToPointer(pointer.leafData())).toEqual(pointer);
-  });
-
-  test('leafDataToPointer is inverse of leafData for LinkTypePointer', () => {
-    let link = LinkTypePointer("test name");
-
-    expect(leafDataToPointer(link.leafData())).toEqual(link);
   });
 
   test('leafDataToPointer is inverse of leafData for EdlPointer', () => {
@@ -247,34 +192,6 @@ describe('endowsTo', () => {
 
     it('returns true if they have the same name', () => {
       expect(EdlPointer("name").endowsTo(EdlPointer("name"))).toBeTruthy();
-    });
-  });
-
-  describe('EdlTypePointer', () => {
-    it('returns false if the other pointer is not an EdlPointer', () => {
-      expect(EdlTypePointer("test type").endowsTo(LinkPointer("test type"), Edl("test type"))).toBeFalsy();
-    });
-
-    it('returns false if the edl does not have the given type', () => {
-      expect(EdlTypePointer("test type").endowsTo(EdlPointer("name"), Edl("test type 2"))).toBeFalsy();
-    });
-
-    it('returns true if the pointer is a edl pointer and the edl has the given type', () => {
-      expect(EdlTypePointer("test type").endowsTo(EdlPointer("name"), Edl("test type"))).toBeTruthy();
-    });
-  });
-
-  describe('LinkTypePointer', () => {
-    it('returns false if the other pointer is not an LinkPointer', () => {
-      expect(LinkTypePointer("test type").endowsTo(EdlPointer("test type"), Link("test type"))).toBeFalsy();
-    });
-
-    it('returns false if the link does not have the given type', () => {
-      expect(LinkTypePointer("test type").endowsTo(LinkPointer("name"), Link("test type 2"))).toBeFalsy();
-    });
-
-    it('returns true if the pointer is a link pointer and the link has the given type', () => {
-      expect(LinkTypePointer("test type").endowsTo(LinkPointer("name"), Link("test type"))).toBeTruthy();
     });
   });
 });

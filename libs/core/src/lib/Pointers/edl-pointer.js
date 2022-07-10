@@ -14,7 +14,7 @@ export function EdlPointer(edlName) {
     x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
     () => `edl:${edlName}`,
-    { edlName, isTypePointer: false }, 
+    { edlName }, 
     {
       leafData() { return { typ: "edl", name: edlName }; },
       clipPart(part) { 
