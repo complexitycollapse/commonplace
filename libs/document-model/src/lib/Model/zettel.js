@@ -19,7 +19,8 @@ export function Zettel(clip, containingEdl) {
     isSegment: false,
     renderPointers: RenderPointerCollection(clip, undefined, containingEdl),
     containingEdl,
-    attributes: memoize(attributes)
+    attributes: memoize(attributes),
+    sequences: []
   });
 
   function addPointer(pointer, end, link) {

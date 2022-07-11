@@ -20,7 +20,8 @@ export function SequenceMetalink(pointer, link, homeEdl) {
       return {
         type: details.type, 
         end: pointer.renderEnd.end,
-        signature
+        signature,
+        link: pointer.renderLink
       };
     }
   }

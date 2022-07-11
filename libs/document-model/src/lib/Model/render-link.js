@@ -45,7 +45,8 @@ export function BaseRenderLink(
       type: link.type,
       modifiers,
       attributes: memoize(attributes),
-      renderEnds: link.ends.map(e => RenderEnd(e, obj))
+      renderEnds: link.ends.map(e => RenderEnd(e, obj)),
+      sequences: []
     });
   }
 

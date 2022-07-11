@@ -18,7 +18,7 @@ function make(content, links) {
   let edl = EdlBuilder().withClips(...content).withLinks(...links);
   let edlZ = EdlZettelBuilder(edl).build();
   content.forEach(x => x.edlZ = edlZ);
-  return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails().map(d => SequenceBuilder(d.type, d.end, d.signature));
+  return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails().map(d => SequenceBuilder(d.type, d.end, d.link, d.signature));
 }
 
 function consumePointer(groupletBuilder, clipBuilder) {
@@ -153,5 +153,37 @@ describe('isComplete', () => {
     consumePointer(builder, span2);
 
     expect(builder.isComplete()).toBe(true);
+  });
+});
+
+describe('pushSequence', () => {
+  it('throws an exception if the sequence is not complete', () => {
+    let span = aSpan();
+    let target = aTargetLink([span]);
+
+    expect(() => make([span], [target, aMetalink(target)])[0].pushSequence()).toThrow();
+  });
+
+  it('does not throw if the sequence is complete', () => {
+    let span = aSpan();
+    let target = aTargetLink([span]);
+    let builder = make([span], [target, aMetalink(target)])[0];
+
+    consumePointer(builder, span);
+
+    expect(() => builder.pushSequence()).not.toThrow();
+  });
+
+  it('pushes the sequence on the sequences properties of the zettel in the sequence', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let target = aTargetLink([span1, span2]);
+    let builder = make([span1, span2], [target, aMetalink(target)])[0];
+    consumePointer(builder, span1);
+    consumePointer(builder, span2);
+
+    builder.pushSequence();
+
+    expect(span1.edlZ.children[0].sequences).toHaveLength(1);
+    expect(span2.edlZ.children[1].sequences).toHaveLength(1);
   });
 });
