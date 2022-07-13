@@ -26,7 +26,8 @@ export function EdlPointer(edlName) {
         }
       },
       engulfs: other => engulfs(obj, other),
-      endowsTo: other => engulfs(obj, other)
+      endowsTo: other => engulfs(obj, other),
+      nibble: other => ({ nibbled: engulfs(obj, other), remainder: undefined })
   });
 
   return obj;
