@@ -134,7 +134,8 @@ export function EdlBuilder(name = "foo") {
     withTarget: clip => { obj.target = clip; return obj.withClip(clip); },
     allLinkParts: function* () {
       obj.build();
-      yield* obj.links.map(b => b.defaultPart());
+      let linkParts = obj.links.map(b => b.defaultPart());
+      yield* linkParts;
       for (let b of obj.clips) {
         if (b.isEdl) { yield* b.allLinkParts(); }
       }
