@@ -78,7 +78,8 @@ export function Zettel(clip, containingEdl) {
     outstandingRequests,
     setOnUpdate,
     addPointer,
-    sequenceDetails
+    sequenceDetails,
+    incommingPointers: obj.renderPointers.renderPointers()
   });
 
   return obj;

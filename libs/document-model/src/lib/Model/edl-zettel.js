@@ -42,7 +42,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     outstandingRequests: () => obj.state.outstandingRequests(),
     renderPointers: () => {
       return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
-    }
+    },
+    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName)
   });
 
   TransitionToResolveEdlState(obj, parts);
@@ -94,7 +95,7 @@ function TransitionToResolveLinksState(harness, edl, parts) {
   }
 
   function resolveLinkFromPartWithoutIndex(part) {
-    let index = edl.links.findIndex(p => p.denotesSame(part.pointer));
+    let index = edl.links.findIndex((p, i) => p.denotesSame(part.pointer) && unresolvedLinks[i] !== undefined);
     if (index >= 0) { resolveLinkFromPart(part, index); }
   }
 

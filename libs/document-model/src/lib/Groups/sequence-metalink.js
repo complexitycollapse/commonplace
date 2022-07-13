@@ -1,4 +1,4 @@
-import { finalObject, memoize } from "@commonplace/utils";
+import { memoize } from "@commonplace/utils";
 import { BaseRenderLink } from "../Model/render-link";
 
 export function SequenceMetalink(pointer, link, homeEdl) {
@@ -11,7 +11,7 @@ export function SequenceMetalink(pointer, link, homeEdl) {
     if (details.sequenceEndNames.findIndex(n => n === endName) === -1) { return undefined; }
     else {
       let linkPointer = pointer.renderLink.pointer;
-      let metalinkPointer = pointer.renderLink.pointer;
+      let metalinkPointer = metaPointer.renderLink.pointer;
       let signature = {
         linkPointer,
         metalinkPointer,

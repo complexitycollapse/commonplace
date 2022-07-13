@@ -1,25 +1,8 @@
 import { it, describe, expect } from '@jest/globals';
-import { EdlBuilder, EdlZettelBuilder, LinkBuilder, SpanBuilder } from '../builders';
-import { sequenceMetalinkType } from '../Model/render-link';
-import { InlinePointer, LinkPointer } from '@commonplace/core';
-import { SequenceBuilder } from './sequence-builder';
+import { LinkPointer } from '@commonplace/core';
+import { aMetalink, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from './group-testing';
 
-function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
-
-function aTargetLink(spans, { endName = "grouping end", name = "target" } = {}) {
-  return LinkBuilder(undefined, [endName, spans]).withName(name);
-}
-
-function aMetalink(target) {
-  return LinkBuilder(sequenceMetalinkType, ["target", [target]], [undefined, [InlinePointer("grouping end")]]).withName("metalink");
-}
-
-function make(content, links) {
-  let edl = EdlBuilder().withClips(...content).withLinks(...links);
-  let edlZ = EdlZettelBuilder(edl).build();
-  content.forEach(x => x.edlZ = edlZ);
-  return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails().map(d => SequenceBuilder(d.type, d.end, d.link, d.signature));
-}
+const make = makeEdlzAndReturnSequnceDetails;
 
 describe('sequenceDetails', () => {
   it ('return undefined if there are no metalinks', () => {

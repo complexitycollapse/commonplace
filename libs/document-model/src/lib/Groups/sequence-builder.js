@@ -7,7 +7,7 @@ export function SequenceBuilder(type, end, definingLink, signature) {
   let validSoFar = true;
   let collected = [];
 
-  function consumePointer(zettel) {
+  function consumeZettel(zettel) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
@@ -48,10 +48,12 @@ export function SequenceBuilder(type, end, definingLink, signature) {
     };
 
     collected.forEach(z => z.sequences.push(sequence));
+
+    return sequence;
   }
 
   return finalObject(obj, {
-    consumePointer,
+    consumeZettel,
     isComplete,
     pushSequence
   });
