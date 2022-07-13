@@ -43,7 +43,8 @@ export function SpanBuilder() {
       withContent: content => obj.withProperty("content", content),
       withOrigin: origin => obj.withProperty("origin", origin),
       withStart: start => obj.withProperty("start", start),
-      defaultPart: () => Part(obj.builtObject, obj.content)
+      defaultPart: () => Part(obj.builtObject, obj.content),
+      pointer: undefined
     }
   );
 

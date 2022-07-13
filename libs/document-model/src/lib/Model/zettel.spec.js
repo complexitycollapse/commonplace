@@ -23,7 +23,7 @@ function makeLink(type, ...ends) {
 }
 
 function getRenderPointers(zettel) {
-  return zettel.renderPointers.renderPointers();
+  return zettel.renderPointers();
 }
 
 test('clip returns the passed clip', () => {

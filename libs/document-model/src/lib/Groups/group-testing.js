@@ -14,6 +14,10 @@ export function aMetalink(target, name = "metalink", type) {
   return builder;
 }
 
+export function anEdl(name) {
+  return EdlBuilder(name);
+}
+
 export function makeEdlZ(content, links) {
   let edl = EdlBuilder().withClips(...content).withLinks(...links);
   let edlZ = EdlZettelBuilder(edl).build();
@@ -23,5 +27,5 @@ export function makeEdlZ(content, links) {
 
 export function makeEdlzAndReturnSequnceDetails(content, links) {
   let edlZ = makeEdlZ(content, links);
-  return edlZ.children[0].renderPointers.allPointers[0].sequenceDetails();
+  return edlZ.children[0].renderPointers()[0].sequenceDetails();
 }

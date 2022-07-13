@@ -42,9 +42,9 @@ expect.extend({
       if (!result.pass) { return result; }
     });
 
-    if (ends.length !== zettel.renderPointers.renderPointers().length) {
+    if (ends.length !== zettel.renderPointers().length) {
       return {
-        message: () => `expected ${ends.length} ends, received ${zettel.renderPointers.length}`,
+        message: () => `expected ${ends.length} ends, received ${zettel.renderPointers().length}`,
         pass: false
       }
     }

@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { SequenceBuilder } from './sequence-builder';
-import { aMetalink, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from './group-testing';
+import { aMetalink, anEdl, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from './group-testing';
 
 function make(content, links) {
   let sequenceDetails = makeEdlzAndReturnSequnceDetails(content, links);
@@ -8,17 +8,25 @@ function make(content, links) {
 }
 
 function consumeZettel(groupletBuilder, clipBuilder) {
-  let clip = clipBuilder.build();
+  clipBuilder.build();
+  let clip = clipBuilder.pointer;
   let zettel = clipBuilder.edlZ.children.find(z => z.clip.denotesSame(clip));
   return groupletBuilder.consumeZettel(zettel);
 }
 
 describe('consumeZettel', () => {
-  it('returns true if clip matches the first pointer in the endset', () => {
+  it('returns true if clip matches the first pointer in the endset (Span case)', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
     let target = aTargetLink([span1, span2]);
 
     expect(consumeZettel(make([span1, span2], [target, aMetalink(target)])[0], span1)).toBe(true);
+  });
+
+  it('returns true if clip matches the first pointer in the endset (EDL case)', () => {
+    let edl1 = anEdl("edl1"), span2 = aSpan(2);
+    let target = aTargetLink([edl1, span2]);
+
+    expect(consumeZettel(make([edl1, span2], [target, aMetalink(target)])[0], edl1)).toBe(true);
   });
 
   it('returns false if clip does not match the first pointer in the end', () => {
@@ -26,6 +34,13 @@ describe('consumeZettel', () => {
     let target = aTargetLink([span1]);
 
     expect(consumeZettel(make([span1, span2], [target, aMetalink(target)])[0], span2)).toBe(false);
+  });
+
+  it('returns false if clip does not match the first pointer in the endset (EDL case)', () => {
+    let edl1 = anEdl("edl1"), edl2 = anEdl("end2"), span2 = aSpan(2);
+    let target = aTargetLink([edl1, span2, edl2]);
+
+    expect(consumeZettel(make([edl1, span2, edl2], [target, aMetalink(target)])[0], edl2)).toBe(false);
   });
 
   it('returns false if clip matches second, not first, pointer in the end', () => {

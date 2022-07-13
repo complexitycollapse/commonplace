@@ -27,6 +27,10 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
   }
 
+  function sequenceDetails() {
+    return obj.renderPointerCollection?.renderPointers().map(p => p.sequenceDetails()).flat();
+  }
+
   addProperties(obj, {
     key,
     clip: edlPointer,
@@ -35,7 +39,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     children: [],
     nameLinkPairs: [],
     defaults,
-    attributes: memoize(attributes)
+    attributes: memoize(attributes),
+    sequences: []
   });
 
   addMethods(obj, {
@@ -43,7 +48,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     renderPointers: () => {
       return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
     },
-    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName)
+    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
+    sequenceDetails
   });
 
   TransitionToResolveEdlState(obj, parts);
@@ -158,7 +164,7 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
   }
 
   function resolveContent(part) {
-    harness.renderPointerCollection.forEach(p => p.resolveContent(part));
+    harness.renderPointerCollection.renderPointers().forEach(p => p.renderEnd.resolveContent(part));
   }
 
   function tryStateTransition() {
