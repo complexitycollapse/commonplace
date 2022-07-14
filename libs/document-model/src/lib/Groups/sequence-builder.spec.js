@@ -3,8 +3,8 @@ import { SequenceBuilder } from './sequence-builder';
 import { aMetalink, anEdl, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from './group-testing';
 
 function make(content, links) {
-  let sequenceDetails = makeEdlzAndReturnSequnceDetails(content, links);
-  return sequenceDetails.map(d => SequenceBuilder(d.type, d.end, d.link, d.signature));
+  let sequenceDetailsEndowments = makeEdlzAndReturnSequnceDetails(content, links);
+  return sequenceDetailsEndowments.map(d => SequenceBuilder(d.type, d.end, d.link, d.signature));
 }
 
 function consumeZettel(groupletBuilder, clipBuilder) {

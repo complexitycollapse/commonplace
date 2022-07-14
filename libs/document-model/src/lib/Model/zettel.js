@@ -69,8 +69,8 @@ export function Zettel(clip, containingEdl) {
     return outstanding;
   }
 
-  function sequenceDetails() {
-    return obj.renderPointers().map(p => p.sequenceDetails()).flat();
+  function potentialSequenceDetails() {
+    return obj.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
   }
 
   obj.renderPointerCollection.addDefaults(containingEdl.defaults);
@@ -82,7 +82,7 @@ export function Zettel(clip, containingEdl) {
     outstandingRequests,
     setOnUpdate,
     addPointer,
-    sequenceDetails,
+    potentialSequenceDetails,
     renderPointers
   });
 

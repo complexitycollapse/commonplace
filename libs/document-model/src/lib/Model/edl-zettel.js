@@ -27,8 +27,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
   }
 
-  function sequenceDetails() {
-    return obj.renderPointerCollection?.renderPointers().map(p => p.sequenceDetails()).flat();
+  function potentialSequenceDetails() {
+    return obj.renderPointerCollection?.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
   }
 
   addProperties(obj, {
@@ -49,7 +49,7 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
       return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
     },
     getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
-    sequenceDetails
+    potentialSequenceDetails
   });
 
   TransitionToResolveEdlState(obj, parts);

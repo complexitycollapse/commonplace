@@ -11,7 +11,7 @@ export function SequenceBuilder(type, end, definingLink, signature) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
-    let zettelSignatures = zettel.sequenceDetails().map(d => d.signature);
+    let zettelSignatures = zettel.potentialSequenceDetails().map(d => d.signature);
     if (!zettelSignatures.some(d => signature.equals(d))) {
       validSoFar = false;
       return false;

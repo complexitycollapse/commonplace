@@ -9,7 +9,7 @@ export function SequenceScanner(zettel) {
     let completeSequences = [];
 
     zettel.forEach(z => {
-      let sequenceDetails = z.sequenceDetails();
+      let sequenceDetailsEndowments = z.potentialSequenceDetails();
       let newBuilders = [];
       let deadBuilders = [];
       
@@ -23,7 +23,7 @@ export function SequenceScanner(zettel) {
         }
       });
 
-      sequenceDetails.forEach(d => {
+      sequenceDetailsEndowments.forEach(d => {
         let newBuilder = SequenceBuilder(d.type, d.end, d.link, d.signature);
         let result = newBuilder.consumeZettel(z);
         if (newBuilder.isComplete()) { completeSequences.push(newBuilder.pushSequence()); }

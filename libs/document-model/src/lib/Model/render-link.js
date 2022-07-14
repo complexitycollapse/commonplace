@@ -85,6 +85,10 @@ export function BaseRenderLink(
       p => p.allContentAttributeEndowments());
   }
 
+  function potentialSequenceDetails() {
+    return obj.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
+  }
+
   return finalObject(obj, {
     outstandingRequests,
     allDirectAttributeEndowments,
@@ -95,10 +99,11 @@ export function BaseRenderLink(
     forEachPointer,
     getRenderEnd,
     createRenderPointer,
-    sequenceDetails: renderPointer => obj.modifiers.allPointers
+    sequenceDetailsEndowments: renderPointer => obj.modifiers.allPointers
       .map(m => m.metaSequenceDetailsFor(renderPointer))
       .filter(x => x !== undefined),
-    metaSequenceDetailsFor
+    metaSequenceDetailsFor,
+    potentialSequenceDetails
   });
 }
 
