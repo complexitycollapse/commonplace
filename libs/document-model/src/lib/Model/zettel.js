@@ -1,8 +1,7 @@
-import { addProperties, addMethods, memoize } from '@commonplace/utils';
+import { addProperties, addMethods } from '@commonplace/utils';
 import { Span, testing } from '@commonplace/core';
 import { ZettelSchneider } from './zettel-schneider';
-import { RenderPointerCollection } from './render-pointer-collection';
-import { Attributes } from '../Attributes/attributes';
+import { AddPointerTargetFeatures } from './pointer-target';
 
 export function Zettel(clip, containingEdl) {
   let obj = {};
@@ -10,33 +9,23 @@ export function Zettel(clip, containingEdl) {
   let contentPart = undefined;
   obj.key = undefined;
 
-  function attributes() {
-    return Attributes(obj, containingEdl.attributes(), obj.renderPointerCollection.pointerStack(), obj.renderPointerCollection.defaultsStack());
-  }
+  let renderPointerCollection = AddPointerTargetFeatures(obj, clip, () => undefined, containingEdl, containingEdl);
 
   addProperties(obj, {
     clip,
-    isSegment: false,
-    renderPointerCollection: RenderPointerCollection(clip, undefined, containingEdl),
-    containingEdl,
-    attributes: memoize(attributes),
-    sequences: []
+    containingEdl
   });
-
-  function renderPointers() {
-    return obj.renderPointerCollection.renderPointers();
-  }
 
   function addPointer(pointer, end, link) {
     let renderPointer = link.createRenderPointer(pointer, end);
-    obj.renderPointerCollection.tryAddRenderPointer(renderPointer);
+    renderPointerCollection.tryAddRenderPointer(renderPointer);
   }
 
   function addLink(link) {
     let newZettel = ZettelSchneider(clip, [link], obj.key, containingEdl).zettel();
 
     newZettel.forEach(z => {
-      obj.renderPointers().forEach(p => z.renderPointerCollection.tryAddRenderPointer(p));
+      obj.renderPointers().forEach(p => z.tryAddRenderPointer(p));
       if (contentPart) { z.tryAddPart(contentPart); }
     });
 
@@ -69,11 +58,7 @@ export function Zettel(clip, containingEdl) {
     return outstanding;
   }
 
-  function potentialSequenceDetails() {
-    return obj.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
-  }
-
-  obj.renderPointerCollection.addDefaults(containingEdl.defaults);
+  renderPointerCollection.addDefaults(containingEdl.defaults);
 
   addMethods(obj, {
     addLink,
@@ -82,8 +67,6 @@ export function Zettel(clip, containingEdl) {
     outstandingRequests,
     setOnUpdate,
     addPointer,
-    potentialSequenceDetails,
-    renderPointers
   });
 
   return obj;

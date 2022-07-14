@@ -1,10 +1,9 @@
-import { addProperties, finalObject, memoize, mergeMaps } from "@commonplace/utils";
-import { RenderPointerCollection } from "./render-pointer-collection";
-import { Attributes } from "../Attributes/attributes";
+import { addProperties, finalObject, mergeMaps } from "@commonplace/utils";
 import { RenderEnd } from "./render-end";
 import { RenderPointer } from "./render-pointer";
 import { MetaEndowment } from "../Attributes/meta-endowment";
 import { SequenceMetalink } from "../Groups/sequence-metalink";
+import { AddPointerTargetFeatures } from "./pointer-target";
 
 export const directMetalinkType = "endows direct attributes";
 export const contentMetalinkType = "endows content attributes";
@@ -29,26 +28,17 @@ export function BaseRenderLink(
   } = {}) {
   let obj = {};
 
-  function attributes() {
-    return Attributes(obj, homeEdl.attributes(), obj.modifiers.pointerStack(), obj.modifiers.defaultsStack());
-  }
+  let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
+  let modifiers = AddPointerTargetFeatures(obj, ownerPointer, () => link, homeEdl, homeEdl);
+  modifiers.addDefaults(homeEdl.defaults);
 
-  {
-    let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
-    let modifiers = RenderPointerCollection(ownerPointer, link, homeEdl);
-    modifiers.addDefaults(homeEdl.defaults);
-
-    addProperties(obj, {
-      pointer,
-      link,
-      ends: link.ends,
-      type: link.type,
-      modifiers,
-      attributes: memoize(attributes),
-      renderEnds: link.ends.map(e => RenderEnd(e, obj)),
-      sequences: []
-    });
-  }
+  addProperties(obj, {
+    pointer,
+    link,
+    ends: link.ends,
+    type: link.type,
+    renderEnds: link.ends.map(e => RenderEnd(e, obj))
+  });
 
   function outstandingRequests() {
     return obj.renderEnds.map(e => e.outstandingRequests()).flat();
@@ -73,20 +63,16 @@ export function BaseRenderLink(
   function allDirectAttributeEndowments(renderPointer) {
     return mergeAllMetaAttributes(
       renderPointer,
-      obj.modifiers,
+      modifiers,
       p => p.allDirectAttributeMetaEndowments());
   }
 
   function allContentAttributeEndowments(renderPointer) {
     return mergeAllMetaAttributes(
       renderPointer,
-      obj.modifiers,
+      modifiers,
       p => p.allContentAttributeMetaEndowments(),
       p => p.allContentAttributeEndowments());
-  }
-
-  function potentialSequenceDetails() {
-    return obj.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
   }
 
   return finalObject(obj, {
@@ -99,11 +85,10 @@ export function BaseRenderLink(
     forEachPointer,
     getRenderEnd,
     createRenderPointer,
-    sequenceDetailsEndowments: renderPointer => obj.modifiers.allPointers
+    sequenceDetailsEndowments: renderPointer => modifiers.allPointers
       .map(m => m.metaSequenceDetailsFor(renderPointer))
       .filter(x => x !== undefined),
-    metaSequenceDetailsFor,
-    potentialSequenceDetails
+    metaSequenceDetailsFor
   });
 }
 

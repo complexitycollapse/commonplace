@@ -45,7 +45,7 @@ function makeEdl(parent, pointerLinkPairs, name) {
 }
 
 function getStack(edlZ, linksInRenderPointerCollection) {
-  let rpc = RenderPointerCollection(targetPointer, targetSubject, edlZ);
+  let rpc = RenderPointerCollection(targetPointer, () => targetSubject, edlZ);
   let renderLinks = linksInRenderPointerCollection.map(l => RenderLink(l[0], l[1], l[2]));
   rpc.tryAddAll(renderLinks);
   let sources = [...rpc.pointerStack()];

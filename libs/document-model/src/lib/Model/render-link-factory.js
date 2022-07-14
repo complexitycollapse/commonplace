@@ -11,7 +11,7 @@ export function RenderLinkFactory(edlZettel) {
     }
 
     renderLinks.forEach((renderLink) => {
-      renderLink.modifiers.tryAddAll(renderLinks);
+      renderLink.tryAddAll(renderLinks);
     });
     
     return renderLinks;

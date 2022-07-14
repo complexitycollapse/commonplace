@@ -1,35 +1,18 @@
-import { addProperties, addMethods, finalObject, memoize } from '@commonplace/utils';
+import { addProperties, addMethods, finalObject } from '@commonplace/utils';
 import { ZettelSchneider } from './zettel-schneider';
 import { RenderLinkFactory } from './render-link-factory';
-import { RenderPointerCollection } from './render-pointer-collection';
 import { EdlPointer, LinkPointer } from '@commonplace/core';
 import { Edl } from '@commonplace/core';
-import { Attributes } from '../Attributes/attributes';
+import { AddPointerTargetFeatures } from './pointer-target';
 
 export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, parts) {
   let obj = {
     edl: undefined,
     renderLinks: undefined,
-    state: undefined,
-    renderPointerCollection: undefined
+    state: undefined
   };
 
-  function attributes() {
-    let pointerStack, defaultsStack;
-    if (obj.renderPointerCollection) {
-      pointerStack = obj.renderPointerCollection.pointerStack();
-      defaultsStack = obj.renderPointerCollection.defaultsStack();
-    } else {
-      pointerStack = [];
-      defaultsStack = [];
-    }
-
-    return Attributes(obj, obj.parent?.attributes(), pointerStack, defaultsStack);
-  }
-
-  function potentialSequenceDetails() {
-    return obj.renderPointerCollection?.renderPointers().map(p => p.sequenceDetailsEndowments()).flat();
-  }
+  let renderPointerCollection = AddPointerTargetFeatures(obj, edlPointer, () => obj.edl, obj, parent)
 
   addProperties(obj, {
     key,
@@ -38,23 +21,17 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     parent,
     children: [],
     nameLinkPairs: [],
-    defaults,
-    attributes: memoize(attributes),
-    sequences: []
+    defaults
   });
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
-    renderPointers: () => {
-      return obj.renderPointerCollection ? obj.renderPointerCollection.renderPointers() : [];
-    },
-    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
-    potentialSequenceDetails
+    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName)
   });
 
-  TransitionToResolveEdlState(obj, parts);
+  TransitionToResolveEdlState(renderPointerCollection, obj, parts);
   if (edl) {
-    TransitionToResolveLinksState(obj, edl, parts);
+    TransitionToResolveLinksState(renderPointerCollection, obj, edl, parts);
     if (links && obj.state.resolveLink) {
       links.forEach((l, i) => obj.state.resolveLink(l, i));
     }
@@ -77,11 +54,11 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
   return obj;
 }
 
-function TransitionToResolveEdlState(harness, parts) {
+function TransitionToResolveEdlState(renderPointerCollection, harness, parts) {
   let obj = { harness };
 
   function resolveEdl(part) {
-    TransitionToResolveLinksState(harness, part.content, parts);
+    TransitionToResolveLinksState(renderPointerCollection, harness, part.content, parts);
   }
 
   harness.state = finalObject(obj, {
@@ -89,7 +66,7 @@ function TransitionToResolveEdlState(harness, parts) {
   });
 }
 
-function TransitionToResolveLinksState(harness, edl, parts) {
+function TransitionToResolveLinksState(renderPointerCollection, harness, edl, parts) {
   let unresolvedLinks = [...edl.links];
   let links = new Array(unresolvedLinks.length);
   
@@ -113,7 +90,7 @@ function TransitionToResolveLinksState(harness, edl, parts) {
       return;
     }
 
-    TransitionToResolveLinkContentState(harness, links, parts);
+    TransitionToResolveLinkContentState(renderPointerCollection, harness, links, parts);
   }
 
   harness.edl = edl;
@@ -121,7 +98,7 @@ function TransitionToResolveLinksState(harness, edl, parts) {
   if (edl.links.length > 0) {
     harness.state = obj;
   } else {
-    TransitionToResolveLinkContentState(harness, [], parts);
+    TransitionToResolveLinkContentState(renderPointerCollection, harness, [], parts);
   }
 
   addMethods(obj, {
@@ -131,7 +108,7 @@ function TransitionToResolveLinksState(harness, edl, parts) {
   });
 }
 
-function TransitionToResolveLinkContentState(harness, links, parts) {
+function TransitionToResolveLinkContentState(renderPointerCollection, harness, links, parts) {
   let obj = {
   };
 
@@ -139,9 +116,8 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
   harness.nameLinkPairs.push(...harness.edl.links.map((n, i) => [n, links[i]]));
 
   function applyLinksToSelf() {
-    harness.renderPointerCollection = RenderPointerCollection(harness.clip, harness.edl, harness);
-    harness.renderPointerCollection.addDefaults(harness.defaults);
-    harness.renderPointerCollection.tryAddAll(harness.renderLinks);
+    renderPointerCollection.addDefaults(harness.defaults);
+    renderPointerCollection.tryAddAll(harness.renderLinks);
   }
 
   function createChildZettel() {
@@ -159,12 +135,12 @@ function TransitionToResolveLinkContentState(harness, links, parts) {
   }
 
   function outstandingLinkContent() {
-    let rps = harness.renderPointerCollection.renderPointers();
+    let rps = harness.renderPointers();
     return rps.map(p => p.renderLink.outstandingRequests()).flat();
   }
 
   function resolveContent(part) {
-    harness.renderPointerCollection.renderPointers().forEach(p => p.renderEnd.resolveContent(part));
+    harness.renderPointers().forEach(p => p.renderEnd.resolveContent(part));
   }
 
   function tryStateTransition() {

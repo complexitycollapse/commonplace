@@ -1,16 +1,16 @@
 import { addProperties, finalObject, listMap } from "@commonplace/utils";
 import { AttributesSourceFromPointers } from "../Attributes/attributes-source";
 
-export function RenderPointerCollection(ownerPointer, pointerSubject, containingEdl) {
+export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containingEdl) {
   let obj = {};
   // Each collection is a listMap of RenderPointers keyed by the Edl (hash) they originate from.
-  let pointers = listMap(), defaultsStack;
+  let pointers = listMap(), defaultsStack = [];
 
   function addDefaults(defaultRenderLinks) {
     let relevantPointers = [];
     defaultRenderLinks.forEach(renderLink => {
       renderLink.forEachPointer((p, e) => {
-        if(p.endowsTo(ownerPointer, pointerSubject)) {
+        if(p.endowsTo(ownerPointer, pointerSubjectFn())) {
           let pointer = renderLink.createRenderPointer(p, e);
           relevantPointers.push(pointer);
           obj.allDefaults.push(pointer);
@@ -33,7 +33,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubject, containing
   }
 
   function internalTryAdd(pointer, renderPointerFn) {
-    if (!pointer.endowsTo(ownerPointer, pointerSubject)) {
+    if (!pointer.endowsTo(ownerPointer, pointerSubjectFn())) {
       return false;
     }
 

@@ -82,7 +82,7 @@ describe('renderLinks', () => {
     ];
 
     let renderLinks = RenderLinkFactory(makeEdlZettel(links)).renderLinks();
-    let actual = renderLinks[1].modifiers.renderPointers();
+    let actual = renderLinks[1].renderPointers();
 
     expect(actual).toHaveLength(1);
     expect(actual[0].pointer).toEqual(links[0][1].ends[0].pointers[0]);
@@ -99,9 +99,9 @@ describe('renderLinks', () => {
 
     let actual = RenderLinkFactory(makeEdlZettel(links)).renderLinks();
 
-    expect(actual[2].modifiers.renderPointers()).toHaveLength(1);
-    expect(actual[2].modifiers.renderPointers()[0].renderLink.link).toEqual(links[1][1]);
-    expect(actual[1].modifiers.renderPointers()).toHaveLength(1);
-    expect(actual[1].modifiers.renderPointers()[0].renderLink.link).toEqual(links[0][1]);
+    expect(actual[2].renderPointers()).toHaveLength(1);
+    expect(actual[2].renderPointers()[0].renderLink.link).toEqual(links[1][1]);
+    expect(actual[1].renderPointers()).toHaveLength(1);
+    expect(actual[1].renderPointers()[0].renderLink.link).toEqual(links[0][1]);
   });
 });
