@@ -28,8 +28,7 @@ export function BaseRenderLink(
   } = {}) {
   let obj = {};
 
-  let ownerPointer = homeEdl.nameLinkPairs.find(e => e[1] === link)[0];
-  let modifiers = AddPointerTargetFeatures(obj, ownerPointer, () => link, homeEdl, homeEdl);
+  let modifiers = AddPointerTargetFeatures(obj, pointer, () => link, homeEdl, homeEdl);
   modifiers.addDefaults(homeEdl.defaults);
 
   addProperties(obj, {

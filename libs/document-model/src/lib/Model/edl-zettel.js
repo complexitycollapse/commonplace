@@ -20,7 +20,6 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     hashableName: edlPointer.hashableName,
     parent,
     children: [],
-    nameLinkPairs: [],
     defaults
   });
 
@@ -113,7 +112,6 @@ function TransitionToResolveLinkContentState(renderPointerCollection, harness, l
   };
 
   harness.state = obj;
-  harness.nameLinkPairs.push(...harness.edl.links.map((n, i) => [n, links[i]]));
 
   function applyLinksToSelf() {
     renderPointerCollection.addDefaults(harness.defaults);
@@ -161,7 +159,7 @@ function TransitionToResolveLinkContentState(renderPointerCollection, harness, l
     resolveContent
   });
 
-  harness.renderLinks = RenderLinkFactory(harness).renderLinks();
+  harness.renderLinks = RenderLinkFactory(harness, links).renderLinks();
 
   applyLinksToSelf();
   createChildZettel();
