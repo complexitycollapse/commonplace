@@ -1,5 +1,5 @@
 import { finalObject } from "@commonplace/utils";
-import { SequenceBuilder } from "./sequence-builder";
+import { SequenceBuildingCursor } from "./sequence-building-cursor";
 
 export function SequenceScanner(zettel) {
   let obj = {};
@@ -24,7 +24,7 @@ export function SequenceScanner(zettel) {
       });
 
       sequenceDetailsEndowments.forEach(d => {
-        let newBuilder = SequenceBuilder(d.type, d.end, d.link, d.signature);
+        let newBuilder = SequenceBuildingCursor(d.type, d.end, d.link, d.signature);
         let result = newBuilder.consumeZettel(z);
         if (newBuilder.isComplete()) { completeSequences.push(newBuilder.pushSequence()); }
         else if (result) { newBuilders.push(newBuilder); }

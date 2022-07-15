@@ -1,6 +1,6 @@
 import { finalObject } from "@commonplace/utils";
 
-export function SequenceBuilder(type, end, definingLink, signature) {
+export function SequenceBuildingCursor(type, end, definingLink, signature) {
   let obj = {};
   let remaining = [...end.pointers];
   let current = undefined;
