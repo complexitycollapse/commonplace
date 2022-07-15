@@ -24,7 +24,7 @@ export function SequenceScanner(zettel) {
       });
 
       sequenceDetailsEndowments.forEach(d => {
-        let newBuilder = SequenceBuildingCursor(d.type, d.end, d.link, d.signature);
+        let newBuilder = SequenceBuildingCursor(d);
         let result = newBuilder.consumeZettel(z);
         if (newBuilder.isComplete()) { completeSequences.push(newBuilder.pushSequence()); }
         else if (result) { newBuilders.push(newBuilder); }

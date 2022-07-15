@@ -4,7 +4,7 @@ import { aMetalink, anEdl, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails }
 
 function make(content, links) {
   let sequenceDetailsEndowments = makeEdlzAndReturnSequnceDetails(content, links);
-  return sequenceDetailsEndowments.map(d => SequenceBuildingCursor(d.type, d.end, d.link, d.signature));
+  return sequenceDetailsEndowments.map(d => SequenceBuildingCursor(d));
 }
 
 function consumeZettel(groupletBuilder, clipBuilder) {

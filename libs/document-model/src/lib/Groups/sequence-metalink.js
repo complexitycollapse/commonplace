@@ -21,7 +21,7 @@ export function SequenceMetalink(pointer, link, homeEdl) {
         type: details.type, 
         end: renderEnd.end,
         signature,
-        link: renderEnd.renderLink
+        definingLink: renderEnd.renderLink
       };
     }
   }
