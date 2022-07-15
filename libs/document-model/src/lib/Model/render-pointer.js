@@ -16,10 +16,10 @@ export function RenderPointer(pointer, renderEnd) {
   return finalObject(obj, {
     allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
     allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
-    sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowments(obj),
+    sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowments(renderEnd),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),
-    metaSequenceDetailsFor: renderPointer => obj.renderLink.metaSequenceDetailsFor(renderPointer, obj)
+    metaSequenceDetailsFor: targetRenderEnd => obj.renderLink.metaSequenceDetailsFor(targetRenderEnd, renderEnd)
   });
 }
 

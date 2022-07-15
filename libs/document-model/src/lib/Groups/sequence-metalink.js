@@ -4,14 +4,14 @@ import { BaseRenderLink } from "../Model/render-link";
 export function SequenceMetalink(pointer, link, homeEdl) {
   let groupDetails = memoize(calculateDetails);
 
-  function metaSequenceDetailsFor(pointer, metaPointer) {
-    if (metaPointer.renderEnd.end.name !== "target") { return undefined; }
-    let endName = pointer.renderEnd.name;
+  function metaSequenceDetailsFor(renderEnd, metaEnd) {
+    if (metaEnd.end.name !== "target") { return undefined; }
+    let endName = renderEnd.name;
     let details = groupDetails();
     if (details.sequenceEndNames.findIndex(n => n === endName) === -1) { return undefined; }
     else {
-      let linkPointer = pointer.renderLink.pointer;
-      let metalinkPointer = metaPointer.renderLink.pointer;
+      let linkPointer = renderEnd.renderLink.pointer;
+      let metalinkPointer = metaEnd.renderLink.pointer;
       let signature = {
         linkPointer,
         metalinkPointer,
@@ -19,9 +19,9 @@ export function SequenceMetalink(pointer, link, homeEdl) {
       };
       return {
         type: details.type, 
-        end: pointer.renderEnd.end,
+        end: renderEnd.end,
         signature,
-        link: pointer.renderLink
+        link: renderEnd.renderLink
       };
     }
   }

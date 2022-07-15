@@ -84,8 +84,8 @@ export function BaseRenderLink(
     forEachPointer,
     getRenderEnd,
     createRenderPointer,
-    sequenceDetailsEndowments: renderPointer => modifiers.allPointers
-      .map(m => m.metaSequenceDetailsFor(renderPointer))
+    sequenceDetailsEndowments: renderEnd => modifiers.allPointers
+      .map(m => m.metaSequenceDetailsFor(renderEnd))
       .filter(x => x !== undefined),
     metaSequenceDetailsFor
   });
