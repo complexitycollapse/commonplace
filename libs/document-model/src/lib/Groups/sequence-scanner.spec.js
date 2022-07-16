@@ -13,7 +13,7 @@ function makeSequenceLink(spans, name = "target", type) {
 }
 
 function scan(content, links){
-  return SequenceScanner(makeEdlZ(content, links).children).sequences();
+  return SequenceScanner(makeEdlZ(content, links)).sequences();
 }
 
 describe('scan', () => {

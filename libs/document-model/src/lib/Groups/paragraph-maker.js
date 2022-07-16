@@ -1,4 +1,4 @@
-import { finalObject } from "../utils";
+import { finalObject } from "@commonplace/utils";
 
 export function BlockMaker(zettel) {
 
