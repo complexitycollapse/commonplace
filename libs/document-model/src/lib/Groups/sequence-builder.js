@@ -9,7 +9,7 @@ export function SequenceBuilder(sequenceDetails) {
     return linkDependencies.every(d => links.find(l => l.hashableName === d.hashableName));
   }
 
-  function sequences(zettel) {
+  function sequences(zettel, existingSequences) {
     let builders = [];
     let completeSequences = [];
 
@@ -18,6 +18,20 @@ export function SequenceBuilder(sequenceDetails) {
       let deadBuilders = [];
       
       builders.forEach(b => {
+        let requiredLink = b.stalledOnLink();
+
+        if (requiredLink) {
+          deadBuilders.push(b);
+          let matchingSequences = existingSequences.filter(s => s.definingLink.pointer.denotesSame(requiredLink));
+          let cursorsForSequences = matchingSequences.map(s => {
+            let newCursor = b.clone();
+            newCursor.consumeSequence(s);
+            if (newCursor.isComplete()) { completeSequences.push(newCursor.pushSequence()); }
+            return newCursor;
+          });
+          newBuilders = newBuilders.concat(cursorsForSequences.filter(c => !c.complete()));
+        }
+
         let result = b.consumeZettel(z);
         let complete = b.isComplete();
 

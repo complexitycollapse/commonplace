@@ -25,7 +25,7 @@ export function SequenceScanner(edlZettel) {
       let buildersToTry = getBuildersWithSatisfiedDependencies(builders, linksWithSequences);
       
       buildersToTry.forEach(b => {
-        let sequences = b.sequences(edlZettel.children);
+        let sequences = b.sequences(edlZettel.children, createdSequences);
         if (sequences.length > 0) {
           newSequencesMade = true;
           linksWithSequences.push(sequences[0].definingLink);

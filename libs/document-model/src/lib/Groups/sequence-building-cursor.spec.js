@@ -1,6 +1,6 @@
-import { it, describe, expect } from '@jest/globals';
+import { it, describe, expect, test } from '@jest/globals';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
-import { aMetalink, anEdl, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from './group-testing';
+import { aMetalink, anEdl, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails, makeEdlZ } from './group-testing';
 
 function make(content, links) {
   let sequenceDetailsEndowments = makeEdlzAndReturnSequnceDetails(content, links);
@@ -12,6 +12,26 @@ function consumeZettel(groupletBuilder, clipBuilder) {
   let clip = clipBuilder.pointer;
   let zettel = clipBuilder.edlZ.children.find(z => z.clip.denotesSame(clip));
   return groupletBuilder.consumeZettel(zettel);
+}
+
+function getCursorForLink(recipient, link) {
+  let renderPointers = recipient.renderPointers();
+  let linkDefiningRequiredSequence = renderPointers.find(p => p.renderLink.pointer.denotesSame(link.pointer));
+  let sequenceDetails = linkDefiningRequiredSequence.sequenceDetailsEndowments()[0];
+  return SequenceBuildingCursor(sequenceDetails);
+}
+
+function makeCursorAndChildSequences(contents, parentSequenceLinks, childSequenceLinks) {
+  let edlZ = makeEdlZ(contents, [...childSequenceLinks, ...parentSequenceLinks].map(l => [l, aMetalink(l)]).flat());
+  let childSequences = [];
+  childSequenceLinks.forEach(l => {
+    let cursor = getCursorForLink(edlZ.children[0], l);
+    contents.forEach(s => consumeZettel(cursor, s));
+    childSequences.push(cursor.pushSequence());
+  });
+  
+  let cursor = getCursorForLink(edlZ.renderLinks[0], parentSequenceLinks[0]);
+  return [[cursor], ...childSequences];
 }
 
 describe('consumeZettel', () => {
@@ -94,6 +114,57 @@ describe('consumeZettel', () => {
 
     expect(consumeZettel(cursor, prefix)).toBe(true);
     expect(consumeZettel(cursor, remaining)).toBe(true);
+  });
+});
+
+describe('consumeSequence', () => {
+  it('returns true when the required sequence matches the given one', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
+
+    expect(cursor.consumeSequence(childSequence)).toBe(true);
+  });
+
+  it('returns false when the required sequence does not match the given one', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let wrongSequenceLink = aTargetLink([span1, span2], { name: "wrong"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let [[cursor], , wrongSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink, wrongSequenceLink]);
+
+    expect(cursor.consumeSequence(wrongSequence)).toBe(false);
+  });
+
+  it('will consume zettel in the child sequence once the child sequence is consumed', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
+    cursor.consumeSequence(childSequence)
+
+    expect(consumeZettel(cursor, span1)).toBe(true);
+    expect(consumeZettel(cursor, span2)).toBe(true);
+  });
+
+  it('will throw an exception if the zettel passed in after consuming a sequence do not match that sequence', () => {
+    let span1 = aSpan(1), span2 = aSpan(2), span3 = aSpan(3);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink, span3], { name: "parent" });
+    let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
+    cursor.consumeSequence(childSequence)
+
+    expect(() => consumeZettel(cursor, span2)).toThrow();
+  });
+
+  test('consumeZettel will return false if the zettel is a member of a child sequence but consumeSequence was not called first', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let [[cursor]] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
+
+    expect(consumeZettel(cursor, span1)).toBe(false);
   });
 });
 
