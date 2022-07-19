@@ -7,7 +7,7 @@ export function InlinePointer(inlineText) {
     true,
     () => undefined,
     undefined,
-    () => `inline:${inlineText}}`,
+    () => `inline:${inlineText}`,
     { inlineText }, 
     {
       leafData() { return { typ: "inline", txt: inlineText }; },
