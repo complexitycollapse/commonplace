@@ -101,7 +101,7 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected) {
       isSequence: true
     };
 
-    collected.forEach(z => z.sequences.push(sequence));
+    collected.forEach(x => x.isSequence ? x.definingLink.sequences.push(sequence) : x.sequences.push(sequence));
 
     return sequence;
   }

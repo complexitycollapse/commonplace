@@ -14,10 +14,9 @@ function consumeZettel(groupletBuilder, clipBuilder) {
   return groupletBuilder.consumeZettel(zettel);
 }
 
-function getCursorForLink(recipient, link) {
-  let renderPointers = recipient.renderPointers();
-  let linkDefiningRequiredSequence = renderPointers.find(p => p.renderLink.pointer.denotesSame(link.pointer));
-  let sequenceDetails = linkDefiningRequiredSequence.sequenceDetailsEndowments()[0];
+function getCursorForLink(edlZ, link) {
+  let renderLink = edlZ.renderLinks.find(l => l.pointer.denotesSame(link.pointer));
+  let sequenceDetails = renderLink.sequenceDetailsEndowments(renderLink.renderEnds.find(e => e.name === "grouping end"))[0];
   return SequenceBuildingCursor(sequenceDetails);
 }
 
@@ -25,13 +24,13 @@ function makeCursorAndChildSequences(contents, parentSequenceLinks, childSequenc
   let edlZ = makeEdlZ(contents, [...childSequenceLinks, ...parentSequenceLinks].map(l => [l, aMetalink(l)]).flat());
   let childSequences = [];
   childSequenceLinks.forEach(l => {
-    let cursor = getCursorForLink(edlZ.children[0], l);
+    let cursor = getCursorForLink(edlZ, l);
     contents.forEach(s => consumeZettel(cursor, s));
     childSequences.push(cursor.pushSequence());
   });
   
-  let cursor = getCursorForLink(edlZ.renderLinks[0], parentSequenceLinks[0]);
-  return [[cursor], ...childSequences];
+  let cursors = parentSequenceLinks.map(l => getCursorForLink(edlZ, l));
+  return [cursors, ...childSequences];
 }
 
 describe('consumeZettel', () => {
@@ -165,6 +164,21 @@ describe('consumeSequence', () => {
     let [[cursor]] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
 
     expect(consumeZettel(cursor, span1)).toBe(false);
+  });
+
+  it('returns true if a second level sequence matches', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let grandparentSequenceLink = aTargetLink([parentSequenceLink], { name: "grandparent" });
+    let [[parentCursor, grandparentCursor], childSequence] =
+      makeCursorAndChildSequences([span1, span2], [parentSequenceLink, grandparentSequenceLink], [childSequenceLink]);
+    parentCursor.consumeSequence(childSequence);
+    consumeZettel(parentCursor, span1);
+    consumeZettel(parentCursor, span2);
+    let parentSequence = parentCursor.pushSequence();
+  
+    expect(grandparentCursor.consumeSequence(parentSequence)).toBe(true);
   });
 });
 
