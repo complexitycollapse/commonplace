@@ -84,6 +84,8 @@ export function EndBuilder(endSpec) {
     withPointer: p => obj.pushTo("pointers", p),
     withName: name => obj.withProperty("name", name)
   });
+  
+  obj.endSpec = endSpec;
 
   if (endSpec) {
     obj.withName(endSpec[0]);

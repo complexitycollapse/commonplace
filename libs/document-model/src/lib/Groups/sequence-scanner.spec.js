@@ -12,11 +12,11 @@ function makeSequenceLink(spans, name = "target", type) {
   return [link, metalink];
 }
 
-function scan(content, links){
-  return SequenceScanner(makeEdlZ(content, links)).sequences();
+function scan(content, ...links){
+  return SequenceScanner(makeEdlZ(content, links.flat())).sequences();
 }
 
-describe('scan', () => {
+describe('first level sequences', () => {
   it('returns no sequences if there were none in the EDL', () => {
     expect(scan(content(), [])).toEqual([]);
   });
@@ -40,13 +40,13 @@ describe('scan', () => {
 
   it('returns a sequence for each matching link', () => {
     let spans = content();
-    expect(scan(spans, [...makeSequenceLink(spans, "target1"), ...makeSequenceLink(spans, "target2")])).toHaveLength(2);
+    expect(scan(spans, makeSequenceLink(spans, "target1"), makeSequenceLink(spans, "target2"))).toHaveLength(2);
   });
 
   it('returns a sequence for each matching link/metalink combination', () => {
     let spans = content();
     // The target links are identical so both metalinks point at both targets
-    expect(scan(spans, [...makeSequenceLink(spans), ...makeSequenceLink(spans)])).toHaveLength(4);
+    expect(scan(spans, makeSequenceLink(spans), makeSequenceLink(spans))).toHaveLength(4);
   });
 
   it('returns a sequence for each metalink on a matching link', () => {
