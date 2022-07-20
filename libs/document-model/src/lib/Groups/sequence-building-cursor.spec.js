@@ -152,9 +152,9 @@ describe('consumeSequence', () => {
     let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
     let parentSequenceLink = aTargetLink([childSequenceLink, span3], { name: "parent" });
     let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
-    cursor.consumeSequence(childSequence)
+    cursor.consumeSequence(childSequence);
 
-    expect(() => consumeZettel(cursor, span2)).toThrow();
+    expect(consumeZettel(cursor, span2)).toBe(false);
   });
 
   test('consumeZettel will return false if the zettel is a member of a child sequence but consumeSequence was not called first', () => {

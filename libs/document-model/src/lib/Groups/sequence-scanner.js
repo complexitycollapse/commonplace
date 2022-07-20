@@ -28,7 +28,7 @@ export function SequenceScanner(edlZettel) {
         let sequences = b.sequences(edlZettel.children, createdSequences);
         if (sequences.length > 0) {
           newSequencesMade = true;
-          linksWithSequences.push(sequences[0].definingLink);
+          linksWithSequences.push(sequences[0].definingLink.pointer);
         }
         createdSequences = createdSequences.concat(sequences);
       });

@@ -13,39 +13,55 @@ export function SequenceBuilder(sequenceDetails) {
     let builders = [];
     let completeSequences = [];
 
+    function explodeSubsequences(b, zettel) {
+      let requiredLink = b.stalledOnLink();
+  
+      if (requiredLink) {
+        let matchingSequences = existingSequences.filter(s => s.definingLink.pointer.denotesSame(requiredLink));
+        let cursorsForSequences = matchingSequences.map(s => {
+          let newCursor = b.clone();
+          newCursor.consumeSequence(s);
+          let result = newCursor.consumeZettel(zettel);
+          if (newCursor.isComplete()) { completeSequences.push(newCursor.pushSequence()); }
+          return result ? newCursor : undefined;
+        });
+        return cursorsForSequences.filter(c => c !== undefined);
+      } else {
+        return undefined;
+      }
+    }
+
     zettel.forEach(z => {
       let newBuilders = [];
       let deadBuilders = [];
       
       builders.forEach(b => {
-        let requiredLink = b.stalledOnLink();
+        let explodedBuilders = explodeSubsequences(b, z);
 
-        if (requiredLink) {
+        if (explodedBuilders != undefined) {
           deadBuilders.push(b);
-          let matchingSequences = existingSequences.filter(s => s.definingLink.pointer.denotesSame(requiredLink));
-          let cursorsForSequences = matchingSequences.map(s => {
-            let newCursor = b.clone();
-            newCursor.consumeSequence(s);
-            if (newCursor.isComplete()) { completeSequences.push(newCursor.pushSequence()); }
-            return newCursor;
-          });
-          newBuilders = newBuilders.concat(cursorsForSequences.filter(c => !c.complete()));
-        }
+          newBuilders = newBuilders.concat(explodedBuilders.filter(c => !c.isComplete()));
+        } else {
+          let result = b.consumeZettel(z);
+          let complete = b.isComplete();
 
-        let result = b.consumeZettel(z);
-        let complete = b.isComplete();
-
-        if (complete) { completeSequences.push(b.pushSequence()); }
-        if (complete || !result) {
-          deadBuilders.push(b);
+          if (complete) { completeSequences.push(b.pushSequence()); }
+          if (complete || !result) {
+            deadBuilders.push(b);
+          }
         }
       });
 
       let newBuilder = SequenceBuildingCursor(sequenceDetails);
-      let result = newBuilder.consumeZettel(z);
-      if (newBuilder.isComplete()) { completeSequences.push(newBuilder.pushSequence()); }
-      else if (result) { newBuilders.push(newBuilder); }
-
+      let explodedBuilders = explodeSubsequences(newBuilder, z);
+      if (explodedBuilders != undefined) {
+        newBuilders = newBuilders.concat(explodedBuilders.filter(c => !c.isComplete()));
+      } else {
+        let result = newBuilder.consumeZettel(z);
+        if (newBuilder.isComplete()) { completeSequences.push(newBuilder.pushSequence()); }
+        else if (result) { newBuilders.push(newBuilder); }
+      }
+      
       builders = builders.filter(b => !deadBuilders.includes(b));
       builders = builders.concat(newBuilders);
     });

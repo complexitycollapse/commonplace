@@ -1,13 +1,12 @@
 import { finalObject } from "@commonplace/utils";
 
 export function SequenceBuildingCursor(sequenceDetails) {
-  return SequenceBuildingCursorInternal(sequenceDetails, []);
+  return SequenceBuildingCursorInternal(sequenceDetails, [], [...sequenceDetails.end.pointers]);
 }
 
-function SequenceBuildingCursorInternal(sequenceDetails, collected) {
+function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
   let obj = {};
-  let { type, end, definingLink, signature } = sequenceDetails;
-  let remaining = [...end.pointers];
+  let { type, definingLink, signature } = sequenceDetails;
   let current = undefined;
   let validSoFar = true;
   let nestedSequencesStack = [];
@@ -16,15 +15,15 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
-    // Clean up the stack
-    while(nestedSequencesStack.length > 0 && nestedSequencesStack[0].length === 0) {
-      nestedSequencesStack.pop();
-    }
-
     if (nestedSequencesStack.length === 0) {
       consumeZettelAtTopLevel(zettel);
     } else {
-      consumeZettelInNestedSequence(zettel);
+      validSoFar = consumeZettelInNestedSequence(zettel);
+    }
+
+    // Clean up the stack
+    while(nestedSequencesStack.length > 0 && nestedSequencesStack[0].length === 0) {
+      nestedSequencesStack.shift();
     }
 
     return validSoFar;
@@ -32,19 +31,14 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected) {
 
   function consumeZettelInNestedSequence(zettel) {
     let currentSequence = nestedSequencesStack[0];
-    let currentSequenceElement = currentSequence.pop();
+    let currentSequenceElement = currentSequence.shift();
 
     if (currentSequenceElement.isSequence) {
-      nestedSequencesStack.push(currentSequenceElement.zettel);
-      consumeZettelInNestedSequence(zettel);
-      return;
+      nestedSequencesStack.unshift([...currentSequenceElement.zettel]);
+      return consumeZettelInNestedSequence(zettel);
     }
 
-    if (!currentSequenceElement.pointer.denotesSame(zettel.pointer)) {
-      throw `Error constructuing sequence ${JSON.stringify(sequenceDetails)}. ` + 
-      `Expected next Zettel to be ${currentSequenceElement.pointer.leafData()} ` +
-      `but was ${zettel.pointer.leafData()}`;
-    }
+    return currentSequenceElement.clip.denotesSame(zettel.clip);
   }
 
   function consumeZettelAtTopLevel(zettel) {
@@ -80,12 +74,12 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected) {
       validSoFar = false;
     }
 
-    nestedSequencesStack.push(sequence.zettel);
+    nestedSequencesStack.unshift([...sequence.zettel]);
     return validSoFar;
   }
 
   function isComplete() {
-    return validSoFar && current === undefined && remaining.length === 0;
+    return validSoFar && current === undefined && remaining.length === 0 && nestedSequencesStack.length === 0;
   }
 
   function pushSequence() {
@@ -107,11 +101,11 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected) {
   }
 
   function clone() {
-    return SequenceBuildingCursorInternal(sequenceDetails, collected);
+    return SequenceBuildingCursorInternal(sequenceDetails, collected, [...remaining]);
   }
 
   function stalledOnLink() {
-    if (validSoFar && current === undefined && remaining.length >= 0 && remaining[0].pointerType === "link") {
+    if (validSoFar && current === undefined && remaining.length > 0 && remaining[0].pointerType === "link") {
       return remaining[0];
     } else {
       return undefined;

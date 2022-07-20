@@ -2,8 +2,8 @@ import { it, describe, expect } from '@jest/globals';
 import { aMetalink, aSpan, aTargetLink, makeEdlZ } from './group-testing';
 import { SequenceScanner } from './sequence-scanner';
 
-function content() {
-  return [aSpan(1), aSpan(2), aSpan(3)];
+function content(n = 3) {
+  return [...Array(n).keys()].map(x => aSpan(x));
 }
 
 function makeSequenceLink(spans, name = "target", type) {
@@ -14,6 +14,10 @@ function makeSequenceLink(spans, name = "target", type) {
 
 function scan(content, ...links){
   return SequenceScanner(makeEdlZ(content, links.flat())).sequences();
+}
+
+function sequenceFor(sequences, linkAndMetalink) {
+  return sequences.find(s => s.definingLink.pointer.denotesSame(linkAndMetalink[0].pointer));
 }
 
 describe('first level sequences', () => {
@@ -85,5 +89,71 @@ describe('first level sequences', () => {
     let sequence = scan(spans, makeSequenceLink(spans, "target", "expected type"))[0];
     
     expect(sequence.type).toBe("expected type");
+  });
+});
+
+describe('second level sequences', () => {
+  it('returns the first and second level sequences', () => {
+    let spans = content();
+    let childSequence = makeSequenceLink(spans, "child");
+    let parentSequence = makeSequenceLink([childSequence[0]], "parent");
+    expect(scan(spans, childSequence, parentSequence)).toHaveLength(2);
+  });
+
+  it('places the first level sequence inside the second level sequence', () => {
+    let spans = content();
+    let childSequence = makeSequenceLink(spans, "child");
+    let parentSequence = makeSequenceLink([childSequence[0]], "parent");
+    
+    let sequences = scan(spans, childSequence, parentSequence);
+    let sequence = sequenceFor(sequences, parentSequence);
+
+    expect(sequence).toBeTruthy();
+  });
+
+  it('places the second level sequence inside the third level sequence', () => {
+    let spans = content();
+    let childSequence = makeSequenceLink(spans, "child");
+    let parentSequence = makeSequenceLink([childSequence[0]], "parent");
+    let grandparentSequence = makeSequenceLink([parentSequence[0]], "grandparent");
+    
+    let sequences = scan(spans, childSequence, parentSequence, grandparentSequence);
+    let sequence = sequenceFor(sequences, grandparentSequence);
+
+    expect(sequence).toBeTruthy();
+  });
+
+  it('can handle both zettel and nested sequences in the same sequence', () => {
+    let spans = content(5);
+    let childSequence = makeSequenceLink(spans.slice(1, 4), "child");
+    let parentSequence = makeSequenceLink([spans[0], childSequence[0], spans[4]], "parent");
+    
+    let sequences = scan(spans, childSequence, parentSequence);
+    let sequence = sequenceFor(sequences, parentSequence);
+
+    expect(sequence).toBeTruthy();
+  });
+
+  it('can handle both zettel and nested sequences to two levels in the same sequence and has all the right elements', () => {
+    let spans = content(10);
+    let childSequence = makeSequenceLink(spans.slice(1, 4), "child");
+    let parentSequence1 = makeSequenceLink([spans[0], childSequence[0], spans[4]], "parent1");
+    let parentSequence2 = makeSequenceLink([spans[6], spans[7]], "parent2");
+    let grandparentSequence = makeSequenceLink([parentSequence1[0], spans[5], parentSequence2[0], spans[8], spans[9]], "grandparent");
+    
+    let sequences = scan(spans, childSequence, parentSequence1, parentSequence2, grandparentSequence);
+    let sequence = sequenceFor(sequences, grandparentSequence);
+
+    expect(sequence).toBeTruthy();
+    expect(sequence.zettel[0].zettel[0].clip.denotesSame(spans[0].pointer)).toBeTruthy();
+    expect(sequence.zettel[0].zettel[1].zettel[0].clip.denotesSame(spans[1].pointer)).toBeTruthy();
+    expect(sequence.zettel[0].zettel[1].zettel[1].clip.denotesSame(spans[2].pointer)).toBeTruthy();
+    expect(sequence.zettel[0].zettel[1].zettel[2].clip.denotesSame(spans[3].pointer)).toBeTruthy();
+    expect(sequence.zettel[0].zettel[2].clip.denotesSame(spans[4].pointer)).toBeTruthy();
+    expect(sequence.zettel[1].clip.denotesSame(spans[5].pointer)).toBeTruthy();
+    expect(sequence.zettel[2].zettel[0].clip.denotesSame(spans[6].pointer)).toBeTruthy();
+    expect(sequence.zettel[2].zettel[1].clip.denotesSame(spans[7].pointer)).toBeTruthy();
+    expect(sequence.zettel[3].clip.denotesSame(spans[8].pointer)).toBeTruthy();
+    expect(sequence.zettel[4].clip.denotesSame(spans[9].pointer)).toBeTruthy();
   });
 });
