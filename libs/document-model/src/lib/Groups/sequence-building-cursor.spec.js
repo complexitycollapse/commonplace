@@ -147,7 +147,7 @@ describe('consumeSequence', () => {
     expect(consumeZettel(cursor, span2)).toBe(true);
   });
 
-  it('will throw an exception if the zettel passed in after consuming a sequence do not match that sequence', () => {
+  it('will throw an return false if the zettel passed in after consuming a sequence do not match that sequence', () => {
     let span1 = aSpan(1), span2 = aSpan(2), span3 = aSpan(3);
     let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
     let parentSequenceLink = aTargetLink([childSequenceLink, span3], { name: "parent" });
@@ -271,5 +271,19 @@ describe('pushSequence', () => {
 
     expect(span1.edlZ.children[0].sequences).toHaveLength(1);
     expect(span2.edlZ.children[1].sequences).toHaveLength(1);
+  });
+
+  it('pushes the parent sequence on the sequences properties of the child sequence links', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
+    let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
+    cursor.consumeSequence(childSequence)
+    consumeZettel(cursor, span1);
+    consumeZettel(cursor, span2);
+
+    cursor.pushSequence();
+
+    expect(span1.edlZ.renderLinks[0].sequences).toHaveLength(1);
   });
 });
