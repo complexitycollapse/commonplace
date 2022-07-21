@@ -48,7 +48,11 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
     return [...pointers.values()].flat();
   }
 
-  function* pointerStack() {
+  function pointerStack() {
+    return [...pointerStackIterator()];
+  }
+
+  function* pointerStackIterator() {
     yield* decomposePointersAccordingToEdlHierarchy(pointers);
   }
 

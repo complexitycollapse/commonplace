@@ -3,22 +3,14 @@ import { ContentAttributeSource, DirectAttributeSource } from "./attributes-sour
 
 export function Attributes(owner, parent, pointerStack, defaultsStack) {
   let obj = {};
-  let materializedPointerStack = undefined;
-
-  function pointerList() {
-    if (!materializedPointerStack) {
-      materializedPointerStack = [...pointerStack];
-    }
-    return materializedPointerStack;
-  }
 
   function content() {
-    let ourContentSource = ContentAttributeSource("defaults", pointerList());
+    let ourContentSource = ContentAttributeSource(owner, pointerStack);
     return [ourContentSource, (parent ? parent.content() : [])];
   }
 
   function defaultContent() {
-    let ourDefaultContentSource = ContentAttributeSource(owner, defaultsStack);
+    let ourDefaultContentSource = ContentAttributeSource("defaults", defaultsStack);
     return [ourDefaultContentSource, (parent ? parent.defaultContent() : [])];
   }
 
@@ -29,13 +21,13 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
       if (Array.isArray(source)) {
         source.forEach(collapse);  
       } else if (source.attributes) {
-        collapse(source.attributes().contents);
+        collapse(source.attributes.contents);
       } else if (source.attribute && !attributes.has(source.attribute)) {
         attributes.set(source.attribute, source.value);
       }
     }
   
-    let directSource = DirectAttributeSource(owner, pointerList());
+    let directSource = DirectAttributeSource(owner, pointerStack);
     let contentSource = content();
     let directDefaultsSource = DirectAttributeSource("defaults", defaultsStack);
     let contentDefaultsSource = defaultContent();

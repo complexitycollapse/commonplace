@@ -35,7 +35,7 @@ describe('AttributesSourceFromPointers', () => {
 
 describe('DirectAttributeSource', () => {
   function makeAttr(...sources) {
-    return DirectAttributeSource(undefined, sources).attributes().contents;
+    return DirectAttributeSource(undefined, sources).attributes.contents;
   }
 
   function mockPointer(directAttributes, contentAttributes = {}) {
@@ -43,7 +43,7 @@ describe('DirectAttributeSource', () => {
   }
 
   it('sets the origin property on the result', () => {
-    expect(DirectAttributeSource("the origin", []).attributes().origin).toBe("the origin");
+    expect(DirectAttributeSource("the origin", []).attributes.origin).toBe("the origin");
   });
 
   it('returns no attributes if there are no sources', () => {
@@ -101,7 +101,7 @@ describe('DirectAttributeSource', () => {
 
 describe('ContentAttributeSource', () => {
   function makeAttr(...sources) {
-    return ContentAttributeSource(undefined, sources).attributes().contents;
+    return ContentAttributeSource(undefined, sources).attributes.contents;
   }
 
   function mockPointer(contentAttributes, directAttributes = {}) {
@@ -109,7 +109,7 @@ describe('ContentAttributeSource', () => {
   }
 
   it('sets the origin property on the result', () => {
-    expect(ContentAttributeSource("the origin", []).attributes().origin).toBe("the origin");
+    expect(ContentAttributeSource("the origin", []).attributes.origin).toBe("the origin");
   });
 
   it('returns no attributes if there are no sources', () => {

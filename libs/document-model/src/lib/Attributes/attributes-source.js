@@ -14,30 +14,33 @@ export function AttributesSourceFromPointers(edl, pointers) {
 }
 
 export function DirectAttributeSource(origin, sources) {
+  let obj = {};
 
-  function attributes() {
-    return generateAttributesOfGivenType(origin, sources, p => p.allDirectAttributeEndowments());
-  }
+  addProperties(obj, {
+    attributes: generateAttributesOfGivenType(origin, sources, p => p.allDirectAttributeEndowments())
+  });
 
-  return finalObject({}, { attributes });
+  return finalObject(obj, { });
 }
 
 export function ContentAttributeSource(origin, sources) {
+  let obj = {};
 
-  function attributes() {
-    return generateAttributesOfGivenType(origin, sources, p => p.allContentAttributeEndowments());
-  }
+  addProperties(obj, {
+    attributes: generateAttributesOfGivenType(origin, sources, p => p.allContentAttributeEndowments())
+  });
 
-  return finalObject({}, { attributes });
+  return finalObject(obj, { });
 }
 
 export function DefaultsAttributeSource(sources) {
+  let obj = {};
 
-  function attributes() {
-    return generateAttributesOfGivenType("defaults", sources, p => p.allContentAttributeEndowments());
-  }
+  addProperties(obj, {
+    attributes: generateAttributesOfGivenType("defaults", sources, p => p.allContentAttributeEndowments())
+  });
 
-  return finalObject({}, { attributes });
+  return finalObject(obj, { });
 }
 
 function generateAttributesOfGivenType(origin, sources, endowmentsFn) {
