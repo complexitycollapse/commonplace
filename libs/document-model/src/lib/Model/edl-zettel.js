@@ -115,7 +115,7 @@ function TransitionToResolveLinkContentState(renderPointerCollection, harness, l
 
   function applyLinksToSelf() {
     renderPointerCollection.addDefaults(harness.defaults);
-    renderPointerCollection.tryAddAll(harness.renderLinks);
+    renderPointerCollection.allAllEdlRenderLinks(harness.renderLinks);
   }
 
   function createChildZettel() {

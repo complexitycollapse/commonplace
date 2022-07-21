@@ -39,8 +39,8 @@ describe('renderLinks', () => {
   it('returns a RenderLink child AND parent links', () => {
     let links = [Link("foo1"), Link("foo2")];
     let linksByPointer = makeLinksByPointer(links);
-    let parent = makeEdlZettel([linksByPointer[1]]);
-    let factory = makeFromLinks([linksByPointer[0]], parent);
+    let parent = makeEdlZettel([linksByPointer[0]]);
+    let factory = makeFromLinks([linksByPointer[1]], parent);
 
     let renderLinks = factory.renderLinks();
 

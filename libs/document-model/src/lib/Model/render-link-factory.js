@@ -7,11 +7,11 @@ export function RenderLinkFactory(edlZettel, links) {
   function renderLinks() {
     let renderLinks = makeRenderLinks(edlZettel, links);
     if (edlZettel.parent) {
-      renderLinks = renderLinks.concat(edlZettel.parent.renderLinks);
+      renderLinks = edlZettel.parent.renderLinks.concat(renderLinks);
     }
 
     renderLinks.forEach((renderLink) => {
-      renderLink.tryAddAll(renderLinks);
+      renderLink.allAllEdlRenderLinks(renderLinks);
     });
     
     return renderLinks;
