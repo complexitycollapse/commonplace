@@ -1,23 +1,9 @@
-import { addProperties, finalObject } from "@commonplace/utils";
-
 export function DirectAttributeSource(origin, edlAndPointersStack) {
-  let obj = {};
-
-  addProperties(obj, {
-    attributes: generateAttributesOfGivenType(origin, edlAndPointersStack, p => p.allDirectAttributeEndowments())
-  });
-
-  return finalObject(obj, { });
+  return generateAttributesOfGivenType(origin, edlAndPointersStack, p => p.allDirectAttributeEndowments());
 }
 
 export function ContentAttributeSource(origin, edlAndPointersStack) {
-  let obj = {};
-
-  addProperties(obj, {
-    attributes: generateAttributesOfGivenType(origin, edlAndPointersStack, p => p.allContentAttributeEndowments())
-  });
-
-  return finalObject(obj, { });
+  return generateAttributesOfGivenType(origin, edlAndPointersStack, p => p.allContentAttributeEndowments());
 }
 
 function generateAttributesOfGivenType(origin, edlAndPointersStack, endowmentsFn) {

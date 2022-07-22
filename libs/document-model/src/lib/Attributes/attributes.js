@@ -20,8 +20,8 @@ export function Attributes(owner, parent, edlAndPointersStack, defaultPointersSt
     function collapse(source) {
       if (Array.isArray(source)) {
         source.forEach(collapse);  
-      } else if (source.attributes) {
-        collapse(source.attributes.attributeDescriptors);
+      } else if (source.attributeDescriptors) {
+        collapse(source.attributeDescriptors);
       } else if (source.attribute && !attributes.has(source.attribute)) {
         attributes.set(source.attribute, source.value);
       }
