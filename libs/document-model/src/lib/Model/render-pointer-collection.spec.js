@@ -14,11 +14,6 @@ function hasLinks(actualSource, ...expected) {
   expect(actualLinks).toEqual(expectedLinks);
 }
 
-function hasEdlAndLinks(actualSource, expectedEdl, ...expectedLinks) {
-  expect(actualSource.edl).toEqual(expectedEdl);
-  hasLinks(actualSource, ...expectedLinks);
-}
-
 function makeLink(target, type) {
   return Link(type.toString(), [undefined, [target]]);
 }
@@ -48,11 +43,11 @@ function getStack(edlZ, linksInRenderPointerCollection) {
   let rpc = RenderPointerCollection(targetPointer, () => targetSubject, edlZ);
   let renderLinks = linksInRenderPointerCollection.map(l => RenderLink(l[0], l[1], l[2]));
   rpc.allAllEdlRenderLinks(renderLinks);
-  let sources = [...rpc.pointerStack()];
-  return sources;
+  let edlAndPointersStack = [...rpc.edlAndPointersStack()];
+  return edlAndPointersStack;
 }
 
-describe('pointerStack', () => {
+describe('edlAndPointersStack', () => {
   let innerLinks = bunchOfLinks(targetPointer);
   let parentLinks = bunchOfLinks(targetPointer);
   let grandParentLinks = bunchOfLinks(targetPointer);

@@ -14,9 +14,9 @@ export function AddPointerTargetFeatures(obj, pointer, pointerSubjectFn, contain
   }
 
   function attributes() {
-    let pointerStack = renderPointerCollection.pointerStack();
+    let edlAndPointersStack = renderPointerCollection.edlAndPointersStack();
     let defaultsStack = renderPointerCollection.defaultsStack();
-    return Attributes(obj, contentParent?.attributes(), pointerStack, defaultsStack);
+    return Attributes(obj, contentParent?.attributes(), edlAndPointersStack, defaultsStack);
   }
 
   addProperties(obj, {

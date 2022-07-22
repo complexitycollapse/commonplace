@@ -1,5 +1,4 @@
 import { addProperties, finalObject, listMap } from "@commonplace/utils";
-import { AttributesSourceFromPointers } from "../Attributes/attributes-source";
 
 export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containingEdl) {
   let obj = {};
@@ -18,7 +17,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
       });
     });
 
-    defaultsStack = [AttributesSourceFromPointers("defaults", relevantPointers.reverse())];
+    defaultsStack = [EdlAndPointers("defaults", relevantPointers.reverse())];
   }
 
   function allAllEdlRenderLinks(renderLinks) {
@@ -48,7 +47,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
     return [...pointers.values()].flat();
   }
 
-  function pointerStack() {
+  function edlAndPointersStack() {
     return [...pointerStackIterator()];
   }
 
@@ -63,7 +62,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
   function* decomposePointersAccordingToEdlHierarchy(renderPointersByEdlHashName) {
     for(let edl = containingEdl; edl !== undefined; edl = edl.parent) {
       let pointers = renderPointersByEdlHashName.get(edl.hashableName);
-      if (pointers.length > 0) { yield AttributesSourceFromPointers(edl, buildPointerList(pointers, edl)); }
+      if (pointers.length > 0) { yield EdlAndPointers(edl, buildPointerList(pointers, edl)); }
     }
   }
 
@@ -76,7 +75,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
     tryAddRenderPointer,
     allAllEdlRenderLinks,
     renderPointers,
-    pointerStack,
+    edlAndPointersStack,
     addDefaults,
     defaultsStack: () => defaultsStack
   });
@@ -89,4 +88,17 @@ function buildPointerList(pointers, edl) {
     if (rp) { sortedList.push(rp); }
   });
   return sortedList.reverse();
+}
+
+function EdlAndPointers(edl, pointers) {
+  let obj = {};
+
+  addProperties(obj, {
+    edl,
+    pointers
+  });
+
+  return finalObject(obj, {
+
+  });
 }

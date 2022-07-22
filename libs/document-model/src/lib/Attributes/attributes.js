@@ -1,16 +1,16 @@
 import { addProperties, finalObject, memoize } from "@commonplace/utils";
 import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
 
-export function Attributes(owner, parent, pointerStack, defaultsStack) {
+export function Attributes(owner, parent, edlAndPointersStack, defaultPointersStack) {
   let obj = {};
 
   function content() {
-    let ourContentSource = ContentAttributeSource(owner, pointerStack);
+    let ourContentSource = ContentAttributeSource(owner, edlAndPointersStack);
     return [ourContentSource, (parent ? parent.content() : [])];
   }
 
   function defaultContent() {
-    let ourDefaultContentSource = ContentAttributeSource("defaults", defaultsStack);
+    let ourDefaultContentSource = ContentAttributeSource("defaults", defaultPointersStack);
     return [ourDefaultContentSource, (parent ? parent.defaultContent() : [])];
   }
 
@@ -21,15 +21,15 @@ export function Attributes(owner, parent, pointerStack, defaultsStack) {
       if (Array.isArray(source)) {
         source.forEach(collapse);  
       } else if (source.attributes) {
-        collapse(source.attributes.contents);
+        collapse(source.attributes.attributeDescriptors);
       } else if (source.attribute && !attributes.has(source.attribute)) {
         attributes.set(source.attribute, source.value);
       }
     }
   
-    let directSource = DirectAttributeSource(owner, pointerStack);
+    let directSource = DirectAttributeSource(owner, edlAndPointersStack);
     let contentSource = content();
-    let directDefaultsSource = DirectAttributeSource("defaults", defaultsStack);
+    let directDefaultsSource = DirectAttributeSource("defaults", defaultPointersStack);
     let contentDefaultsSource = defaultContent();
     collapse([directSource, contentSource, directDefaultsSource, contentDefaultsSource]);
     return attributes;

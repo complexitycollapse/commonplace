@@ -1,41 +1,17 @@
-import { describe, it, test, expect } from '@jest/globals';
-import { AttributesSourceFromPointers, DirectAttributeSource, ContentAttributeSource } from './attributes-source';
+import { describe, it, expect } from '@jest/globals';
+import { DirectAttributeSource, ContentAttributeSource } from './attributes-source';
 import { makeTestEdlAndEdlZettelFromLinks } from '../Model/edl-zettel';
 import { mockLinkRenderPointer } from '../Model/render-pointer';
-import { testing } from '@commonplace/core'
-
-function makeEdlZ(n = 10) {
-  let links = [...Array(n).keys()].map(testing.links.makePointerAndLink);
-  return makeTestEdlAndEdlZettelFromLinks(links.map(x => x[1]), links.map(x => x[1]));
-}
-
-function make(edl, pointers) {
-  return AttributesSourceFromPointers(edl, pointers);
-}
 
 function mockSource(...pointers) {
   let links = pointers.map(p => p.renderLink);
   let edlZ = makeTestEdlAndEdlZettelFromLinks(links, links.map(l => l.pointer));
-  return AttributesSourceFromPointers(edlZ, pointers);
+  return { edl: edlZ, pointers };
 }
-
-describe('AttributesSourceFromPointers', () => {
-  test('edl property set by constructor', () => {
-    let edlZ = makeEdlZ();
-    expect(make(edlZ).edl).toBe(edlZ);
-  });
-
-  test('pointers property set by constructor', () => {
-    let edlZ = makeEdlZ();
-    let allPointers = edlZ.renderLinks;
-    let pointers = [allPointers[3], allPointers[1]];
-    expect(make(edlZ, pointers).pointers).toBe(pointers);
-  });
-});
 
 describe('DirectAttributeSource', () => {
   function makeAttr(...sources) {
-    return DirectAttributeSource(undefined, sources).attributes.contents;
+    return DirectAttributeSource(undefined, sources).attributes.attributeDescriptors;
   }
 
   function mockPointer(directAttributes, contentAttributes = {}) {
@@ -101,7 +77,7 @@ describe('DirectAttributeSource', () => {
 
 describe('ContentAttributeSource', () => {
   function makeAttr(...sources) {
-    return ContentAttributeSource(undefined, sources).attributes.contents;
+    return ContentAttributeSource(undefined, sources).attributes.attributeDescriptors;
   }
 
   function mockPointer(contentAttributes, directAttributes = {}) {
