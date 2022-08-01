@@ -253,3 +253,17 @@ describe('links to EDL', () => {
     expect(child.renderPointers().map(p => p.pointer)).toEqual([childPointer]);
   });
 });
+
+describe('depth', () => {
+  it('is 0 for an Edl with no parent', () => {
+    expect(make(makeEdl()).depth()).toBe(0);
+  });
+
+  it('is 1 for an Edl with a parent that has no parent', () => {
+    expect(make(makeEdl(), { parent: make(makeEdl()) }).depth()).toBe(1);
+  });
+
+  it('is 2 for an Edl with a parent that has a parent that has no parent', () => {
+    expect(make(makeEdl(), { parent: make(makeEdl(), { parent: make(makeEdl()) }) }).depth()).toBe(2);
+  });
+});

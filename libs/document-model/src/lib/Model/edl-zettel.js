@@ -25,7 +25,8 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
-    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName)
+    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
+    depth: () => parent === undefined ? 0 : 1 + parent.depth()
   });
 
   TransitionToResolveEdlState(renderPointerCollection, obj, parts);
