@@ -114,4 +114,15 @@ describe('renderLinks', () => {
     expect(actual[1].renderPointers()).toHaveLength(1);
     expect(actual[1].renderPointers()[0].renderLink.link).toEqual(links[0][1]);
   });
+
+  it('sets the linkIndex on the links according to their position in the EDL', () => {
+    let links = [Link("foo1"), Link("foo2")];
+    let linksByPointer = makeLinksByPointer(links);
+    let factory = makeFromLinks(linksByPointer);
+
+    let renderLinks = factory.renderLinks();
+
+    expect(renderLinks[0].linkIndex).toEqual(links.findIndex(l => l === renderLinks[0].link));
+    expect(renderLinks[1].linkIndex).toEqual(links.findIndex(l => l === renderLinks[1].link));
+  });
 });

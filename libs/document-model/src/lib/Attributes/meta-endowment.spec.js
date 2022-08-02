@@ -10,7 +10,7 @@ function renderLinkWithValueEnd(valueEndName, value) {
   let pointer = typeof value === "string" ? Span("x", 1, value.length) : InlinePointer(value);
   let link = Link(undefined, ["endowing end", []], [valueEndName, [pointer]]);
   let edlZ = makeTestEdlAndEdlZettelFromLinks([link]);
-  let renderLink = RenderLink(edlZ.edl.links[0], link, edlZ);
+  let renderLink = RenderLink(edlZ.edl.links[0], link, edlZ, 0);
   renderLink.renderEnds[1].resolveContent(Part(pointer, value));
   return renderLink;
 }

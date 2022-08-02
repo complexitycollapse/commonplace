@@ -22,13 +22,13 @@ function makeLinkAndMetalink(target, metalinkType, attributeName, attributeValue
 }
 
 function make(link) {
-  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
+  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]), 0);
 }
 
 test('The getHomeEdl method should return the EDL that the link resides in', () => {
   let link = Link();
   let edlZettel = makeTestEdlAndEdlZettelFromLinks([link]);
-  expect(RenderLink("foo", link, edlZettel).getHomeEdl()).toBe(edlZettel);
+  expect(RenderLink("foo", link, edlZettel, 0).getHomeEdl()).toBe(edlZettel);
 });
 
 test('attributes returns attribute values derived from modifiers', () => {

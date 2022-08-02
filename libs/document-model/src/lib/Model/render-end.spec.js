@@ -10,7 +10,7 @@ function make(...pointersAndContent) {
   let link = Link(undefined, ["foo", pointersAndContent.map(x => x[0])]);
   let parts = pointersAndContent.filter(x => x[1]).map(x => Part(x[0], x[1]));
   let edlZ = makeTestEdlAndEdlZettelFromLinks([link]);
-  let renderEnd = RenderEnd(link.ends[0], RenderLink(edlZ.edl.links[0], link, edlZ));
+  let renderEnd = RenderEnd(link.ends[0], RenderLink(edlZ.edl.links[0], link, edlZ, 0));
   parts.forEach(renderEnd.resolveContent);
   return renderEnd;
 }

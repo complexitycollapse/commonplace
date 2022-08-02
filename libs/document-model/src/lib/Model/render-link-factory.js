@@ -22,5 +22,5 @@ export function RenderLinkFactory(edlZettel, links) {
 
 function makeRenderLinks(edlZettel, links) {
   let names = edlZettel.edl.links;
-  return links.filter(x => x).map((link, i) => RenderLink(names[i], link, edlZettel));
+  return links.filter(x => x).map((link, i) => RenderLink(names[i], link, edlZettel, i));
 }

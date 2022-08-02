@@ -19,7 +19,7 @@ function make(clip = Span("origin", 1, 10)) {
 
 function makeLink(type, ...ends) {
   let link = Link(type, ...ends);
-  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]));
+  return RenderLink("foo", link, makeTestEdlAndEdlZettelFromLinks([link]), 0);
 }
 
 function getRenderPointers(zettel) {

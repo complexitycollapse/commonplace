@@ -41,7 +41,7 @@ function makeEdl(parent, pointerLinkPairs, name) {
 
 function getStack(edlZ, linksInRenderPointerCollection) {
   let rpc = RenderPointerCollection(targetPointer, () => targetSubject, edlZ);
-  let renderLinks = linksInRenderPointerCollection.map(l => RenderLink(l[0], l[1], l[2]));
+  let renderLinks = linksInRenderPointerCollection.map((l, i) => RenderLink(l[0], l[1], l[2], i));
   rpc.allAllEdlRenderLinks(renderLinks);
   let edlAndPointersStack = [...rpc.edlAndPointersStack()];
   return edlAndPointersStack;
@@ -97,6 +97,7 @@ describe('edlAndPointersStack', () => {
     expect(sources[1].edl).toBe(parentEdl);
     expect(sources[2].edl).toBe(grandParentEdl);
   });
+});
 
 // function make(ownerName, ownerType) {
 //   return RenderPointerCollection(LinkPointer(ownerName), Link(ownerType));
@@ -247,4 +248,3 @@ describe('edlAndPointersStack', () => {
 //     key2: "key2 value",
 //     key3: "key3 value"
 //   });
-});

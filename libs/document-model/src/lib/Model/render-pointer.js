@@ -43,7 +43,7 @@ function mockRenderPointer(pointer, directAttributes, contentAttributes) {
   let link = Link(undefined, [undefined, [pointer]]);
   let edl = Edl(undefined, [], [linkPointerForEdl]);
   let edlZettel = makeTestEdlZettelWithLinks(edl, [link]);
-  let rl = RenderLink("mock", link, edlZettel);
+  let rl = RenderLink("mock", link, edlZettel, 0);
   let directMap = new Map(Object.entries(directAttributes));
   let contentMap = new Map(Object.entries(contentAttributes));
   return {

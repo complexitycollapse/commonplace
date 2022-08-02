@@ -1,7 +1,7 @@
 import { memoize } from "@commonplace/utils";
 import { BaseRenderLink } from "../Model/render-link";
 
-export function SequenceMetalink(pointer, link, homeEdl) {
+export function SequenceMetalink(pointer, link, homeEdl, linkIndex) {
   let groupDetails = memoize(calculateDetails);
 
   function metaSequenceDetailsFor(renderEnd, metaEnd) {
@@ -26,7 +26,7 @@ export function SequenceMetalink(pointer, link, homeEdl) {
     }
   }
 
-  let obj = BaseRenderLink(pointer, link, homeEdl, { metaSequenceDetailsFor });
+  let obj = BaseRenderLink(pointer, link, homeEdl, linkIndex, { metaSequenceDetailsFor });
 
   function calculateDetails() {
     let type, sequenceEndNames = [];
