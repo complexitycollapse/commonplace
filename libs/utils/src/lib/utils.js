@@ -69,13 +69,20 @@ export function mergeMaps(target, source) {
 export function memoize(initFn) {
   let value = undefined, memoized = false;
 
-  return () => {
+  let fn = () => {
     if (!memoized) {
       value = initFn();
       memoized = true;
     }
     return value;
   }
+
+  fn.reset = () => {
+    value = undefined;
+    memoized = false;
+  }
+
+  return fn;
 }
 
 export function memoizedProperty(host, name, initFn) {
