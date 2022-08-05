@@ -40,7 +40,8 @@ export function BaseRenderLink(
     ends: link.ends,
     type: link.type,
     renderEnds: link.ends.map(e => RenderEnd(e, obj)),
-    linkIndex
+    linkIndex,
+    homeEdl
   });
 
   function outstandingRequests() {
@@ -63,6 +64,11 @@ export function BaseRenderLink(
     return RenderPointer(pointer, renderEnd);
   }
 
+  function comparePriority(otherLink) {
+    let edlCompare = homeEdl.depth() - otherLink.homeEdl.depth();
+    return edlCompare == 0 ? linkIndex - otherLink.linkIndex : edlCompare;
+  }
+
   function allDirectAttributeEndowments(renderPointer) {
     return mergeAllMetaAttributes(
       renderPointer,
@@ -79,6 +85,7 @@ export function BaseRenderLink(
   }
 
   return finalObject(obj, {
+    comparePriority,
     outstandingRequests,
     allDirectAttributeEndowments,
     allContentAttributeEndowments,

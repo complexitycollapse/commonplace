@@ -13,7 +13,13 @@ export function RenderPointer(pointer, renderEnd) {
     renderLink: renderEnd.renderLink
   });
 
+  function comparePriority(otherPointer) {
+    let linkPriority = otherPointer.renderLink.comparePriority(obj.renderLink);
+    return linkPriority != 0 ? linkPriority : otherPointer.renderEnd.index - obj.renderEnd.index;
+  }
+
   return finalObject(obj, {
+    comparePriority,
     allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
     allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
     sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowments(renderEnd),
