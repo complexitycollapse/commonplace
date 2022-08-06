@@ -164,13 +164,11 @@ function mergeAllMetaAttributes(renderPointer, modifiers, metaEndowmentFn, recur
   let metaAttributes = new Map();
 
   function merge(p) {
-    if (p.pointerType !== "end" || p.endName === undefined || p.endName === renderPointer.renderEnd.name) {
-      let metaEndowmentsToMerge = metaEndowmentFn(p);
-      metaEndowmentsToMerge.forEach(m => {
-          let [present, value] = m.calculateValueForPointer(renderPointer);
-          if (present) { metaAttributes.set(m.attributeName, value); }
-        });
-    }
+    let metaEndowmentsToMerge = metaEndowmentFn(p);
+    metaEndowmentsToMerge.forEach(m => {
+        let [present, value] = m.calculateValueForPointer(renderPointer);
+        if (present) { metaAttributes.set(m.attributeName, value); }
+      });
   }
 
   modifiers.allDefaults.forEach(merge);

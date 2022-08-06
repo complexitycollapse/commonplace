@@ -4,12 +4,6 @@ import { leafDataToLink } from "../model";
 
 export function LinkPointer(linkName) {
   function engulfs(obj, other) {
-    // We can engulf an end pointer, as that is more specific.
-
-    if (other.pointerType === "end") {
-      return linkName === other.linkName;
-    }
-
     return obj.hasSamePointerType(other) && linkName === other.linkName;
   }
 
