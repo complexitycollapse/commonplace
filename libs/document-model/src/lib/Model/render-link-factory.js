@@ -11,7 +11,7 @@ export function RenderLinkFactory(edlZettel, links) {
     }
 
     renderLinks.forEach((renderLink) => {
-      renderLink.allAllEdlRenderLinks(renderLinks);
+      renderLink.addAllEdlRenderLinks(renderLinks);
     });
     
     return renderLinks;

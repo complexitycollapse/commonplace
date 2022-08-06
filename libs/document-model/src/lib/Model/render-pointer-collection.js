@@ -20,7 +20,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
     defaultsStack = [EdlAndPointers("defaults", relevantPointers.reverse())];
   }
 
-  function allAllEdlRenderLinks(renderLinks) {
+  function addAllEdlRenderLinks(renderLinks) {
     renderLinks.forEach(renderLink => {
       renderLink.forEachPointer((p, e) =>
         internalTryAdd(p, () => renderLink.createRenderPointer(p, e)));
@@ -73,7 +73,7 @@ export function RenderPointerCollection(ownerPointer, pointerSubjectFn, containi
 
   return finalObject(obj, {
     tryAddRenderPointer,
-    allAllEdlRenderLinks,
+    addAllEdlRenderLinks,
     renderPointers,
     edlAndPointersStack,
     addDefaults,

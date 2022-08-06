@@ -27,7 +27,7 @@ export function AddPointerTargetFeatures(obj, pointer, pointerSubjectFn, contain
   addMethods(obj, {
     renderPointers,
     potentialSequenceDetails,
-    allAllEdlRenderLinks: renderPointerCollection.allAllEdlRenderLinks,
+    addAllEdlRenderLinks: renderPointerCollection.addAllEdlRenderLinks,
     tryAddRenderPointer: renderPointerCollection.tryAddRenderPointer
   });
 
