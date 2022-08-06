@@ -5,6 +5,8 @@ import { EdlPointer, LinkPointer } from '@commonplace/core';
 import { Edl } from '@commonplace/core';
 import { AddPointerTargetFeatures } from './pointer-target';
 
+export const defaultsPointer = EdlPointer("defaults");
+
 export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, parts) {
   let obj = {
     edl: undefined,
@@ -12,7 +14,7 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     state: undefined
   };
 
-  let renderPointerCollection = AddPointerTargetFeatures(obj, edlPointer, () => obj.edl, obj, parent)
+  let renderPointerCollection = AddPointerTargetFeatures(obj, edlPointer, () => obj.edl, parent)
 
   addProperties(obj, {
     key,
@@ -26,7 +28,7 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
     getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
-    depth: () => parent === undefined ? 0 : 1 + parent.depth()
+    depth: () => parent === undefined ? (edlPointer.denotesSame(defaultsPointer) ? -1 : 0) : 1 + parent.depth()
   });
 
   TransitionToResolveEdlState(renderPointerCollection, obj, parts);

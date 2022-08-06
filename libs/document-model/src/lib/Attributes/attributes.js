@@ -1,38 +1,41 @@
-import { addProperties, finalObject, memoize } from "@commonplace/utils";
-import { ContentAttributeSource, DirectAttributeSource } from "./attributes-source";
+import { addProperties, finalObject, memoize, listMap } from "@commonplace/utils";
 
-export function Attributes(owner, parent, edlAndPointersStack, defaultPointersStack) {
+export function Attributes(parent, renderPointers, defaultPointers) {
   let obj = {};
 
-  function content() {
-    let ourContentSource = ContentAttributeSource(owner, edlAndPointersStack);
-    return [ourContentSource, (parent ? parent.content() : [])];
+  function contentDescriptors() {
+    let ourDescriptors = renderPointers.map(p => p.contentAttributeDescriptors()).flat();
+    return ourDescriptors.concat(parent ? parent.contentDescriptors() : []);
   }
 
-  function defaultContent() {
-    let ourDefaultContentSource = ContentAttributeSource("defaults", defaultPointersStack);
-    return [ourDefaultContentSource, (parent ? parent.defaultContent() : [])];
+  function defaultContentDescriptors() {
+    let ourDescriptors = defaultPointers.map(p => p.contentAttributeDescriptors()).flat();
+    return ourDescriptors.concat(parent ? parent.defaultContentDescriptors() : []);
+  }
+
+  function winningValue(descriptors) {
+    descriptors.sort((a, b) => a.endowmentType === b.endowmentType
+      ? a.endowingPointer.comparePriority(b.endowingPointer)
+      : (a.endowmentType === "direct" ? -1 : 1));
+    return descriptors[0].attributeValue;
+  }
+
+  function buildAttributeValueMap(attributeDescriptors) {
+    let byAttributeName = listMap();
+    attributeDescriptors.forEach(a => byAttributeName.push(a.attributeName, a));
+    let attributes = new Map([...byAttributeName.entries()].map(([name, descriptors]) => [name, winningValue(descriptors)]));
+    return attributes;
   }
 
   function values() {
-    let attributes = new Map();
-  
-    function collapse(source) {
-      if (Array.isArray(source)) {
-        source.forEach(collapse);  
-      } else if (source.attributeDescriptors) {
-        collapse(source.attributeDescriptors);
-      } else if (source.attribute && !attributes.has(source.attribute)) {
-        attributes.set(source.attribute, source.value);
-      }
-    }
-  
-    let directSource = DirectAttributeSource(owner, edlAndPointersStack);
-    let contentSource = content();
-    let directDefaultsSource = DirectAttributeSource("defaults", defaultPointersStack);
-    let contentDefaultsSource = defaultContent();
-    collapse([directSource, contentSource, directDefaultsSource, contentDefaultsSource]);
-    return attributes;
+    let directAttributeDescriptors = renderPointers.map(p => p.directAttributeDescriptors()).flat();
+    let defaultDirectAttributeDescriptors = defaultPointers.map(p => p.directAttributeDescriptors()).flat();
+    let allDescriptors = directAttributeDescriptors.concat(
+      contentDescriptors(),
+      defaultContentDescriptors(),
+      defaultDirectAttributeDescriptors);
+
+    return buildAttributeValueMap(allDescriptors);
   }
 
   addProperties(obj, {
@@ -40,8 +43,8 @@ export function Attributes(owner, parent, edlAndPointersStack, defaultPointersSt
   });
 
   return finalObject(obj, {
-    content,
-    defaultContent
+    contentDescriptors,
+    defaultContentDescriptors
   });
 }
 

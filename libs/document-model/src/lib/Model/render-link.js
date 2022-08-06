@@ -31,7 +31,7 @@ export function BaseRenderLink(
 
   let obj = {};
 
-  let modifiers = AddPointerTargetFeatures(obj, pointer, () => link, homeEdl, homeEdl);
+  let modifiers = AddPointerTargetFeatures(obj, pointer, () => link, homeEdl);
   modifiers.addDefaults(homeEdl.defaults);
 
   addProperties(obj, {

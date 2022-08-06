@@ -9,7 +9,7 @@ export function Zettel(clip, containingEdl) {
   let contentPart = undefined;
   obj.key = undefined;
 
-  let renderPointerCollection = AddPointerTargetFeatures(obj, clip, () => undefined, containingEdl, containingEdl);
+  let renderPointerCollection = AddPointerTargetFeatures(obj, clip, () => undefined, containingEdl);
 
   addProperties(obj, {
     clip,

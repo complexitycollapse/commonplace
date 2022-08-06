@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Link, Edl } from '@commonplace/core';
-import { EdlZettel, makeTestEdlZettel } from './edl-zettel';
+import { defaultsPointer, EdlZettel, makeTestEdlZettel } from './edl-zettel';
 import { Span, Box, EdlPointer, LinkPointer } from '@commonplace/core';
 import { Part } from '@commonplace/core';
 
@@ -265,5 +265,9 @@ describe('depth', () => {
 
   it('is 2 for an Edl with a parent that has a parent that has no parent', () => {
     expect(make(makeEdl(), { parent: make(makeEdl(), { parent: make(makeEdl()) }) }).depth()).toBe(2);
+  });
+
+  it('is -1 for the default EDL', () => {
+    expect(make(makeEdl(), { edlPointer: defaultsPointer }).depth()).toBe(-1);
   });
 });

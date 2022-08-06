@@ -1,7 +1,7 @@
 import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
-import { EdlZettel } from "./Model/edl-zettel";
+import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
 
 export function Builder(buildFn, extensions) {
   let obj = {
@@ -158,7 +158,7 @@ export function EdlBuilder(name = "foo") {
 export function EdlZettelBuilder(edl) {
   let obj = Builder(obj => {
     let edl = obj.edl.build();
-    let defaultEdl = EdlBuilder("defaults").withLinks(...obj.defaults);
+    let defaultEdl = EdlBuilder(defaultsPointer.edlName).withLinks(...obj.defaults);
     let defaultLinks = obj.defaults.map(d => d.build());
     let defaultEdlZ = EdlZettel(defaultEdl.pointer, undefined, [], "1", defaultEdl.build(), defaultLinks, []);
     return EdlZettel(

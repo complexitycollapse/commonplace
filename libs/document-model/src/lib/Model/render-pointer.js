@@ -1,8 +1,8 @@
 import { addProperties, finalObject } from '@commonplace/utils';
-import { EdlPointer, LinkPointer } from '@commonplace/core';
-import { Edl, Link } from '@commonplace/core';
+import { EdlPointer, LinkPointer, Edl, Link } from '@commonplace/core';
 import { RenderLink } from './render-link';
 import { makeTestEdlZettelWithLinks } from './edl-zettel';
+import { AttributeDescriptor } from '../Attributes/attribute-descriptor';
 
 export function RenderPointer(pointer, renderEnd) {
   let obj = {};
@@ -18,8 +18,16 @@ export function RenderPointer(pointer, renderEnd) {
     return linkPriority != 0 ? linkPriority : otherPointer.renderEnd.index - obj.renderEnd.index;
   }
 
+  function getAttributeDescriptors(endowmentType, endowmentsFn) {
+    let endowments = endowmentsFn();
+    let descriptors = [...endowments.entries()].map(([name, value]) => AttributeDescriptor(name, value, obj, endowmentType));
+    return descriptors;
+  }
+
   return finalObject(obj, {
     comparePriority,
+    directAttributeDescriptors: () => getAttributeDescriptors("direct", obj.allDirectAttributeEndowments),
+    contentAttributeDescriptors: () => getAttributeDescriptors("content", obj.allContentAttributeEndowments),
     allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
     allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
     sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowments(renderEnd),

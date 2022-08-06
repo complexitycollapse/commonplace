@@ -2,8 +2,8 @@ import { addMethods, addProperties, memoize } from "@commonplace/utils";
 import { Attributes } from "../Attributes/attributes";
 import { RenderPointerCollection } from "./render-pointer-collection";
 
-export function AddPointerTargetFeatures(obj, pointer, pointerSubjectFn, containingEdl, contentParent) {
-  let renderPointerCollection = RenderPointerCollection(pointer, pointerSubjectFn, containingEdl);
+export function AddPointerTargetFeatures(obj, pointer, pointerSubjectFn, contentParent) {
+  let renderPointerCollection = RenderPointerCollection(pointer, pointerSubjectFn);
 
   function renderPointers() {
     return renderPointerCollection.renderPointers();
@@ -14,9 +14,10 @@ export function AddPointerTargetFeatures(obj, pointer, pointerSubjectFn, contain
   }
 
   function attributes() {
-    let edlAndPointersStack = renderPointerCollection.edlAndPointersStack();
-    let defaultsStack = renderPointerCollection.defaultsStack();
-    return Attributes(obj, contentParent?.attributes(), edlAndPointersStack, defaultsStack);
+    return Attributes(
+      contentParent?.attributes(),
+      renderPointerCollection.allPointers,
+      renderPointerCollection.allDefaults);
   }
 
   addProperties(obj, {

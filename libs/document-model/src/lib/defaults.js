@@ -1,7 +1,7 @@
 import { Edl, Link } from "@commonplace/core";
 import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
-import { EdlPointer, InlinePointer, LinkPointer } from "@commonplace/core";
-import { EdlZettel } from "./Model/edl-zettel";
+import { InlinePointer, LinkPointer } from "@commonplace/core";
+import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
 
 function makeEnds(types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
@@ -52,8 +52,6 @@ let defaultsLinks = [
 ];
 
 let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));
-
-let defaultsPointer = EdlPointer("defaults");
 
 export function DefaultsEdlZettel() {
   return EdlZettel(defaultsPointer, undefined, [], "defaults", defaultsEdl, defaultsLinks, []);
