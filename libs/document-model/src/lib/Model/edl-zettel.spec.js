@@ -256,18 +256,18 @@ describe('links to EDL', () => {
 
 describe('depth', () => {
   it('is 0 for an Edl with no parent', () => {
-    expect(make(makeEdl()).depth()).toBe(0);
+    expect(make(makeEdl()).depth).toBe(0);
   });
 
   it('is 1 for an Edl with a parent that has no parent', () => {
-    expect(make(makeEdl(), { parent: make(makeEdl()) }).depth()).toBe(1);
+    expect(make(makeEdl(), { parent: make(makeEdl()) }).depth).toBe(1);
   });
 
   it('is 2 for an Edl with a parent that has a parent that has no parent', () => {
-    expect(make(makeEdl(), { parent: make(makeEdl(), { parent: make(makeEdl()) }) }).depth()).toBe(2);
+    expect(make(makeEdl(), { parent: make(makeEdl(), { parent: make(makeEdl()) }) }).depth).toBe(2);
   });
 
   it('is -1 for the default EDL', () => {
-    expect(make(makeEdl(), { edlPointer: defaultsPointer }).depth()).toBe(-1);
+    expect(make(makeEdl(), { edlPointer: defaultsPointer }).depth).toBe(-1);
   });
 });

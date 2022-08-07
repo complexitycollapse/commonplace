@@ -22,13 +22,13 @@ export function EdlZettel(edlPointer, parent, defaults = [], key, edl, links, pa
     hashableName: edlPointer.hashableName,
     parent,
     children: [],
-    defaults
+    defaults,
+    depth: parent === undefined ? (edlPointer.denotesSame(defaultsPointer) ? -1 : 0) : 1 + parent.depth
   });
 
   addMethods(obj, {
     outstandingRequests: () => obj.state.outstandingRequests(),
-    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName),
-    depth: () => parent === undefined ? (edlPointer.denotesSame(defaultsPointer) ? -1 : 0) : 1 + parent.depth()
+    getRenderLinkForPointer: linkPointer => obj.renderLinks.find(r => r.pointer.hashableName === linkPointer.hashableName)
   });
 
   TransitionToResolveEdlState(renderPointerCollection, obj, parts);

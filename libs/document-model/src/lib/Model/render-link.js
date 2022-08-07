@@ -65,7 +65,7 @@ export function BaseRenderLink(
   }
 
   function comparePriority(otherLink) {
-    let edlCompare = homeEdl.depth() - otherLink.homeEdl.depth();
+    let edlCompare = homeEdl.depth - otherLink.homeEdl.depth;
     return edlCompare == 0 ? linkIndex - otherLink.linkIndex : edlCompare;
   }
 
