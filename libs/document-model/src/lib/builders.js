@@ -1,4 +1,4 @@
-import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
+import { contentMetalinkType, directMetalinkType, sequenceMetalinkType } from "./Model/render-link";
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
 import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
@@ -100,7 +100,23 @@ export function PointerBuilder(builder) {
 }
 
 export function MetalinkBuilder(directOrContent) {
-  let builder = LinkBuilder().withType(directOrContent === "direct" ? directMetalinkType : contentMetalinkType);
+  let type;
+
+  switch(directOrContent) {
+    case ("direct"):
+      type = directMetalinkType;
+      break;
+    case ("content"):
+      type = contentMetalinkType;
+      break;
+    case ("sequence"):
+      type = sequenceMetalinkType;
+      break;
+    default:
+      type = directOrContent;
+  }
+
+  let builder = LinkBuilder().withType(type);
 
   builder.endowing = (...attributePairs) => {
     for (let i = 0; i < attributePairs.length; i += 2) {
