@@ -12,10 +12,10 @@ expect.extend({
   hasExactlyAttributes: attributesTesting.hasExactlyAttributes
  });
 
-function makeLinkAndMetalink(target, metalinkType, attributeName, attributeValue) {
-  let endowingLink = LinkBuilder().withName("endowing link").withEnd(EndBuilder().withPointer(target));
+function makeLinkAndMetalink(target, metalinkType, attributeName, attributeValue, namePrefix = "") {
+  let endowingLink = LinkBuilder().withName(namePrefix + "endowing link").withEnd(EndBuilder().withPointer(target));
   let metalink = MetalinkBuilder(metalinkType)
-    .withName("metalink")
+    .withName(namePrefix + "metalink")
     .pointingTo(endowingLink)
     .endowing(attributeName, attributeValue);
   return [endowingLink, metalink];
@@ -61,7 +61,7 @@ test('attributes returns default content values if there are no modifiers', () =
 test('attributes returns values from links in preference to defaults', () => {
   let link = LinkBuilder().withName("target");
   let edl = EdlBuilder().withLinks(link, ...makeLinkAndMetalink(link, contentMetalinkType, "attr1", "override value"));
-  let edlZ = EdlZettelBuilder(edl).withDefaults(...makeLinkAndMetalink(link, directMetalinkType, "attr1", "default value")).build();
+  let edlZ = EdlZettelBuilder(edl).withDefaults(...makeLinkAndMetalink(link, directMetalinkType, "attr1", "default value", "default-")).build();
   let renderLink = edlZ.renderLinks[0];
   
   expect(renderLink.attributes().values()).hasExactlyAttributes("attr1", "override value");

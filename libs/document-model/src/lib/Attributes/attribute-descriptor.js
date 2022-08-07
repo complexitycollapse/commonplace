@@ -7,7 +7,8 @@ export function AttributeDescriptor(attributeName, attributeValue, endowingPoint
     attributeName,
     attributeValue,
     endowingPointer,
-    endowmentType
+    endowmentType,
+    isDefault: endowingPointer.renderLink.homeEdl.depth < 0
   });
 
   return obj;

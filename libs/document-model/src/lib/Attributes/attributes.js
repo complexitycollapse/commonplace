@@ -14,9 +14,16 @@ export function Attributes(parent, renderPointers, defaultPointers) {
   }
 
   function winningValue(descriptors) {
-    descriptors.sort((a, b) => a.endowmentType === b.endowmentType
-      ? a.endowingPointer.comparePriority(b.endowingPointer)
-      : (a.endowmentType === "direct" ? -1 : 1));
+    descriptors.sort((a, b) => {
+      if (a.isDefault !== b.isDefault) {
+        return a.isDefault ? 1 : -1;
+      } else if (a.endowmentType !== b.endowmentType) {
+        return a.endowmentType === "direct" ? -1 : 1;
+      } else {
+        return a.endowingPointer.comparePriority(b.endowingPointer);
+      }
+    });
+
     return descriptors[0].attributeValue;
   }
 
