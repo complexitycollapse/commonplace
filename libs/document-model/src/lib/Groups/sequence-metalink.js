@@ -4,7 +4,7 @@ import { BaseRenderLink } from "../Model/render-link";
 export function SequenceMetalink(pointer, link, homeEdl, linkIndex) {
   let groupDetails = memoize(calculateDetails);
 
-  function metaSequenceDetailsFor(renderEnd, metaEnd) {
+  function metaSequenceDetailPrototypessFor(renderEnd, metaEnd) {
     if (metaEnd.end.name !== "target") { return undefined; }
     let endName = renderEnd.name;
     let details = groupDetails();
@@ -26,7 +26,7 @@ export function SequenceMetalink(pointer, link, homeEdl, linkIndex) {
     }
   }
 
-  let obj = BaseRenderLink(pointer, link, homeEdl, linkIndex, { metaSequenceDetailsFor });
+  let obj = BaseRenderLink(pointer, link, homeEdl, linkIndex, { metaSequenceDetailPrototypessFor });
 
   function calculateDetails() {
     let type, sequenceEndNames = [];

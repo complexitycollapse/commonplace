@@ -4,7 +4,7 @@ import { aMetalink, aSpan, aTargetLink, makeEdlzAndReturnSequnceDetails } from '
 
 const make = makeEdlzAndReturnSequnceDetails;
 
-describe('sequenceDetailsEndowments', () => {
+describe('sequenceDetailsEndowmentPrototypes', () => {
   it ('return undefined if there are no metalinks', () => {
     let span = aSpan();
     expect(make([span], [aTargetLink([span])])).toHaveLength(0);

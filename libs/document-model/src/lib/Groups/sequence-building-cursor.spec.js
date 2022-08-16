@@ -16,7 +16,7 @@ function consumeZettel(groupletBuilder, clipBuilder) {
 
 function getCursorForLink(edlZ, link) {
   let renderLink = edlZ.renderLinks.find(l => l.pointer.denotesSame(link.pointer));
-  let sequenceDetails = renderLink.sequenceDetailsEndowments(renderLink.renderEnds.find(e => e.name === "grouping end"))[0];
+  let sequenceDetails = renderLink.sequenceDetailsEndowmentPrototypes(renderLink.renderEnds.find(e => e.name === "grouping end"))[0];
   return SequenceBuildingCursor(sequenceDetails);
 }
 

@@ -24,16 +24,20 @@ export function RenderPointer(pointer, renderEnd) {
     return descriptors;
   }
 
+  function createSequenceDetailsEndowmentForPointer(endowment) {
+    return Object.create(endowment, { endowingPointer: obj });
+  }
+
   return finalObject(obj, {
     comparePriority,
     directAttributeDescriptors: () => getAttributeDescriptors("direct", obj.allDirectAttributeEndowments),
     contentAttributeDescriptors: () => getAttributeDescriptors("content", obj.allContentAttributeEndowments),
     allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
     allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
-    sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowments(renderEnd),
+    sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowmentPrototypes(renderEnd, obj).map(createSequenceDetailsEndowmentForPointer),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),
-    metaSequenceDetailsFor: targetRenderEnd => obj.renderLink.metaSequenceDetailsFor(targetRenderEnd, renderEnd)
+    metaSequenceDetailPrototypessFor: targetRenderEnd => obj.renderLink.metaSequenceDetailPrototypessFor(targetRenderEnd, renderEnd)
   });
 }
 

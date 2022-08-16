@@ -5,7 +5,7 @@ export function SequenceScanner(edlZettel) {
   let obj = {};
 
   function makeAllBuilders() {
-    let allSequenceDetails = edlZettel.renderLinks.map(l => l.renderEnds.map(e => l.sequenceDetailsEndowments(e)).flat()).flat();
+    let allSequenceDetails = edlZettel.renderLinks.map(l => l.renderEnds.map(e => l.sequenceDetailsEndowmentPrototypes(e)).flat()).flat();
     let builders = allSequenceDetails.map(SequenceBuilder);
     return builders;
   }
