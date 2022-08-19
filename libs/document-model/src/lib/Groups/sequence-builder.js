@@ -1,6 +1,7 @@
 import { finalObject } from '@commonplace/utils';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
 
+// Builds all sequences for a given SequenceDetails that are present in a list of zettel
 export function SequenceBuilder(sequenceDetails) {
   let obj = {};
   let linkDependencies = sequenceDetails.end.pointers.filter(p => p.pointerType === "link");

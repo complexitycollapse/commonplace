@@ -1,12 +1,14 @@
 import { finalObject } from "@commonplace/utils";
 
-export function SequenceBuildingCursor(sequenceDetails) {
-  return SequenceBuildingCursorInternal(sequenceDetails, [], [...sequenceDetails.end.pointers]);
+// Attempts to incrementally build a sequence for a particular SequenceDetails, either succeeding
+// if the passed zettel and sequences match the SequenceDetails, or failing if they don't.
+export function SequenceBuildingCursor(sequenceDetailsPrototype) {
+  return SequenceBuildingCursorInternal(sequenceDetailsPrototype, [], [...sequenceDetailsPrototype.end.pointers]);
 }
 
-function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
+function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, remaining) {
   let obj = {};
-  let { type, definingLink, signature } = sequenceDetails;
+  let { type, definingLink, signature } = sequenceDetailsPrototype;
   let current = undefined;
   let validSoFar = true;
   let nestedSequencesStack = [];
@@ -42,8 +44,8 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
   }
 
   function consumeZettelAtTopLevel(zettel) {
-    let zettelSignatures = zettel.potentialSequenceDetails().map(d => d.signature);
-    if (!zettelSignatures.some(d => signature.equals(d))) {
+    let sequenceDetails = zettel.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    if (sequenceDetails.length === 0) {
       validSoFar = false;
       return;
     }
@@ -54,7 +56,7 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
 
     if (nibbled) {
       current = remainder;
-      collected.push(zettel);
+      collected.push(SequenceMember(zettel, sequenceDetails));
     } else {
       validSoFar = false;
     }
@@ -64,12 +66,20 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
     if (validSoFar === false) { return false; }
     if (isComplete()) { return true; }
 
+    let definingLink = sequence.definingLink;
+
+    let sequenceDetails = definingLink.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    if (sequenceDetails.length === 0) {
+      validSoFar = false;
+      return false;
+    }
+
     let next = remaining.shift();
 
-    let matches = next.denotesSame(sequence.definingLink.pointer);
+    let matches = next.denotesSame(definingLink.pointer);
 
     if (matches) {
-      collected.push(sequence);
+      collected.push(SequenceMember(sequence, sequenceDetails));
     } else {
       validSoFar = false;
     }
@@ -91,17 +101,18 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
       definingLink,
       signature,
       type,
-      zettel: collected,
+      zettel: collected.map(m => m.member),
       isSequence: true
     };
 
-    collected.forEach(x => x.isSequence ? x.definingLink.sequences.push(sequence) : x.sequences.push(sequence));
+    sequence.zettel.forEach(x => x.isSequence ? x.definingLink.sequences.push(sequence) : x.sequences.push(sequence));
+    collected.forEach(member => member.endowingPointers.forEach(p => p.addValidSequenceEndowed(sequenceDetailsPrototype)));
 
     return sequence;
   }
 
   function clone() {
-    return SequenceBuildingCursorInternal(sequenceDetails, collected, [...remaining]);
+    return SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, [...remaining]);
   }
 
   function stalledOnLink() {
@@ -119,5 +130,12 @@ function SequenceBuildingCursorInternal(sequenceDetails, collected, remaining) {
     pushSequence,
     clone,
     stalledOnLink
+  });
+}
+
+function SequenceMember(member, sequenceDetails) {
+  return Object.freeze({
+    member,
+    endowingPointers: sequenceDetails.map(d => d.endowingPointer)
   });
 }

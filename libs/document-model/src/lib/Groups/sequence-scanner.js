@@ -1,6 +1,7 @@
 import { finalObject } from "@commonplace/utils";
 import { SequenceBuilder } from "./sequence-builder";
 
+// Scans through an edlZettel and creates all of its valid sequences
 export function SequenceScanner(edlZettel) {
   let obj = {};
 

@@ -73,14 +73,16 @@ export function BaseRenderLink(
     return mergeAllMetaAttributes(
       renderPointer,
       modifiers,
-      p => p.allDirectAttributeMetaEndowments());
+      p => p.allDirectAttributeMetaEndowments(),
+      false);
   }
 
-  function allContentAttributeEndowments(renderPointer) {
+  function allContentAttributeEndowments(renderPointer, recur) {
     return mergeAllMetaAttributes(
       renderPointer,
       modifiers,
       p => p.allContentAttributeMetaEndowments(),
+      recur,
       p => p.allContentAttributeEndowments());
   }
 
@@ -160,7 +162,7 @@ function extractMetaEndowments(renderPointer) {
   return metaEndowments;
 }
 
-function mergeAllMetaAttributes(renderPointer, modifiers, metaEndowmentFn, recursiveFn) {
+function mergeAllMetaAttributes(renderPointer, modifiers, metaEndowmentFn, shouldRecur, recursiveFn) {
   let metaAttributes = new Map();
 
   function merge(p) {
@@ -172,7 +174,7 @@ function mergeAllMetaAttributes(renderPointer, modifiers, metaEndowmentFn, recur
   }
 
   modifiers.allDefaults.forEach(merge);
-  if (recursiveFn) {
+  if (shouldRecur) {
     modifiers.renderPointers().forEach(p => mergeMaps(metaAttributes, recursiveFn(p)));
   }
   modifiers.renderPointers().forEach(merge);

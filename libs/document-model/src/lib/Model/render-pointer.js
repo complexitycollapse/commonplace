@@ -10,7 +10,8 @@ export function RenderPointer(pointer, renderEnd) {
   addProperties(obj, {
     pointer,
     renderEnd,
-    renderLink: renderEnd.renderLink
+    renderLink: renderEnd.renderLink,
+    validSequencesEndowed: []
   });
 
   function comparePriority(otherPointer) {
@@ -24,16 +25,26 @@ export function RenderPointer(pointer, renderEnd) {
     return descriptors;
   }
 
+  function addValidSequenceEndowed(sequenceDetailsPrototype) {
+    obj.validSequencesEndowed.push(sequenceDetailsPrototype);
+  }
+
   function createSequenceDetailsEndowmentForPointer(endowment) {
-    return Object.create(endowment, { endowingPointer: obj });
+    return Object.create(endowment, { endowingPointer: { value: obj }});
+  }
+
+  function allEndowmentsIfSequencesAreValid() {
+    if (obj.validSequencesEndowed.length === 0) { return false; }
+    return true;
   }
 
   return finalObject(obj, {
     comparePriority,
+    addValidSequenceEndowed,
     directAttributeDescriptors: () => getAttributeDescriptors("direct", obj.allDirectAttributeEndowments),
     contentAttributeDescriptors: () => getAttributeDescriptors("content", obj.allContentAttributeEndowments),
-    allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj, renderEnd.end),
-    allContentAttributeEndowments: () =>  obj.renderLink.allContentAttributeEndowments(obj, renderEnd.end),
+    allDirectAttributeEndowments: () => obj.renderLink.allDirectAttributeEndowments(obj),
+    allContentAttributeEndowments: () => obj.renderLink.allContentAttributeEndowments(obj, allEndowmentsIfSequencesAreValid()),
     sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowmentPrototypes(renderEnd, obj).map(createSequenceDetailsEndowmentForPointer),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),

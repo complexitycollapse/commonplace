@@ -1,6 +1,8 @@
 import { expect, it, describe } from '@jest/globals';
 import { attributesTesting } from './attributes';
 import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder } from '../builders';
+import { sequenceMetalinkType } from '../Model/render-link';
+import { InlinePointer } from '@commonplace/core';
 
 expect.extend({
  hasAttribute: attributesTesting.hasAttribute,
@@ -56,6 +58,14 @@ function aLink(targetBuilder, ...attributePairs) {
 
 function aMetalink(endowingLink, metalinkFn, ...attributePairs) {
   let metalink = metalinkFn(`metalink for ${endowingLink.type}`).pointingTo(endowingLink).endowing(...attributePairs);
+  return metalink;
+}
+
+function aSequenceMetalink(endowingLink, sequenceEndName) {
+  let metalink = LinkBuilder(sequenceMetalinkType)
+    .withName(`sequence metalink for ${endowingLink.type}`)
+    .withEnd(EndBuilder().withName("target").withPointer(endowingLink))
+    .withEnd(EndBuilder().withPointer(InlinePointer(sequenceEndName)));
   return metalink;
 }
 
@@ -156,12 +166,59 @@ it('returns the value when the link is in the Edl but the metalink is in the def
   expect(values).hasAttribute("attr1", "val1");
 });
 
-it('returns a content attribute value inherited through a link', () => {
+it('does not return a content attribute value inherited through a non-sequence link', () => {
   let edlZ = anEdlZettelWithSpan();
   let link = aLink(edlZ.target, "attr1", "val1");
   let intermediateLink = aLink(link);
   let metalink = aMetalink(intermediateLink, aContentMetalink, "attr1", "val1");
   edlZ.edl.withLinks(link, intermediateLink, metalink);
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).not.hasAttribute("attr1", "val1");
+});
+
+it('returns a content attribute value inherited through a sequence link if it is part of a valid sequence', () => {
+  // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
+  // The zettel receives the value by inheritance, because it is part of the sequence.
+  let edlZ = anEdlZettelWithSpan();
+  let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target]]).withName("sequence link");
+  let [contentLink, contentMetalnk] = aContentLinkAndMetalinkPointingTo(sequenceLink, "attr1", "val1")
+  let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+  edlZ.edl.withLinks(sequenceLink, contentLink, contentMetalnk, sequenceMetalink);
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).hasAttribute("attr1", "val1");
+});
+
+it('does not return a content attribute value inherited through a sequence link if it is not part of a valid sequence', () => {
+  // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
+  // The attribute is not on the zettel because the second link points to the sequence link, not the zettel, and therefore the
+  // attribute can only be received by inheritance from a sequence, but the sequence link does not form a valid sequence here.
+  let edlZ = anEdlZettelWithSpan();
+  let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target, aSpan()]]).withName("sequence link");
+  let [contentLink, contentMetalnk] = aContentLinkAndMetalinkPointingTo(sequenceLink, "attr1", "val1")
+  let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+  edlZ.edl.withLinks(sequenceLink, contentLink, contentMetalnk, sequenceMetalink);
+  let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+
+  let values = attributes.values();
+
+  expect(values).not.hasAttribute("attr1", "val1");
+});
+
+it('returns a content attribute endowed directly by a sequence link even if it is not part of a valid sequence', () => {
+  // Note here we have two metalinks on the same link, one endowing a sequence and the other endowing an attribute. The
+  // zettel gets the attribute because it is not inheriting it via the sequence, but is getting it directly from the link,
+  // which points directly at the zettel.
+  let edlZ = anEdlZettelWithSpan();
+  let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target, aSpan()]]).withName("sequence link");
+  let metalink = aMetalink(sequenceLink, aContentMetalink, "attr1", "val1");
+  let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+  edlZ.edl.withLinks(sequenceLink, metalink, sequenceMetalink);
   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
 
   let values = attributes.values();

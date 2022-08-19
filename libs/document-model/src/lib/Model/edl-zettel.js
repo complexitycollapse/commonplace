@@ -4,6 +4,7 @@ import { RenderLinkFactory } from './render-link-factory';
 import { EdlPointer, LinkPointer } from '@commonplace/core';
 import { Edl } from '@commonplace/core';
 import { AddPointerTargetFeatures } from './pointer-target';
+import { SequenceScanner } from '../Groups/sequence-scanner';
 
 export const defaultsPointer = EdlPointer("defaults");
 
@@ -182,6 +183,8 @@ function TransitionToResolveEdlContentState(harness) {
   });
 
   harness.state = obj;
+
+  SequenceScanner(harness).sequences();
 }
 
 export function makeTestEdlZettel(edl, {edlPointer, parent, key} = {}) {
