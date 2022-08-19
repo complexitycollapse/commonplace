@@ -263,11 +263,9 @@ describe('pushSequence', () => {
   it('pushes the sequence on the sequences properties of the zettel in the sequence', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
     let target = aTargetLink([span1, span2]);
-    let cursor = make([span1, span2], [target, aMetalink(target)]);
-    consumeZettel(cursor, span1);
-    consumeZettel(cursor, span2);
-
-    cursor.pushSequence();
+    
+    // The EdlZettel will call pushSequence when it resolves its sequences
+    make([span1, span2], [target, aMetalink(target)]);
 
     expect(span1.edlZ.children[0].sequences).toHaveLength(1);
     expect(span2.edlZ.children[1].sequences).toHaveLength(1);
@@ -277,13 +275,10 @@ describe('pushSequence', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
     let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
     let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
-    let [[cursor], childSequence] = makeCursorAndChildSequences([span1, span2], [parentSequenceLink], [childSequenceLink]);
-    cursor.consumeSequence(childSequence)
-    consumeZettel(cursor, span1);
-    consumeZettel(cursor, span2);
 
-    cursor.pushSequence();
+    // The EdlZettel will call pushSequence when it resolves its sequences
+    make([span1, span2], [parentSequenceLink, childSequenceLink, aMetalink(parentSequenceLink), aMetalink(childSequenceLink)]);
 
-    expect(span1.edlZ.renderLinks[0].sequences).toHaveLength(1);
+    expect(span1.edlZ.renderLinks[1].sequences).toHaveLength(1);
   });
 });
