@@ -5,11 +5,18 @@ export function PartRepository(fetcher) {
   let obj = {};
   let cache = LeafCache();
 
-  async function getPart(pointer) {
+  function check(pointer) {
     let cached = cache.getPart(pointer);
     if (cached[0]) { 
       return cached[1];
      }
+
+     return undefined;
+  }
+
+  async function getPart(pointer) {
+    let cached = check(pointer);
+    if (cached) { return cached; }
 
     let fetched = await fetcher.getPart(pointer);
     if (fetched[0]) {
@@ -47,6 +54,7 @@ export function PartRepository(fetcher) {
 
   return finalObject(obj, {
     getPart,
-    getManyParts
+    getManyParts,
+    check
   });
 }
