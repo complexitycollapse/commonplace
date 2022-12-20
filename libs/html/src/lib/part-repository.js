@@ -52,9 +52,34 @@ export function PartRepository(fetcher) {
     return Promise.all([...asHash.values()].map(rs => getPartsForOrigin(rs)));
   }
 
+  function docStatus(docName) {
+    let docPart = check(docName);
+  
+    if (docPart === undefined) { return { required: [docName] }; }
+  
+    let doc = docPart.content;    
+    let linkResults = doc.links.map(l => [l, check(l)]);
+    let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
+    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1]);
+    let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
+      .filter(p => p.specifiesContent && !check(p));
+    let docContent = doc.clips.filter(c => !check(c)); 
+    let required = missingLinkNames.concat(linkContentPointers).concat(docContent);
+
+    return {
+      docAvailable: true,
+      linksAvailable: missingLinkNames.length === 0,
+      linkContentAvailable: linkContentPointers.length === 0,
+      docContentAvailable: docContent.length === 0,
+      allAvailable: required.length === 0,
+      required
+    };
+  }
+
   return finalObject(obj, {
     getPart,
     getManyParts,
-    check
+    check,
+    docStatus
   });
 }
