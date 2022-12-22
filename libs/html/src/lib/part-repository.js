@@ -60,7 +60,7 @@ export function PartRepository(fetcher) {
     let doc = docPart.content;    
     let linkResults = doc.links.map(l => [l, check(l)]);
     let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
-    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1]);
+    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
     let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
       .filter(p => p.specifiesContent && !check(p));
     let docContent = doc.clips.filter(c => !check(c)); 

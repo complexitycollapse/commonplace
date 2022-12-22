@@ -5,7 +5,7 @@ import { Span, Box, EdlPointer, LinkPointer } from '@commonplace/core';
 import { Part } from '@commonplace/core';
 import { PartRepository } from './part-repository';
 
-async function make(...nameContentPairs) {
+async function make(nameContentPairs = []) {
   let repo = PartRepository({ getPart: p => {
       let pair = nameContentPairs.find(x => x[0] === p);
       return pair ? [true, Part(pair[0], pair[1])] : [false, undefined];
@@ -18,8 +18,22 @@ async function make(...nameContentPairs) {
   return repo;
 }
 
+function anEdl(clips = [], links = []) {
+  return [EdlPointer("p"), makeEdl(clips, links)];
+}
+
+function aLink(n = 1, linkContent) {
+  let content = linkContent ? aClip(100 + n) : [];
+  let ends = linkContent ? [["content", [content[0]]]] : [];
+  return [LinkPointer(n.toString()), Link(n.toString(), ...ends), ...content];
+}
+
+function aClip(n = 1) {
+  return [Span("or", n, 10), "x".repeat(n+10)];
+}
+
 function makeEdl(clips = [], links = []) {
-  return Edl(undefined, clips, links);
+  return Edl(undefined, clips.map(x => x[0]), links.map(x => x[0]));
 }
 
 function resolve(request, value) {
@@ -48,46 +62,53 @@ describe('docStatus', () => {
   it('has docAvailable truthy if the doc is in the cache', async () => {
     let edlPointer = EdlPointer("p");
     
-    expect((await make([edlPointer, makeEdl()])).docStatus(edlPointer).docAvailable).toBeTruthy();
-  });
-
-  it('has all statuses set to truthy if the doc is available and contains nothing', async () => {
-    let edlPointer = EdlPointer("p");
-    
-    let result = (await make([edlPointer, makeEdl([], [])])).docStatus(edlPointer);
-
-    expect(result.docAvailable).toBeTruthy();
-    expect(result.linksAvailable).toBeTruthy();
-    expect(result.linkContentAvailable).toBeTruthy();
-    expect(result.docContentAvailable).toBeTruthy();
-    expect(result.allAvailable).toBeTruthy();
-  });
-
-  it('stops requesting the EDL once it has been resolved', async () => {
-    let edlPointer = EdlPointer("p");
-    
-    expect((await make([edlPointer, makeEdl()])).docStatus(edlPointer).required).not.toContain(edlPointer);
+    expect((await make([[edlPointer, makeEdl()]])).docStatus(edlPointer).docAvailable).toBeTruthy();
   });
 
   describe('after EDL downloaded', () => {
-  //   it('requests all links initially, but not content', async () => {
-  //     let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
-  //     let ez = make(makeEdl([Span("x", 1, 10), EdlPointer("child")], links));
-      
-  //     let actualRequests = ez.outstandingRequests();
+    async function makeAndGetDocStatus(clips = [], links = [], cached = []) {
+      let edlPair = anEdl(clips, links);
+      return (await make([edlPair, ...cached])).docStatus(edlPair[0]);
+    }
 
-  //     expect(actualRequests.map(x => x[0])).toEqual(links);
-  //   });
+    it('has all statuses set to truthy if the doc is available and contains nothing', async () => {
+      let result = await makeAndGetDocStatus();
+  
+      expect(result.docAvailable).toBeTruthy();
+      expect(result.linksAvailable).toBeTruthy();
+      expect(result.linkContentAvailable).toBeTruthy();
+      expect(result.docContentAvailable).toBeTruthy();
+      expect(result.allAvailable).toBeTruthy();
+    });
+  
+    it('stops requesting the EDL', async () => {
+      expect((await makeAndGetDocStatus()).required).toEqual([]);
+    });
 
-  //   it('stops requesting a link once it has been resolved', async () => {
-  //     let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
-  //     let ez = make(makeEdl([Span("x", 1, 10), EdlPointer("child")], links));
-  //     let initialRequests = ez.outstandingRequests();
+    it('starts requesting the EDL clips and links', async () => {
+      let clip = aClip(), link = aLink(1);
 
-  //     resolve(initialRequests[1], Link(undefined));
+      let required = (await makeAndGetDocStatus([clip], [link])).required;
 
-  //     expect(ez.outstandingRequests().map(x => x[0])).toEqual([links[0], links[2]]);
-  //   });
+      expect(required).toContain(clip[0]);
+      expect(required).toContain(link[0]);
+    });
+
+    it('stops requesting a link once it has been downloaded', async () => {
+      let link = aLink(1);
+
+      let required = (await makeAndGetDocStatus([], [link], [link])).required;
+
+      expect(required).toEqual([]);
+    });
+
+    it('stops requesting a clip once it has been downloaded', async () => {
+      let clip = aClip();
+
+      let required = (await makeAndGetDocStatus([clip], [], [clip])).required;
+
+      expect(required).toEqual([]);
+    });
 
   //   it('goes directly to requesting clips if the EDL has no links', async () => {
   //     let clips = [Span("x", 1, 10), EdlPointer("child")];
