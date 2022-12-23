@@ -110,64 +110,21 @@ describe('docStatus', () => {
       expect(required).toEqual([]);
     });
 
-  //   it('goes directly to requesting clips if the EDL has no links', async () => {
-  //     let clips = [Span("x", 1, 10), EdlPointer("child")];
-  //     let ez = make(makeEdl(clips, []));
+    it('starts requesting link content once the link has been downloaded', async () => {
+      let link = aLink(1, true);
 
-  //     expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips);
-  //   });
+      let required = (await makeAndGetDocStatus([], [link], [link])).required;
 
-  //   it('requests link content once all links are resolved', async () => {
-  //     let clip = Span("x", 1, 10);
-  //     let ez = make(makeEdl([], [LinkPointer("1")]));
-  //     let initialRequests = ez.outstandingRequests();
+      expect(required).toContain(link[2]);
+    });
 
-  //     resolve(initialRequests[0], Link(undefined, [undefined, [ez.clip]], [undefined, [clip]]));
+    it('stops requesting link content once the link content has been downloaded', async () => {
+      let link = aLink(1, true);
 
-  //     expect(ez.outstandingRequests().map(x => x[0])).toEqual([clip]);
-  //   });
-  });
+      let required = (await makeAndGetDocStatus([], [link], [link, link.slice(2, 4)])).required;
 
-  describe('after links downloaded', () => {
-  //   it('requests content for all pointers in all ends that point to content', async () => {
-  //     let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
-  //     let clips = [Span("x", 1, 10), Box("y", 1, 1, 100, 100), Span("z", 10, 10)];
-  //     let ez = make(makeEdl([], links));
-  //     let initialRequests = ez.outstandingRequests();
-  //     resolve(initialRequests[0], Link(undefined, [undefined, [ez.clip]], [undefined, [clips[0], clips[1]]]));
-  //     resolve(initialRequests[1], Link(undefined, [undefined, [ez.clip]]));
-  //     resolve(initialRequests[2], Link(undefined, [undefined, [ez.clip]], [undefined, [clips[2]]]));
-
-  //     let requestedContent = ez.outstandingRequests().map(x => x[0]);
-
-  //     expect(requestedContent).toHaveLength(3);
-  //     expect(requestedContent).toEqual(expect.arrayContaining(clips));
-  //   });
-
-  //   it('requests clips once all link content is resolved', async () => {
-  //     let links = [LinkPointer("1"), LinkPointer("2"), LinkPointer("3")];
-  //     let clips = [Span("x", 1, 10), EdlPointer("child")];
-  //     let ez = make(makeEdl(clips, links));
-  //     let initialRequests = ez.outstandingRequests();
-
-  //     resolve(initialRequests[0], Link(undefined));
-  //     resolve(initialRequests[1], Link(undefined));
-  //     resolve(initialRequests[2], Link(undefined));
-
-  //     expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips);
-  //   });
-  });
-
-  describe('after link content downloaded', () => { 
-  //   it('stops returning a clip once it has been resolved', async () => {
-  //     let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
-  //     let ez = make(makeEdl(clips));
-  //     let firstRequest = ez.outstandingRequests()[0];
-  
-  //     resolve(firstRequest, "0123456789");
-  
-  //     expect(ez.outstandingRequests().map(x => x[0])).toEqual(clips.slice(1));
-  //   });
+      expect(required).not.toContain(link[2]);
+    });
   });
 
   describe("child zettel", () => {
