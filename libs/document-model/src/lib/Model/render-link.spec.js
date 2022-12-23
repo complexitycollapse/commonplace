@@ -4,7 +4,7 @@ import { LinkPointer, Span } from '@commonplace/core';
 import { Link, End } from '@commonplace/core';
 import { Part } from '@commonplace/core';
 import { makeTestEdlAndEdlZettelFromLinks } from './edl-zettel';
-import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, MetalinkBuilder } from '../builders';
+import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, MetalinkBuilder } from '../Testing/test-builders';
 import { attributesTesting } from '../Attributes/attributes';
 
 expect.extend({

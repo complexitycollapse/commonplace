@@ -1,6 +1,6 @@
 import { expect, it, describe } from '@jest/globals';
 import { attributesTesting } from './attributes';
-import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder } from '../builders';
+import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder } from '../Testing/test-builders';
 import { sequenceMetalinkType } from '../Model/render-link';
 import { InlinePointer } from '@commonplace/core';
 

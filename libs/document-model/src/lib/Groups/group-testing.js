@@ -1,5 +1,5 @@
 import { InlinePointer } from "@commonplace/core";
-import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "../builders";
+import { EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "../Testing/test-builders";
 import { sequenceMetalinkType } from '../Model/render-link';
 
 export function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
