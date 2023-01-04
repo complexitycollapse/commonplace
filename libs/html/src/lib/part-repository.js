@@ -5,7 +5,7 @@ export function PartRepository(fetcher) {
   let obj = {};
   let cache = LeafCache();
 
-  function check(pointer) {
+  function getPartLocally(pointer) {
     let cached = cache.getPart(pointer);
     if (cached[0]) { 
       return cached[1];
@@ -15,7 +15,7 @@ export function PartRepository(fetcher) {
   }
 
   async function getPart(pointer) {
-    let cached = check(pointer);
+    let cached = getPartLocally(pointer);
     if (cached) { return cached; }
 
     let fetched = await fetcher.getPart(pointer);
@@ -53,17 +53,17 @@ export function PartRepository(fetcher) {
   }
 
   function docStatus(docName) {
-    let docPart = check(docName);
+    let docPart = getPartLocally(docName);
   
     if (docPart === undefined) { return { required: [docName] }; }
   
     let doc = docPart.content;    
-    let linkResults = doc.links.map(l => [l, check(l)]);
+    let linkResults = doc.links.map(l => [l, getPartLocally(l)]);
     let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
     let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
     let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
-      .filter(p => p.specifiesContent && !check(p));
-    let docContent = doc.clips.filter(c => !check(c)); 
+      .filter(p => p.specifiesContent && !getPartLocally(p));
+    let docContent = doc.clips.filter(c => !getPartLocally(c)); 
     let required = missingLinkNames.concat(linkContentPointers).concat(docContent);
 
     return {
@@ -79,7 +79,7 @@ export function PartRepository(fetcher) {
   return finalObject(obj, {
     getPart,
     getManyParts,
-    check,
+    getPartLocally,
     docStatus
   });
 }
