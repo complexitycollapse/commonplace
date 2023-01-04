@@ -18,8 +18,8 @@ export function ZettelSchneider2(clip, links = []) {
     return result;
   }
 
-  function mapSpanToZettel(span, overlappingEntries) {
-    if (overlappingEntries.length == 0) { return [Zettel2(span, [])]; }
+  function mapSpanToZettel(span, overlappingEntries, linksToAdd = []) {
+    if (overlappingEntries.length == 0) { return [Zettel2(span, linksToAdd)]; }
 
     let overlappingClip = overlappingEntries[0].clip;
     let remainingEntries = overlappingEntries.slice(1);
@@ -30,34 +30,36 @@ export function ZettelSchneider2(clip, links = []) {
       subResults.push(mapSplitSpanToZettel(
         span.clone({ length: overlappingClip.start - span.start }),
         undefined,
-        remainingEntries));
+        remainingEntries,
+        linksToAdd));
     }
 
     subResults.push(mapSplitSpanToZettel(
       cropped,
       overlappingEntries[0],
-      remainingEntries));
+      remainingEntries,
+      linksToAdd));
 
     if (cropped.next < span.next) {
       subResults.push(mapSplitSpanToZettel(
         span.clone( { start: cropped.next, length: span.next - cropped.next }),
         undefined,
-        remainingEntries));
+        remainingEntries,
+        linksToAdd));
     }
 
     let result = subResults.flat();
     return result;
   }
 
-  function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans) {
-    var zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.clip.overlaps(span)));
-
+  function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans, linksToAdd) {
+    let newLinksToAdd = linksToAdd;
     if (coveringSpan) {
-      zettel.forEach(z => {
-        z.linkPointers.push(LinkPointer(span, coveringSpan.end, coveringSpan.link));
-      });
+      let newLinkPointer = LinkPointer(coveringSpan.clip, coveringSpan.end, coveringSpan.link);
+      newLinksToAdd = linksToAdd.concat([newLinkPointer]);
     }
-
+    
+    let zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.clip.overlaps(span)), newLinksToAdd);
     return zettel;
   }
 

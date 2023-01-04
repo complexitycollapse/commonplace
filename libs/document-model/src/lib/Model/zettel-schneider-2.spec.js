@@ -27,7 +27,7 @@ function hasEnd(zettel, link, index = 0) {
 
   for(let candidate of zettel.linkPointers) {
     if (candidate.end.name === expectedEnd.name
-        && candidate.link.ends.indexOf(candidate.end) === index
+        && candidate.end.index === index
         && candidate.link.type === link.type) {
       if (clipArraysEqual(candidate.end.pointers, expectedEnd.pointers)) {
         return {
