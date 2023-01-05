@@ -1,18 +1,29 @@
 import { finalObject, addProperties } from "@commonplace/utils";
-import { Edl } from "@commonplace/core";
 import { ZettelSchneider2 } from "../Model/zettel-schneider-2";
 
-export function DocumentModelBuilder(edl, repo) {
+export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
 
   function build() {
-    return buildRecursively(edl, []);
+    return buildRecursively(edlPointer, []);
   }
 
-  function buildRecursively(edl, inheritedLinks) {
+  function buildRecursively(edlPointer, inheritedLinks) {
     let model = {};
     let zettel = [];
 
+    let edlPart = repo.getPartLocally(edlPointer);
+
+    if (edlPart === undefined) {
+      return {
+        type: "missing EDL",
+        zettel: [],
+        links: [],
+        groups: []
+      };
+    }
+
+    let edl = edlPart.content;
     let linksList = edl.links.map(x => repo.getPartLocally(x)).filter(x => x).map(part => [part.pointer.hashableName, part.content]);
     let links = Object.fromEntries(linksList);
 
@@ -21,8 +32,7 @@ export function DocumentModelBuilder(edl, repo) {
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
       {
-        let childEdl = repo.getPartLocally(c) ?? Edl("missing EDL", [], []);
-        zettel.push(buildRecursively(childEdl.content, allLinks));
+        zettel.push(buildRecursively(c, allLinks));
       } else {
         let z = ZettelSchneider2(c, allLinks).zettel();
         zettel = zettel.concat(z);

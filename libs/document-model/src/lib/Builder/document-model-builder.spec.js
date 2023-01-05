@@ -8,9 +8,10 @@ function mockRepo(parts) {
 
 function make(clips = [], links = []) {
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[2] ? x[2] :Link(x[0])))
-    .concat(clips.filter(x => x[1]).map(x => Part(x[0], x[0].pointerType === "edl" ? x[1] : "x".repeat(x[0].length))));
+    .concat(clips.filter(x => x[1]).map(x => Part(x[0], x[0].pointerType === "edl" ? x[1] : "x".repeat(x[0].length))))
+    .concat([Part(EdlPointer("document"), Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
   let repo = mockRepo(parts);
-  let builder = DocumentModelBuilder(Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))), repo);
+  let builder = DocumentModelBuilder(EdlPointer("document"), repo);
   let model = builder.build();
   return model;
 }
@@ -18,7 +19,9 @@ function make(clips = [], links = []) {
 describe('build', () => {
   describe('type', () => {
     it('should equal the type of the EDL', () => {
-      expect(DocumentModelBuilder(Edl("expected type", [], []), mockRepo([])).build().type).toBe("expected type");
+      let edl = Edl("expected type", [], []);
+      let edlPointer = EdlPointer("testedl");
+      expect(DocumentModelBuilder(edlPointer, mockRepo([Part(edlPointer, edl)])).build().type).toBe("expected type");
     });
   });
 
