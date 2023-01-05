@@ -48,9 +48,9 @@ describe('build', () => {
       let clip1 = Span("x", 1, 10), clip2 = Box("y", 1, 1, 10, 20), clip3 = Span("z", 20, 200);
 
       expect(make([[clip1, true], [clip2, true], [clip3, true]]).zettel).toEqual([
-        { clip: clip1, linkPointers: []},
-        { clip: clip2, linkPointers: []},
-        { clip: clip3, linkPointers: []},
+        { clip: clip1, incomingPointers: []},
+        { clip: clip2, incomingPointers: []},
+        { clip: clip3, incomingPointers: []},
       ]);
     });
 
@@ -72,8 +72,8 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", true, link1], ["link2", true, link2]]).zettel;
 
-      expect(zettel[0].linkPointers[0]).toEqual({ clip: Span("x", 1, 20), end: link1.ends[0], link: link1});
-      expect(zettel[0].linkPointers[1]).toEqual({ clip: Span("x", 1, 30), end: link2.ends[0], link: link2});
+      expect(zettel[0].incomingPointers[0]).toEqual({ clip: Span("x", 1, 20), end: link1.ends[0], link: link1});
+      expect(zettel[0].incomingPointers[1]).toEqual({ clip: Span("x", 1, 30), end: link2.ends[0], link: link2});
     });
 
     it('does not attach a link to a zettel if it does not point to it', () => {
@@ -82,7 +82,7 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", true, link1]]).zettel;
 
-      expect(zettel[0].linkPointers).toEqual([]);
+      expect(zettel[0].incomingPointers).toEqual([]);
     });
 
     it('creates a nested structure for a nested EDL', () => {
@@ -99,7 +99,7 @@ describe('build', () => {
       expect(child.zettel[0].clip).toEqual(clip1);
       expect(Object.entries(child.links).length).toBe(1);
       expect(child.links[LinkPointer("link1").hashableName]).toEqual(link1);
-      expect(child.zettel[0].linkPointers[0].link).toEqual(link1);
+      expect(child.zettel[0].incomingPointers[0].link).toEqual(link1);
     });
 
     it('splits a clip in a child EDL into multiple zettel if the clip is bisected by a link in the parent', () => {

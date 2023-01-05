@@ -25,7 +25,7 @@ function clipArraysEqual(actual, expected) {
 function hasEnd(zettel, link, index = 0) {
   let expectedEnd = link.ends[index];
 
-  for(let candidate of zettel.linkPointers) {
+  for(let candidate of zettel.incomingPointers) {
     if (candidate.end.name === expectedEnd.name
         && candidate.end.index === index
         && candidate.link.type === link.type) {
@@ -73,9 +73,9 @@ expect.extend({
       if (!result.pass) { return result; }
     });
 
-    if (ends.length !== zettel.linkPointers.length) {
+    if (ends.length !== zettel.incomingPointers.length) {
       return {
-        message: () => `expected ${ends.length} ends, received ${zettel.linkPointers.length}`,
+        message: () => `expected ${ends.length} ends, received ${zettel.incomingPointers.length}`,
         pass: false
       }
     }

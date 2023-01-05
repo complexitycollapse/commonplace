@@ -78,8 +78,8 @@ function buildClipEndLinks(links) {
   return clipList;
 }
 
-function Zettel2(clip, linkPointers) {
-  return { clip, linkPointers };
+function Zettel2(clip, incomingPointers) {
+  return { clip, incomingPointers };
 }
 
 function LinkPointer(clip, end, link) {
