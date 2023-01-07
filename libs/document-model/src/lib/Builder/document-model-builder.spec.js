@@ -6,9 +6,13 @@ function mockRepo(parts) {
   return { getPartLocally: pointer => parts.find(p => p.pointer.hashableName === pointer.hashableName) };
 }
 
+function getLink(links, name) {
+  return links[LinkPointer(name).hashableName];
+}
+
 function make(clips = [], links = []) {
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[2] ? x[2] :Link(x[0])))
-    .concat(clips.filter(x => x[1]).map(x => Part(x[0], x[0].pointerType === "edl" ? x[1] : "x".repeat(x[0].length))))
+    .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
     .concat([Part(EdlPointer("document"), Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
   let repo = mockRepo(parts);
   let builder = DocumentModelBuilder(EdlPointer("document"), repo);
@@ -31,11 +35,84 @@ describe('build', () => {
     });
 
     it('returns a link under its hashable name if it is present in the repo', () => {
-      expect(make([], [["link1", true]]).links[LinkPointer("link1").hashableName].type).toEqual("link1");
+      expect(getLink(make([], [["link1", true]]).links, "link1").type).toEqual("link1");
     });
 
     it('does not return a link under its hashable name if it is NOT present in the repo', () => {
-      expect(make([], [["link1", false]]).links[LinkPointer("link1").hashableName]).toBeFalsy();
+      expect(getLink(make([], [["link1", false]]).links, "link1")).toBeFalsy();
+    });
+
+    it('returns links in an EDL AND its parent', () => {
+      let link1 = Link("link1"), link2 = Link("link2");
+      let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
+
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+
+      expect(Object.values(zettel[0].links).length).toBe(2);
+      expect(getLink(zettel[0].links, "link1").type).toBe("link1");
+      expect(getLink(zettel[0].links, "link2").type).toBe("link2");
+    });
+
+    it('does not return links in a child EDL', () => {
+      let link1 = Link("link1"), link2 = Link("link2");
+      let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
+
+      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).links;
+
+      expect(Object.values(links)).toHaveLength(1);
+      expect(getLink(links, "link1").type).toBe("link1");
+      expect(links).not.toHaveProperty("links2");
+    });
+
+    it('links in the EDL have depth 0 and those from the parent have depth 1', () => {
+      let link1 = Link("link1"), link2 = Link("link2");
+      let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
+
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+
+      expect(getLink(zettel[0].links, "link1").depth).toBe(1);
+      expect(getLink(zettel[0].links, "link2").depth).toBe(0);
+    });
+
+    it('links have an index equivalent to their order in the original EDL', () => {
+      let links = make([], [["link1", true], ["link2", true]]).links;
+
+      expect(getLink(links, "link1").index).toBe(0);
+      expect(getLink(links, "link2").index).toBe(1);
+    });
+
+    it('interlinks links that point to each other through the incomingPointers property', () => {
+      let link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let links = make([], [["link1", true], ["link2", true, link2]]).links;
+
+      let incoming = getLink(links, "link1").incomingPointers;
+      expect(incoming).toHaveLength(1);
+      expect(Object.getPrototypeOf(incoming[0].link)).toEqual(link2);
+      expect(incoming[0].pointer).toEqual(LinkPointer("link1"));
+      expect(incoming[0].end).toEqual(link2.ends[0]);
+    });
+
+    it('interlinks all links in the scope of a child EDL', () => {
+      let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
+
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+
+      let createdLink1 = getLink(zettel[0].links, "link1");
+      expect(createdLink1.incomingPointers).toHaveLength(1);
+      expect(Object.getPrototypeOf(createdLink1.incomingPointers[0].link)).toEqual(link2);
+      let createdLink2 = getLink(zettel[0].links, "link2");
+      expect(createdLink2.incomingPointers).toHaveLength(1);
+      expect(Object.getPrototypeOf(createdLink2.incomingPointers[0].link)).toEqual(link1);
+    });
+
+    it('does not interlink child EDL links to links in the parent', () => {
+      let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
+
+      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).links;
+
+      expect(getLink(links, "link1").incomingPointers).toHaveLength(0);
     });
   });
 
@@ -72,8 +149,8 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", true, link1], ["link2", true, link2]]).zettel;
 
-      expect(zettel[0].incomingPointers[0]).toEqual({ clip: Span("x", 1, 20), end: link1.ends[0], link: link1});
-      expect(zettel[0].incomingPointers[1]).toEqual({ clip: Span("x", 1, 30), end: link2.ends[0], link: link2});
+      expect(zettel[0].incomingPointers[0]).toEqual({ pointer: Span("x", 1, 20), end: link1.ends[0], link: link1});
+      expect(zettel[0].incomingPointers[1]).toEqual({ pointer: Span("x", 1, 30), end: link2.ends[0], link: link2});
     });
 
     it('does not attach a link to a zettel if it does not point to it', () => {
@@ -92,13 +169,13 @@ describe('build', () => {
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", true, link1]]).zettel;
 
-      expect(zettel.length).toBe(1);
+      expect(zettel).toHaveLength(1);
       let child = zettel[0];
       expect(child.type).toBe("nested EDL");
-      expect(child.zettel.length).toBe(1);
+      expect(child.zettel).toHaveLength(1);
       expect(child.zettel[0].clip).toEqual(clip1);
-      expect(Object.entries(child.links).length).toBe(1);
-      expect(child.links[LinkPointer("link1").hashableName]).toEqual(link1);
+      expect(Object.entries(child.links)).toHaveLength(1);
+      expect(Object.getPrototypeOf(child.links[LinkPointer("link1").hashableName])).toEqual(link1);
       expect(child.zettel[0].incomingPointers[0].link).toEqual(link1);
     });
 
@@ -109,7 +186,7 @@ describe('build', () => {
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", true, link1]]).zettel;
 
-      expect(zettel[0].zettel.length).toBe(2);
+      expect(zettel[0].zettel).toHaveLength(2);
       expect(zettel[0].zettel[0].clip).toEqual(Span("x", 1, 4));
       expect(zettel[0].zettel[1].clip).toEqual(Span("x", 5, 6));
     });

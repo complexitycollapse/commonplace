@@ -4,8 +4,8 @@ export function ZettelSchneider2(clip, links = []) {
   let obj = {};
   
   function zettel() {
-    let clipEndLinks = buildClipEndLinks(links);
-    let overlappingEntries = clipEndLinks.filter(s => s.clip.overlaps && s.clip.overlaps(clip));
+    let clipEndLinks = buildPointerEndLinks(links);
+    let overlappingEntries = clipEndLinks.filter(s => s.pointer.overlaps && s.pointer.overlaps(clip));
     let result = undefined;
 
     if (clip.pointerType === "span") {
@@ -21,7 +21,7 @@ export function ZettelSchneider2(clip, links = []) {
   function mapSpanToZettel(span, overlappingEntries, linksToAdd = []) {
     if (overlappingEntries.length == 0) { return [Zettel2(span, linksToAdd)]; }
 
-    let overlappingClip = overlappingEntries[0].clip;
+    let overlappingClip = overlappingEntries[0].pointer;
     let remainingEntries = overlappingEntries.slice(1);
     let cropped = span.intersect(overlappingClip)[1];
     let subResults = [];
@@ -55,11 +55,11 @@ export function ZettelSchneider2(clip, links = []) {
   function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans, linksToAdd) {
     let newLinksToAdd = linksToAdd;
     if (coveringSpan) {
-      let newLinkPointer = LinkPointer(coveringSpan.clip, coveringSpan.end, coveringSpan.link);
+      let newLinkPointer = LinkPointer(coveringSpan.pointer, coveringSpan.end, coveringSpan.link);
       newLinksToAdd = linksToAdd.concat([newLinkPointer]);
     }
     
-    let zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.clip.overlaps(span)), newLinksToAdd);
+    let zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.pointer.overlaps(span)), newLinksToAdd);
     return zettel;
   }
 
@@ -68,7 +68,7 @@ export function ZettelSchneider2(clip, links = []) {
   });
 }
 
-function buildClipEndLinks(links) {
+function buildPointerEndLinks(links) {
   let clipList = [];
   links.forEach(l => l.forEachPointer((p, e, l) => {
     if (p.isClip) {
@@ -83,5 +83,5 @@ function Zettel2(clip, incomingPointers) {
 }
 
 function LinkPointer(clip, end, link) {
-  return { clip, end, link };
+  return { pointer: clip, end, link };
 }
