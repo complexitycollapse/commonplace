@@ -87,7 +87,7 @@ describe('build', () => {
 
       let incoming = getLink(links, "link1").incomingPointers;
       expect(incoming).toHaveLength(1);
-      expect(Object.getPrototypeOf(incoming[0].link)).toEqual(link2);
+      expect(incoming[0].link).toMatchObject(link2);
       expect(incoming[0].pointer).toEqual(LinkPointer("link1"));
       expect(incoming[0].end).toEqual(link2.ends[0]);
     });
@@ -100,10 +100,10 @@ describe('build', () => {
 
       let createdLink1 = getLink(zettel[0].links, "link1");
       expect(createdLink1.incomingPointers).toHaveLength(1);
-      expect(Object.getPrototypeOf(createdLink1.incomingPointers[0].link)).toEqual(link2);
+      expect(createdLink1.incomingPointers[0].link).toMatchObject(link2);
       let createdLink2 = getLink(zettel[0].links, "link2");
       expect(createdLink2.incomingPointers).toHaveLength(1);
-      expect(Object.getPrototypeOf(createdLink2.incomingPointers[0].link)).toEqual(link1);
+      expect(createdLink2.incomingPointers[0].link).toMatchObject(link1);
     });
 
     it('does not interlink child EDL links to links in the parent', () => {
@@ -175,7 +175,7 @@ describe('build', () => {
       expect(child.zettel).toHaveLength(1);
       expect(child.zettel[0].clip).toEqual(clip1);
       expect(Object.entries(child.links)).toHaveLength(1);
-      expect(Object.getPrototypeOf(child.links[LinkPointer("link1").hashableName])).toEqual(link1);
+      expect(child.links[LinkPointer("link1").hashableName]).toMatchObject(link1);
       expect(child.zettel[0].incomingPointers[0].link).toEqual(link1);
     });
 
