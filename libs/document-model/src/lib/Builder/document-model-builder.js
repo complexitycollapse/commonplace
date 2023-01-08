@@ -1,5 +1,5 @@
 import { finalObject } from "@commonplace/utils";
-import { ZettelSchneider2 } from "../Model/zettel-schneider-2";
+import { ZettelSchneider2 } from "./zettel-schneider-2";
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
@@ -77,3 +77,7 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
 
   targetLink.incomingPointers.push({ pointer, end, link: incomingLink });
 }
+
+export let docModelBuilderTesting = {
+  LinkWithIncommingPointers
+};
