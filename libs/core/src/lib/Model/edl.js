@@ -9,7 +9,8 @@ export function Edl(type, clips, links) {
   addProperties(obj, {
     type,
     clips,
-    links
+    links,
+    isEdl: true
   });
 
   function leafData() {

@@ -67,7 +67,11 @@ function EdlModel(type, zettel, links, parent) {
 
 function connectLinks(linksObject) {
   let links = Object.values(linksObject);
-  links.forEach(l1 => links.forEach(l2 => l2.forEachPointer((p, e) => tryAdd(p, e, l2, l1))));
+  links.forEach(l1 => addIncomingPointers(l1, links));
+}
+
+function addIncomingPointers(target, links) {
+  links.forEach(l2 => l2.forEachPointer((p, e) => tryAdd(p, e, l2, target)));
 }
 
 function tryAdd(pointer, end, incomingLink, targetLink) {
@@ -79,5 +83,6 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
 }
 
 export let docModelBuilderTesting = {
-  LinkWithIncommingPointers
+  LinkWithIncommingPointers,
+  addIncomingPointers
 };

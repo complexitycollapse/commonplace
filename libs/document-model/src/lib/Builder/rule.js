@@ -4,23 +4,24 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
   let obj = {};
 
   addProperties(obj, {
+    originLink,
     attributeValuePairs
   });
 
   function match(target) {
-    if (target.incomingLinks.any(l => l.pointer.endowsTo(originLink.pointer))) {
+    if (immediateTargets.some(t => t.endowsTo(target.pointer))) {
       return attributeValuePairs;
     }
 
-    if (target.isLink && linkTypes.any(t => t == target.type)) {
+    if (target.isLink && linkTypes.some(t => t == target.type)) {
       return attributeValuePairs;
     }
 
-    if (target.isClip && clipTypes.any(t => t === target.pointerType)) {
+    if (target.isClip && clipTypes.some(t => t === target.pointerType)) {
       return attributeValuePairs;
     }
 
-    if (target.isEdl && edlTypes.any(t => t === target.type)) {
+    if (target.isEdl && edlTypes.some(t => t === target.type)) {
       return attributeValuePairs;
     }
 
