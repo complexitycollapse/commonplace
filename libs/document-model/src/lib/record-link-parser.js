@@ -9,7 +9,7 @@ export function RecordLinkParser(link, fields) {
       } else {
         records.push(currentRecord);
         currentRecord = {};
-        currentRecord[end.name = end.pointers];
+        currentRecord[end.name] = end.pointers;
       }
       fieldIndex = index;
     }
