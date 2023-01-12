@@ -92,3 +92,30 @@ describe('clipSource', () => {
     expect(source()).toBeUndefined();
   });
 });
+
+describe('getEnd', () => {
+  it('returns undefined if there is no end with the given name', () => {
+    let link = Link(undefined, ["foo", []], ["bar", []]);
+
+    expect(link.getEnd("quux")).toBe(undefined);
+  });
+
+  it('returns end if there is an end with the given name', () => {
+    let link = Link(undefined, ["foo", []], ["bar", []]);
+
+    expect(link.getEnd("bar")).toBe(link.ends[1]);
+  });
+
+  it('returns a subsequent end if the index is positive', () => {
+    let link = Link(undefined, ["foo", []], ["foo", []]);
+
+    expect(link.getEnd("foo", 1)).toBe(link.ends[1]);
+    expect(link.getEnd("foo", 1)).not.toBe(link.ends[0]);
+  });
+
+  it('returns undefined if the index is equal or higher than the number of matching ends', () => {
+    let link = Link(undefined, ["foo", []], ["foo", []]);
+
+    expect(link.getEnd("foo", 2)).toBe(undefined);
+  });
+});
