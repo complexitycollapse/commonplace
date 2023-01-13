@@ -1,4 +1,6 @@
 import { finalObject } from "@commonplace/utils";
+import { RecordLinkParser } from "../record-link-parser";
+import { Rule } from "./rule";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
 
 export function DocumentModelBuilder(edlPointer, repo) {
@@ -31,6 +33,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let model = EdlModel(edl.type, zettel, links, parent);
 
     connectLinks(links);
+    parseRules(model, linksList);
 
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
@@ -59,7 +62,7 @@ function LinkWithIncommingPointers(link, index, linkPointer, depth) {
 
 function EdlModel(type, zettel, links, parent) {
   let model = {
-    type, zettel, links
+    type, zettel, links, markupRules: [], semanticRules: [], sequenceRules: []
   };
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return model;
@@ -80,6 +83,32 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
   }
 
   targetLink.incomingPointers.push({ pointer, end, link: incomingLink });
+}
+
+function parseRules(model, linksList) {
+  linksList.forEach(link => {
+    switch (link.type) {
+      case "markup":
+        model.markupRules.push(buildMarkupRule(link));
+        break;
+    }
+  });
+}
+
+function buildMarkupRule(link) {
+  function getPointers(name) {
+    let end = link.getEnd(name);
+    return end ? end.pointers : [];
+  }
+
+  let targets = getPointers("targets");
+  let linkTypes = getPointers("link types");
+  let edlTypes = getPointers("edl types");
+  let clipTypes = getPointers("clip types");
+  let attributes = RecordLinkParser(link, ["attribute", "value"]);
+
+  let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes);
+  return rule;
 }
 
 export let docModelBuilderTesting = {
