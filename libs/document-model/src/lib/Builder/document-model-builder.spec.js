@@ -11,7 +11,7 @@ function getLink(links, name) {
 }
 
 function make(clips = [], links = []) {
-  let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[2] ? x[2] :Link(x[0])))
+  let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
     .concat([Part(EdlPointer("document"), Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
   let repo = mockRepo(parts);
@@ -46,7 +46,7 @@ describe('build', () => {
       let link1 = Link("link1"), link2 = Link("link2");
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
-      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
 
       expect(Object.values(zettel[0].links).length).toBe(2);
       expect(getLink(zettel[0].links, "link1").type).toBe("link1");
@@ -57,7 +57,7 @@ describe('build', () => {
       let link1 = Link("link1"), link2 = Link("link2");
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
-      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).links;
+      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
 
       expect(Object.values(links)).toHaveLength(1);
       expect(getLink(links, "link1").type).toBe("link1");
@@ -68,7 +68,7 @@ describe('build', () => {
       let link1 = Link("link1"), link2 = Link("link2");
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
-      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
 
       expect(getLink(zettel[0].links, "link1").depth).toBe(1);
       expect(getLink(zettel[0].links, "link2").depth).toBe(0);
@@ -83,7 +83,7 @@ describe('build', () => {
 
     it('interlinks links that point to each other through the incomingPointers property', () => {
       let link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
-      let links = make([], [["link1", true], ["link2", true, link2]]).links;
+      let links = make([], [["link1", true], ["link2", link2]]).links;
 
       let incoming = getLink(links, "link1").incomingPointers;
       expect(incoming).toHaveLength(1);
@@ -96,7 +96,7 @@ describe('build', () => {
       let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
-      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).zettel;
+      let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
 
       let createdLink1 = getLink(zettel[0].links, "link1");
       expect(createdLink1.incomingPointers).toHaveLength(1);
@@ -110,7 +110,7 @@ describe('build', () => {
       let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
-      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", true, link1]]).links;
+      let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
 
       expect(getLink(links, "link1").incomingPointers).toHaveLength(0);
     });
@@ -135,7 +135,7 @@ describe('build', () => {
       let clip1 = Span("x", 1, 10);
       let link = Link(undefined, [undefined, [Span("x", 5, 10)]]);
 
-      let zettel = make([[clip1, true]], [["link1", true, link]]).zettel;
+      let zettel = make([[clip1, true]], [["link1", link]]).zettel;
 
       expect(zettel.length).toBe(2);
       expect(zettel[0].clip).toEqual(Span("x", 1, 4));
@@ -147,7 +147,7 @@ describe('build', () => {
       let link1 = Link("link1", [undefined, [Span("x", 1, 20)]]);
       let link2 = Link("link2", [undefined, [Span("x", 1, 30)]]);
 
-      let zettel = make([[clip1, true]], [["link1", true, link1], ["link2", true, link2]]).zettel;
+      let zettel = make([[clip1, true]], [["link1", link1], ["link2", link2]]).zettel;
 
       expect(zettel[0].incomingPointers[0]).toEqual({ pointer: Span("x", 1, 20), end: link1.ends[0], link: link1});
       expect(zettel[0].incomingPointers[1]).toEqual({ pointer: Span("x", 1, 30), end: link2.ends[0], link: link2});
@@ -157,7 +157,7 @@ describe('build', () => {
       let clip1 = Span("x", 1, 10);
       let link1 = Link(undefined, [undefined, [Span("somewhere else", 1, 20)]]);
 
-      let zettel = make([[clip1, true]], [["link1", true, link1]]).zettel;
+      let zettel = make([[clip1, true]], [["link1", link1]]).zettel;
 
       expect(zettel[0].incomingPointers).toEqual([]);
     });
@@ -167,7 +167,7 @@ describe('build', () => {
       let link1 = Link(undefined, [undefined, [Span("x", 1, 20)]]);
       let edl1 = Edl("nested EDL", [clip1], [LinkPointer("link1")]);
 
-      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", true, link1]]).zettel;
+      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
 
       expect(zettel).toHaveLength(1);
       let child = zettel[0];
@@ -184,7 +184,7 @@ describe('build', () => {
       let link1 = Link(undefined, [undefined, [Span("x", 5, 10)]]);
       let edl1 = Edl(undefined, [clip1], []);
 
-      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", true, link1]]).zettel;
+      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
 
       expect(zettel[0].zettel).toHaveLength(2);
       expect(zettel[0].zettel[0].clip).toEqual(Span("x", 1, 4));
@@ -192,3 +192,4 @@ describe('build', () => {
     });
   });
 });
+
