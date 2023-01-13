@@ -1,9 +1,17 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder } from './document-model-builder';
-import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer } from '@commonplace/core';
+import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer, InlinePointer } from '@commonplace/core';
 
 function mockRepo(parts) {
-  return { getPartLocally: pointer => parts.find(p => p.pointer.hashableName === pointer.hashableName) };
+  return { 
+    getPartLocally: pointer => {
+      if (pointer.pointerType === "inline") {
+        return Part(pointer, pointer.inlineText);
+      } else {
+        return parts.find(p => p.pointer.hashableName === pointer.hashableName);
+      }
+    }
+  };
 }
 
 function getLink(links, name) {
@@ -189,6 +197,58 @@ describe('build', () => {
       expect(zettel[0].zettel).toHaveLength(2);
       expect(zettel[0].zettel[0].clip).toEqual(Span("x", 1, 4));
       expect(zettel[0].zettel[1].clip).toEqual(Span("x", 5, 6));
+    });
+  });
+
+  describe('markupRules', () => {
+    function markupLink({ name, attributeValues = [], linkTypes, clipTypes, edlTypes } = {}) {
+      let endSpecs = attributeValues.map(av => [["attribute",[InlinePointer(av[0])]], ["value", [InlinePointer(av[1])]]]).flat();
+      if (linkTypes) endSpecs.push(["link types", linkTypes]);
+      if (clipTypes) endSpecs.push(["clip types", clipTypes]);
+      if (edlTypes) endSpecs.push(["edl types", edlTypes]);
+      let link = [
+        name ?? "markup",
+        Link("markup", ...endSpecs)
+      ];
+      
+      return link;
+    }
+
+    it('is empty if there are no markup links', () => {
+      expect(make([], [["not a markup link", true]]).markupRules).toEqual([]);
+    });
+
+    it('returns a rule if there is a markup link', () => {
+      expect(make([], [markupLink()]).markupRules).toHaveLength(1);
+    });
+
+    it('returns a rule for each markup link', () => {
+      expect(make([], [markupLink({name: "markup1"}), markupLink({name: "markup"}), markupLink({name: "markup3"})]).markupRules).toHaveLength(3);
+    });
+
+    it('sets all of the criteria properties to the content values of the link ends', () => {
+      let link = markupLink({
+        clipTypes: [InlinePointer("ct1"), InlinePointer("ct2")],
+        linkTypes: [InlinePointer("lt1"), InlinePointer("lt2")],
+        edlTypes: [InlinePointer("et1"), InlinePointer("et2")]
+      });
+
+      let rule = make([], [link]).markupRules[0];
+
+      expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
+      expect(rule.linkTypes).toEqual(["lt1", "lt2"]);
+      expect(rule.edlTypes).toEqual(["et1", "et2"]);
+    });
+
+    it('sets the attributeValuePairs on the rule from the link', () => {
+      let attributeValues = [["attr1", "val1"], ["attr2", "val2"]];
+
+      let actual = make([], [markupLink({attributeValues})]).markupRules[0].attributeValuePairs;
+
+      expect(actual[0].attribute).toEqual("attr1");
+      expect(actual[0].value).toEqual("val1");
+      expect(actual[1].attribute).toEqual("attr2");
+      expect(actual[1].value).toEqual("val2");
     });
   });
 });

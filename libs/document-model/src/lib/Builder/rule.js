@@ -5,7 +5,11 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
 
   addProperties(obj, {
     originLink,
-    attributeValuePairs
+    attributeValuePairs,
+    immediateTargets,
+    linkTypes,
+    clipTypes,
+    edlTypes
   });
 
   function match(target) {

@@ -33,7 +33,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let model = EdlModel(edl.type, zettel, links, parent);
 
     connectLinks(links);
-    parseRules(model, linksList);
+    parseRules(model, links, repo);
 
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
@@ -85,27 +85,38 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
   targetLink.incomingPointers.push({ pointer, end, link: incomingLink });
 }
 
-function parseRules(model, linksList) {
-  linksList.forEach(link => {
+function parseRules(model, links, repo) {
+  Object.values(links).forEach(link => {
     switch (link.type) {
       case "markup":
-        model.markupRules.push(buildMarkupRule(link));
+        model.markupRules.push(buildMarkupRule(link, repo));
         break;
     }
   });
 }
 
-function buildMarkupRule(link) {
+function buildMarkupRule(link, repo) {
   function getPointers(name) {
     let end = link.getEnd(name);
     return end ? end.pointers : [];
   }
 
+  function getContent(pointers) {
+    return pointers.map(p => repo.getPartLocally(p).content);
+  }
+
+  function resolveAttribute(attribute) {
+    return Object.fromEntries(
+      Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
+  }
+
   let targets = getPointers("targets");
-  let linkTypes = getPointers("link types");
-  let edlTypes = getPointers("edl types");
-  let clipTypes = getPointers("clip types");
-  let attributes = RecordLinkParser(link, ["attribute", "value"]);
+  let linkTypes = getContent(getPointers("link types"));
+  let edlTypes = getContent(getPointers("edl types"));
+  let clipTypes = getContent(getPointers("clip types"));
+  let unresolvedAttributes = RecordLinkParser(link, ["attribute", "value"]);
+
+  let attributes = unresolvedAttributes.map(resolveAttribute);
 
   let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes);
   return rule;
