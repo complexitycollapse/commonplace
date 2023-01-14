@@ -11,7 +11,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
     return pointers.map(p => repo.getPartLocally(p).content);
   }
 
-  function buildMarkupRule() { 
+  function buildRule(attributeEnds, extraContentEnds = []) { 
     function resolveAttribute(attribute) {
       return Object.fromEntries(
         Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
@@ -21,11 +21,12 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
     let linkTypes = getContent(getPointers("link types"));
     let edlTypes = getContent(getPointers("edl types"));
     let clipTypes = getContent(getPointers("clip types"));
-    let unresolvedAttributes = RecordLinkParser(link, ["attribute", "value"]);
-  
+    let unresolvedAttributes = RecordLinkParser(link, attributeEnds);
+    let extraEnds = Object.fromEntries(extraContentEnds.map(e => [e, getContent(getPointers(e)).join("")]));
+
     let attributes = unresolvedAttributes.map(resolveAttribute);
   
-    let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes);
+    let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes, extraEnds);
     return rule;
   }
 
@@ -34,6 +35,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
   newLink.index = index;
   newLink.pointer = linkPointer;
   newLink.depth = depth;
-  if (link.type === "markup") { newLink.markupRule = buildMarkupRule(); }
+  if (link.type === "markup") { newLink.markupRule = buildRule(["attribute", "value"]); }
+  if (link.type === "endows attributes") { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
   return newLink;
 }

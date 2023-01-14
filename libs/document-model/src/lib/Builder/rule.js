@@ -1,6 +1,6 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 
-export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlTypes, attributeValuePairs) {
+export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlTypes, attributeValuePairs, additionalProperties = {}) {
   let obj = {};
 
   addProperties(obj, {
@@ -11,6 +11,8 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
     clipTypes,
     edlTypes
   });
+
+  Object.assign(obj, additionalProperties);
 
   function match(target) {
     if (immediateTargets.some(t => t.endowsTo(target.pointer))) {
