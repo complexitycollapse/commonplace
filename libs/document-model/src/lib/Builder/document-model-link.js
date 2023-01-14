@@ -1,11 +1,8 @@
-import { finalObject } from "@commonplace/utils";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 
-export function LinkProcessor(repo) {
-  let obj = {};
-
-  function getPointers(link, name) {
+export function DocumentModelLink(link, index, linkPointer, depth, repo) {
+  function getPointers(name) {
     let end = link.getEnd(name);
     return end ? end.pointers : [];
   }
@@ -14,16 +11,16 @@ export function LinkProcessor(repo) {
     return pointers.map(p => repo.getPartLocally(p).content);
   }
 
-  function buildMarkupRule(link) { 
+  function buildMarkupRule() { 
     function resolveAttribute(attribute) {
       return Object.fromEntries(
         Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
     }
   
-    let targets = getPointers(link, "targets");
-    let linkTypes = getContent(getPointers(link, "link types"));
-    let edlTypes = getContent(getPointers(link, "edl types"));
-    let clipTypes = getContent(getPointers(link, "clip types"));
+    let targets = getPointers("targets");
+    let linkTypes = getContent(getPointers("link types"));
+    let edlTypes = getContent(getPointers("edl types"));
+    let clipTypes = getContent(getPointers("clip types"));
     let unresolvedAttributes = RecordLinkParser(link, ["attribute", "value"]);
   
     let attributes = unresolvedAttributes.map(resolveAttribute);
@@ -32,7 +29,11 @@ export function LinkProcessor(repo) {
     return rule;
   }
 
-  return finalObject(obj, {
-    buildMarkupRule
-  });
+  let newLink = Object.create(link, {ends: {value: link.ends.map(e => Object.create(e)), enumerable: true}});
+  newLink.incomingPointers = [];
+  newLink.index = index;
+  newLink.pointer = linkPointer;
+  newLink.depth = depth;
+  if (link.type === "markup") { newLink.markupRule = buildMarkupRule(); }
+  return newLink;
 }

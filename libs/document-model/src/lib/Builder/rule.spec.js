@@ -2,8 +2,9 @@ import { describe, expect, it, test } from '@jest/globals';
 import { Rule } from './rule';
 import { docModelBuilderTesting } from './document-model-builder';
 import { LinkPointer, Link, Span, Edl } from '@commonplace/core';
+import { DocumentModelLink } from './document-model-link';
 
-const makeLink = docModelBuilderTesting.LinkWithIncommingPointers;
+const makeLink = DocumentModelLink;
 const addIncoming = docModelBuilderTesting.addIncomingPointers;
 const expectedResult = [["attr1", "val1"]];
 
