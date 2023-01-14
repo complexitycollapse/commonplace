@@ -1,10 +1,10 @@
 import { finalObject } from "@commonplace/utils";
-import { RecordLinkParser } from "../record-link-parser";
-import { Rule } from "./rule";
+import { LinkProcessor } from "./link-processor";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
+  let linkProcessor = LinkProcessor(repo);
 
   function build() {
     return buildRecursively(edlPointer, undefined);
@@ -33,7 +33,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let model = EdlModel(edl.type, zettel, links, parent);
 
     connectLinks(links);
-    parseRules(model, links, repo);
+    parseRules(model, links, linkProcessor);
 
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
@@ -62,7 +62,7 @@ function LinkWithIncommingPointers(link, index, linkPointer, depth) {
 
 function EdlModel(type, zettel, links, parent) {
   let model = {
-    type, zettel, links, markupRules: [], semanticRules: [], sequenceRules: []
+    type, zettel, links, markupRules: [], semanticRules: [], potentialSequences: []
   };
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return model;
@@ -85,41 +85,14 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
   targetLink.incomingPointers.push({ pointer, end, link: incomingLink });
 }
 
-function parseRules(model, links, repo) {
+function parseRules(model, links, linkProcessor) {
   Object.values(links).forEach(link => {
     switch (link.type) {
       case "markup":
-        model.markupRules.push(buildMarkupRule(link, repo));
+        model.markupRules.push(linkProcessor.buildMarkupRule(link));
         break;
     }
   });
-}
-
-function buildMarkupRule(link, repo) {
-  function getPointers(name) {
-    let end = link.getEnd(name);
-    return end ? end.pointers : [];
-  }
-
-  function getContent(pointers) {
-    return pointers.map(p => repo.getPartLocally(p).content);
-  }
-
-  function resolveAttribute(attribute) {
-    return Object.fromEntries(
-      Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
-  }
-
-  let targets = getPointers("targets");
-  let linkTypes = getContent(getPointers("link types"));
-  let edlTypes = getContent(getPointers("edl types"));
-  let clipTypes = getContent(getPointers("clip types"));
-  let unresolvedAttributes = RecordLinkParser(link, ["attribute", "value"]);
-
-  let attributes = unresolvedAttributes.map(resolveAttribute);
-
-  let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes);
-  return rule;
 }
 
 export let docModelBuilderTesting = {
