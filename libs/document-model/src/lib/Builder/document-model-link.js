@@ -1,5 +1,6 @@
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
+import { decorateObject } from "@commonplace/utils";
 
 export function DocumentModelLink(link, index, linkPointer, depth, repo) {
   function getPointers(name) {
@@ -26,7 +27,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
 
     let attributes = unresolvedAttributes.map(resolveAttribute);
   
-    let rule = Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes, extraEnds);
+    let rule = decorateObject(Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes, extraEnds), extraEnds);
     return rule;
   }
 
