@@ -13,6 +13,10 @@ export function addProperties(obj, props) {
   });
 }
 
+export function decorateObject(obj, props) {
+  return Object.freeze(Object.assign(Object.create(obj), props));
+}
+
 export function addMethods(obj, props) {
   forAllOwnProperties(props, key => {
     Object.defineProperty(obj, key, {
