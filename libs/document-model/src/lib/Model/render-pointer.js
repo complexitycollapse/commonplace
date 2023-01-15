@@ -48,7 +48,7 @@ export function RenderPointer(pointer, renderEnd) {
     sequenceDetailsEndowments: () => obj.renderLink.sequenceDetailsEndowmentPrototypes(renderEnd, obj).map(createSequenceDetailsEndowmentForPointer),
     allDirectAttributeMetaEndowments: () => obj.renderLink.allDirectAttributeMetaEndowments(obj, renderEnd.end),
     allContentAttributeMetaEndowments: () => obj.renderLink.allContentAttributeMetaEndowments(obj, renderEnd.end),
-    metaSequenceDetailPrototypessFor: targetRenderEnd => obj.renderLink.metaSequenceDetailPrototypessFor(targetRenderEnd, renderEnd)
+    metaSequenceDetailPrototypesFor: targetRenderEnd => obj.renderLink.metaSequenceDetailPrototypesFor(targetRenderEnd, renderEnd)
   });
 }
 

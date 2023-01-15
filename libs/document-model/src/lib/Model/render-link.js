@@ -25,7 +25,7 @@ export function BaseRenderLink(
   {
     directMetaEndowments = () => { return new Map(); },
     contentMetaEndowments = () => { return new Map(); },
-    metaSequenceDetailPrototypessFor = () => undefined
+    metaSequenceDetailPrototypesFor = () => undefined
   } = {}) {
   if (linkIndex === undefined) { throw "BaseRenderLink is missing mandatory argument linkIndex"; }
 
@@ -98,9 +98,9 @@ export function BaseRenderLink(
     getRenderEnd,
     createRenderPointer,
     sequenceDetailsEndowmentPrototypes: renderEnd => modifiers.allPointers
-      .map(m => m.metaSequenceDetailPrototypessFor(renderEnd))
+      .map(m => m.metaSequenceDetailPrototypesFor(renderEnd))
       .filter(x => x !== undefined),
-      metaSequenceDetailPrototypessFor
+      metaSequenceDetailPrototypesFor
   });
 }
 
