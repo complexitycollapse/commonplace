@@ -3,6 +3,8 @@ import { Rule } from "./rule";
 import { decorateObject } from "@commonplace/utils";
 
 export function DocumentModelLink(link, index, linkPointer, depth, repo) {
+  let newLink = Object.create(link, {ends: {value: link.ends.map(e => Object.create(e)), enumerable: true}});
+
   function getPointers(name) {
     let end = link.getEnd(name);
     return end ? end.pointers : [];
@@ -27,11 +29,10 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
 
     let attributes = unresolvedAttributes.map(resolveAttribute);
   
-    let rule = decorateObject(Rule(link, targets, linkTypes, clipTypes, edlTypes, attributes, extraEnds), extraEnds);
+    let rule = decorateObject(Rule(newLink, targets, linkTypes, clipTypes, edlTypes, attributes, extraEnds), extraEnds);
     return rule;
   }
 
-  let newLink = Object.create(link, {ends: {value: link.ends.map(e => Object.create(e)), enumerable: true}});
   newLink.incomingPointers = [];
   newLink.index = index;
   newLink.pointer = linkPointer;

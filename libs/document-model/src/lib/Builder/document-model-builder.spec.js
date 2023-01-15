@@ -201,8 +201,10 @@ describe('build', () => {
   });
 
   describe('markupRules', () => {
-    function markupLink({ name, attributeValues = [], linkTypes, clipTypes, edlTypes } = {}) {
+    function markupLink({ name, attributeValues = [], immediateTargets, linkTypes, clipTypes, edlTypes } = {}) {
       let endSpecs = attributeValues.map(av => [["attribute",[InlinePointer(av[0])]], ["value", [InlinePointer(av[1])]]]).flat();
+
+      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);
@@ -253,13 +255,14 @@ describe('build', () => {
   });
 
   describe('metaEndowmentRules', () => {
-    function metaLink({ name, attributeValues = [], linkTypes, clipTypes, edlTypes, end } = {}) {
+    function metaLink({ name, attributeValues = [], immediateTargets, linkTypes, clipTypes, edlTypes, end } = {}) {
       let endSpecs = attributeValues.map(av => 
         [["attribute",[InlinePointer(av[0])]],
         ["value", [InlinePointer(av[1])]],
         ["inheritance", [InlinePointer(av[2])]]])
       .flat();
       
+      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);
@@ -323,13 +326,10 @@ describe('build', () => {
   });
 
   describe('metaSequenceRules', () => {
-    function metaLink({ name, attributeValues = [], linkTypes, clipTypes, edlTypes, end, type } = {}) {
-      let endSpecs = attributeValues.map(av => 
-        [["attribute",[InlinePointer(av[0])]],
-        ["value", [InlinePointer(av[1])]],
-        ["inheritance", [InlinePointer(av[2])]]])
-      .flat();
-      
+    function metaLink({ name, immediateTargets, linkTypes, clipTypes, edlTypes, end, type } = {}) {
+      let endSpecs = [];
+
+      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);
@@ -349,6 +349,54 @@ describe('build', () => {
 
     it('returns a rule if there is a meta-sequence link', () => {
       expect(make([], [metaLink()]).metaSequenceRules).toHaveLength(1);
+    });
+
+    it('adds the meta-sequence prototype to the targeted end', () => {
+      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let link = ["target", Link(undefined, ["foo", []])];
+
+      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      
+      expect(actualLink.getEnd("foo").sequenceDetailPrototypes).toBeTruthy();
+    });
+
+    it('sets the type property on the prototype to be the type specified in the metalink', () => {
+      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let link = ["target", Link(undefined, ["foo", []])];
+
+      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      
+      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].type).toBe("expected");
+    });
+
+    it('sets the definingLink property on the prototype to be the link it comes from', () => {
+      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let link = ["target", Link(undefined, ["foo", []])];
+
+      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      
+      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].definingLink).toBe(actualLink);
+    });
+
+    it('sets the end property on the prototype to be the end that defines the sequence', () => {
+      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let link = ["target", Link(undefined, ["foo", []])];
+
+      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      
+      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].end).toBe(actualLink.getEnd("foo"));
+    });
+
+    it('sets the signature property on the prototype to an object with the pointers of the link and metalink', () => {
+      let metalink = metaLink({name: "meta", immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let link = ["target", Link(undefined, ["foo", []])];
+
+      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      
+      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].signature).toMatchObject({
+        metalinkPointer: LinkPointer("meta"),
+        linkPointer: LinkPointer("target")
+      });
     });
 
     it('returns a rule for each meta-sequence link', () => {

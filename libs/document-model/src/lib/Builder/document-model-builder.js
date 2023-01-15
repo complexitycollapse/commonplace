@@ -33,6 +33,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
 
     connectLinks(links);
     gatherRules(model, links);
+    applyMetarules(model, links);
 
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
@@ -86,6 +87,37 @@ function gatherRules(model, links) {
       model.metaSequenceRules.push(link.metaSequenceRule);
     }
   });
+}
+
+function applyMetarules(model, links) {
+  links.forEach(link => {
+    let matching = model.metaSequenceRules.filter(r => r.match(link));
+    matching.forEach(rule => {
+      let end = link.getEnd(rule.end);
+      if (end) {
+        ensureAndPush(end, "sequenceDetailPrototypes", createSequenceDetailPrototype(rule, end, link));
+      }
+    });
+  });
+}
+
+function createSequenceDetailPrototype(rule, end, definingLink) {
+  let linkPointer = definingLink.pointer, metalinkPointer = rule.originLink.pointer;
+  return {
+    type: rule.type,
+    end,
+    definingLink,
+    signature: {
+      linkPointer,
+      metalinkPointer,
+      equals: s => linkPointer.denotesSame(s.linkPointer) && metalinkPointer.denotesSame(s.metalinkPointer)
+    }
+  };
+}
+
+function ensureAndPush(object, property, item) {
+  if (object[property] === undefined) { object[property] = [item]; }
+  else { object[property].push(item); }
 }
 
 export let docModelBuilderTesting = {
