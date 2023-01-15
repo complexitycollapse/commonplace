@@ -26,9 +26,10 @@ export function DocumentModelBuilder(edlPointer, repo) {
     linksList = linksList.concat(edl.links.map((x, index) => [repo.getPartLocally(x), index])
       .filter(x => x[0])
       .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo)]));
-    let links = Object.fromEntries(linksList);
+    let linksObject = Object.fromEntries(linksList);
+    let links = Object.values(linksObject);
 
-    let model = EdlModel(edl.type, zettel, links, parent);
+    let model = EdlModel(edl.type, zettel, linksObject, parent);
 
     connectLinks(links);
     gatherRules(model, links);
@@ -57,8 +58,7 @@ function EdlModel(type, zettel, links, parent) {
   return model;
 }
 
-function connectLinks(linksObject) {
-  let links = Object.values(linksObject);
+function connectLinks(links) {
   links.forEach(l1 => addIncomingPointers(l1, links));
 }
 
@@ -74,8 +74,8 @@ function tryAdd(pointer, end, incomingLink, targetLink) {
   targetLink.incomingPointers.push({ pointer, end, link: incomingLink });
 }
 
-function gatherRules(model, linksObj) {
-  Object.values(linksObj).forEach(link => {
+function gatherRules(model, links) {
+  links.forEach(link => {
     if (link.markupRule) {
       model.markupRules.push(link.markupRule);
     }
