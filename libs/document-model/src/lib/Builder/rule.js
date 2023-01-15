@@ -16,22 +16,22 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
 
   function match(target) {
     if (immediateTargets.some(t => t.endowsTo(target.pointer))) {
-      return attributeValuePairs;
+      return true;
     }
 
     if (target.isLink && linkTypes.some(t => t == target.type)) {
-      return attributeValuePairs;
+      return true;
     }
 
     if (target.isClip && clipTypes.some(t => t === target.pointerType)) {
-      return attributeValuePairs;
+      return true;
     }
 
     if (target.isEdl && edlTypes.some(t => t === target.type)) {
-      return attributeValuePairs;
+      return true;
     }
 
-    return [];
+    return false;
   }
 
   return finalObject(obj, {

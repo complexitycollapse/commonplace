@@ -6,10 +6,9 @@ import { DocumentModelLink } from './document-model-link';
 
 const makeLink = DocumentModelLink;
 const addIncoming = docModelBuilderTesting.addIncomingPointers;
-const expectedResult = [["attr1", "val1"]];
 
-function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = [], edlTypes = []} = {}) {
-  return Rule(originLink ?? link("origin"), immediateTargets, linkTypes, clipTypes, edlTypes, expectedResult);
+function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = [], edlTypes = [], attributeValues = []} = {}) {
+  return Rule(originLink ?? link("origin"), immediateTargets, linkTypes, clipTypes, edlTypes, attributeValues);
 }
 
 function link(name, incomingPointers = []) {
@@ -25,60 +24,67 @@ test('originLink set in constructor',  () => {
   expect(rule.originLink).toBe(originLink);
 });
 
+test('attributeValuePairs set in constructor',  () => {
+  let expectedAttributeValues = [["attr1", "val1"]];
+  let rule = make({attributeValues: expectedAttributeValues});
+
+  expect(rule.attributeValuePairs).toEqual(expectedAttributeValues);
+});
+
 describe('Rule.match', () => {
-  it('returns the attributes if there is a direct pointer to the target',  () => {
+  it('returns true if there is a direct pointer to the target',  () => {
     let target = link("link1");
     let rule = make({immediateTargets: [LinkPointer("link1")]});
 
-    expect(rule.match(target)).toBe(expectedResult);
+    expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns NO attributes if there is NO direct pointer to the target',  () => {
+  it('returns false if there is NO direct pointer to the target',  () => {
     let target = link("link1");
     let rule = make({immediateTargets: [LinkPointer("other link")]});
 
-    expect(rule.match(target)).toEqual([]);
+    expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns the attributes if the target is a link and has the specified link type',  () => {
+  it('returns true if the target is a link and has the specified link type',  () => {
     let target = link("link1");
     let rule = make({linkTypes: ["link1"]});
 
-    expect(rule.match(target)).toBe(expectedResult);
+    expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns NO attributes if the target is a link but does not have the specified link type',  () => {
+  it('returns false if the target is a link but does not have the specified link type',  () => {
     let target = link("link1");
     let rule = make({linkTypes: ["other type"]});
 
-    expect(rule.match(target)).toEqual([]);
+    expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns the attributes if the target is a clip and has the specified pointer type',  () => {
+  it('returns true if the target is a clip and has the specified pointer type',  () => {
     let target = Span("origin", 1, 10);
     let rule = make({clipTypes: ["span"]});
 
-    expect(rule.match(target)).toBe(expectedResult);
+    expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns NO attributes if the target is a clip but does not have the specified pointer type',  () => {
+  it('returns false if the target is a clip but does not have the specified pointer type',  () => {
     let target = Span("origin", 1, 10);
     let rule = make({clipTypes: ["box"]});
 
-    expect(rule.match(target)).toEqual([]);
+    expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns the attributes if the target is an EDL and has the specified EDL type',  () => {
+  it('returns true if the target is an EDL and has the specified EDL type',  () => {
     let target = Edl("edl1", [], []);
     let rule = make({edlTypes: ["edl1"]});
 
-    expect(rule.match(target)).toBe(expectedResult);
+    expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns NO attributes if the target is an EDL but it does NOT have the specified EDL type',  () => {
+  it('returns false if the target is an EDL but it does NOT have the specified EDL type',  () => {
     let target = Edl("edl1", [], []);
     let rule = make({edlTypes: ["other EDL type"]});
 
-    expect(rule.match(target)).toEqual([]);
+    expect(rule.match(target)).toBeFalsy();
   });
 });
