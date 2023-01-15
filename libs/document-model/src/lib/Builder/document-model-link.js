@@ -38,5 +38,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
   newLink.depth = depth;
   if (link.type === "markup") { newLink.markupRule = buildRule(["attribute", "value"]); }
   if (link.type === "endows attributes") { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
+  if (link.type === "defines sequence") { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
   return newLink;
 }

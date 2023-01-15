@@ -51,7 +51,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
 
 function EdlModel(type, zettel, links, parent) {
   let model = {
-    type, zettel, links, markupRules: [], metaEndowmentRules: []
+    type, zettel, links, markupRules: [], metaEndowmentRules: [], metaSequenceRules: []
   };
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return model;
@@ -81,6 +81,9 @@ function gatherRules(model, linksObj) {
     }
     if (link.metaEndowmentRule) {
       model.metaEndowmentRules.push(link.metaEndowmentRule);
+    }
+    if (link.metaSequenceRule) {
+      model.metaSequenceRules.push(link.metaSequenceRule);
     }
   });
 }

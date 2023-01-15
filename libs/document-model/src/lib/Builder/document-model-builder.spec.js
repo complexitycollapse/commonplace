@@ -321,4 +321,72 @@ describe('build', () => {
       expect(rule.end).toEqual("expected end");
     });
   });
+
+  describe('metaSequenceRules', () => {
+    function metaLink({ name, attributeValues = [], linkTypes, clipTypes, edlTypes, end, type } = {}) {
+      let endSpecs = attributeValues.map(av => 
+        [["attribute",[InlinePointer(av[0])]],
+        ["value", [InlinePointer(av[1])]],
+        ["inheritance", [InlinePointer(av[2])]]])
+      .flat();
+      
+      if (linkTypes) endSpecs.push(["link types", linkTypes]);
+      if (clipTypes) endSpecs.push(["clip types", clipTypes]);
+      if (edlTypes) endSpecs.push(["edl types", edlTypes]);
+      if (end) endSpecs.push(["end", end]);
+      if (type) endSpecs.push(["type", type]);
+      let link = [
+        name ?? "metalink",
+        Link("defines sequence", ...endSpecs)
+      ];
+      
+      return link;
+    }
+
+    it('is empty if there are no meta-sequence links', () => {
+      expect(make([], [["not a meta-sequence link", true]]).metaSequenceRules).toEqual([]);
+    });
+
+    it('returns a rule if there is a meta-sequence link', () => {
+      expect(make([], [metaLink()]).metaSequenceRules).toHaveLength(1);
+    });
+
+    it('returns a rule for each meta-sequence link', () => {
+      expect(make([], [metaLink({name: "meta1"}), metaLink({name: "meta2"}), metaLink({name: "meta3"})]).metaSequenceRules).toHaveLength(3);
+    });
+
+    it('sets all of the criteria properties to the content values of the link ends', () => {
+      let link = metaLink({
+        clipTypes: [InlinePointer("ct1"), InlinePointer("ct2")],
+        linkTypes: [InlinePointer("lt1"), InlinePointer("lt2")],
+        edlTypes: [InlinePointer("et1"), InlinePointer("et2")]
+      });
+
+      let rule = make([], [link]).metaSequenceRules[0];
+
+      expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
+      expect(rule.linkTypes).toEqual(["lt1", "lt2"]);
+      expect(rule.edlTypes).toEqual(["et1", "et2"]);
+    });
+
+    it('sets the end value on the rule to the content of the end called end', () => {
+      let link = metaLink({
+        end: [InlinePointer("expected "), InlinePointer("end")],
+      });
+
+      let rule = make([], [link]).metaSequenceRules[0];
+
+      expect(rule.end).toEqual("expected end");
+    });
+
+    it('sets the type value on the rule to the content of the end called type', () => {
+      let link = metaLink({
+        type: [InlinePointer("expected "), InlinePointer("type")],
+      });
+
+      let rule = make([], [link]).metaSequenceRules[0];
+
+      expect(rule.type).toEqual("expected type");
+    });
+  });
 });
