@@ -1,4 +1,4 @@
-import { LeafCache } from "@commonplace/core";
+import { LeafCache, Part } from "@commonplace/core";
 import { finalObject, listMapFromList } from "@commonplace/utils";
 
 export function PartRepository(fetcher) {
@@ -82,4 +82,16 @@ export function PartRepository(fetcher) {
     getPartLocally,
     docStatus
   });
+}
+
+export function MockPartRepository(parts) {
+  return { 
+    getPartLocally: pointer => {
+      if (pointer.pointerType === "inline") {
+        return Part(pointer, pointer.inlineText);
+      } else {
+        return parts.find(p => p.pointer.hashableName === pointer.hashableName);
+      }
+    }
+  };
 }

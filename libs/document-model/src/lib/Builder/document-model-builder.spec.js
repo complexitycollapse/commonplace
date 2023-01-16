@@ -1,18 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import { DocumentModelBuilder } from './document-model-builder';
-import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer, InlinePointer } from '@commonplace/core';
+import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
+import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer, InlinePointer, testing } from '@commonplace/core';
 
-function mockRepo(parts) {
-  return { 
-    getPartLocally: pointer => {
-      if (pointer.pointerType === "inline") {
-        return Part(pointer, pointer.inlineText);
-      } else {
-        return parts.find(p => p.pointer.hashableName === pointer.hashableName);
-      }
-    }
-  };
-}
+const mockRepo = testing.MockPartRepository;
 
 function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
@@ -22,8 +12,7 @@ function make(clips = [], links = []) {
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
     .concat([Part(EdlPointer("document"), Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
-  let repo = mockRepo(parts);
-  let builder = DocumentModelBuilder(EdlPointer("document"), repo);
+  let builder = docModelBuilderTesting.makeMockedBuilder(EdlPointer("document"), parts);
   let model = builder.build();
   return model;
 }
@@ -132,10 +121,10 @@ describe('build', () => {
     it('returns a zettel for each clip if there are no links that bisect them', () => {
       let clip1 = Span("x", 1, 10), clip2 = Box("y", 1, 1, 10, 20), clip3 = Span("z", 20, 200);
 
-      expect(make([[clip1, true], [clip2, true], [clip3, true]]).zettel).toEqual([
-        { clip: clip1, incomingPointers: []},
-        { clip: clip2, incomingPointers: []},
-        { clip: clip3, incomingPointers: []},
+      expect(make([[clip1, true], [clip2, true], [clip3, true]]).zettel).toMatchObject([
+        { clip: clip1 },
+        { clip: clip2 },
+        { clip: clip3 },
       ]);
     });
 

@@ -1,6 +1,7 @@
 import { finalObject } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
+import { testing } from '@commonplace/core';
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
@@ -53,7 +54,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
 
 function EdlModel(type, zettel, links, parent) {
   let model = {
-    type, zettel, links, markupRules: [], metaEndowmentRules: [], metaSequenceRules: []
+    type, zettel, links, markupRules: [], metaEndowmentRules: [], metaSequenceRules: [], sequences: []
   };
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return model;
@@ -121,5 +122,9 @@ function ensureAndPush(object, property, item) {
 }
 
 export let docModelBuilderTesting = {
-  addIncomingPointers
+  addIncomingPointers,
+  makeMockedBuilder: function (edlPointer, cachedParts) {
+    let repo = testing.MockPartRepository(cachedParts);
+    return DocumentModelBuilder(edlPointer, repo);
+  }
 };

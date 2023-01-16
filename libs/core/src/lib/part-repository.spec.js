@@ -1,8 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link, Edl } from '@commonplace/core';
-import { EdlZettel, makeTestEdlZettel } from './edl-zettel';
-import { Span, Box, EdlPointer, LinkPointer } from '@commonplace/core';
-import { Part } from '@commonplace/core';
+import { Link, Edl } from './model';
+import { Span, EdlPointer, LinkPointer } from './pointers';
+import { Part } from './part';
 import { PartRepository } from './part-repository';
 
 async function make(nameContentPairs = []) {

@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { FlightComponent } from './flight-component';
-import { Edl, EdlPointer } from '@commonplace/core';
-import { PartRepository, StaticPartFetcher } from '@commonplace/html';
+import { PartRepository, EdlPointer } from '@commonplace/core';
+import { StaticPartFetcher } from '@commonplace/html';
 import { DefaultsEdlZettel } from '@commonplace/document-model';
 
 describe('FlightComponent', () => {
