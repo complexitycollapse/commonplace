@@ -1,4 +1,5 @@
 import { finalObject } from "@commonplace/utils";
+import { Sequence } from "./sequence";
 
 // Attempts to incrementally build a sequence for a particular SequenceDetails, either succeeding
 // if the passed zettel and sequences match the SequenceDetails, or failing if they don't.
@@ -8,7 +9,7 @@ export function SequenceBuildingCursor2(sequenceDetailsPrototype) {
 
 function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, remaining) {
   let obj = {};
-  let { type, definingLink, signature } = sequenceDetailsPrototype;
+  let signature = sequenceDetailsPrototype.signature;
   let current = undefined;
   let validSoFar = true;
   let nestedSequencesStack = [];
@@ -96,16 +97,10 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
     if (!isComplete()) {
       throw "Cannot reify incomplete sequence";
     }
+    
+    let sequence = Sequence(sequenceDetailsPrototype, collected.map(m => m.member));
 
-    let sequence = {
-      definingLink,
-      signature,
-      type,
-      zettel: collected.map(m => m.member),
-      isSequence: true
-    };
-
-    sequence.zettel.forEach(x => x.isSequence ? x.definingLink.sequences.push(sequence) : x.sequences.push(sequence));
+    sequence.members.forEach(z => z.isSequence ? z.definingLink.sequences.push(sequence) : z.sequences.push(sequence));
     collected.forEach(member => member.endowingPointers.forEach(p => p.addValidSequenceEndowed(sequenceDetailsPrototype)));
 
     return sequence;

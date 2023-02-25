@@ -79,7 +79,7 @@ function buildPointerEndLinks(links) {
 }
 
 function Zettel2(clip, incomingPointers) {
-  return { clip, incomingPointers };
+  return { clip, incomingPointers, sequences: [] };
 }
 
 function LinkPointer(clip, end, link) {
