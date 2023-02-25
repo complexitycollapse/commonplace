@@ -346,7 +346,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
       
-      expect(actualLink.getEnd("foo").sequenceDetailPrototypes).toBeTruthy();
+      expect(actualLink.getEnd("foo").sequencePrototypes).toBeTruthy();
     });
 
     it('sets the type property on the prototype to be the type specified in the metalink', () => {
@@ -355,7 +355,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
       
-      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].type).toBe("expected");
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toBe("expected");
     });
 
     it('sets the definingLink property on the prototype to be the link it comes from', () => {
@@ -364,7 +364,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
       
-      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].definingLink).toBe(actualLink);
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].definingLink).toBe(actualLink);
     });
 
     it('sets the end property on the prototype to be the end that defines the sequence', () => {
@@ -373,7 +373,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
       
-      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].end).toBe(actualLink.getEnd("foo"));
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].end).toBe(actualLink.getEnd("foo"));
     });
 
     it('sets the signature property on the prototype to an object with the pointers of the link and metalink', () => {
@@ -382,7 +382,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
       
-      expect(actualLink.getEnd("foo").sequenceDetailPrototypes[0].signature).toMatchObject({
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].signature).toMatchObject({
         metalinkPointer: LinkPointer("meta"),
         linkPointer: LinkPointer("target")
       });

@@ -1,15 +1,15 @@
 import { finalObject } from "@commonplace/utils";
 import { Sequence } from "./sequence";
 
-// Attempts to incrementally build a sequence for a particular SequenceDetails, either succeeding
-// if the passed zettel and sequences match the SequenceDetails, or failing if they don't.
-export function SequenceBuildingCursor2(sequenceDetailsPrototype) {
-  return SequenceBuildingCursorInternal(sequenceDetailsPrototype, [], [...sequenceDetailsPrototype.end.pointers]);
+// Attempts to incrementally build a sequence for a particular SequencePrototype, either succeeding
+// if the passed zettel and sequences that match the SequencePrototype, or failing if they don't.
+export function SequenceBuildingCursor2(sequencePrototype) {
+  return SequenceBuildingCursorInternal(sequencePrototype, [], [...sequencePrototype.end.pointers]);
 }
 
-function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, remaining) {
+function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining) {
   let obj = {};
-  let signature = sequenceDetailsPrototype.signature;
+  let signature = sequencePrototype.signature;
   let current = undefined;
   let validSoFar = true;
   let nestedSequencesStack = [];
@@ -45,8 +45,8 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
   }
 
   function consumeZettelAtTopLevel(zettel) {
-    let sequenceDetails = zettel.potentialSequenceDetails().filter(d => signature.equals(d.signature));
-    if (sequenceDetails.length === 0) {
+    let sequencePrototypes = zettel.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    if (sequencePrototypes.length === 0) {
       validSoFar = false;
       return;
     }
@@ -57,7 +57,7 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
 
     if (nibbled) {
       current = remainder;
-      collected.push(SequenceMember(zettel, sequenceDetails));
+      collected.push(SequenceMember(zettel, sequencePrototypes));
     } else {
       validSoFar = false;
     }
@@ -69,8 +69,8 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
 
     let definingLink = sequence.definingLink;
 
-    let sequenceDetails = definingLink.potentialSequenceDetails().filter(d => signature.equals(d.signature));
-    if (sequenceDetails.length === 0) {
+    let sequencePrototypes = definingLink.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    if (sequencePrototypes.length === 0) {
       validSoFar = false;
       return false;
     }
@@ -80,7 +80,7 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
     let matches = next.denotesSame(definingLink.pointer);
 
     if (matches) {
-      collected.push(SequenceMember(sequence, sequenceDetails));
+      collected.push(SequenceMember(sequence, sequencePrototypes));
     } else {
       validSoFar = false;
     }
@@ -98,16 +98,16 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
       throw "Cannot reify incomplete sequence";
     }
     
-    let sequence = Sequence(sequenceDetailsPrototype, collected.map(m => m.member));
+    let sequence = Sequence(sequencePrototype, collected.map(m => m.member));
 
     sequence.members.forEach(z => z.isSequence ? z.definingLink.sequences.push(sequence) : z.sequences.push(sequence));
-    collected.forEach(member => member.endowingPointers.forEach(p => p.addValidSequenceEndowed(sequenceDetailsPrototype)));
+    collected.forEach(member => member.endowingPointers.forEach(p => p.addValidSequenceEndowed(sequencePrototype)));
 
     return sequence;
   }
 
   function clone() {
-    return SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, [...remaining]);
+    return SequenceBuildingCursorInternal(sequencePrototype, collected, [...remaining]);
   }
 
   function stalledOnLink() {
@@ -128,9 +128,9 @@ function SequenceBuildingCursorInternal(sequenceDetailsPrototype, collected, rem
   });
 }
 
-function SequenceMember(member, sequenceDetails) {
+function SequenceMember(member, sequencePrototypes) {
   return Object.freeze({
     member,
-    endowingPointers: sequenceDetails.map(d => d.endowingPointer)
+    endowingPointers: sequencePrototypes.map(d => d.endowingPointer)
   });
 }

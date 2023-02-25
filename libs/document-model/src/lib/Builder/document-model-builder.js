@@ -2,6 +2,7 @@ import { finalObject } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
 import { testing } from '@commonplace/core';
+import { SequencePrototype } from "./sequence-prototype";
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
@@ -96,24 +97,10 @@ function applyMetarules(model, links) {
     matching.forEach(rule => {
       let end = link.getEnd(rule.end);
       if (end) {
-        ensureAndPush(end, "sequenceDetailPrototypes", SequenceDetailPrototype(rule, end, link));
+        ensureAndPush(end, "sequencePrototypes", SequencePrototype(rule, end, link));
       }
     });
   });
-}
-
-function SequenceDetailPrototype(rule, end, definingLink) {
-  let linkPointer = definingLink.pointer, metalinkPointer = rule.originLink.pointer;
-  return {
-    type: rule.type,
-    end,
-    definingLink,
-    signature: {
-      linkPointer,
-      metalinkPointer,
-      equals: s => linkPointer.denotesSame(s.linkPointer) && metalinkPointer.denotesSame(s.metalinkPointer)
-    }
-  };
 }
 
 function ensureAndPush(object, property, item) {

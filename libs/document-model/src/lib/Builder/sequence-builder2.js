@@ -1,10 +1,10 @@
 import { finalObject } from '@commonplace/utils';
 import { SequenceBuildingCursor2 } from './sequence-building-cursor2';
 
-// Builds all sequences for a given SequenceDetails that are present in a list of zettel
-export function SequenceBuilder2(sequenceDetails) {
+// Builds all sequences for a given SequencePrototype that are present in a list of zettel
+export function SequenceBuilder2(sequencePrototype) {
   let obj = {};
-  let linkDependencies = sequenceDetails.end.pointers.filter(p => p.pointerType === "link");
+  let linkDependencies = sequencePrototype.end.pointers.filter(p => p.pointerType === "link");
 
   function areDependenciesSatisfied(linksWithSequences) {
     return linkDependencies.every(d => linksWithSequences.find(l => l.hashableName === d.hashableName));
@@ -53,7 +53,7 @@ export function SequenceBuilder2(sequenceDetails) {
         }
       });
 
-      let newBuilder = SequenceBuildingCursor2(sequenceDetails);
+      let newBuilder = SequenceBuildingCursor2(sequencePrototype);
       let explodedBuilders = explodeSubsequences(newBuilder, z);
       if (explodedBuilders != undefined) {
         newBuilders = newBuilders.concat(explodedBuilders.filter(c => !c.isComplete()));
