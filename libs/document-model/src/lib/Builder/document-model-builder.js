@@ -97,7 +97,7 @@ function applyMetarules(model, links) {
     matching.forEach(rule => {
       let end = link.getEnd(rule.end);
       if (end) {
-        ensureAndPush(end, "sequencePrototypes", SequencePrototype(rule, end, link));
+        ensureAndPush(end, "sequencePrototypes", SequencePrototype(rule.type, end, link, rule.originLink.pointer));
       }
     });
   });

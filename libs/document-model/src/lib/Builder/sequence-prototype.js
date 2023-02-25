@@ -1,7 +1,7 @@
-export function SequencePrototype(rule, end, definingLink) {
-  let linkPointer = definingLink.pointer, metalinkPointer = rule.originLink.pointer;
+export function SequencePrototype(type, end, definingLink, metalinkPointer) {
+  let linkPointer = definingLink.pointer;
   return {
-    type: rule.type,
+    type,
     end,
     definingLink,
     signature: {
