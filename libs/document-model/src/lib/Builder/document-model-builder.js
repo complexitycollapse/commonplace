@@ -42,7 +42,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
       {
         zettel.push(buildRecursively(c, model));
       } else {
-        let z = ZettelSchneider2(c, linksList.map(x => x[1])).zettel();
+        let z = ZettelSchneider2(c, links).zettel();
         zettel.push(...z);
       }
     });
