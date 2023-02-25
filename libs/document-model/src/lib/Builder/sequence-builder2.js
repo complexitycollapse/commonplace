@@ -6,8 +6,8 @@ export function SequenceBuilder2(sequenceDetails) {
   let obj = {};
   let linkDependencies = sequenceDetails.end.pointers.filter(p => p.pointerType === "link");
 
-  function areDependenciesSatisfied(links) {
-    return linkDependencies.every(d => links.find(l => l.hashableName === d.hashableName));
+  function areDependenciesSatisfied(linksWithSequences) {
+    return linkDependencies.every(d => linksWithSequences.find(l => l.hashableName === d.hashableName));
   }
 
   function sequences(zettel, existingSequences) {
