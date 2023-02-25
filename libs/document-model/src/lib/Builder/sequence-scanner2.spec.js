@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
-import { aMetalink, aSpan, aTargetLink, makeEdlZ } from './group-testing';
-import { SequenceScanner2 } from '../Builder/sequence-scanner2';
+import { aMetalink, aSpan, aTargetLink, makeEdlZ } from '../Groups/group-testing';
+import { SequenceScanner2 } from './sequence-scanner2';
 
 function content(n = 3) {
   return [...Array(n).keys()].map(x => aSpan(x));
