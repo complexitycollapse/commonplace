@@ -189,6 +189,38 @@ describe('build', () => {
     });
   });
 
+  describe('Edls', () => {
+    it('returns an EdlModel for each EDL', () => {
+      let edl1 = Edl(undefined, [], []), edl2 = Edl(undefined, [], []), edl3 = Edl(undefined, [], []);
+
+      expect(make([[EdlPointer("edl1"), edl1], [EdlPointer("edl2"), edl2], [EdlPointer("edl3"), edl3]]).zettel).toMatchObject([
+        { pointer: EdlPointer("edl1") },
+        { pointer: EdlPointer("edl2") },
+        { pointer: EdlPointer("edl3") }
+      ]);
+    });
+
+    it('attaches link pointers to the EDL that they point to', () => {
+      let edl1 = Edl(undefined, [], []);
+      let link1 = Link("link1", [undefined, [EdlPointer("edl1")]]);
+      let link2 = Link("link2", [undefined, [EdlPointer("edl1")]]);
+
+      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1], ["link2", link2]]).zettel;
+
+      expect(zettel[0].incomingPointers[0]).toEqual({ pointer: EdlPointer("edl1"), end: link1.ends[0], link: link1});
+      expect(zettel[0].incomingPointers[1]).toEqual({ pointer: EdlPointer("edl1"), end: link2.ends[0], link: link2});
+    });
+
+    it('does not attach a link to an EDL if it does not point to it', () => {
+      let edl1 = Edl(undefined, [], []);
+      let link1 = Link("link1", [undefined, [EdlPointer("different-edl")]]);
+
+      let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
+
+      expect(zettel[0].incomingPointers).toEqual([]);
+    });
+  });
+
   describe('markupRules', () => {
     function markupLink({ name, attributeValues = [], immediateTargets, linkTypes, clipTypes, edlTypes } = {}) {
       let endSpecs = attributeValues.map(av => [["attribute",[InlinePointer(av[0])]], ["value", [InlinePointer(av[1])]]]).flat();

@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/utils";
+import { finalObject, addProperties } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
 import { testing } from '@commonplace/core';
@@ -20,18 +20,22 @@ export function DocumentModelBuilder(edlPointer, repo) {
     }
 
     let edl = edlPart.content;
-    let linksList = [];
+    let linkPairs = [];
     if (parent) {
-      linksList = Object.entries(parent.links)
+      linkPairs = Object.entries(parent.links)
         .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, repo)]);
     }
-    linksList = linksList.concat(edl.links.map((x, index) => [repo.getPartLocally(x), index])
+    linkPairs = linkPairs.concat(edl.links.map((x, index) => [repo.getPartLocally(x), index])
       .filter(x => x[0])
       .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo)]));
-    let linksObject = Object.fromEntries(linksList);
+    let linksObject = Object.fromEntries(linkPairs);
     let links = Object.values(linksObject);
 
-    let model = EdlModel(edl.type, zettel, linksObject, parent);
+    let pointersToEdl = [];
+    links.forEach(l => l.forEachPointer((pointer, end, link) => {
+      if (pointer.endowsTo(edlPointer)) { pointersToEdl.push({ pointer, end, link }) }
+    }));
+    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl);
 
     connectLinks(links);
     gatherRules(model, links);
@@ -53,12 +57,22 @@ export function DocumentModelBuilder(edlPointer, repo) {
   return finalObject(obj, { build });
 }
 
-function EdlModel(type, zettel, links, parent) {
-  let model = {
-    type, zettel, links, markupRules: [], metaEndowmentRules: [], metaSequenceRules: [], sequences: []
-  };
+function EdlModel(pointer, type, zettel, links, parent, incomingPointers) {
+  let model = addProperties({}, {
+    pointer,
+    type,
+    zettel,
+    links,
+    markupRules: [],
+    metaEndowmentRules: [],
+    metaSequenceRules: [],
+    sequences: [],
+    incomingPointers
+  });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
-  return model;
+  return finalObject(model, {
+    sequencePrototypes: () => incomingPointers.map(p => p.end.sequencePrototypes).flat()
+  });
 }
 
 function connectLinks(links) {
