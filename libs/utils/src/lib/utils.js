@@ -11,6 +11,7 @@ export function addProperties(obj, props) {
       enumerable: true,
     })
   });
+  return obj;
 }
 
 export function decorateObject(obj, props) {
