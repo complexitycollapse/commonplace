@@ -96,13 +96,13 @@ function applyMetarules(model, links) {
     matching.forEach(rule => {
       let end = link.getEnd(rule.end);
       if (end) {
-        ensureAndPush(end, "sequenceDetailPrototypes", createSequenceDetailPrototype(rule, end, link));
+        ensureAndPush(end, "sequenceDetailPrototypes", SequenceDetailPrototype(rule, end, link));
       }
     });
   });
 }
 
-function createSequenceDetailPrototype(rule, end, definingLink) {
+function SequenceDetailPrototype(rule, end, definingLink) {
   let linkPointer = definingLink.pointer, metalinkPointer = rule.originLink.pointer;
   return {
     type: rule.type,
