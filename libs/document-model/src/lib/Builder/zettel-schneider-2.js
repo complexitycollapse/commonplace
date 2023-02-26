@@ -1,18 +1,18 @@
 import { finalObject } from "@commonplace/utils";
+import { IncomingPointer } from "./IncomingPointer";
 import { Zettel } from "./zettel";
 
 export function ZettelSchneider2(clip, links = []) {
   let obj = {};
   
   function zettel() {
-    let clipEndLinks = buildPointerEndLinks(links);
-    let overlappingEntries = clipEndLinks.filter(s => s.pointer.overlaps && s.pointer.overlaps(clip));
+    let incomingPointers = buildIncomingPointers(links, clip);
     let result = undefined;
 
     if (clip.pointerType === "span") {
-      result = mapSpanToZettel(clip, overlappingEntries);
+      result = mapSpanToZettel(clip, incomingPointers);
     } else {
-      let singleZettel = Zettel(clip, overlappingEntries);
+      let singleZettel = Zettel(clip, incomingPointers);
       result = [singleZettel];
     }
 
@@ -56,7 +56,7 @@ export function ZettelSchneider2(clip, links = []) {
   function mapSplitSpanToZettel(span, coveringSpan, parentOverlappingSpans, linksToAdd) {
     let newLinksToAdd = linksToAdd;
     if (coveringSpan) {
-      let newLinkPointer = LinkPointer(coveringSpan.pointer, coveringSpan.end, coveringSpan.link);
+      let newLinkPointer = IncomingPointer(coveringSpan.pointer, coveringSpan.end, coveringSpan.link);
       newLinksToAdd = linksToAdd.concat([newLinkPointer]);
     }
     
@@ -69,16 +69,12 @@ export function ZettelSchneider2(clip, links = []) {
   });
 }
 
-function buildPointerEndLinks(links) {
+function buildIncomingPointers(links, clip) {
   let clipList = [];
   links.forEach(l => l.forEachPointer((p, e, l) => {
-    if (p.isClip) {
-      clipList.push(LinkPointer(p, e, l));
+    if (p.isClip && p.overlaps && p.overlaps(clip)) {
+      clipList.push(IncomingPointer(p, e, l));
     }
   }));
   return clipList;
-}
-
-function LinkPointer(clip, end, link) {
-  return { pointer: clip, end, link };
 }
