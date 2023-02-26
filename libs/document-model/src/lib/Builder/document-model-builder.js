@@ -1,8 +1,9 @@
-import { finalObject, addProperties } from "@commonplace/utils";
+import { finalObject } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider2 } from "./zettel-schneider-2";
 import { testing } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
+import { EdlModel } from "./edl-model";
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
@@ -55,24 +56,6 @@ export function DocumentModelBuilder(edlPointer, repo) {
   }
 
   return finalObject(obj, { build });
-}
-
-function EdlModel(pointer, type, zettel, links, parent, incomingPointers) {
-  let model = addProperties({}, {
-    pointer,
-    type,
-    zettel,
-    links,
-    markupRules: [],
-    metaEndowmentRules: [],
-    metaSequenceRules: [],
-    sequences: [],
-    incomingPointers
-  });
-  Object.defineProperty(model, "parent", { value: parent, enumerable: false});
-  return finalObject(model, {
-    sequencePrototypes: () => incomingPointers.map(p => p.end.sequencePrototypes).flat()
-  });
 }
 
 function connectLinks(links) {
