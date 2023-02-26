@@ -6,6 +6,7 @@ import { LinkPointer } from '@commonplace/core';
 import { Zettel } from './zettel';
 import { IncomingPointer } from './IncomingPointer';
 import { DocumentModelLink } from './document-model-link';
+import { EdlModel } from './edl-model';
 
 function make(content, links) {
   let sequenceDetailsEndowments = makeEdlzAndReturnSequnceDetails(content, links);
@@ -29,7 +30,14 @@ function make2(sequenceElements) {
   
   scenario.cursor = SequenceBuildingCursor2(prototype);
   scenario.consumeZettel = clipBuilder => {
-    return scenario.cursor.consumeZettel(Zettel(clipBuilder.build(), [IncomingPointer(clipBuilder.pointer, sequenceEnd, sequenceLink)]))
+    let clip = clipBuilder.build();
+    let incomingPointer = IncomingPointer(clipBuilder.pointer, sequenceEnd, sequenceLink);
+    return scenario.cursor.consumeZettel(Zettel(clip, [incomingPointer]))
+  }
+  scenario.consumeEdl = edlBuilder => {
+    let edl = edlBuilder.build();
+    let incomingPointer = IncomingPointer(edlBuilder.pointer, sequenceEnd, sequenceLink);
+    return scenario.cursor.consumeZettel(EdlModel(edlBuilder.pointer, edl.type, [], [], undefined, [incomingPointer]));
   }
 
   return scenario;
@@ -64,35 +72,31 @@ describe('consumeZettel', () => {
   it('returns true if clip matches the first pointer in the endset (EDL case)', () => {
     let edl1 = anEdl("edl1"), span2 = aSpan(2);
 
-    expect(make([edl1, span2]).consumeZettel(edl1)).toBe(true);
+    expect(make2([edl1, span2]).consumeEdl(edl1)).toBe(true);
   });
 
   it('returns false if clip does not match the first pointer in the end', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
-    let target = aTargetLink([span1]);
 
-    expect(make([span1, span2], [target, aMetalink(target)]).consumeZettel(span2)).toBe(false);
+    expect(make2([span1, span2]).consumeZettel(span2)).toBe(false);
   });
 
   it('returns false if clip does not match the first pointer in the endset (EDL case)', () => {
     let edl1 = anEdl("edl1"), edl2 = anEdl("end2"), span2 = aSpan(2);
-    let target = aTargetLink([edl1, span2, edl2]);
 
-    expect(make([edl1, span2, edl2], [target, aMetalink(target)]).consumeZettel(edl2)).toBe(false);
+    expect(make2([edl1, span2, edl2]).consumeEdl(edl2)).toBe(false);
   });
 
   it('returns false if clip matches second, not first, pointer in the end', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
-    let target = aTargetLink([span1, span2]);
 
-    expect(make([span1, span2], [target, aMetalink(target)]).consumeZettel(span2)).toBe(false);
+    expect(make2([span1, span2]).consumeZettel(span2)).toBe(false);
   });
 
   it('returns false on the second call if the second pointer does not match the end', () => {
     let span1 = aSpan(1), span2 = aSpan(2), span3 = aSpan(3);
-    let target = aTargetLink([span1, span2]);
 
-    let scenario = make([span1, span2, span3], [target, aMetalink(target)]);
+    let scenario = make2([span1, span2, span3]);
     
     expect(scenario.consumeZettel(span1)).toBe(true);
     expect(scenario.consumeZettel(span3)).toBe(false);
@@ -100,25 +104,22 @@ describe('consumeZettel', () => {
 
   it('returns true on the second call if the second pointer matches the end', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
-    let target = aTargetLink([span1, span2]);
 
-    let scenario = make([span1, span2], [target, aMetalink(target)]);
+    let scenario = make2([span1, span2]);
     
     expect(scenario.consumeZettel(span1)).toBe(true);
     expect(scenario.consumeZettel(span2)).toBe(true);
   });
 
-  it('returns true if clip matches the beginning of the first pointer in the end', () => {
+    it('returns true if clip matches the beginning of the first pointer in the end', () => {
     let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
-    let target = aTargetLink([wholeSpan]);
 
-    expect(make([prefix], [target, aMetalink(target)]).consumeZettel(prefix)).toBe(true);
+    expect(make2([wholeSpan]).consumeZettel(prefix)).toBe(true);
   });
 
-  it('returns false if clip matches the beginning of the first pointer but not the second', () => {
+  it('returns false if clip matches the beginning of the first pointer but not the rest', () => {
     let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20), nextSpan = aSpan(2);
-    let target = aTargetLink([wholeSpan, nextSpan]);
-    let scenario = make([prefix, wholeSpan, nextSpan], [target, aMetalink(target)]);
+    let scenario = make2([wholeSpan]);
 
     expect(scenario.consumeZettel(prefix)).toBe(true);
     expect(scenario.consumeZettel(nextSpan)).toBe(false);
@@ -127,8 +128,7 @@ describe('consumeZettel', () => {
   it('returns true if clip matches the beginning of the first pointer and then the rest of the first pointer', () => {
     let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
     let remaining = aSpan(1, 10).withStart(prefix.build().next);
-    let target = aTargetLink([wholeSpan]);
-    let scenario = make([prefix, remaining, wholeSpan], [target, aMetalink(target)]);
+    let scenario = make2([prefix, remaining, wholeSpan]);
 
     expect(scenario.consumeZettel(prefix)).toBe(true);
     expect(scenario.consumeZettel(remaining)).toBe(true);
