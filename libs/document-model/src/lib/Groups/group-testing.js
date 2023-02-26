@@ -8,6 +8,11 @@ export function aTargetLink(spans, { endName = "grouping end", name = "target" }
   return LinkBuilder(undefined, [endName, spans]).withName(name);
 }
 
+export function aTargetLink2(spanBuilders, { endName = "grouping end", name = "target" } = {}) {
+  spanBuilders.forEach(s => s.build());
+  return LinkBuilder(undefined, [endName, spanBuilders.map(s => s.pointer)]).withName(name);
+}
+
 export function aMetalink(target, name = "metalink", type) {
   let builder = LinkBuilder(sequenceMetalinkType, ["target", [target]], [undefined, [InlinePointer("grouping end")]]).withName(name);
   if (type !== undefined) { builder.withEnd(EndBuilder(["type", [InlinePointer(type)]])); }
