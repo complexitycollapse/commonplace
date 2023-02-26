@@ -41,11 +41,11 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
       return consumeZettelInNestedSequence(zettel);
     }
 
-    return currentSequenceElement.clip.denotesSame(zettel.clip);
+    return currentSequenceElement.pointer.denotesSame(zettel.pointer);
   }
 
   function consumeZettelAtTopLevel(zettel) {
-    let sequencePrototypes = zettel.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    let sequencePrototypes = zettel.sequencePrototypes().filter(p => signature.equals(p.signature));
     if (sequencePrototypes.length === 0) {
       validSoFar = false;
       return;
@@ -53,7 +53,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
 
     if (current === undefined) { current = remaining.shift(); }
     
-    let { nibbled, remainder } = current.nibble(zettel.clip);
+    let { nibbled, remainder } = current.nibble(zettel.pointer);
 
     if (nibbled) {
       current = remainder;
@@ -69,7 +69,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
 
     let definingLink = sequence.definingLink;
 
-    let sequencePrototypes = definingLink.potentialSequenceDetails().filter(d => signature.equals(d.signature));
+    let sequencePrototypes = definingLink.sequencePrototypes().filter(p => signature.equals(p.signature));
     if (sequencePrototypes.length === 0) {
       validSoFar = false;
       return false;
@@ -129,8 +129,10 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
 }
 
 function SequenceMember(member, sequencePrototypes) {
+  // TODO SequencePrototype doesn't even have an endowingPointer property.
+  // Wrong name or not needed?
   return Object.freeze({
     member,
-    endowingPointers: sequencePrototypes.map(d => d.endowingPointer)
+    endowingPointers: sequencePrototypes.map(p => p.endowingPointer)
   });
 }
