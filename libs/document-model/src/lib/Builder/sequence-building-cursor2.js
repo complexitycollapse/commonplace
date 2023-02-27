@@ -37,7 +37,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     let currentSequenceElement = currentSequence.shift();
 
     if (currentSequenceElement.isSequence) {
-      nestedSequencesStack.unshift([...currentSequenceElement.zettel]);
+      nestedSequencesStack.unshift([...currentSequenceElement.members]);
       return consumeZettelInNestedSequence(zettel);
     }
 
@@ -85,7 +85,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
       validSoFar = false;
     }
 
-    nestedSequencesStack.unshift([...sequence.zettel]);
+    nestedSequencesStack.unshift([...sequence.members]);
     return validSoFar;
   }
 
