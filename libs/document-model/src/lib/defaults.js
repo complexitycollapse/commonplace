@@ -1,33 +1,36 @@
-import { Edl, Link } from "@commonplace/core";
-import { contentMetalinkType, directMetalinkType } from "./Model/render-link";
-import { InlinePointer, LinkPointer } from "@commonplace/core";
-import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
+import { Edl, Link, InlinePointer, LinkPointer, EdlPointer } from "@commonplace/core";
+import { DocumentModelBuilder } from './Builder/document-model-builder';
 
-function makeEnds(types, attribute, value, hasValueEnd, valueEnd) {
+function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
-  let ends = []; // [...types.map(type => [undefined, [LinkTypePointer(type)]]), ["attribute", [InlinePointer(attribute)]]];
+  let ends = [
+    ["link types", types.map(t => InlinePointer(t))],
+    ["attribute", [InlinePointer(attribute)]],
+    ["inheritance", [InlinePointer(inheritance)]]
+  ];
+    
   if (value !== undefined) {
     ends.push(["value", [InlinePointer(value)]]);
   }
 
   if (hasValueEnd) {
-    ends.push(["value end", [InlinePointer(valueEnd)]]);
+    ends.push(["end", [InlinePointer(valueEnd)]]);
   }
 
   return ends;
 }
 
 function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
-  let ends = makeEnds(type, attribute, value, hasValueEnd, valueEnd);
-  return Link(contentMetalinkType, ...ends);
+  let ends = makeEnds("content", type, attribute, value, hasValueEnd, valueEnd);
+  return Link("endows attributes", ...ends);
 }
 
 function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
-  let ends = makeEnds(type, attribute, value, hasValueEnd, valueEnd);
-  return Link(directMetalinkType, ...ends);
+  let ends = makeEnds("direct", type, attribute, value, hasValueEnd, valueEnd);
+  return Link("endows attributes", ...ends);
 }
 
-let defaultsLinks = [
+export let defaultsLinks = [
   contentAttribute("bold", "bold", true),
   directAttribute("paragraph", "paragraph", true),
   contentAttribute("italic", "italic", true),
@@ -51,8 +54,15 @@ let defaultsLinks = [
   //Link("block", [undefined, [EdlTypePointer("paragraph")]])
 ];
 
-let defaultsEdl = Edl("defaults", [], defaultsLinks.map(link => LinkPointer("defaults:" + link.type)));
+function deriveLinkPointer(link) {
+  let targetType = link.getEnd("link types").pointers[0].inlineText;
+  return LinkPointer("defaults:" + targetType);
+}
 
-export function DefaultsEdlZettel() {
-  return EdlZettel(defaultsPointer, undefined, [], "defaults", defaultsEdl, defaultsLinks, []);
+export const defaultsPointer = EdlPointer("defaults");
+
+export const defaultsEdl = Edl("defaults", [], defaultsLinks.map(deriveLinkPointer));
+
+export function DefaultsDocModel(repo) {
+  return DocumentModelBuilder(defaultsPointer, repo).build();
 }

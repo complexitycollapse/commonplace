@@ -87,6 +87,7 @@ export function PartRepository(fetcher) {
 
 export function MockPartRepository(parts) {
   return { 
+    parts,
     getPartLocally: pointer => {
       if (pointer.pointerType === "inline") {
         return Part(pointer, pointer.inlineText);

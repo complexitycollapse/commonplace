@@ -21,14 +21,8 @@ export function DocumentModelBuilder(edlPointer, repo) {
     }
 
     let edl = edlPart.content;
-    let linkPairs = [];
-    if (parent) {
-      linkPairs = Object.entries(parent.links)
-        .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, repo)]);
-    }
-    linkPairs = linkPairs.concat(edl.links.map((x, index) => [repo.getPartLocally(x), index])
-      .filter(x => x[0])
-      .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo)]));
+    let linkPairs = createLinkPairs(edl, repo, parent);
+
     let linksObject = Object.fromEntries(linkPairs);
     let links = Object.values(linksObject);
 
@@ -56,6 +50,24 @@ export function DocumentModelBuilder(edlPointer, repo) {
   }
 
   return finalObject(obj, { build });
+}
+
+function createLinkPairs(edl, repo, parent) {
+  let linkPairs = [];
+
+  if (parent) {
+    linkPairs = Object.entries(parent.links)
+      .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, repo)]);
+  }
+
+  let childParts = edl.links.map((x, index) => [repo.getPartLocally(x), index]);
+  let childPairs = childParts
+  .filter(x => x[0])
+  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo)]);
+
+  linkPairs = linkPairs.concat(childPairs);
+
+  return linkPairs;
 }
 
 function connectLinks(links) {
