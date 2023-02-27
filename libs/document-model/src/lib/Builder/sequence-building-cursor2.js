@@ -45,8 +45,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
   }
 
   function consumeZettelAtTopLevel(zettel) {
-    let sequencePrototypes = zettel.sequencePrototypes().filter(p => signature.equals(p.signature));
-    if (sequencePrototypes.length === 0) {
+    if (!zettel.sequencePrototypes().some(p => signature.equals(p.signature))) {
       validSoFar = false;
       return;
     }
@@ -57,7 +56,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
 
     if (nibbled) {
       current = remainder;
-      collected.push(SequenceMember(zettel, sequencePrototypes));
+      collected.push(zettel);
     } else {
       validSoFar = false;
     }
@@ -69,8 +68,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
 
     let definingLink = sequence.definingLink;
 
-    let sequencePrototypes = definingLink.sequencePrototypes().filter(p => signature.equals(p.signature));
-    if (sequencePrototypes.length === 0) {
+    if (!definingLink.sequencePrototypes().some(p => signature.equals(p.signature))) {
       validSoFar = false;
       return false;
     }
@@ -80,7 +78,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     let matches = next.denotesSame(definingLink.pointer);
 
     if (matches) {
-      collected.push(SequenceMember(sequence, sequencePrototypes));
+      collected.push(sequence);
     } else {
       validSoFar = false;
     }
@@ -98,7 +96,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
       throw "Cannot reify incomplete sequence";
     }
     
-    let sequence = Sequence(sequencePrototype, collected.map(m => m.member));
+    let sequence = Sequence(sequencePrototype, collected);
 
     sequence.members.forEach(z => z.isSequence ? z.definingLink.sequences.push(sequence) : z.sequences.push(sequence));
 
@@ -124,14 +122,5 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     pushSequence,
     clone,
     stalledOnLink
-  });
-}
-
-function SequenceMember(member, sequencePrototypes) {
-  // TODO SequencePrototype doesn't even have an endowingPointer property.
-  // Wrong name or not needed?
-  return Object.freeze({
-    member,
-    endowingPointers: sequencePrototypes.map(p => p.endowingPointer)
   });
 }
