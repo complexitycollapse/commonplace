@@ -52,6 +52,7 @@ function make2(sequenceElements) {
   scenario.consumeSequence = sequence => {
     return scenario.cursor.consumeSequence(sequence.build());
   }
+  scenario.isComplete = () => scenario.cursor.isComplete();
 
   return scenario;
 }
@@ -201,65 +202,59 @@ describe('consumeSequence', () => {
   });
 });
 
-// describe('isComplete', () => {
-//   it('returns false if consumeZettel has not been called', () => {
-//     let span = aSpan();
-//     let target = aTargetLink([span]);
+describe('isComplete', () => {
+  it('returns false if consumeZettel has not been called', () => {
+    let span = aSpan();
 
-//     expect(make([span], [target, aMetalink(target)]).isComplete()).toBe(false);
-//   });
+    expect(make2([span]).isComplete()).toBe(false);
+  });
 
-//   it('returns false if consumeZettel did not match the first pointer', () => {
-//     let span1 = aSpan(1), span2 = aSpan(2);
-//     let target = aTargetLink([span1]);
-//     let scenario = make([span1, span2], [target, aMetalink(target)]);
+  it('returns false if consumeZettel did not match the first pointer', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let scenario = make2([span1, span2]);
 
-//     scenario.consumeZettel(span2);
+    scenario.consumeZettel(span2);
     
-//     expect(scenario.isComplete()).toBe(false);
-//   });
+    expect(scenario.isComplete()).toBe(false);
+  });
 
-//   it('returns true if consumeZettel matched the only pointer in the end', () => {
-//     let span = aSpan();
-//     let target = aTargetLink([span]);
-//     let scenario = make([span], [target, aMetalink(target)]);
+  it('returns true if consumeZettel matched the only pointer in the end', () => {
+    let span = aSpan();
+    let scenario = make2([span]);
 
-//     scenario.consumeZettel(span);
+    scenario.consumeZettel(span);
 
-//     expect(scenario.isComplete()).toBe(true);
-//   });
+    expect(scenario.isComplete()).toBe(true);
+  });
 
-//   it('returns false if consumeZettel matched the first pointer but there is still another in the end', () => {
-//     let span1 = aSpan(1), span2 = aSpan(2);
-//     let target = aTargetLink([span1, span2]);
-//     let scenario = make([span1, span2], [target, aMetalink(target)]);
+  it('returns false if consumeZettel matched the first pointer but there is still another in the end', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let scenario = make2([span1, span2]);
 
-//     scenario.consumeZettel(span1);
+    scenario.consumeZettel(span1);
 
-//     expect(scenario.isComplete()).toBe(false);
-//   });
+    expect(scenario.isComplete()).toBe(false);
+  });
 
-//   it('returns false if consumeZettel matched only the beginning of the span', () => {
-//     let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
-//     let target = aTargetLink([wholeSpan]);
-//     let scenario = make([prefix], [target, aMetalink(target)]);
+  it('returns false if consumeZettel matched only the beginning of the span', () => {
+    let prefix = aSpan(1, 10), wholeSpan = aSpan(1, 20);
+    let scenario = make2([wholeSpan]);
 
-//     scenario.consumeZettel(prefix);
+    scenario.consumeZettel(prefix);
 
-//     expect(scenario.isComplete()).toBe(false);
-//   });
+    expect(scenario.isComplete()).toBe(false);
+  });
 
-//   it('returns true if consumeZettel matched all pointers in the end', () => {
-//     let span1 = aSpan(1), span2 = aSpan(2);
-//     let target = aTargetLink([span1, span2]);
-//     let scenario = make([span1, span2], [target, aMetalink(target)]);
+  it('returns true if consumeZettel matched all pointers in the end', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let scenario = make2([span1, span2]);
 
-//     scenario.consumeZettel(span1);
-//     scenario.consumeZettel(span2);
+    scenario.consumeZettel(span1);
+    scenario.consumeZettel(span2);
 
-//     expect(scenario.isComplete()).toBe(true);
-//   });
-// });
+    expect(scenario.isComplete()).toBe(true);
+  });
+});
 
 // describe('pushSequence', () => {
 //   it('throws an exception if the sequence is not complete', () => {
