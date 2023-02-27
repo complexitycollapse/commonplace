@@ -1,6 +1,9 @@
 import { it, describe, expect } from '@jest/globals';
-import { aMetalink, aSpan, aTargetLink, makeEdlZ } from '../Groups/group-testing';
+import { aMetalink, aSpan, aTargetLink } from '../Groups/group-testing';
 import { SequenceScanner2 } from './sequence-scanner2';
+import { docModelBuilderTesting } from './document-model-builder';
+import { Part } from '@commonplace/core';
+import { EdlBuilder } from '../Testing/test-builders';
 
 function content(n = 3) {
   return [...Array(n).keys()].map(x => aSpan(x));
@@ -8,12 +11,21 @@ function content(n = 3) {
 
 function makeSequenceLink(spans, name = "target", type) {
   let link = aTargetLink(spans, { name });
-  let metalink = aMetalink(link, name, type);
+  let metalink = aMetalink(link, "metalink-" + name, type);
   return [link, metalink];
 }
 
-function scan(content, ...links){
-  return SequenceScanner2(makeEdlZ(content, links.flat())).sequences();
+function scan(content, ...links) {
+  links = links.flat()
+  let docBuilder = EdlBuilder("document").withClips(...content).withLinks(...links);
+  let allBuilders = [docBuilder].concat(content, links);
+  let parts = allBuilders.map(b => {
+    b.build();
+    return Part(b.pointer, b.builtObject);
+  })
+  let builder = docModelBuilderTesting.makeMockedBuilder(docBuilder.pointer, parts);
+  let docModel = builder.build();
+  return SequenceScanner2(docModel).sequences();
 }
 
 function sequenceFor(sequences, linkAndMetalink) {
@@ -47,12 +59,6 @@ describe('first level sequences', () => {
     expect(scan(spans, makeSequenceLink(spans, "target1"), makeSequenceLink(spans, "target2"))).toHaveLength(2);
   });
 
-  it('returns a sequence for each matching link/metalink combination', () => {
-    let spans = content();
-    // The target links are identical so both metalinks point at both targets
-    expect(scan(spans, makeSequenceLink(spans), makeSequenceLink(spans))).toHaveLength(4);
-  });
-
   it('returns a sequence for each metalink on a matching link', () => {
     let spans = content();
     let target = aTargetLink(spans);
@@ -61,26 +67,25 @@ describe('first level sequences', () => {
     expect(scan(spans, [target, metalink1, metalink2])).toHaveLength(2);
   });
 
-  it('returns a sequence that contains the zettel in the sequence', () => {
-    let sequenceSpans = content();
+  it('returns a sequence whose members correspond to the matched sequence items', () => {
+    let sequenceSpans = content(3);
     let allSpans = [aSpan(10), ...sequenceSpans, aSpan(11)];
 
     let sequence = scan(allSpans, makeSequenceLink(sequenceSpans))[0];
     
-    let children = sequenceSpans[0].edlZ.children;
-    expect(sequence.zettel[0]).toBe(children[1]);
-    expect(sequence.zettel[1]).toBe(children[2]);
-    expect(sequence.zettel[2]).toBe(children[3]);
+    expect(sequence.members).toHaveLength(3);
+    expect(sequence.members[0].clip).toEqual(sequenceSpans[0].builtObject);
+    expect(sequence.members[1].clip).toEqual(sequenceSpans[1].builtObject);
+    expect(sequence.members[2].clip).toEqual(sequenceSpans[2].builtObject);
   });
 
-  it('returns a sequence that has definingLink set to the RenderLink that defines it', () => {
+  it('returns a sequence that has definingLink set to the link that defines it', () => {
     let spans = content();
     let [definingLink, metalink] = makeSequenceLink(spans);
 
     let sequence = scan(spans, [definingLink, metalink])[0];
     
-    let expectedRenderLink = spans[0].edlZ.getRenderLinkForPointer(definingLink.pointer);
-    expect(sequence.definingLink).toBe(expectedRenderLink);
+    expect(sequence.definingLink).toMatchObject(definingLink.builtObject);
   });
 
   it('returns a sequence that has the type specified by the metapointer', () => {
@@ -145,15 +150,15 @@ describe('second level sequences', () => {
     let sequence = sequenceFor(sequences, grandparentSequence);
 
     expect(sequence).toBeTruthy();
-    expect(sequence.zettel[0].zettel[0].clip.denotesSame(spans[0].pointer)).toBeTruthy();
-    expect(sequence.zettel[0].zettel[1].zettel[0].clip.denotesSame(spans[1].pointer)).toBeTruthy();
-    expect(sequence.zettel[0].zettel[1].zettel[1].clip.denotesSame(spans[2].pointer)).toBeTruthy();
-    expect(sequence.zettel[0].zettel[1].zettel[2].clip.denotesSame(spans[3].pointer)).toBeTruthy();
-    expect(sequence.zettel[0].zettel[2].clip.denotesSame(spans[4].pointer)).toBeTruthy();
-    expect(sequence.zettel[1].clip.denotesSame(spans[5].pointer)).toBeTruthy();
-    expect(sequence.zettel[2].zettel[0].clip.denotesSame(spans[6].pointer)).toBeTruthy();
-    expect(sequence.zettel[2].zettel[1].clip.denotesSame(spans[7].pointer)).toBeTruthy();
-    expect(sequence.zettel[3].clip.denotesSame(spans[8].pointer)).toBeTruthy();
-    expect(sequence.zettel[4].clip.denotesSame(spans[9].pointer)).toBeTruthy();
+    expect(sequence.members[0].members[0].clip.denotesSame(spans[0].pointer)).toBeTruthy();
+    expect(sequence.members[0].members[1].members[0].clip.denotesSame(spans[1].pointer)).toBeTruthy();
+    expect(sequence.members[0].members[1].members[1].clip.denotesSame(spans[2].pointer)).toBeTruthy();
+    expect(sequence.members[0].members[1].members[2].clip.denotesSame(spans[3].pointer)).toBeTruthy();
+    expect(sequence.members[0].members[2].clip.denotesSame(spans[4].pointer)).toBeTruthy();
+    expect(sequence.members[1].clip.denotesSame(spans[5].pointer)).toBeTruthy();
+    expect(sequence.members[2].members[0].clip.denotesSame(spans[6].pointer)).toBeTruthy();
+    expect(sequence.members[2].members[1].clip.denotesSame(spans[7].pointer)).toBeTruthy();
+    expect(sequence.members[3].clip.denotesSame(spans[8].pointer)).toBeTruthy();
+    expect(sequence.members[4].clip.denotesSame(spans[9].pointer)).toBeTruthy();
   });
 });

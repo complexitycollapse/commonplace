@@ -1,13 +1,14 @@
 import { finalObject } from "@commonplace/utils";
 import { SequenceBuilder2 } from "./sequence-builder2";
 
-// Scans through an edlZettel and creates all of its valid sequences
-export function SequenceScanner2(edlZettel) {
+// Scans through a Document Model and adds all of its valid sequences
+export function SequenceScanner2(docModel) {
   let obj = {};
 
   function makeAllBuilders() {
-    let allSequenceDetails = edlZettel.renderLinks.map(l => l.renderEnds.map(e => l.sequenceDetailsEndowmentPrototypes(e)).flat()).flat();
-    let builders = allSequenceDetails.map(SequenceBuilder2);
+    let links = Object.values(docModel.links);
+    let allSequencePrototypes = links.map(l => l.ends.map(e => e.sequencePrototypes ?? []).flat()).flat();
+    let builders = allSequencePrototypes.map(SequenceBuilder2);
     return builders;
   }
 
@@ -26,7 +27,7 @@ export function SequenceScanner2(edlZettel) {
       let buildersToTry = getBuildersWithSatisfiedDependencies(builders, linksWithSequences);
       
       buildersToTry.forEach(b => {
-        let sequences = b.sequences(edlZettel.children, createdSequences);
+        let sequences = b.sequences(docModel.zettel, createdSequences);
         if (sequences.length > 0) {
           newSequencesMade = true;
           linksWithSequences.push(sequences[0].definingLink.pointer);
@@ -40,8 +41,6 @@ export function SequenceScanner2(edlZettel) {
 
     return createdSequences;
   }
-
-  
 
   return finalObject(obj, {
     sequences    

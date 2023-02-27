@@ -3,10 +3,36 @@ import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 
 export function DocumentModelLink(link, index, linkPointer, depth, repo) {
-  let newLink = Object.create(link, {ends: {value: link.ends.map(e => Object.create(e)), enumerable: true}});
+  function docModelEnd(end) {
+    let dme = Object.create(end);
+    dme.sequencePrototypes = [];
+    return dme;
+  }
+
+  let newLink = Object.create(link, {ends: {value: link.ends.map(docModelEnd), enumerable: true}});
 
   addMethods(newLink, {
-    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat()
+    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
+    getEnd: (name, index = 0) => {
+      if (index < 0) { throw `Invalid index passed to getEnd: ${index}`; }
+      for(let i = 0; i < newLink.ends.length; ++i) {
+        let cur = newLink.ends[i];
+        if (cur.name === name) {
+          if (index > 0) {
+            --index;
+          } else {
+            return cur;
+          }
+        }
+      }
+    },
+    forEachPointer: fn => {
+      newLink.ends.forEach(e => {
+        e.pointers.forEach(p => {
+          fn(p, e, newLink);
+        });
+      });
+    }
   })
 
   function getPointers(name) {

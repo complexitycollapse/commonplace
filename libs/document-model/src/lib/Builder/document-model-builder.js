@@ -94,15 +94,10 @@ function applyMetarules(model, links) {
     matching.forEach(rule => {
       let end = link.getEnd(rule.end);
       if (end) {
-        ensureAndPush(end, "sequencePrototypes", SequencePrototype(rule.type, end, link, rule.originLink.pointer));
+        end.sequencePrototypes.push(SequencePrototype(rule.type, end, link, rule.originLink.pointer));
       }
     });
   });
-}
-
-function ensureAndPush(object, property, item) {
-  if (object[property] === undefined) { object[property] = [item]; }
-  else { object[property].push(item); }
 }
 
 export let docModelBuilderTesting = {

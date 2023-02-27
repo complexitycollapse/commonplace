@@ -86,7 +86,7 @@ describe('build', () => {
       expect(incoming).toHaveLength(1);
       expect(incoming[0].link).toMatchObject(link2);
       expect(incoming[0].pointer).toEqual(LinkPointer("link1"));
-      expect(incoming[0].end).toEqual(link2.ends[0]);
+      expect(incoming[0].end).toMatchObject(link2.ends[0]);
     });
 
     it('interlinks all links in the scope of a child EDL', () => {
@@ -146,8 +146,8 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", link1], ["link2", link2]]).zettel;
 
-      expect(zettel[0].incomingPointers[0]).toEqual({ pointer: Span("x", 1, 20), end: link1.ends[0], link: link1});
-      expect(zettel[0].incomingPointers[1]).toEqual({ pointer: Span("x", 1, 30), end: link2.ends[0], link: link2});
+      expect(zettel[0].incomingPointers[0]).toMatchObject({ pointer: Span("x", 1, 20), end: link1.ends[0], link: link1});
+      expect(zettel[0].incomingPointers[1]).toMatchObject({ pointer: Span("x", 1, 30), end: link2.ends[0], link: link2});
     });
 
     it('does not attach a link to a zettel if it does not point to it', () => {
@@ -173,7 +173,7 @@ describe('build', () => {
       expect(child.zettel[0].clip).toEqual(clip1);
       expect(Object.entries(child.links)).toHaveLength(1);
       expect(child.links[LinkPointer("link1").hashableName]).toMatchObject(link1);
-      expect(child.zettel[0].incomingPointers[0].link).toEqual(link1);
+      expect(child.zettel[0].incomingPointers[0].link).toMatchObject(link1);
     });
 
     it('splits a clip in a child EDL into multiple zettel if the clip is bisected by a link in the parent', () => {
@@ -207,8 +207,8 @@ describe('build', () => {
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1], ["link2", link2]]).zettel;
 
-      expect(zettel[0].incomingPointers[0]).toEqual({ pointer: EdlPointer("edl1"), end: link1.ends[0], link: link1});
-      expect(zettel[0].incomingPointers[1]).toEqual({ pointer: EdlPointer("edl1"), end: link2.ends[0], link: link2});
+      expect(zettel[0].incomingPointers[0]).toMatchObject({ pointer: EdlPointer("edl1"), end: link1.ends[0], link: link1});
+      expect(zettel[0].incomingPointers[1]).toMatchObject({ pointer: EdlPointer("edl1"), end: link2.ends[0], link: link2});
     });
 
     it('does not attach a link to an EDL if it does not point to it', () => {
