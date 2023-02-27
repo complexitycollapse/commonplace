@@ -101,7 +101,6 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     let sequence = Sequence(sequencePrototype, collected.map(m => m.member));
 
     sequence.members.forEach(z => z.isSequence ? z.definingLink.sequences.push(sequence) : z.sequences.push(sequence));
-    collected.forEach(member => member.endowingPointers.forEach(p => p.addValidSequenceEndowed(sequencePrototype)));
 
     return sequence;
   }

@@ -38,6 +38,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
   }
 
   newLink.incomingPointers = [];
+  newLink.sequences = [];
   newLink.index = index;
   newLink.pointer = linkPointer;
   newLink.depth = depth;

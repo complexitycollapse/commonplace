@@ -41,8 +41,10 @@ function make2(sequenceElements) {
   scenario.consumeZettel = clipBuilder => {
     let clip = clipBuilder.build();
     let incomingPointer = IncomingPointer(clipBuilder.pointer, sequenceEnd, sequenceLink);
+    let zettel = Zettel(clip, [incomingPointer]);
+    clipBuilder.zettel = zettel;
 
-    return scenario.cursor.consumeZettel(Zettel(clip, [incomingPointer]))
+    return scenario.cursor.consumeZettel(zettel)
   }
   scenario.consumeEdl = edlBuilder => {
     let edl = edlBuilder.build();
@@ -53,6 +55,7 @@ function make2(sequenceElements) {
     return scenario.cursor.consumeSequence(sequence.build());
   }
   scenario.isComplete = () => scenario.cursor.isComplete();
+  scenario.pushSequence = () => scenario.cursor.pushSequence();
 
   return scenario;
 }
@@ -256,43 +259,44 @@ describe('isComplete', () => {
   });
 });
 
-// describe('pushSequence', () => {
-//   it('throws an exception if the sequence is not complete', () => {
-//     let span = aSpan();
-//     let target = aTargetLink([span]);
+describe('pushSequence', () => {
+  it('throws an exception if the sequence is not complete', () => {
+    let span = aSpan();
 
-//     expect(() => make([span], [target, aMetalink(target)]).pushSequence()).toThrow();
-//   });
+    expect(() => make2([span]).pushSequence()).toThrow();
+  });
 
-//   it('does not throw if the sequence is complete', () => {
-//     let span = aSpan();
-//     let target = aTargetLink([span]);
-//     let scenario = make([span], [target, aMetalink(target)]);
+  it('does not throw if the sequence is complete', () => {
+    let span = aSpan();
+    let scenario = make2([span]);
 
-//     scenario.consumeZettel(span);
+    scenario.consumeZettel(span);
 
-//     expect(() => scenario.pushSequence()).not.toThrow();
-//   });
+    expect(() => scenario.pushSequence()).not.toThrow();
+  });
 
-//   it('pushes the sequence on the sequences properties of the zettel in the sequence', () => {
-//     let span1 = aSpan(1), span2 = aSpan(2);
-//     let target = aTargetLink([span1, span2]);
-    
-//     // The EdlZettel will call pushSequence when it resolves its sequences
-//     make([span1, span2], [target, aMetalink(target)]);
+  it('pushes the sequence on the sequences properties of the zettel in the sequence', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let scenario = make2([span1, span2]);
+    scenario.consumeZettel(span1);
+    scenario.consumeZettel(span2);
 
-//     expect(span1.edlZ.children[0].sequences).toHaveLength(1);
-//     expect(span2.edlZ.children[1].sequences).toHaveLength(1);
-//   });
+    scenario.pushSequence();
 
-//   it('pushes the parent sequence on the sequences properties of the child sequence links', () => {
-//     let span1 = aSpan(1), span2 = aSpan(2);
-//     let childSequenceLink = aTargetLink([span1, span2], { name: "child"});
-//     let parentSequenceLink = aTargetLink([childSequenceLink], { name: "parent" });
+    expect(span1.zettel.sequences).toHaveLength(1);
+    expect(span2.zettel.sequences).toHaveLength(1);
+  });
 
-//     // The EdlZettel will call pushSequence when it resolves its sequences
-//     make([span1, span2], [parentSequenceLink, childSequenceLink, aMetalink(parentSequenceLink), aMetalink(childSequenceLink)]);
+  it('pushes the parent sequence on the sequences properties of the child sequence links', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let [childSequenceLink, childSequence] = sequenceAndLink([span1, span2]);
+    let scenario = make2([childSequenceLink]);
+    scenario.consumeSequence(childSequence);
+    scenario.consumeZettel(span1);
+    scenario.consumeZettel(span2);
 
-//     expect(span1.edlZ.renderLinks[1].sequences).toHaveLength(1);
-//   });
-// });
+    scenario.pushSequence();
+
+    expect(childSequenceLink.builtObject.sequences).toHaveLength(1);
+  });
+});
