@@ -2,6 +2,7 @@ import { contentMetalinkType, directMetalinkType, sequenceMetalinkType } from ".
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
 import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
+import { Sequence } from "../Builder/sequence";
 
 export function Builder(buildFn, extensions) {
   let obj = {
@@ -187,4 +188,12 @@ export function EdlZettelBuilder(edl) {
   });
 
   return obj;
+}
+
+export function wrap(object, pointer) {
+  return Builder(() => object, { pointer });
+}
+
+export function SequenceBuilder(prototype, members) {
+  return wrap(Sequence(prototype, members));
 }
