@@ -1,9 +1,13 @@
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
-import { decorateObject } from "@commonplace/utils";
+import { decorateObject, addMethods } from "@commonplace/utils";
 
 export function DocumentModelLink(link, index, linkPointer, depth, repo) {
   let newLink = Object.create(link, {ends: {value: link.ends.map(e => Object.create(e)), enumerable: true}});
+
+  addMethods(newLink, {
+    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat()
+  })
 
   function getPointers(name) {
     let end = link.getEnd(name);
