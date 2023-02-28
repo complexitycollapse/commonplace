@@ -3,7 +3,7 @@ import { Sequence } from "./sequence";
 
 // Attempts to incrementally build a sequence for a particular SequencePrototype, either succeeding
 // if the passed zettel and sequences that match the SequencePrototype, or failing if they don't.
-export function SequenceBuildingCursor2(sequencePrototype) {
+export function SequenceBuildingCursor(sequencePrototype) {
   return SequenceBuildingCursorInternal(sequencePrototype, [], [...sequencePrototype.end.pointers]);
 }
 

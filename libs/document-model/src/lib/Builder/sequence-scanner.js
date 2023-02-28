@@ -1,14 +1,14 @@
 import { finalObject } from "@commonplace/utils";
-import { SequenceBuilder2 } from "./sequence-builder2";
+import { SequenceBuilder } from "./sequence-builder";
 
 // Scans through a Document Model and adds all of its valid sequences
-export function SequenceScanner2(docModel) {
+export function SequenceScanner(docModel) {
   let obj = {};
 
   function makeAllBuilders() {
     let links = Object.values(docModel.links);
     let allSequencePrototypes = links.map(l => l.ends.map(e => e.sequencePrototypes ?? []).flat()).flat();
-    let builders = allSequencePrototypes.map(SequenceBuilder2);
+    let builders = allSequencePrototypes.map(SequenceBuilder);
     return builders;
   }
 

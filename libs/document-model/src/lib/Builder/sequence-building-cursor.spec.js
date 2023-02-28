@@ -1,5 +1,5 @@
 import { it, describe, expect, test } from '@jest/globals';
-import { SequenceBuildingCursor2 } from './sequence-building-cursor2';
+import { SequenceBuildingCursor } from './sequence-building-cursor';
 import { anEdl, aSpan, aTargetLink2, } from '../Groups/group-testing';
 import { SequencePrototype } from './sequence-prototype';
 import { LinkPointer } from '@commonplace/core';
@@ -24,7 +24,7 @@ function make(sequenceElements) {
     }
   });
 
-  scenario.cursor = SequenceBuildingCursor2(prototype);
+  scenario.cursor = SequenceBuildingCursor(prototype);
   scenario.consumeZettel = clipBuilder => {
     let clip = clipBuilder.build();
     let incomingPointer = IncomingPointer(clipBuilder.pointer, sequenceEnd, sequenceLink);

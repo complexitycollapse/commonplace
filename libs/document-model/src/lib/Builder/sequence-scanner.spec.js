@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { aMetalink, aSpan, aTargetLink } from '../Groups/group-testing';
-import { SequenceScanner2 } from './sequence-scanner2';
+import { SequenceScanner } from './sequence-scanner';
 import { docModelBuilderTesting } from './document-model-builder';
 import { Part } from '@commonplace/core';
 import { EdlBuilder } from '../Testing/test-builders';
@@ -25,7 +25,7 @@ function scan(content, ...links) {
   })
   let builder = docModelBuilderTesting.makeMockedBuilder(docBuilder.pointer, parts);
   let docModel = builder.build();
-  return SequenceScanner2(docModel).sequences();
+  return SequenceScanner(docModel).sequences();
 }
 
 function sequenceFor(sequences, linkAndMetalink) {
