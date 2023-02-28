@@ -1,6 +1,6 @@
 import { finalObject } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
-import { ZettelSchneider2 } from "./zettel-schneider-2";
+import { ZettelSchneider } from "./zettel-schneider";
 import { testing } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
@@ -41,7 +41,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
       {
         zettel.push(buildRecursively(c, model));
       } else {
-        let z = ZettelSchneider2(c, links).zettel();
+        let z = ZettelSchneider(c, links).zettel();
         zettel.push(...z);
       }
     });

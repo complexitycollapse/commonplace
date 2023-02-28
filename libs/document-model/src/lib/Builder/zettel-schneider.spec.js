@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { ZettelSchneider2 } from './zettel-schneider-2';
+import { ZettelSchneider } from './zettel-schneider';
 import { testing, Span, Box } from '@commonplace/core';
 
 let makeSpanLink = (...args) => {
@@ -45,7 +45,7 @@ function hasEnd(zettel, link, index = 0) {
 }
 
 function make(clip, renderLinks) {
-  return ZettelSchneider2(clip, renderLinks);
+  return ZettelSchneider(clip, renderLinks);
 }
 
 expect.extend({

@@ -2,7 +2,7 @@ import { finalObject } from "@commonplace/utils";
 import { IncomingPointer } from "./IncomingPointer";
 import { Zettel } from "./zettel";
 
-export function ZettelSchneider2(clip, links = []) {
+export function ZettelSchneider(clip, links = []) {
   let obj = {};
   
   function zettel() {
