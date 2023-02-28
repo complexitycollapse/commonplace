@@ -1,10 +1,10 @@
 import { EdlPointer } from '@commonplace/core';
-import { DefaultsEdlZettel } from '@commonplace/document-model';
+import { DefaultsDocModel } from '@commonplace/document-model';
 import { FlightComponent } from '@commonplace/components';
 import { StaticPartFetcher, PartRepository } from '@commonplace/html';
 
 let repository = PartRepository(StaticPartFetcher("/assets/content/", fetch));
-let defaults = DefaultsEdlZettel().renderLinks;
+let defaults = DefaultsDocModel();
 
 export function App() {
     return (
