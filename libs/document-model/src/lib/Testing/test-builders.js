@@ -1,7 +1,5 @@
-import { contentMetalinkType, directMetalinkType, sequenceMetalinkType } from "./Model/render-link";
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
-import { defaultsPointer, EdlZettel } from "./Model/edl-zettel";
 import { Sequence } from "../Builder/sequence";
 
 export function Builder(buildFn, extensions) {
@@ -105,13 +103,13 @@ export function MetalinkBuilder(directOrContent) {
 
   switch(directOrContent) {
     case ("direct"):
-      type = directMetalinkType;
+      type = "endows attributes";
       break;
     case ("content"):
-      type = contentMetalinkType;
+      type = "endows attributes";
       break;
     case ("sequence"):
-      type = sequenceMetalinkType;
+      type = "defines sequence";
       break;
     default:
       type = directOrContent;
@@ -167,24 +165,6 @@ export function EdlBuilder(name = "foo") {
         if (b.isEdl) { yield* b.allClipParts(); }
       }
     }
-  });
-
-  return obj;
-}
-
-export function EdlZettelBuilder(edl) {
-  let obj = Builder(obj => {
-    let edl = obj.edl.build();
-    let defaultEdl = EdlBuilder(defaultsPointer.edlName).withLinks(...obj.defaults);
-    let defaultLinks = obj.defaults.map(d => d.build());
-    let defaultEdlZ = EdlZettel(defaultEdl.pointer, undefined, [], "1", defaultEdl.build(), defaultLinks, []);
-    return EdlZettel(
-      obj.edl.pointer, undefined, defaultEdlZ.renderLinks, "1", edl, undefined, [...obj.edl.allLinkParts(), ...obj.edl.allClipParts()]);
-  }, {
-    edl,
-    defaults: [],
-    withLinks: (...links) => { edl.withLinks(...links); return obj; },
-    withDefaults: (...links) => { links.forEach(link => obj.pushTo("defaults", link)); return obj; }
   });
 
   return obj;
