@@ -1,5 +1,5 @@
 import { finalObject } from "@commonplace/utils";
-import { IncomingPointer } from "./IncomingPointer";
+import { IncomingPointer } from "./incoming-pointer";
 import { Zettel } from "./zettel";
 
 export function ZettelSchneider(clip, links = []) {

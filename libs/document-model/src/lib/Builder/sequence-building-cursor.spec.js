@@ -4,7 +4,7 @@ import { anEdl, aSpan, aTargetLink2, } from '../Groups/group-testing';
 import { SequencePrototype } from './sequence-prototype';
 import { LinkPointer } from '@commonplace/core';
 import { Zettel } from './zettel';
-import { IncomingPointer } from './IncomingPointer';
+import { IncomingPointer } from './incoming-pointer';
 import { DocumentModelLink } from './document-model-link';
 import { EdlModel } from './edl-model';
 import { SequenceBuilder, wrap } from '../Testing/test-builders';
