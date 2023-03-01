@@ -17,8 +17,19 @@ export function SequenceBuilder(sequencePrototype) {
     function explodeSubsequences(b, zettel) {
       let requiredLink = b.stalledOnLink();
   
+      function isPotentialNestedSequence(sequence) {
+        let definedByRequiredLink = sequence.definingLink.pointer.denotesSame(requiredLink);
+        if (!definedByRequiredLink) { return false; }
+
+        let firstZettelMember = sequence.members[0];
+        for(; firstZettelMember.isSequence; firstZettelMember = firstZettelMember.members[0]);
+
+        let isInCorrectPlace = firstZettelMember == zettel;
+        return definedByRequiredLink && isInCorrectPlace;
+      }
+
       if (requiredLink) {
-        let matchingSequences = existingSequences.filter(s => s.definingLink.pointer.denotesSame(requiredLink));
+        let matchingSequences = existingSequences.filter(isPotentialNestedSequence);
         let cursorsForSequences = matchingSequences.map(s => {
           let newCursor = b.clone();
           newCursor.consumeSequence(s);

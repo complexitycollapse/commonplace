@@ -42,6 +42,11 @@ describe('first level sequences', () => {
     expect(scan(spans, makeSequenceLink(spans))).toHaveLength(1);
   });
 
+  it('returns no sequences for an empty sequence', () => {
+    let spans = content();
+    expect(scan(spans, makeSequenceLink([]))).toHaveLength(0);
+  });
+
   it('returns a sequence even when other spans are not part of the sequence', () => {
     let sequenceSpans = content();
     let allSpans = [aSpan(10), ...sequenceSpans, aSpan(11)];
@@ -160,5 +165,17 @@ describe('second level sequences', () => {
     expect(sequence.members[2].members[1].clip.denotesSame(spans[7].pointer)).toBeTruthy();
     expect(sequence.members[3].clip.denotesSame(spans[8].pointer)).toBeTruthy();
     expect(sequence.members[4].clip.denotesSame(spans[9].pointer)).toBeTruthy();
+  });
+
+  it('constructs a parent sequence containing the nested child, not any other sequence created by the child link', () => {
+    let span1 = aSpan(1), span2 = aSpan(2);
+    let childSequence = makeSequenceLink([span1], "child");
+    let parentSequence = makeSequenceLink([childSequence[0], span2]);
+
+    // The child sequence matches in two places but only one of them is part of the parent sequence.
+    // So there are 3 sequences in total.
+    let sequences = scan([span1, span1, span2], childSequence, parentSequence);
+
+    expect(sequences).toHaveLength(3);
   });
 });

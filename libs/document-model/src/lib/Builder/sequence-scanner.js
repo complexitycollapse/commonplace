@@ -6,8 +6,9 @@ export function SequenceScanner(docModel) {
   let obj = {};
 
   function makeAllBuilders() {
-    let links = Object.values(docModel.links);
-    let allSequencePrototypes = links.map(l => l.ends.map(e => e.sequencePrototypes ?? []).flat()).flat();
+    // A sequence of length zero is not valid, so exclude them.
+    let validEnds = Object.values(docModel.links).map(l => l.ends.filter(e => e.pointers.length > 0)).flat();
+    let allSequencePrototypes = validEnds.map(e => e.sequencePrototypes ?? []).flat();
     let builders = allSequencePrototypes.map(SequenceBuilder);
     return builders;
   }
