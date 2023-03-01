@@ -1,36 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { aMetalink, aSpan, aTargetLink } from '../Groups/group-testing';
-import { SequenceScanner } from './sequence-scanner';
-import { docModelBuilderTesting } from './document-model-builder';
-import { Part } from '@commonplace/core';
-import { EdlBuilder } from '../Testing/test-builders';
-
-function content(n = 3) {
-  return [...Array(n).keys()].map(x => aSpan(x));
-}
-
-function makeSequenceLink(spans, name = "target", type) {
-  let link = aTargetLink(spans, { name });
-  let metalink = aMetalink(link, "metalink-" + name, type);
-  return [link, metalink];
-}
-
-function scan(content, ...links) {
-  links = links.flat()
-  let docBuilder = EdlBuilder("document").withClips(...content).withLinks(...links);
-  let allBuilders = [docBuilder].concat(content, links);
-  let parts = allBuilders.map(b => {
-    b.build();
-    return Part(b.pointer, b.builtObject);
-  })
-  let builder = docModelBuilderTesting.makeMockedBuilder(docBuilder.pointer, parts);
-  let docModel = builder.build();
-  return SequenceScanner(docModel).sequences();
-}
-
-function sequenceFor(sequences, linkAndMetalink) {
-  return sequences.find(s => s.definingLink.pointer.denotesSame(linkAndMetalink[0].pointer));
-}
+import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Groups/group-testing';
 
 describe('first level sequences', () => {
   it('returns no sequences if there were none in the EDL', () => {

@@ -98,7 +98,14 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     
     let sequence = Sequence(sequencePrototype, collected);
 
-    sequence.members.forEach(z => z.isSequence ? z.definingLink.sequences.push(sequence) : z.sequences.push(sequence));
+    sequence.members.forEach(z => {
+      if (z.isSequence) {
+        z.definingLink.sequences.push(sequence);
+        z.isSubordinated = true;
+      } else {
+        z.sequences.push(sequence);
+      }
+    });
 
     return sequence;
   }

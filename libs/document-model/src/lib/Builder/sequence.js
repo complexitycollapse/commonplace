@@ -4,7 +4,8 @@ export function Sequence(sequencePrototype, members) {
     signature: sequencePrototype.signature,
     type: sequencePrototype.type,
     members,
-    isSequence: true
+    isSequence: true,
+    isSubordinated: false
   };
 
   return sequence;

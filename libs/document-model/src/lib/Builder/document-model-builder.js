@@ -4,9 +4,11 @@ import { ZettelSchneider } from "./zettel-schneider";
 import { testing } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
+import { SequenceScanner } from './sequence-scanner';
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
+
   function build() {
     return buildRecursively(edlPointer, undefined);
   }
@@ -45,6 +47,9 @@ export function DocumentModelBuilder(edlPointer, repo) {
         zettel.push(...z);
       }
     });
+
+    let sequences = SequenceScanner(zettel, links).sequences();
+    model.setContainedSequences(sequences);
 
     return finalObject(model, {});
   }
