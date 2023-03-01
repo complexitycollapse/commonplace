@@ -19,7 +19,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let edlPart = repo.getPartLocally(edlPointer);
 
     if (edlPart === undefined) {
-      return EdlModel("missing EDL", [], [], undefined);
+      return EdlModel(edlPointer, "missing EDL", [], [], undefined, []);
     }
 
     let edl = edlPart.content;

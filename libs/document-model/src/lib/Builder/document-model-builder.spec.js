@@ -8,11 +8,12 @@ function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
 }
 
-function make(clips = [], links = []) {
+function make(clips = [], links = [], edlPointer) {
+  edlPointer = edlPointer ?? EdlPointer("document");
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
-    .concat([Part(EdlPointer("document"), Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
-  let builder = docModelBuilderTesting.makeMockedBuilder(EdlPointer("document"), parts);
+    .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
+  let builder = docModelBuilderTesting.makeMockedBuilder(edlPointer, parts);
   let model = builder.build();
   return model;
 }
@@ -110,6 +111,15 @@ describe('build', () => {
       let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
 
       expect(getLink(links, "link1").incomingPointers).toHaveLength(0);
+    });
+
+    it('links to the EDL itself', () => {
+      let link = Link("link1", [undefined, [EdlPointer("edl1")]]);
+      
+      let model = make([], [["link1", link]], EdlPointer("edl1"));
+
+      expect(model.incomingPointers).toHaveLength(1);
+      expect(model.incomingPointers[0].link).toMatchObject(link);
     });
   });
 
