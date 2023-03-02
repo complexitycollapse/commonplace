@@ -59,9 +59,11 @@ function deriveLinkPointer(link) {
   return LinkPointer("defaults:" + targetType);
 }
 
+export const defaultsType = "defaults";
+
 export const defaultsPointer = EdlPointer("defaults");
 
-export const defaultsEdl = Edl("defaults", [], defaultsLinks.map(deriveLinkPointer));
+export const defaultsEdl = Edl(defaultsType, [], defaultsLinks.map(deriveLinkPointer));
 
 export function DefaultsDocModel(repo) {
   return DocumentModelBuilder(defaultsPointer, repo).build();

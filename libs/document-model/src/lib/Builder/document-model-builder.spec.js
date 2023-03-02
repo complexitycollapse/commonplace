@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
 import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer, InlinePointer, testing } from '@commonplace/core';
+import { defaultsPointer, defaultsType } from '../defaults';
 
 const mockRepo = testing.MockPartRepository;
 
@@ -38,6 +39,10 @@ describe('build', () => {
 
     it('does not return a link under its hashable name if it is NOT present in the repo', () => {
       expect(getLink(make([], [["link1", false]]).links, "link1")).toBeFalsy();
+    });
+
+    it('sets isDefault on the link to false', () => {
+      expect(getLink(make([], [["link1", true]]).links, "link1").isDefault).toBeFalsy();
     });
 
     it('returns links in an EDL AND its parent', () => {
@@ -466,6 +471,62 @@ describe('build', () => {
       let rule = make([], [link]).metaSequenceRules[0];
 
       expect(rule.type).toEqual("expected type");
+    });
+  });
+
+  describe('defaultLinks', () => {
+    it('is {} when there are no defaults', () => {
+      expect(make().defaultsLinks).toEqual({});
+    });
+
+    it('returns all defaults links found in the repo', () => {
+      let edl = Edl("expected type", [], []);
+      let edlPointer = EdlPointer("testedl");
+      let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1"), LinkPointer("default2")]);
+      let defaultLink1 = Link("d1"), defaultLink2 = Link("d2");
+      let parts = [
+        Part(edlPointer, edl),
+        Part(defaultsPointer, defaultsEdl),
+        Part(LinkPointer("default1"), defaultLink1),
+        Part(LinkPointer("default2"), defaultLink2)
+      ];
+
+      let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
+      
+      expect(getLink(defaults, "default1")).toMatchObject(defaultLink1);
+      expect(getLink(defaults, "default2")).toMatchObject(defaultLink2);
+    });
+
+    it('returns defaults with isDefault set to true', () => {
+      let edl = Edl("expected type", [], []);
+      let edlPointer = EdlPointer("testedl");
+      let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1")]);
+      let parts = [
+        Part(edlPointer, edl),
+        Part(defaultsPointer, defaultsEdl),
+        Part(LinkPointer("default1"), Link("d1")),
+      ];
+
+      let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
+      
+      expect(getLink(defaults, "default1").isDefault).toBeTruthy();
+    });
+
+    it('will be interlinked to Edl links', () => {
+      let edl = Edl("expected type", [], [LinkPointer("link1")]);
+      let targetLink = Link("target type"), defaultLink = Link("d1", [undefined, [LinkPointer("link1")]]);
+      let edlPointer = EdlPointer("testedl");
+      let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1")]);
+      let parts = [
+        Part(edlPointer, edl),
+        Part(defaultsPointer, defaultsEdl),
+        Part(LinkPointer("default1"), defaultLink),
+        Part(LinkPointer("link1"), targetLink)
+      ];
+
+      let model = DocumentModelBuilder(edlPointer, mockRepo(parts)).build();
+      
+      expect(getLink(model.links, "link1").incomingPointers[0].link).toMatchObject(defaultLink);
     });
   });
 });

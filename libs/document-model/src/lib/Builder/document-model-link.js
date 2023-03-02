@@ -2,7 +2,7 @@ import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 
-export function DocumentModelLink(link, index, linkPointer, depth, repo) {
+export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
@@ -63,6 +63,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo) {
     return rule;
   }
 
+  newLink.isDefault = isDefault
   newLink.incomingPointers = [];
   newLink.sequences = [];
   newLink.index = index;

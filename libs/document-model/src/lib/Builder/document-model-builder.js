@@ -5,6 +5,7 @@ import { testing } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
+import { defaultsPointer } from "../defaults";
 
 export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
@@ -19,24 +20,29 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let edlPart = repo.getPartLocally(edlPointer);
 
     if (edlPart === undefined) {
-      return EdlModel(edlPointer, "missing EDL", [], [], undefined, []);
+      return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {});
     }
 
     let edl = edlPart.content;
-    let linkPairs = createLinkPairs(edl, repo, parent);
 
+    let defaultsEdl = repo.getPartLocally(defaultsPointer)?.content;
+    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, repo, undefined, true)) : {};
+
+    let linkPairs = createLinkPairs(edl, repo, parent);
     let linksObject = Object.fromEntries(linkPairs);
     let links = Object.values(linksObject);
+    let allLinks = links.concat(Object.values(defaults));
 
     let pointersToEdl = [];
     links.forEach(l => l.forEachPointer((pointer, end, link) => {
       if (pointer.endowsTo(edlPointer)) { pointersToEdl.push({ pointer, end, link }) }
     }));
-    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl);
 
-    connectLinks(links);
-    gatherRules(model, links);
-    applyMetarules(model, links);
+    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults);
+
+    connectLinks(allLinks);
+    gatherRules(model, allLinks);
+    applyMetarules(model, allLinks);
 
     edl.clips.forEach(c => {
       if (c.pointerType === "edl")
@@ -57,7 +63,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
   return finalObject(obj, { build });
 }
 
-function createLinkPairs(edl, repo, parent) {
+function createLinkPairs(edl, repo, parent, isDefault) {
   let linkPairs = [];
 
   if (parent) {
@@ -68,7 +74,7 @@ function createLinkPairs(edl, repo, parent) {
   let childParts = edl.links.map((x, index) => [repo.getPartLocally(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
-  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo)]);
+  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo, isDefault)]);
 
   linkPairs = linkPairs.concat(childPairs);
 
