@@ -1,6 +1,6 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 
-export function EdlModel(pointer, type, zettel, links, parent, incomingPointers, defaultsLinks) {
+export function EdlModel(pointer, type, zettel, links, parent, incomingPointers, defaultsLinks, key) {
   let containedSequences = [];
 
   let model = addProperties({}, {
@@ -13,7 +13,8 @@ export function EdlModel(pointer, type, zettel, links, parent, incomingPointers,
     metaSequenceRules: [],
     sequences: [],
     incomingPointers,
-    defaultsLinks
+    defaultsLinks,
+    key
   });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return finalObject(model, {

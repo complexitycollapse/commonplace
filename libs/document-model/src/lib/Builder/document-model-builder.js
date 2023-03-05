@@ -11,16 +11,18 @@ export function DocumentModelBuilder(edlPointer, repo) {
   let obj = {};
 
   function build() {
-    return buildRecursively(edlPointer, undefined);
+    return buildRecursively(edlPointer, undefined, undefined);
   }
 
-  function buildRecursively(edlPointer, parent) {
+  function buildRecursively(edlPointer, parent, indexInParent) {
     let zettel = [];
 
     let edlPart = repo.getPartLocally(edlPointer);
 
+    let key = parent ? parent.key + ":" + indexInParent.toString() : "1";
+
     if (edlPart === undefined) {
-      return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {});
+      return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {}, key);
     }
 
     let edl = edlPart.content;
@@ -38,18 +40,18 @@ export function DocumentModelBuilder(edlPointer, repo) {
       if (pointer.endowsTo(edlPointer)) { pointersToEdl.push({ pointer, end, link }) }
     }));
 
-    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults);
+    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults, key);
 
     connectLinks(allLinks);
     gatherRules(model, allLinks);
     applyMetarules(model, allLinks);
 
-    edl.clips.forEach(c => {
+    edl.clips.forEach((c, i) => {
       if (c.pointerType === "edl")
       {
-        zettel.push(buildRecursively(c, model));
+        zettel.push(buildRecursively(c, model, i));
       } else {
-        let z = ZettelSchneider(c, links).zettel();
+        let z = ZettelSchneider(c, links, key, i).zettel();
         zettel.push(...z);
       }
     });

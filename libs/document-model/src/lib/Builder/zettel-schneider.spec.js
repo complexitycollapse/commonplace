@@ -45,7 +45,7 @@ function hasEnd(zettel, link, index = 0) {
 }
 
 function make(clip, renderLinks) {
-  return ZettelSchneider(clip, renderLinks);
+  return ZettelSchneider(clip, renderLinks, "1", 0);
 }
 
 expect.extend({

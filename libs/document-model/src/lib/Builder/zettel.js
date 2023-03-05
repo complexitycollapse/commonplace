@@ -1,11 +1,12 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 
-export function Zettel(clip, incomingPointers) {
+export function Zettel(clip, incomingPointers, key) {
   let obj = addProperties({}, {
     clip,
     pointer: clip,
     incomingPointers,
-    sequences: []
+    sequences: [],
+    key
   })
 
   return finalObject(obj, {
