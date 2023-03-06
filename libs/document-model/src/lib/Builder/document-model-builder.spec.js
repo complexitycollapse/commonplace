@@ -556,8 +556,8 @@ describe('build', () => {
         [[Span("x", 1, 10), true], [Box("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]],
         [["link1", true], ["link2", true]]);
 
-      expect(getLink(model.links, "link1").key).toBe("1:0")
-      expect(getLink(model.links, "link2").key).toBe("1:1")
+      expect(getLink(model.links, "link1").key).toBe("1:0");
+      expect(getLink(model.links, "link2").key).toBe("1:1");
       expect(model.zettel[0].key).toBe("1:2:0");
       expect(model.zettel[1].key).toBe("1:3");
       expect(model.zettel[2].key).toBe("1:4:0");
@@ -571,6 +571,15 @@ describe('build', () => {
 
       expect(zettel[0].key).toBe("1:1:0");
       expect(zettel[1].key).toBe("1:1:1");
+    });
+
+    it('is set to a subkey on children of a child EDL', () => {
+      let clip1 = Span("x", 1, 10);
+      let edl1 = Edl("nested EDL", [clip1], []);
+
+      let zettel = make([[EdlPointer("edl1"), edl1]]).zettel;
+
+      expect(zettel[0].zettel[0].key).toBe("1:0:0:0");
     });
   });
 });
