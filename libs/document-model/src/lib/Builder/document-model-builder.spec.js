@@ -547,12 +547,20 @@ describe('build', () => {
       expect(make([[EdlPointer("edl1"), Edl(undefined, [], [])]]).zettel[0].key).toBe("1:0");
     });
 
-    it('is set to unique values on different children', () => {
-      let zettel = make([[Span("x", 1, 10), true], [Box("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]]).zettel;
+    it('is set to 1:0 on the first child link', () => {
+      expect(getLink(make([], [["link1", true]]).links, "link1").key).toEqual("1:0");
+    });
 
-      expect(zettel[0].key).toBe("1:0:0");
-      expect(zettel[1].key).toBe("1:1");
-      expect(zettel[2].key).toBe("1:2:0");
+    it('is set to unique values on different children', () => {
+      let model = make(
+        [[Span("x", 1, 10), true], [Box("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]],
+        [["link1", true], ["link2", true]]);
+
+      expect(getLink(model.links, "link1").key).toBe("1:0")
+      expect(getLink(model.links, "link2").key).toBe("1:1")
+      expect(model.zettel[0].key).toBe("1:2:0");
+      expect(model.zettel[1].key).toBe("1:3");
+      expect(model.zettel[2].key).toBe("1:4:0");
     });
 
     it('is set to unique values on zettel produced by a schneidered span', () => {
@@ -561,8 +569,8 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", link]]).zettel;
 
-      expect(zettel[0].key).toBe("1:0:0");
-      expect(zettel[1].key).toBe("1:0:1");
+      expect(zettel[0].key).toBe("1:1:0");
+      expect(zettel[1].key).toBe("1:1:1");
     });
   });
 });

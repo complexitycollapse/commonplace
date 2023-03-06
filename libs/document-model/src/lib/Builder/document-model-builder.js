@@ -28,9 +28,12 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let edl = edlPart.content;
 
     let defaultsEdl = repo.getPartLocally(defaultsPointer)?.content;
-    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, repo, undefined, true)) : {};
+    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, repo, undefined, true, key, 0)) : {};
 
-    let linkPairs = createLinkPairs(edl, repo, parent);
+    let keyCounter = defaultsEdl?.links?.length ?? 0;
+
+    let linkPairs = createLinkPairs(edl, repo, parent, false, key, keyCounter);
+    keyCounter += linkPairs.length;
     let linksObject = Object.fromEntries(linkPairs);
     let links = Object.values(linksObject);
     let allLinks = links.concat(Object.values(defaults));
@@ -51,7 +54,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
       {
         zettel.push(buildRecursively(c, model, i));
       } else {
-        let z = ZettelSchneider(c, links, key, i).zettel();
+        let z = ZettelSchneider(c, links, key, keyCounter + i).zettel();
         zettel.push(...z);
       }
     });
@@ -65,18 +68,39 @@ export function DocumentModelBuilder(edlPointer, repo) {
   return finalObject(obj, { build });
 }
 
-function createLinkPairs(edl, repo, parent, isDefault) {
+function createLinkPairs(edl, repo, parent, isDefault, edlKey, keyBase) {
   let linkPairs = [];
+  let keyCount = keyBase;
 
   if (parent) {
     linkPairs = Object.entries(parent.links)
-      .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, repo)]);
+      .map(([key, link]) => [
+        key,
+        DocumentModelLink(
+          Object.getPrototypeOf(link),
+          link.index,
+          link.pointer,
+          link.depth + 1,
+          repo,
+          false,
+          edlKey + ":" + (keyCount++).toString()
+         )]);
   }
 
   let childParts = edl.links.map((x, index) => [repo.getPartLocally(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
-  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo, isDefault)]);
+    .map(([part, index]) => [
+      part.pointer.hashableName,
+      DocumentModelLink(
+        part.content,
+        index,
+        part.pointer,
+        0,
+        repo,
+        isDefault,
+        edlKey + ":" + (keyCount++).toString()
+      )]);
 
   linkPairs = linkPairs.concat(childPairs);
 
