@@ -1,5 +1,5 @@
 import { InlinePointer } from "@commonplace/core";
-import { EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "../Testing/test-builders";
+import { EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "./test-builders";
 import { SequenceScanner } from '../Builder/sequence-scanner';
 import { docModelBuilderTesting } from '../Builder/document-model-builder';
 import { Part } from '@commonplace/core';

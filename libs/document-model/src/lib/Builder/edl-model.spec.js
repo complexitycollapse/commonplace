@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { aSpan, buildMockedEdlModel, makeSequenceLink, } from '../Groups/group-testing';
+import { aSpan, buildMockedEdlModel, makeSequenceLink, } from '../Testing/group-testing';
 
 describe('rootSequences', () => {
   it ("returns only root sequences", () => {

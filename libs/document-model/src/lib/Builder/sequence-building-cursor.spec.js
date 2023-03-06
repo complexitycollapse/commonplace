@@ -1,6 +1,6 @@
 import { it, describe, expect, test } from '@jest/globals';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
-import { anEdl, aSpan, aTargetLink2, } from '../Groups/group-testing';
+import { anEdl, aSpan, aTargetLink2, } from '../Testing/group-testing';
 import { SequencePrototype } from './sequence-prototype';
 import { LinkPointer } from '@commonplace/core';
 import { Zettel } from './zettel';

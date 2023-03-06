@@ -1,5 +1,5 @@
 import { it, describe, expect } from '@jest/globals';
-import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Groups/group-testing';
+import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Testing/group-testing';
 
 describe('first level sequences', () => {
   it('returns no sequences if there were none in the EDL', () => {
