@@ -260,6 +260,12 @@ describe('build', () => {
       expect(make([], [markupLink()]).markupRules).toHaveLength(1);
     });
 
+    it('sets markupRule on the link to the rule', () => {
+      let model = make([], [markupLink()]);
+
+      expect(Object.values(model.links)[0].markupRule).toBeTruthy();
+    });
+
     it('returns a rule for each markup link', () => {
       expect(make([], [markupLink({name: "markup1"}), markupLink({name: "markup"}), markupLink({name: "markup3"})]).markupRules).toHaveLength(3);
     });
