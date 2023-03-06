@@ -2,7 +2,7 @@ import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 
-export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefault, key) {
+export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
@@ -69,7 +69,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.index = index;
   newLink.pointer = linkPointer;
   newLink.depth = depth;
-  newLink.key = key;
+  newLink.key = undefined; // set later
   if (link.type === "markup") { newLink.markupRule = buildRule(["attribute", "value"]); }
   if (link.type === "endows attributes") { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
   if (link.type === "defines sequence") { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
