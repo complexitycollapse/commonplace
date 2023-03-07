@@ -6,7 +6,9 @@ export function Zettel(clip, incomingPointers, key) {
     pointer: clip,
     incomingPointers,
     sequences: [],
-    key
+    key,
+    markup: {},
+    contentMarkup: {}
   })
 
   return finalObject(obj, {
