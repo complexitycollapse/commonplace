@@ -1,11 +1,11 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 
-export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlTypes, attributeValuePairs) {
+export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlTypes, attributeDescriptors) {
   let obj = {};
 
   addProperties(obj, {
     originLink,
-    attributeValuePairs,
+    attributeDescriptors,
     immediateTargets,
     linkTypes,
     clipTypes,

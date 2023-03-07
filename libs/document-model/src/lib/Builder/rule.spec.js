@@ -7,8 +7,8 @@ import { DocumentModelLink } from './document-model-link';
 const makeLink = DocumentModelLink;
 const addIncoming = docModelBuilderTesting.addIncomingPointers;
 
-function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = [], edlTypes = [], attributeValues = []} = {}) {
-  return Rule(originLink ?? link("origin"), immediateTargets, linkTypes, clipTypes, edlTypes, attributeValues);
+function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = [], edlTypes = [], attributeDescriptors = []} = {}) {
+  return Rule(originLink ?? link("origin"), immediateTargets, linkTypes, clipTypes, edlTypes, attributeDescriptors);
 }
 
 function link(name, incomingPointers = []) {
@@ -24,11 +24,11 @@ test('originLink set in constructor',  () => {
   expect(rule.originLink).toBe(originLink);
 });
 
-test('attributeValuePairs set in constructor',  () => {
-  let expectedAttributeValues = [["attr1", "val1"]];
-  let rule = make({attributeValues: expectedAttributeValues});
+test('attributrDescriptors set in constructor',  () => {
+  let expectedAttributeDescriptors = [["attr1", "val1", "direct"]];
+  let rule = make({attributeDescriptors: expectedAttributeDescriptors});
 
-  expect(rule.attributeValuePairs).toEqual(expectedAttributeValues);
+  expect(rule.attributeDescriptors).toEqual(expectedAttributeDescriptors);
 });
 
 describe('Rule.match', () => {

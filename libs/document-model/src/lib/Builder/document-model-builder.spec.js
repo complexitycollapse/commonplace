@@ -237,8 +237,12 @@ describe('build', () => {
   });
 
   describe('markupRules', () => {
-    function markupLink({ name, attributeValues = [], immediateTargets, linkTypes, clipTypes, edlTypes } = {}) {
-      let endSpecs = attributeValues.map(av => [["attribute",[InlinePointer(av[0])]], ["value", [InlinePointer(av[1])]]]).flat();
+    function markupLink({ name, attributeDescriptors = [], immediateTargets, linkTypes, clipTypes, edlTypes } = {}) {
+      let endSpecs = attributeDescriptors.map(av => [
+        ["attribute", [InlinePointer(av[0])]],
+        ["value", [InlinePointer(av[1])]],
+        ["inheritance", [InlinePointer(av[2])]]]
+      ).flat();
 
       if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
@@ -284,21 +288,23 @@ describe('build', () => {
       expect(rule.edlTypes).toEqual(["et1", "et2"]);
     });
 
-    it('sets the attributeValuePairs on the rule from the link', () => {
-      let attributeValues = [["attr1", "val1"], ["attr2", "val2"]];
+    it('sets the attributeDescriptors on the rule from the link', () => {
+      let attributeDescriptors = [["attr1", "val1", "direct"], ["attr2", "val2", "content"]];
 
-      let actual = make([], [markupLink({attributeValues})]).markupRules[0].attributeValuePairs;
+      let actual = make([], [markupLink({attributeDescriptors})]).markupRules[0].attributeDescriptors;
 
       expect(actual[0].attribute).toEqual("attr1");
       expect(actual[0].value).toEqual("val1");
+      expect(actual[0].inheritance).toEqual("direct");
       expect(actual[1].attribute).toEqual("attr2");
       expect(actual[1].value).toEqual("val2");
+      expect(actual[1].inheritance).toEqual("content");
     });
   });
 
   describe('metaEndowmentRules', () => {
-    function metaLink({ name, attributeValues = [], immediateTargets, linkTypes, clipTypes, edlTypes, end } = {}) {
-      let endSpecs = attributeValues.map(av => 
+    function metaLink({ name, attributeDescriptors = [], immediateTargets, linkTypes, clipTypes, edlTypes, end } = {}) {
+      let endSpecs = attributeDescriptors.map(av => 
         [["attribute",[InlinePointer(av[0])]],
         ["value", [InlinePointer(av[1])]],
         ["inheritance", [InlinePointer(av[2])]]])
@@ -343,10 +349,10 @@ describe('build', () => {
       expect(rule.edlTypes).toEqual(["et1", "et2"]);
     });
 
-    it('sets the attributeValuePairs on the rule from the link', () => {
-      let attributeValues = [["attr1", "val1", "direct"], ["attr2", "val2", "content"]];
+    it('sets the attributeDescriptors on the rule from the link', () => {
+      let attributeDescriptors = [["attr1", "val1", "direct"], ["attr2", "val2", "content"]];
 
-      let actual = make([], [metaLink({attributeValues})]).metaEndowmentRules[0].attributeValuePairs;
+      let actual = make([], [metaLink({attributeDescriptors})]).metaEndowmentRules[0].attributeDescriptors;
 
       expect(actual[0].attribute).toEqual("attr1");
       expect(actual[0].value).toEqual("val1");
