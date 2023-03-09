@@ -15,8 +15,8 @@ export function EdlModel(pointer, type, zettel, links, parent, incomingPointers,
     incomingPointers,
     defaultsLinks,
     key,
-    markup: {},
-    contentMarkup: {}
+    markup: new Map(),
+    contentMarkup: new Map()
   });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return finalObject(model, {

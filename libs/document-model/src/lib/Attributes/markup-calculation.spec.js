@@ -1,33 +1,27 @@
 import { expect, it, describe } from '@jest/globals';
+import { docModelBuilderTesting } from '../Builder/document-model-builder';
 // import { attributesTesting } from './attributes';
-// import { MetalinkBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder } from '../Testing/test-builders';
+import { MarkupBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder } from '../Testing/test-builders';
 // import { sequenceMetalinkType } from '../Model/render-link';
-// import { InlinePointer } from '@commonplace/core';
+import { InlinePointer, EdlPointer, Part } from '@commonplace/core';
 
 // expect.extend({
 //  hasAttribute: attributesTesting.hasAttribute,
 //  hasExactlyAttributes: attributesTesting.hasExactlyAttributes
 // });
 
-// function aSpan() {
-//   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
-// }
+function aSpan() {
+  return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
+}
 
-// function anEnd(name) {
-//   return EndBuilder().withName(name);
-// }
+function anEnd(name) {
+  return EndBuilder().withName(name);
+}
 
-// function aDirectMetalink(name) {
-//   return MetalinkBuilder("direct").withName(name);
-// }
-
-// function aContentMetalink(name) {
-//   return MetalinkBuilder("content").withName(name);
-// }
-
-// function anEdl({name} = {}) {
-//   return EdlBuilder(name);
-// }
+function anEdl({name} = {}) {
+  let builder = EdlBuilder(name);
+  return builder;
+}
 
 // function anEdlWithSpan(args) {
 //   return anEdl(args).withTarget(aSpan());
@@ -38,28 +32,16 @@ import { expect, it, describe } from '@jest/globals';
 //   return EdlZettelBuilder(edl);
 // }
 
-// function aDirectLinkAndMetalinkPointingTo(targetBuilder, ...attributePairs) {
-//   return aLinkAndMetalink(aDirectMetalink, targetBuilder, ...attributePairs);
-// }
+function aLink(targetBuilder, ...attributePairs) {
+  let type = attributePairs.length >= 2 ? `${attributePairs[0]}:${attributePairs[1]}` : "unspecified type";
+  let target = PointerBuilder(targetBuilder);
+  let builder = LinkBuilder().withName(type).withType(type);
+  if (target) {
+    builder.withEnd(anEnd().withPointer(target));
+  }
 
-// function aContentLinkAndMetalinkPointingTo(targetBuilder, ...attributePairs) {
-//   return aLinkAndMetalink(aContentMetalink, targetBuilder, ...attributePairs);
-// }
-
-// function aLink(targetBuilder, ...attributePairs) {
-//   let type = attributePairs.length >= 2 ? `${attributePairs[0]}:${attributePairs[1]}` : "unspecified type";
-//   let target = PointerBuilder(targetBuilder);
-//   let builder = LinkBuilder().withName(type).withType(type);
-//   if (target) {
-//     builder.withEnd(anEnd().withPointer(target));
-//   }
-//   return builder;
-// }
-
-// function aMetalink(endowingLink, metalinkFn, ...attributePairs) {
-//   let metalink = metalinkFn(`metalink for ${endowingLink.type}`).pointingTo(endowingLink).endowing(...attributePairs);
-//   return metalink;
-// }
+  return builder;
+}
 
 // function aSequenceMetalink(endowingLink, sequenceEndName) {
 //   let metalink = LinkBuilder(sequenceMetalinkType)
@@ -67,12 +49,6 @@ import { expect, it, describe } from '@jest/globals';
 //     .withEnd(EndBuilder().withName("target").withPointer(endowingLink))
 //     .withEnd(EndBuilder().withPointer(InlinePointer(sequenceEndName)));
 //   return metalink;
-// }
-
-// function aLinkAndMetalink(metalinkFn, targetBuilder, ...attributePairs) {
-//   let endowingLink = aLink(targetBuilder, ...attributePairs);
-//   let metaLink = aMetalink(endowingLink, metalinkFn, ...attributePairs);
-//   return [endowingLink, metaLink];
 // }
 
 // function anEdlZettelWithSpan() {
@@ -87,42 +63,54 @@ import { expect, it, describe } from '@jest/globals';
 //   return builder;
 // }
 
-// function getZettel(hierarchy, clip) {
-//   let zettel = hierarchy.children.find(z => clip.endowsTo(z.clip));
-//   if (zettel) { return zettel; }
-//   return hierarchy.children.filter(z => z.clip.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
-// }
+function aMarkupLink(name, ...attributeDescriptors) {
+  let metalink = MarkupBuilder().withName(name)
+    .endowing(...attributeDescriptors);
+  return metalink;
+}
 
-// function makeFromEdlZettel(targetBuilder, rootEdlZ) {
-//   let target = targetBuilder.build();
-//   let targetZettel = getZettel(rootEdlZ.build(), target);
-//   if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
-//   let attributes = targetZettel.attributes();
-//   return attributes;
-// }
+function aMarkupLinkPointingTo(name, targetBuilder, ...attributeDescriptors) {
+  return aMarkupLink(name, targetBuilder, ...attributeDescriptors)
+    .withEnd(EndBuilder(["targets", [targetBuilder]]));
+}
 
-// function make(target, edl) {
-//   let edlZ = anEdlZettel({edl});
-//   let attributes = makeFromEdlZettel(target, edlZ);
-//   return attributes;
-// }
+function aDMB(edlBuilder) {
+  return DocModelBuilderBuilder(edlBuilder);
+}
 
-describe('attributes', () => {
-  it("dummy", () => expect(true).toBeTruthy());
-  // it('returns no attributes if there are no pointers', () => {
-  //   let target = aSpan();
-  //   let attributes = make(target, anEdl().withClip(target));
-  //   expect(attributes.values()).hasExactlyAttributes();
-  // });
+function getZettel(hierarchy, clip) {
+  let zettel = hierarchy.zettel.find(z => clip.endowsTo(z.clip));
+  if (zettel) { return zettel; }
+  return hierarchy.zettel.filter(z => z.pointer.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
+}
+
+function makeFromDMB(docBuilder) {
+  let target = docBuilder.target.build();
+  let targetZettel = getZettel(docBuilder.build().build(), target);
+  if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
+  let markup = targetZettel.markup;
+  return markup;
+}
+
+function make(edlBuilder) {
+  let builder = aDMB(edlBuilder);
+  let markup = makeFromDMB(builder);
+  return markup;
+}
+
+describe('markup', () => {
+  it('returns no attributes if there are no pointers', () => {
+    let target = aSpan();
+    let markup = make(anEdl().withTarget(target));
+    expect([...markup.values()]).toEqual([]);
+  });
   
   // it('returns the default direct value if there are no links', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo(edlZ.target, "attr1", "val1"));
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  //   let dmb = aDMB(anEdl().withTarget(aSpan()));
+  //   dmb.withDefaults(...aMarkupLinkPointingTo("1", dmb.target, "attr1", "val1", "direct"));
+  //   let markup = makeFromDMB(dmb);
   
-  //   let values = attributes.values();
-  
-  //   expect(values).hasAttribute("attr1", "val1");
+  //   expect(markup.get("attr1")).toBe("val1");
   // });
   
   // it('does not return the default direct value from the containing EDL', () => {

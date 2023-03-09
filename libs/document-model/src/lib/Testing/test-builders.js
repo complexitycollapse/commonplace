@@ -1,5 +1,6 @@
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
+import { docModelBuilderTesting } from "../Builder/document-model-builder";
 import { Sequence } from "../Builder/sequence";
 
 export function Builder(buildFn, extensions) {
@@ -98,30 +99,16 @@ export function PointerBuilder(builder) {
   return Builder(() => builder.pointer, {});
 }
 
-export function MetalinkBuilder(directOrContent) {
-  let type;
+export function MarkupBuilder() {
 
-  switch(directOrContent) {
-    case ("direct"):
-      type = "endows attributes";
-      break;
-    case ("content"):
-      type = "endows attributes";
-      break;
-    case ("sequence"):
-      type = "defines sequence";
-      break;
-    default:
-      type = directOrContent;
-  }
+  let builder = LinkBuilder().withType("markup");
 
-  let builder = LinkBuilder().withType(type);
-
-  builder.endowing = (...attributePairs) => {
-    for (let i = 0; i < attributePairs.length; i += 2) {
+  builder.endowing = (...attributeDescriptors) => {
+    for (let i = 0; i < attributeDescriptors.length; i += 3) {
       builder
-        .withEnd(EndBuilder().withName("attribute").withPointer(InlinePointer(attributePairs[i])))
-        .withEnd(EndBuilder().withName("value").withPointer(InlinePointer(attributePairs[i+1])));
+        .withEnd(EndBuilder().withName("attribute").withPointer(InlinePointer(attributeDescriptors[i])))
+        .withEnd(EndBuilder().withName("value").withPointer(InlinePointer(attributeDescriptors[i+1])))
+        .withEnd(EndBuilder().withName("inheritance").withPointer(InlinePointer(attributeDescriptors[i+2])));
     }
     return builder;
   };
@@ -176,4 +163,20 @@ export function wrap(object, pointer) {
 
 export function SequenceBuilder(prototype, members) {
   return wrap(Sequence(prototype, members));
+}
+
+export function DocModelBuilderBuilder(edlBuilder) {
+  let obj = Builder(obj => {
+    let edl = edlBuilder.build();
+    let defaultParts = obj.defaultLinks.map((link, i) => Part(LinkPointer("default-" + i), link.build()));
+    obj.pointer = EdlPointer("doc");
+    let b = docModelBuilderTesting.makeMockedBuilder(obj.pointer, defaultParts.concat([Part(obj.pointer, edl)]));
+    return b;
+  }, {
+    defaultLinks: [],
+    target: edlBuilder.target,
+    withDefaults: (...links) => obj.defaultLinks = obj.defaultLinks.concat(links)
+  });
+
+  return obj;
 }
