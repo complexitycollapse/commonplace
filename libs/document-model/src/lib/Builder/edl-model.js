@@ -4,6 +4,7 @@ export function EdlModel(pointer, type, zettel, links, parent, incomingPointers,
   let containedSequences = [];
 
   let model = addProperties({}, {
+    isEdl: true,
     pointer,
     type,
     zettel,
