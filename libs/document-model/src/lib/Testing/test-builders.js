@@ -2,6 +2,7 @@ import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
 import { docModelBuilderTesting } from "../Builder/document-model-builder";
 import { Sequence } from "../Builder/sequence";
+import { defaultsPointer } from "../defaults";
 
 export function Builder(buildFn, extensions) {
   let obj = {
@@ -75,7 +76,7 @@ export function EndBuilder(endSpec) {
     if (p.build) {
       let built = p.build();
       return p.pointer ?? built;
-    } 
+    }
     return p;
   }
 
@@ -84,7 +85,7 @@ export function EndBuilder(endSpec) {
     withPointer: p => obj.pushTo("pointers", p),
     withName: name => obj.withProperty("name", name)
   });
-  
+
   obj.endSpec = endSpec;
 
   if (endSpec) {
@@ -117,7 +118,7 @@ export function MarkupBuilder() {
     builder.withEnd(EndBuilder().withPointer(pointer));
     return builder;
   };
-  
+
   return builder;
 }
 
@@ -168,14 +169,21 @@ export function SequenceBuilder(prototype, members) {
 export function DocModelBuilderBuilder(edlBuilder) {
   let obj = Builder(obj => {
     let edl = edlBuilder.build();
-    let defaultParts = obj.defaultLinks.map((link, i) => Part(LinkPointer("default-" + i), link.build()));
+    let defaultParts = obj.defaultLinks.map(link => Part(link.pointer, link.build()));
     obj.pointer = EdlPointer("doc");
-    let b = docModelBuilderTesting.makeMockedBuilder(obj.pointer, defaultParts.concat([Part(obj.pointer, edl)]));
+    let b = docModelBuilderTesting.makeMockedBuilder(
+      obj.pointer,
+      defaultParts.concat([Part(obj.pointer, edl), Part(defaultsPointer, obj.defaultsEdl.build())]));
     return b;
   }, {
     defaultLinks: [],
     target: edlBuilder.target,
-    withDefaults: (...links) => obj.defaultLinks = obj.defaultLinks.concat(links)
+    defaultsEdl: EdlBuilder(defaultsPointer.edlName),
+    withDefault: link => {
+      obj.defaultLinks.push(link);
+      obj.defaultsEdl.withLink(link);
+    },
+    withDefaults: (...links) => links.map(l => obj.withDefault(l))
   });
 
   return obj;

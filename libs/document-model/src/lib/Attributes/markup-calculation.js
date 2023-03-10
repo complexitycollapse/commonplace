@@ -1,54 +1,31 @@
-import { addProperties, finalObject, memoize, listMap } from "@commonplace/utils";
+import { finalObject, memoize, listMap } from "@commonplace/utils";
 import { AttributeValue } from "./attribute-value";
 import { AttributeRoute } from "./AttributeRoute";
 
-export function MarkupCalculation(parent, rules, objects) {
+export function MarkupCalculation(edl, rules, objects) {
   let obj = {};
+  let objectMap = new Map();
 
-  function buildExpandedMarkup() {
+  function populateObjectMap() {
+    let [linkTypeMap, edlTypeMap, clipTypeMap] = buildTypeMaps(rules);
 
-    let linkTypeMap = listMap();
-    let edlTypeMap = listMap();
-    let clipTypeMap = listMap();
+    function createMarkupForObject(object) {
+      // Only process each object once.
+      if (objectMap.has(object.key)) { return objectMap.get(object.key); }
 
-    rules.forEach(rule => {
-      rule.linkTypes.forEach(type => linkTypeMap.push(type, rule));
-      rule.edlTypes.forEach(type => edlTypeMap.push(type, rule));
-      rule.clipTypes.forEach(type => clipTypeMap.push(type, rule));
-    });
-
-    let objectMap = new Map();
-
-    function pushRule(rulesMap, rule, connection) {
-      rule.attributeDescriptors.forEach(pair => {
-
-        let route = undefined;
-        if (connection == "target") {
-          if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectTarget; }
-          else { route = AttributeRoute.immediateContentTarget; }
-        } else {
-          if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectType; }
-          else { route = AttributeRoute.immediateContentType; }
-        }
-
-        rulesMap.push(AttributeValue(
-          pair.attribute,
-          pair.value,
-          route,
-          rule.isDefault,
-          rule.originLink.depth,
-          rule.originLink.index,
-          rule
-        ));
-      });
-    }
-
-    objects.forEach(object => {
       let markupMap = listMap();
-      objectMap.set(object.key, markupMap);
-      
+      let markup = {
+        expandedMarkup: markupMap,
+        markup: memoize(() => calculateMarkup(markupMap)),
+        contentMarkup: memoize(() => calculateContentMarkup(markupMap))
+      };
+      objectMap.set(object.key, markup);
+
+      // Add all rules that target the object directly.
       let rules = object.incomingPointers.map(p => p.link.markupRule).filter(x => x);
       rules.forEach(rule => pushRule(markupMap, rule, "target"));
+
+      // Add rules that target the type of this object.
 
       if (object.isLink) {
         let rulesForType = linkTypeMap.get(object.type);
@@ -61,18 +38,23 @@ export function MarkupCalculation(parent, rules, objects) {
       }
 
       if (object.isClip) {
-        let rulesForType = clipTypeMap.get(object.clipType);
+        let rulesForType = clipTypeMap.get(object.clip.pointerType);
         rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
       }
 
-      let containers = object.seqences.length > 0 ? object.sequences : [parent];
-      containers.forEach(container => {
-        // TODO make sure the container's markup has been calculated first
-        Object.entries(container.contentMarkup).forEach(([attribute, value]) => {
+      // Add any attributes inherited from the object's containers.
+
+      function addContentValueFromContainer(container) {
+        if (container === undefined) { return container; }
+
+        // If the container has not had its markupMap created yet, do it now.
+        let containerMarkup = createMarkupForObject(container);
+
+        for (var [attribute, value] of containerMarkup.contentMarkup().entries()) {
           // TODO how does this work with calculated markup? Do we used a calculated attribute
           // from the container or could we inherit the calculation itself? In which case, what
           // previous value is the calculation applied to?
-          markupMap.set(attribute, AttributeValue(
+          markupMap.push(attribute, AttributeValue(
             attribute,
             value,
             AttributeRoute.inheritedNonDefault,
@@ -80,8 +62,16 @@ export function MarkupCalculation(parent, rules, objects) {
             0,
             0
           ));
-        });
-      });
+        }
+      }
+
+      if (object === edl) {
+        addContentValueFromContainer(edl.parent);
+      } else if (object.sequences.length > 0) {
+        object.sequences.forEach(sequence => addContentValueFromContainer(sequence.definingLink));
+      } else {
+        addContentValueFromContainer(edl);
+      }
 
       function routeToOrder(route) {
         switch (route) {
@@ -101,7 +91,7 @@ export function MarkupCalculation(parent, rules, objects) {
         }
       }
 
-      Object.values(markupMap).forEach(values => {
+      for (let values of markupMap.values()) {
         values.sort((a, b) => {
           if (a.isDefault !== b.isDefault) {
             return a.isDefault ? 1 : -1;
@@ -112,42 +102,80 @@ export function MarkupCalculation(parent, rules, objects) {
           }
           else { return a.linkIndex - b.linkIndex; }
         });
-      });
-    });
+      }
+
+      return markup;
+    }
+
+    objects.forEach(createMarkupForObject);
+    return objectMap;
   }
 
-  function calculateMarkup() {
-    let expanded = obj.expandedMarkup();
+  function calculateMarkup(markupMap) {
     let markup = new Map();
 
-    Object.values(expanded).forEach(values => {
+    for (var values of markupMap.values()) {
       let head = values[0];
-      markup.set(head.attributeName, head.AttributeValue);
-    });
+      markup.set(head.attributeName, head.attributeValue);
+    }
 
     return markup;
   }
 
-  function calculateContentMarkup() {
-    let expanded = obj.expandedMarkup();
+  function calculateContentMarkup(markupMap) {
     let markup = new Map();
 
-    Object.values(expanded).forEach(values => {
+    for (var values of markupMap.values()) {
       let head = values.find(value => value.isDefault == false
         && (value.attributeRoute == AttributeRoute.immediateContentTarget
           || value.attributeRoute == AttributeRoute.immediateContentType
           || value.attributeRoute == AttributeRoute.inheritedNonDefault));
       if (head) { markup.set(head.attributeName, head.AttributeValue); }
-    });
+    }
 
     return markup;
   }
 
-  addProperties(obj, {
-    expandedMarkup: memoize(buildExpandedMarkup),
-    markup: memoize(calculateMarkup),
-    contentMarkup: memoize(calculateContentMarkup)
+  return finalObject(obj, {
+    initialize: populateObjectMap
+  });
+}
+
+function buildTypeMaps(rules) {
+  let linkTypeMap = listMap();
+  let edlTypeMap = listMap();
+  let clipTypeMap = listMap();
+
+  rules.forEach(rule => {
+    rule.linkTypes.forEach(type => linkTypeMap.push(type, rule));
+    rule.edlTypes.forEach(type => edlTypeMap.push(type, rule));
+    rule.clipTypes.forEach(type => clipTypeMap.push(type, rule));
   });
 
-  return finalObject(obj, {});
+  return [linkTypeMap, edlTypeMap, clipTypeMap];
+}
+
+function pushRule(markupMap, rule, connection) {
+  rule.attributeDescriptors.forEach(pair => {
+
+    let route = undefined;
+    if (connection == "target") {
+      if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectTarget; }
+      else { route = AttributeRoute.immediateContentTarget; }
+    } else {
+      if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectType; }
+      else { route = AttributeRoute.immediateContentType; }
+    }
+
+    markupMap.push(pair.attribute,
+      AttributeValue(
+        pair.attribute,
+        pair.value,
+        route,
+        rule.isDefault,
+        rule.originLink.depth,
+        rule.originLink.index,
+        rule
+    ));
+  });
 }

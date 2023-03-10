@@ -1,4 +1,4 @@
-import { finalObject } from "@commonplace/utils";
+import { finalObject, mergeMaps } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider } from "./zettel-schneider";
 import { testing } from '@commonplace/core';
@@ -6,15 +6,27 @@ import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { defaultsPointer } from "../defaults";
+import { MarkupCalculation } from "../Attributes/markup-calculation";
 
 export function DocumentModelBuilder(edlPointer, repo) {
+  let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, repo, undefined, undefined);
+  return finalObject({}, {
+    build: () => {
+      // Doc Models are built using two passes. The first assembles a hierarchy of models with
+      // zettel and links. The second decorates all the objects in the hierarchy top-down with
+      // markup information.
+      let rootModel = recursiveBuilder.buildHierarchy();
+      recursiveBuilder.addMarkup();
+      return rootModel;
+    }});
+}
+
+function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) {
   let obj = {};
+  let childBuilders = [];
+  let model, allLinks;
 
-  function build() {
-    return buildRecursively(edlPointer, undefined, undefined);
-  }
-
-  function buildRecursively(edlPointer, parent, indexInParent) {
+  function buildHierarchy() {
     let zettel = [];
 
     let edlPart = repo.getPartLocally(edlPointer);
@@ -33,7 +45,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
     let linkPairs = createLinkPairs(edl, repo, parent);
     let linksObject = Object.fromEntries(linkPairs);
     let links = Object.values(linksObject);
-    let allLinks = links.concat(Object.values(defaults));
+    allLinks = links.concat(Object.values(defaults));
     allLinks.forEach((link, i) => link.key = key + ":" + i);
 
     let pointersToEdl = [];
@@ -41,29 +53,49 @@ export function DocumentModelBuilder(edlPointer, repo) {
       if (pointer.endowsTo(edlPointer)) { pointersToEdl.push({ pointer, end, link }) }
     }));
 
-    let model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults, key);
+    model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults, key);
 
     connectLinks(allLinks);
     gatherRules(model, allLinks);
     applyMetarules(model, allLinks);
 
+
     edl.clips.forEach((c, i) => {
       if (c.pointerType === "edl")
       {
-        zettel.push(buildRecursively(c, model, i));
+        let childBuilder = RecursiveDocumentModelBuilder(c, repo, model, i);
+        childBuilders.push(childBuilder);
+        zettel.push(childBuilder.buildHierarchy());
       } else {
         let z = ZettelSchneider(c, links, key, i + allLinks.length).zettel();
         zettel.push(...z);
       }
     });
 
-    let sequences = SequenceScanner(zettel, links).sequences();
+    let sequences = SequenceScanner(zettel, allLinks).sequences();
     model.setContainedSequences(sequences);
 
     return finalObject(model, {});
   }
 
-  return finalObject(obj, { build });
+  function addMarkup() {
+    let objectsRequiringMarkup = allLinks.concat(model.zettel.filter(z => z.isZettel));
+    let calc = MarkupCalculation(model, model.markupRules, objectsRequiringMarkup);
+    let markupMap = calc.initialize();
+
+    objectsRequiringMarkup.forEach(object => {
+      let allMarkup = markupMap.get(object.key);
+      mergeMaps(object.markup, allMarkup.markup());
+      mergeMaps(object.contentMarkup, allMarkup.contentMarkup());
+    });
+
+    childBuilders.forEach(builder => builder.addMarkup());
+  }
+
+  return finalObject(obj, {
+    buildHierarchy,
+    addMarkup,
+  });
 }
 
 function createLinkPairs(edl, repo, parent, isDefault) {
