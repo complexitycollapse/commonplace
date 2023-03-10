@@ -51,17 +51,10 @@ function aLink(targetBuilder, ...attributePairs) {
 //   return metalink;
 // }
 
-// function anEdlZettelWithSpan() {
-//   let edl = anEdlWithSpan();
-//   let builder = anEdlZettel({edl, parent, name});
-//   builder.target = edl.target;
-//   builder.withLinkWithDirectAttributes = (attributeName, attributeValue) => {
-//     let links = aDirectLinkAndMetalinkPointingTo(edl.target, attributeName, attributeValue);
-//     edl.withLinks(...links);
-//     return builder;
-//   };
-//   return builder;
-// }
+function aDmbWithSpan() {
+  let dmb = aDMB(anEdl().withTarget(aSpan()));
+  return dmb;
+}
 
 function aMarkupLink(name, ...attributeDescriptors) {
   let metalink = MarkupBuilder().withName(name)
@@ -79,6 +72,10 @@ function aMarkupLinkOnSpans(name, ...attributeDescriptors) {
     .withEnd(EndBuilder(["clip types", [InlinePointer("span")]]));
 }
 
+function aMarkupLinkOnEdls(name, type, ...attributeDescriptors) {
+  return aMarkupLink(name, ...attributeDescriptors)
+    .withEnd(EndBuilder(["edl types", [InlinePointer(type)]]));
+}
 
 function aDMB(edlBuilder) {
   return DocModelBuilderBuilder(edlBuilder);
@@ -106,48 +103,44 @@ function make(edlBuilder) {
 
 describe('markup', () => {
   it('returns no attributes if there are no pointers', () => {
-    let target = aSpan();
-    let markup = make(anEdl().withTarget(target));
+    let dmb = aDmbWithSpan();
+    let markup = makeFromDMB(dmb);
     expect([...markup.values()]).toEqual([]);
   });
 
   it('returns the default direct value if there are no non-default links', () => {
-    let dmb = aDMB(anEdl().withTarget(aSpan()));
+    let dmb = aDmbWithSpan();
     dmb.withDefaults(aMarkupLinkOnSpans("1", "attr1", "val1", "direct"));
     let markup = makeFromDMB(dmb);
 
     expect(markup.get("attr1")).toBe("val1");
   });
 
-  // it('does not return the default direct value from the containing EDL', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo(edlZ.edl, "attr1", "val1"));
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  it('does not return the default direct value from the containing EDL', () => {
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    dmb.withDefaults(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "direct"));
+    let markup = makeFromDMB(dmb);
 
-  //   let values = attributes.values();
+    expect([...markup.values()]).toEqual([]);
+  });
 
-  //   expect(values).hasExactlyAttributes();
-  // });
+  it('returns the default content value if there are no links', () => {
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    dmb.withDefaults(aMarkupLinkOnSpans("1", "attr1", "val1", "content"));
+    let markup = makeFromDMB(dmb);
 
-  // it('returns the default content value if there are no links', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo(edlZ.target, "attr1", "val1"));
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+    expect(markup.get("attr1")).toBe("val1");
+  });
 
-  //   let values = attributes.values();
+  it('returns the default content value from the containing EDL if there are no links', () => {
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    dmb.withDefaults(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "content"));
+    let markup = makeFromDMB(dmb);
 
-  //   expect(values).hasAttribute("attr1", "val1");
-  // });
+    expect(markup.get("attr1")).toBe("val1");
+  });
 
-  // it('returns the default content value from the containing EDL if there are no links', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   edlZ.withDefaults(...aContentLinkAndMetalinkPointingTo(edlZ.edl, "attr1", "val1"));
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
-
-  //   let values = attributes.values();
-
-  //   expect(values).hasAttribute("attr1", "val1");
-  // });
+  // TODO the below test would make sense for semantic attributes, but doesn't for markup
 
   // it('returns the value when the link is in the Edl but the metalink is in the defaults', () => {
   //   let edlZ = anEdlZettelWithSpan();

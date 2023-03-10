@@ -131,6 +131,7 @@ export function EdlBuilder(name = "foo") {
     links: [],
     clips: [],
     isEdl: true,
+    withType: type => { obj.withProperty("type", type); },
     withLink: link => obj.pushTo("links", link),
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
     withClip: clip => obj.pushTo("clips", clip),
@@ -183,7 +184,11 @@ export function DocModelBuilderBuilder(edlBuilder) {
       obj.defaultLinks.push(link);
       obj.defaultsEdl.withLink(link);
     },
-    withDefaults: (...links) => links.map(l => obj.withDefault(l))
+    withDefaults: (...links) => links.map(l => obj.withDefault(l)),
+    onEdl: callback => {
+      callback(edlBuilder);
+      return obj;
+    }
   });
 
   return obj;

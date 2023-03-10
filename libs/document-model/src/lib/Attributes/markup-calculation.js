@@ -49,8 +49,9 @@ export function MarkupCalculation(edl, rules, objects) {
 
         // If the container has not had its markupMap created yet, do it now.
         let containerMarkup = createMarkupForObject(container);
+        let contentMarkup = containerMarkup.contentMarkup();
 
-        for (var [attribute, value] of containerMarkup.contentMarkup().entries()) {
+        for (var [attribute, value] of contentMarkup.entries()) {
           // TODO how does this work with calculated markup? Do we used a calculated attribute
           // from the container or could we inherit the calculation itself? In which case, what
           // previous value is the calculation applied to?
@@ -126,11 +127,11 @@ export function MarkupCalculation(edl, rules, objects) {
     let markup = new Map();
 
     for (var values of markupMap.values()) {
-      let head = values.find(value => value.isDefault == false
-        && (value.attributeRoute == AttributeRoute.immediateContentTarget
-          || value.attributeRoute == AttributeRoute.immediateContentType
-          || value.attributeRoute == AttributeRoute.inheritedNonDefault));
-      if (head) { markup.set(head.attributeName, head.AttributeValue); }
+      let head = values.find(value =>
+        value.attributeRoute == AttributeRoute.immediateContentTarget
+        || value.attributeRoute == AttributeRoute.immediateContentType
+        || value.attributeRoute == AttributeRoute.inheritedNonDefault);
+      if (head) { markup.set(head.attributeName, head.attributeValue); }
     }
 
     return markup;
