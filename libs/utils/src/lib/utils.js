@@ -24,6 +24,7 @@ export function addMethods(obj, props) {
       value: props[key]
     })
   });
+  return obj;
 }
 
 export function forAllOwnProperties(obj, callback) {
