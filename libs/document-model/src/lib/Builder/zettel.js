@@ -4,7 +4,6 @@ export function Zettel(clip, incomingPointers, key) {
   let obj = addProperties({}, {
     isZettel: true,
     isClip: clip.isClip,
-    clip,
     pointer: clip,
     incomingPointers,
     sequences: [],

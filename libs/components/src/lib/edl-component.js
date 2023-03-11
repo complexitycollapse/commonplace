@@ -2,7 +2,7 @@ import { CssStyle } from '@commonplace/html';
 import { ZettelComponent } from './zettel-component';
 
 export function EdlComponent({ edl }) {
-  let innerComponents = edl.children.map(f => f.clip.pointerType === "edl"
+  let innerComponents = edl.children.map(f => f.pointer.pointerType === "edl"
     ? (<EdlComponent key={f.key} edl={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 

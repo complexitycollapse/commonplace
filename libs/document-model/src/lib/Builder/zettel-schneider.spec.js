@@ -54,16 +54,16 @@ expect.extend({
   hasZettelProperties(zettel, start, length, ...ends) {
     ends = ends ?? [];
 
-    if (zettel.clip.start !== start) {
+    if (zettel.pointer.start !== start) {
       return {
-        message: () => `expected zettel to start at ${start}, actual ${zettel.clip.start}`,
+        message: () => `expected zettel to start at ${start}, actual ${zettel.pointer.start}`,
         pass: false
       };
     }
 
-    if (zettel.clip.start !== start) {
+    if (zettel.pointer.start !== start) {
       return {
-        message: () => `expected zettel to have length at ${length}, actual ${zettel.clip.length}`,
+        message: () => `expected zettel to have length at ${length}, actual ${zettel.pointer.length}`,
         pass: false
       };
     }
@@ -156,9 +156,9 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 5));
-    expect(zettel[1].clip).toEqualClip(Span(s.origin, endSpan.start, 5));
-    expect(zettel.reduce((n, z) => n + z.clip.length, 0)).toBe(s.length);
+    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 5));
+    expect(zettel[1].pointer).toEqualClip(Span(s.origin, endSpan.start, 5));
+    expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 
   it('splits a span if only the start is covered by a link', () => {
@@ -180,9 +180,9 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 5));
-    expect(zettel[1].clip).toEqualClip(Span(s.origin, 6, 5));
-    expect(zettel.reduce((n, z) => n + z.clip.length, 0)).toBe(s.length);
+    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 5));
+    expect(zettel[1].pointer).toEqualClip(Span(s.origin, 6, 5));
+    expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 
   it('splits a span twice if the link is fully contained in the span', () => {
@@ -205,10 +205,10 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
-    expect(zettel[0].clip).toEqualClip(Span(s.origin, s.start, 1));
-    expect(zettel[1].clip).toEqualClip(Span(s.origin, endSpan.start, endSpan.length));
-    expect(zettel[2].clip).toEqualClip(Span(s.origin, endSpan.next, 1));
-    expect(zettel.reduce((n, z) => n + z.clip.length, 0)).toBe(s.length);
+    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 1));
+    expect(zettel[1].pointer).toEqualClip(Span(s.origin, endSpan.start, endSpan.length));
+    expect(zettel[2].pointer).toEqualClip(Span(s.origin, endSpan.next, 1));
+    expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 
   it('assigns all ends that overlap the zettel', () => {

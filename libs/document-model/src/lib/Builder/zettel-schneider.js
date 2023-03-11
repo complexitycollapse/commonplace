@@ -4,14 +4,14 @@ import { Zettel } from "./zettel";
 
 export function ZettelSchneider(clip, links, parentKey, index) {
   let obj = {};
-  
+
   function zettel() {
     let incomingPointers = buildIncomingPointers(links, clip);
     let rootKey = parentKey + ":" + index.toString();
 
     if (clip.pointerType === "span") {
       let result = mapSpanToZettel(clip, incomingPointers, []);
-      return result.map((z, i) => Zettel(z.clip, z.incomingPointers, rootKey + ":" + i));
+      return result.map((z, i) => Zettel(z.pointer, z.incomingPointers, rootKey + ":" + i));
 
     } else {
       let singleZettel = Zettel(clip, incomingPointers, rootKey);
@@ -59,7 +59,7 @@ export function ZettelSchneider(clip, links, parentKey, index) {
       let newLinkPointer = IncomingPointer(coveringSpan.pointer, coveringSpan.end, coveringSpan.link);
       newLinksToAdd = linksToAdd.concat([newLinkPointer]);
     }
-    
+
     let zettel = mapSpanToZettel(span, parentOverlappingSpans.filter(s => s.pointer.overlaps(span)), newLinksToAdd);
     return zettel;
   }

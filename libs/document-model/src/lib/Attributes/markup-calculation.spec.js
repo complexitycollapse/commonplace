@@ -82,7 +82,7 @@ function aDMB(edlBuilder) {
 }
 
 function getZettel(hierarchy, clip) {
-  let zettel = hierarchy.zettel.find(z => z.clip && clip.endowsTo(z.clip));
+  let zettel = hierarchy.zettel.find(z => clip.endowsTo(z.pointer));
   if (zettel) { return zettel; }
   return hierarchy.zettel.filter(z => z.pointer.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
 }

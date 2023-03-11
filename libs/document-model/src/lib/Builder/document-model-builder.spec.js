@@ -120,7 +120,7 @@ describe('build', () => {
 
     it('links to the EDL itself', () => {
       let link = Link("link1", [undefined, [EdlPointer("edl1")]]);
-      
+
       let model = make([], [["link1", link]], EdlPointer("edl1"));
 
       expect(model.incomingPointers).toHaveLength(1);
@@ -137,9 +137,9 @@ describe('build', () => {
       let clip1 = Span("x", 1, 10), clip2 = Box("y", 1, 1, 10, 20), clip3 = Span("z", 20, 200);
 
       expect(make([[clip1, true], [clip2, true], [clip3, true]]).zettel).toMatchObject([
-        { clip: clip1 },
-        { clip: clip2 },
-        { clip: clip3 },
+        { pointer: clip1 },
+        { pointer: clip2 },
+        { pointer: clip3 },
       ]);
     });
 
@@ -150,8 +150,8 @@ describe('build', () => {
       let zettel = make([[clip1, true]], [["link1", link]]).zettel;
 
       expect(zettel.length).toBe(2);
-      expect(zettel[0].clip).toEqual(Span("x", 1, 4));
-      expect(zettel[1].clip).toEqual(Span("x", 5, 6));
+      expect(zettel[0].pointer).toEqual(Span("x", 1, 4));
+      expect(zettel[1].pointer).toEqual(Span("x", 5, 6));
     });
 
     it('attaches link pointers to the zettel that they point to', () => {
@@ -185,7 +185,7 @@ describe('build', () => {
       let child = zettel[0];
       expect(child.type).toBe("nested EDL");
       expect(child.zettel).toHaveLength(1);
-      expect(child.zettel[0].clip).toEqual(clip1);
+      expect(child.zettel[0].pointer).toEqual(clip1);
       expect(Object.entries(child.links)).toHaveLength(1);
       expect(child.links[LinkPointer("link1").hashableName]).toMatchObject(link1);
       expect(child.zettel[0].incomingPointers[0].link).toMatchObject(link1);
@@ -199,8 +199,8 @@ describe('build', () => {
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
 
       expect(zettel[0].zettel).toHaveLength(2);
-      expect(zettel[0].zettel[0].clip).toEqual(Span("x", 1, 4));
-      expect(zettel[0].zettel[1].clip).toEqual(Span("x", 5, 6));
+      expect(zettel[0].zettel[0].pointer).toEqual(Span("x", 1, 4));
+      expect(zettel[0].zettel[1].pointer).toEqual(Span("x", 5, 6));
     });
   });
 
@@ -252,7 +252,7 @@ describe('build', () => {
         name ?? "markup",
         Link("markup", ...endSpecs)
       ];
-      
+
       return link;
     }
 
@@ -304,12 +304,12 @@ describe('build', () => {
 
   describe('metaEndowmentRules', () => {
     function metaLink({ name, attributeDescriptors = [], immediateTargets, linkTypes, clipTypes, edlTypes, end } = {}) {
-      let endSpecs = attributeDescriptors.map(av => 
+      let endSpecs = attributeDescriptors.map(av =>
         [["attribute",[InlinePointer(av[0])]],
         ["value", [InlinePointer(av[1])]],
         ["inheritance", [InlinePointer(av[2])]]])
       .flat();
-      
+
       if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
@@ -319,7 +319,7 @@ describe('build', () => {
         name ?? "metalink",
         Link("endows attributes", ...endSpecs)
       ];
-      
+
       return link;
     }
 
@@ -387,7 +387,7 @@ describe('build', () => {
         name ?? "metalink",
         Link("defines sequence", ...endSpecs)
       ];
-      
+
       return link;
     }
 
@@ -404,7 +404,7 @@ describe('build', () => {
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
-      
+
       expect(actualLink.getEnd("foo").sequencePrototypes).toBeTruthy();
     });
 
@@ -413,7 +413,7 @@ describe('build', () => {
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
-      
+
       expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toBe("expected");
     });
 
@@ -422,7 +422,7 @@ describe('build', () => {
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
-      
+
       expect(actualLink.getEnd("foo").sequencePrototypes[0].definingLink).toBe(actualLink);
     });
 
@@ -431,7 +431,7 @@ describe('build', () => {
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
-      
+
       expect(actualLink.getEnd("foo").sequencePrototypes[0].end).toBe(actualLink.getEnd("foo"));
     });
 
@@ -440,7 +440,7 @@ describe('build', () => {
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
-      
+
       expect(actualLink.getEnd("foo").sequencePrototypes[0].signature).toMatchObject({
         metalinkPointer: LinkPointer("meta"),
         linkPointer: LinkPointer("target")
@@ -504,7 +504,7 @@ describe('build', () => {
       ];
 
       let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
-      
+
       expect(getLink(defaults, "default1")).toMatchObject(defaultLink1);
       expect(getLink(defaults, "default2")).toMatchObject(defaultLink2);
     });
@@ -520,7 +520,7 @@ describe('build', () => {
       ];
 
       let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
-      
+
       expect(getLink(defaults, "default1").isDefault).toBeTruthy();
     });
 
@@ -537,7 +537,7 @@ describe('build', () => {
       ];
 
       let model = DocumentModelBuilder(edlPointer, mockRepo(parts)).build();
-      
+
       expect(getLink(model.links, "link1").incomingPointers[0].link).toMatchObject(defaultLink);
     });
   });

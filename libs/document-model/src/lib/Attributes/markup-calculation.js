@@ -38,7 +38,7 @@ export function MarkupCalculation(edl, rules, objects) {
       }
 
       if (object.isClip) {
-        let rulesForType = clipTypeMap.get(object.clip.pointerType);
+        let rulesForType = clipTypeMap.get(object.pointer.pointerType);
         rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
       }
 
