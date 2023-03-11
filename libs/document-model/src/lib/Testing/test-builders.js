@@ -171,20 +171,34 @@ export function DocModelBuilderBuilder(edlBuilder) {
   let obj = Builder(obj => {
     let edl = edlBuilder.build();
     let defaultParts = obj.defaultLinks.map(link => Part(link.pointer, link.build()));
+    let linkParts = obj.links.map(link => Part(link.pointer, link.build()));
     obj.pointer = EdlPointer("doc");
     let b = docModelBuilderTesting.makeMockedBuilder(
       obj.pointer,
-      defaultParts.concat([Part(obj.pointer, edl), Part(defaultsPointer, obj.defaultsEdl.build())]));
+      defaultParts.concat(linkParts).concat([Part(obj.pointer, edl), Part(defaultsPointer, obj.defaultsEdl.build())]));
     return b;
   }, {
     defaultLinks: [],
+    links: [],
     target: edlBuilder.target,
+    linkCount: 1,
     defaultsEdl: EdlBuilder(defaultsPointer.edlName),
     withDefault: link => {
       obj.defaultLinks.push(link);
       obj.defaultsEdl.withLink(link);
     },
     withDefaults: (...links) => links.map(l => obj.withDefault(l)),
+    withLink: link => {
+      obj.links.push(link);
+      edlBuilder.withLink(link);
+      return obj;
+    },
+    withLinks: (...links) => { links.map(l => obj.withLink(l)); return obj; },
+    withMarkupLinkPointingToTarget: (attr, val, inherit) => {
+      return obj.withLink(MarkupBuilder().withName(obj.linkCount++)
+        .endowing(attr, val, inherit)
+        .withEnd(EndBuilder(["targets", [obj.target]])));
+    },
     onEdl: callback => {
       callback(edlBuilder);
       return obj;

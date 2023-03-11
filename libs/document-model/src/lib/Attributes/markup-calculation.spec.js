@@ -43,13 +43,13 @@ function aLink(targetBuilder, ...attributePairs) {
   return builder;
 }
 
-// function aSequenceMetalink(endowingLink, sequenceEndName) {
-//   let metalink = LinkBuilder(sequenceMetalinkType)
-//     .withName(`sequence metalink for ${endowingLink.type}`)
-//     .withEnd(EndBuilder().withName("target").withPointer(endowingLink))
-//     .withEnd(EndBuilder().withPointer(InlinePointer(sequenceEndName)));
-//   return metalink;
-// }
+function aSequenceMetalink(endowingLink, sequenceEndName) {
+  let metalink = LinkBuilder("defines sequence")
+    .withName(`sequence metalink for ${endowingLink.type}`)
+    .withEnd(EndBuilder().withName("targets").withPointer(endowingLink))
+    .withEnd(EndBuilder().withName("end").withPointer(InlinePointer(sequenceEndName)));
+  return metalink;
+}
 
 function aDmbWithSpan() {
   let dmb = aDMB(anEdl().withTarget(aSpan()));
@@ -89,7 +89,9 @@ function getZettel(hierarchy, clip) {
 
 function makeFromDMB(docBuilder) {
   let target = docBuilder.target.build();
-  let targetZettel = getZettel(docBuilder.build().build(), target);
+  let dmb = docBuilder.build();
+  let doc = dmb.build();
+  let targetZettel = getZettel(doc, target);
   if (!targetZettel) { throw(`make failed, target Zettel not found. Pointer was ${JSON.stringify(target)}.`); }
   let markup = targetZettel.markup;
   return markup;
@@ -143,125 +145,118 @@ describe('markup', () => {
   // TODO the below test would make sense for semantic attributes, but doesn't for markup
 
   // it('returns the value when the link is in the Edl but the metalink is in the defaults', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let link = aLink(edlZ.target, "attr1", "val1");
+  //   let dmb = aDmbWithSpan();
+  //   let link = aLink(dmb.target, "attr1", "val1");
   //   let metalink = aMetalink(link, aDirectMetalink, "attr1", "val1");
-  //   edlZ.withDefaults(metalink);
-  //   edlZ.edl.withLink(link);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  //   dmb.withDefaults(metalink);
+  //   dmb.edl.withLink(link);
+  //   let attributes = makeFromEdlZettel(dmb.target, dmb);
 
   //   let values = attributes.values();
 
   //   expect(values).hasAttribute("attr1", "val1");
   // });
 
-  // it('does not return a content attribute value inherited through a non-sequence link', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let link = aLink(edlZ.target, "attr1", "val1");
-  //   let intermediateLink = aLink(link);
-  //   let metalink = aMetalink(intermediateLink, aContentMetalink, "attr1", "val1");
-  //   edlZ.edl.withLinks(link, intermediateLink, metalink);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  it('does not return a content attribute value inherited through a non-sequence link', () => {
+    let dmb = aDmbWithSpan();
+    let intermediateLink = aLink(dmb.target);
+    let link = aMarkupLinkPointingTo("1", intermediateLink, "attr1", "val1", "content");
+    dmb.withLinks(link, intermediateLink);
 
-  //   let values = attributes.values();
+    let markup = makeFromDMB(dmb);
 
-  //   expect(values).not.hasAttribute("attr1", "val1");
-  // });
+    expect([...markup.values()]).toEqual([]);
+  });
 
-  // it('returns a content attribute value inherited through a sequence link if it is part of a valid sequence', () => {
-  //   // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
-  //   // The zettel receives the value by inheritance, because it is part of the sequence.
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target]]).withName("sequence link");
-  //   let [contentLink, contentMetalnk] = aContentLinkAndMetalinkPointingTo(sequenceLink, "attr1", "val1")
-  //   let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-  //   edlZ.edl.withLinks(sequenceLink, contentLink, contentMetalnk, sequenceMetalink);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  it('returns a content attribute value inherited through a sequence link if it is part of a valid sequence', () => {
+    // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
+    // The zettel receives the value by inheritance, because it is part of the sequence.
+    let dmb = aDmbWithSpan();
+    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
+    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "content");
+    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-  //   let values = attributes.values();
+    let markup = makeFromDMB(dmb);
 
-  //   expect(values).hasAttribute("attr1", "val1");
-  // });
+    expect(markup.get("attr1")).toBe("val1");
+  });
 
-  // it('does not return a content attribute value inherited through a sequence link if it is not part of a valid sequence', () => {
-  //   // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
-  //   // The attribute is not on the zettel because the second link points to the sequence link, not the zettel, and therefore the
-  //   // attribute can only be received by inheritance from a sequence, but the sequence link does not form a valid sequence here.
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target, aSpan()]]).withName("sequence link");
-  //   let [contentLink, contentMetalnk] = aContentLinkAndMetalinkPointingTo(sequenceLink, "attr1", "val1")
-  //   let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-  //   edlZ.edl.withLinks(sequenceLink, contentLink, contentMetalnk, sequenceMetalink);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  it('does not return a content attribute value inherited through a sequence link if it is not part of a valid sequence', () => {
+    // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
+    // The attribute is not on the zettel because the second link points to the sequence link, not the zettel, and therefore the
+    // attribute can only be received by inheritance from a sequence, but the sequence link does not form a valid sequence here.
+    let dmb = aDmbWithSpan();
+    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target, aSpan()]]).withName("sequence link");
+    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "content");
+    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-  //   let values = attributes.values();
+    let markup = makeFromDMB(dmb);
 
-  //   expect(values).not.hasAttribute("attr1", "val1");
-  // });
+    expect([...markup.values()]).toEqual([]);
+  });
 
   // it('returns a content attribute endowed directly by a sequence link even if it is not part of a valid sequence', () => {
   //   // Note here we have two metalinks on the same link, one endowing a sequence and the other endowing an attribute. The
   //   // zettel gets the attribute because it is not inheriting it via the sequence, but is getting it directly from the link,
   //   // which points directly at the zettel.
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let sequenceLink = LinkBuilder(undefined, ["sequence", [edlZ.target, aSpan()]]).withName("sequence link");
-  //   let metalink = aMetalink(sequenceLink, aContentMetalink, "attr1", "val1");
+  //   let dmb = aDmbWithSpan();
+  //   let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target, aSpan()]]).withName("sequence link");
+  //   let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1");
   //   let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-  //   edlZ.edl.withLinks(sequenceLink, metalink, sequenceMetalink);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  //   dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-  //   let values = attributes.values();
+  //   let markup = makeFromDMB(dmb);
 
-  //   expect(values).hasAttribute("attr1", "val1");
+  //   expect([...markup.values()]).toEqual([]);
   // });
 
-  // it('does not return a direct attribute value inherited through a link', () => {
-  //   let edlZ = anEdlZettelWithSpan();
-  //   let link = aLink(edlZ.target, "attr1", "val1");
-  //   let intermediateLink = aLink(link);
-  //   let metalink = aMetalink(intermediateLink, aDirectMetalink, "attr1", "val1");
-  //   edlZ.edl.withLinks(link, intermediateLink, metalink);
-  //   let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  it('does not return a direct attribute value inherited through a sequence', () => {
+    // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
+    // The zettel receives the value by inheritance, because it is part of the sequence.
+    let dmb = aDmbWithSpan();
+    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
+    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "direct");
+    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
+    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-  //   let values = attributes.values();
+    let markup = makeFromDMB(dmb);
 
-  //   expect(values).hasExactlyAttributes();
-  // });
+    expect([...markup.values()]).toEqual([]);
+  });
 
-  // describe("direct attributes", () => {
-  //   it('returns the value endowed by a pointer', () => {
-  //     let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "val1");
-  //     let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  describe("direct attributes", () => {
+    it('returns the value endowed by a pointer', () => {
+      let dmb = aDmbWithSpan().withMarkupLinkPointingToTarget("attr1", "val1", "direct");
 
-  //     let values = attributes.values();
+      let markup = makeFromDMB(dmb);
 
-  //     expect(values).hasAttribute("attr1", "val1");
-  //   });
+      expect(markup.get("attr1")).toBe("val1");
+    });
 
-  //   it('returns all values of all attributes', () => {
-  //     let edlZ = anEdlZettelWithSpan()
-  //       .withLinkWithDirectAttributes("attr1", "val1")
-  //       .withLinkWithDirectAttributes("attr2", "val2")
-  //       .withLinkWithDirectAttributes("attr3", "val3");
-  //     let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+    it('returns all values of all attributes', () => {
+      let dmb = aDmbWithSpan()
+        .withMarkupLinkPointingToTarget("attr1", "val1", "direct")
+        .withMarkupLinkPointingToTarget("attr2", "val2", "direct")
+        .withMarkupLinkPointingToTarget("attr3", "val3", "direct");
 
-  //     let values = attributes.values();
+      let markup = makeFromDMB(dmb);
 
-  //     expect(values).hasAttribute("attr1", "val1");
-  //     expect(values).hasAttribute("attr2", "val2");
-  //     expect(values).hasAttribute("attr3", "val3");
-  //   });
+      expect(markup.get("attr1")).toBe("val1");
+      expect(markup.get("attr2")).toBe("val2");
+      expect(markup.get("attr3")).toBe("val3");
+    });
 
-  //   it('returns the later value in the Zettel rather than the earlier one', () => {
-  //     let edlZ = anEdlZettelWithSpan()
-  //       .withLinkWithDirectAttributes("attr1", "first")
-  //       .withLinkWithDirectAttributes("attr1", "second");
-  //     let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+    it('returns the later value in the Zettel rather than the earlier one', () => {
+      let dmb = aDmbWithSpan()
+        .withMarkupLinkPointingToTarget("attr1", "first", "direct")
+        .withMarkupLinkPointingToTarget("attr1", "second", "direct");
 
-  //     let values = attributes.values();
+      let markup = makeFromDMB(dmb);
 
-  //     expect(values).hasAttribute("attr1", "second");
-  //   });
+      expect(markup.get("attr1")).toBe("second");
+    });
 
   //   it('returns the value endowed by a link in the parent', () => {
   //     let child = anEdlWithSpan({name: "child"});
@@ -289,24 +284,24 @@ describe('markup', () => {
   //   });
 
   //   it('does not return direct attributes of containing objects', () => {
-  //     let edlZ = anEdlZettelWithSpan();
-  //     edlZ.withLinks(...aDirectLinkAndMetalinkPointingTo(edlZ.edl, "attr", "val"));
+  //     let dmb = aDmbWithSpan();
+  //     dmb.withLinks(...aDirectLinkAndMetalinkPointingTo(dmb.edl, "attr", "val"));
 
-  //     let values = makeFromEdlZettel(edlZ.target, edlZ).values();
+  //     let values = makeFromEdlZettel(dmb.target, dmb).values();
 
   //     expect(values).hasExactlyAttributes();
   //   });
 
   //   it('prefers a value from the links to a default value', () => {
-  //     let edlZ = anEdlZettelWithSpan().withLinkWithDirectAttributes("attr1", "link value");
-  //     edlZ.withDefaults(...aDirectLinkAndMetalinkPointingTo(edlZ.edl, "attr1", "default value"));
-  //     let attributes = makeFromEdlZettel(edlZ.target, edlZ);
+  //     let dmb = aDmbWithSpan().withMarkupLinkPointingToTarget("attr1", "link value");
+  //     dmb.withDefaults(...aDirectLinkAndMetalinkPointingTo(dmb.edl, "attr1", "default value"));
+  //     let attributes = makeFromEdlZettel(dmb.target, dmb);
 
   //     let values = attributes.values();
 
   //     expect(values).hasAttribute("attr1", "link value");
   //   });
-  // });
+  });
 
   // describe("content attributes", () => {
   //   describe.each(
@@ -339,9 +334,9 @@ describe('markup', () => {
   //     };
 
   //     function make(hierarchy) {
-  //       let edlZ = anEdlZettel({edl: hierarchy.parent})
-  //       if (hierarchy.defaults) { edlZ.withDefaults(...hierarchy.defaults); }
-  //       return makeFromEdlZettel(hierarchy.target, edlZ);
+  //       let dmb = anEdlZettel({edl: hierarchy.parent})
+  //       if (hierarchy.defaults) { dmb.withDefaults(...hierarchy.defaults); }
+  //       return makeFromEdlZettel(hierarchy.target, dmb);
   //     }
 
   //     it('returns the value endowed by a pointer', () => {

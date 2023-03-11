@@ -92,6 +92,11 @@ export function MarkupCalculation(edl, rules, objects) {
         }
       }
 
+      // Sorting the values by priority, from most significant factor to least:
+      // 1. Non-defaults preferred to defaults
+      // 2. High priority routes preferred over low priority routes
+      // 3. Inner links preferred over outer links
+      // 4. Links later in the EDL preferred to those earlier
       for (let values of markupMap.values()) {
         values.sort((a, b) => {
           if (a.isDefault !== b.isDefault) {
@@ -101,7 +106,7 @@ export function MarkupCalculation(edl, rules, objects) {
           } else if (a.linkDepth != b.linkDepth) {
             return a.linkDepth - b.linkDepth;
           }
-          else { return a.linkIndex - b.linkIndex; }
+          else { return b.linkIndex - a.linkIndex; }
         });
       }
 
