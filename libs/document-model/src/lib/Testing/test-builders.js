@@ -167,15 +167,21 @@ export function SequenceBuilder(prototype, members) {
   return wrap(Sequence(prototype, members));
 }
 
+function partsForEdl(edlBuilder) {
+  let edl = edlBuilder.build();
+  let linkParts = edlBuilder.links.map(link => Part(link.pointer, link.build()));
+  let childParts = edlBuilder.clips.filter(c => c.isEdl).map(partsForEdl);
+  return linkParts.concat(...childParts).concat([Part(edlBuilder.pointer, edl)]);
+}
+
 export function DocModelBuilderBuilder(edlBuilder) {
   let obj = Builder(obj => {
-    let edl = edlBuilder.build();
+    let edlParts = partsForEdl(edlBuilder);
     let defaultParts = obj.defaultLinks.map(link => Part(link.pointer, link.build()));
-    let linkParts = obj.links.map(link => Part(link.pointer, link.build()));
-    obj.pointer = EdlPointer("doc");
+    obj.pointer = edlBuilder.pointer;
     let b = docModelBuilderTesting.makeMockedBuilder(
       obj.pointer,
-      defaultParts.concat(linkParts).concat([Part(obj.pointer, edl), Part(defaultsPointer, obj.defaultsEdl.build())]));
+      defaultParts.concat(edlParts).concat([Part(defaultsPointer, obj.defaultsEdl.build())]));
     return b;
   }, {
     defaultLinks: [],

@@ -25,6 +25,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
   let obj = {};
   let childBuilders = [];
   let model, allLinks;
+  let edlFound = false;
 
   function buildHierarchy() {
     let zettel = [];
@@ -36,6 +37,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     if (edlPart === undefined) {
       return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {}, key);
     }
+    edlFound = true;
 
     let edl = edlPart.content;
 
@@ -79,6 +81,8 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
   }
 
   function addMarkup() {
+    if (!edlFound) { return; }
+
     let objectsRequiringMarkup = allLinks.concat(model.zettel.filter(z => z.isZettel));
     let calc = MarkupCalculation(model, model.markupRules, objectsRequiringMarkup);
     let markupMap = calc.initialize();

@@ -23,9 +23,9 @@ function anEdl({name} = {}) {
   return builder;
 }
 
-// function anEdlWithSpan(args) {
-//   return anEdl(args).withTarget(aSpan());
-// }
+function anEdlWithSpan(args) {
+  return anEdl(args).withTarget(aSpan());
+}
 
 // function anEdlZettel({ edl, name } = {}) {
 //   edl = edl ?? anEdl({name});
@@ -82,13 +82,13 @@ function aDMB(edlBuilder) {
 }
 
 function getZettel(hierarchy, clip) {
-  let zettel = hierarchy.zettel.find(z => clip.endowsTo(z.clip));
+  let zettel = hierarchy.zettel.find(z => z.clip && clip.endowsTo(z.clip));
   if (zettel) { return zettel; }
   return hierarchy.zettel.filter(z => z.pointer.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
 }
 
-function makeFromDMB(docBuilder) {
-  let target = docBuilder.target.build();
+function makeFromDMB(docBuilder, target) {
+  target = target ?? docBuilder.target.build();
   let dmb = docBuilder.build();
   let doc = dmb.build();
   let targetZettel = getZettel(doc, target);
@@ -258,17 +258,16 @@ describe('markup', () => {
       expect(markup.get("attr1")).toBe("second");
     });
 
-  //   it('returns the value endowed by a link in the parent', () => {
-  //     let child = anEdlWithSpan({name: "child"});
-  //     let parent = anEdl({name: "parent"})
-  //       .withClip(child)
-  //       .withLinks(...aDirectLinkAndMetalinkPointingTo(child.target, "attr1", "val1"));
-  //     let attributes = makeFromEdlZettel(child.target, anEdlZettel({edl: parent}));
+    it('returns the value endowed by a link in the parent', () => {
+      let child = anEdlWithSpan({name: "child"});
+      let parent = anEdl({name: "parent"})
+        .withClip(child)
+        .withLinks(aMarkupLinkPointingTo("1", child.target, "attr1", "val1", "direct"));
 
-  //     let values = attributes.values();
+      let zettel = getZettel(aDMB(parent).build().build(), child.target.build());
 
-  //     expect(values).hasAttribute("attr1", "val1");
-  //   });
+      expect(zettel.markup.get("attr1")).toBe("val1");
+    });
 
   //   it('returns the value in the child in preference to that in the parent', () => {
   //     let child = anEdlWithSpan({name: "child" });
