@@ -2,9 +2,9 @@ import { finalObject, memoize, listMap } from "@commonplace/utils";
 import { AttributeValue } from "./attribute-value";
 import { AttributeRoute } from "./AttributeRoute";
 
-export function MarkupCalculation(edl, rules, objects) {
+export function MarkupCalculation(edl, rules, objects, parentMap) {
   let obj = {};
-  let objectMap = new Map();
+  let objectMap = new Map(parentMap);
 
   function populateObjectMap() {
     let [linkTypeMap, edlTypeMap, clipTypeMap] = buildTypeMaps(rules);

@@ -16,7 +16,7 @@ export function DocumentModelBuilder(edlPointer, repo) {
       // zettel and links. The second decorates all the objects in the hierarchy top-down with
       // markup information.
       let rootModel = recursiveBuilder.buildHierarchy();
-      recursiveBuilder.addMarkup();
+      recursiveBuilder.addMarkup(undefined);
       return rootModel;
     }});
 }
@@ -80,11 +80,12 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     return finalObject(model, {});
   }
 
-  function addMarkup() {
+  function addMarkup(parentMarkup) {
     if (!edlFound) { return; }
+    parentMarkup = parentMarkup ?? new Map();
 
-    let objectsRequiringMarkup = allLinks.concat(model.zettel.filter(z => z.isZettel));
-    let calc = MarkupCalculation(model, model.markupRules, objectsRequiringMarkup);
+    let objectsRequiringMarkup = [model].concat(model.zettel.filter(z => z.isZettel)).concat(allLinks);
+    let calc = MarkupCalculation(model, model.markupRules, objectsRequiringMarkup, parentMarkup);
     let markupMap = calc.initialize();
 
     objectsRequiringMarkup.forEach(object => {
@@ -93,7 +94,8 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
       mergeMaps(object.contentMarkup, allMarkup.contentMarkup());
     });
 
-    childBuilders.forEach(builder => builder.addMarkup());
+    parentMarkup.set(model.key, markupMap.get(model.key));
+    childBuilders.forEach(builder => builder.addMarkup(parentMarkup));
   }
 
   return finalObject(obj, {

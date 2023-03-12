@@ -1,14 +1,6 @@
 import { expect, it, describe } from '@jest/globals';
-import { docModelBuilderTesting } from '../Builder/document-model-builder';
-// import { attributesTesting } from './attributes';
-import { MarkupBuilder, EdlBuilder, EdlZettelBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder } from '../Testing/test-builders';
-// import { sequenceMetalinkType } from '../Model/render-link';
-import { InlinePointer, EdlPointer, Part } from '@commonplace/core';
-
-// expect.extend({
-//  hasAttribute: attributesTesting.hasAttribute,
-//  hasExactlyAttributes: attributesTesting.hasExactlyAttributes
-// });
+import { MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder } from '../Testing/test-builders';
+import { InlinePointer } from '@commonplace/core';
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
@@ -26,11 +18,6 @@ function anEdl({name} = {}) {
 function anEdlWithSpan(args) {
   return anEdl(args).withTarget(aSpan());
 }
-
-// function anEdlZettel({ edl, name } = {}) {
-//   edl = edl ?? anEdl({name});
-//   return EdlZettelBuilder(edl);
-// }
 
 function aLink(targetBuilder, ...attributePairs) {
   let type = attributePairs.length >= 2 ? `${attributePairs[0]}:${attributePairs[1]}` : "unspecified type";
@@ -52,7 +39,7 @@ function aSequenceMetalink(endowingLink, sequenceEndName) {
 }
 
 function aDmbWithSpan() {
-  let dmb = aDMB(anEdl().withTarget(aSpan()));
+  let dmb = aDmb(anEdl().withTarget(aSpan()));
   return dmb;
 }
 
@@ -63,6 +50,7 @@ function aMarkupLink(name, ...attributeDescriptors) {
 }
 
 function aMarkupLinkPointingTo(name, targetBuilder, ...attributeDescriptors) {
+  if (targetBuilder === undefined) { throw "targetBuilder cannot be null"; }
   return aMarkupLink(name, ...attributeDescriptors)
     .withEnd(EndBuilder(["targets", [targetBuilder]]));
 }
@@ -77,7 +65,7 @@ function aMarkupLinkOnEdls(name, type, ...attributeDescriptors) {
     .withEnd(EndBuilder(["edl types", [InlinePointer(type)]]));
 }
 
-function aDMB(edlBuilder) {
+function aDmb(edlBuilder) {
   return DocModelBuilderBuilder(edlBuilder);
 }
 
@@ -87,8 +75,8 @@ function getZettel(hierarchy, clip) {
   return hierarchy.zettel.filter(z => z.pointer.pointerType === "edl").map(z => getZettel(z, clip)).find(x => x);
 }
 
-function makeFromDMB(docBuilder, target) {
-  target = target ?? docBuilder.target.build();
+function makeFromDmb(docBuilder, target) {
+  target = target ? target.build() : docBuilder.target.build();
   let dmb = docBuilder.build();
   let doc = dmb.build();
   let targetZettel = getZettel(doc, target);
@@ -97,47 +85,41 @@ function makeFromDMB(docBuilder, target) {
   return markup;
 }
 
-function make(edlBuilder) {
-  let builder = aDMB(edlBuilder);
-  let markup = makeFromDMB(builder);
-  return markup;
-}
-
 describe('markup', () => {
   it('returns no attributes if there are no pointers', () => {
     let dmb = aDmbWithSpan();
-    let markup = makeFromDMB(dmb);
+    let markup = makeFromDmb(dmb);
     expect([...markup.values()]).toEqual([]);
   });
 
   it('returns the default direct value if there are no non-default links', () => {
     let dmb = aDmbWithSpan();
-    dmb.withDefaults(aMarkupLinkOnSpans("1", "attr1", "val1", "direct"));
-    let markup = makeFromDMB(dmb);
+    dmb.withDefault(aMarkupLinkOnSpans("1", "attr1", "val1", "direct"));
+    let markup = makeFromDmb(dmb);
 
     expect(markup.get("attr1")).toBe("val1");
   });
 
   it('does not return the default direct value from the containing EDL', () => {
     let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
-    dmb.withDefaults(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "direct"));
-    let markup = makeFromDMB(dmb);
+    dmb.withDefault(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "direct"));
+    let markup = makeFromDmb(dmb);
 
     expect([...markup.values()]).toEqual([]);
   });
 
   it('returns the default content value if there are no links', () => {
     let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
-    dmb.withDefaults(aMarkupLinkOnSpans("1", "attr1", "val1", "content"));
-    let markup = makeFromDMB(dmb);
+    dmb.withDefault(aMarkupLinkOnSpans("1", "attr1", "val1", "content"));
+    let markup = makeFromDmb(dmb);
 
     expect(markup.get("attr1")).toBe("val1");
   });
 
   it('returns the default content value from the containing EDL if there are no links', () => {
     let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
-    dmb.withDefaults(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "content"));
-    let markup = makeFromDMB(dmb);
+    dmb.withDefault(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "content"));
+    let markup = makeFromDmb(dmb);
 
     expect(markup.get("attr1")).toBe("val1");
   });
@@ -148,7 +130,7 @@ describe('markup', () => {
   //   let dmb = aDmbWithSpan();
   //   let link = aLink(dmb.target, "attr1", "val1");
   //   let metalink = aMetalink(link, aDirectMetalink, "attr1", "val1");
-  //   dmb.withDefaults(metalink);
+  //   dmb.withDefault(metalink);
   //   dmb.edl.withLink(link);
   //   let attributes = makeFromEdlZettel(dmb.target, dmb);
 
@@ -163,7 +145,7 @@ describe('markup', () => {
     let link = aMarkupLinkPointingTo("1", intermediateLink, "attr1", "val1", "content");
     dmb.withLinks(link, intermediateLink);
 
-    let markup = makeFromDMB(dmb);
+    let markup = makeFromDmb(dmb);
 
     expect([...markup.values()]).toEqual([]);
   });
@@ -177,7 +159,7 @@ describe('markup', () => {
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
     dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-    let markup = makeFromDMB(dmb);
+    let markup = makeFromDmb(dmb);
 
     expect(markup.get("attr1")).toBe("val1");
   });
@@ -192,7 +174,7 @@ describe('markup', () => {
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
     dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-    let markup = makeFromDMB(dmb);
+    let markup = makeFromDmb(dmb);
 
     expect([...markup.values()]).toEqual([]);
   });
@@ -207,7 +189,7 @@ describe('markup', () => {
   //   let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
   //   dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-  //   let markup = makeFromDMB(dmb);
+  //   let markup = makeFromDmb(dmb);
 
   //   expect([...markup.values()]).toEqual([]);
   // });
@@ -221,7 +203,7 @@ describe('markup', () => {
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
     dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
 
-    let markup = makeFromDMB(dmb);
+    let markup = makeFromDmb(dmb);
 
     expect([...markup.values()]).toEqual([]);
   });
@@ -230,7 +212,7 @@ describe('markup', () => {
     it('returns the value endowed by a pointer', () => {
       let dmb = aDmbWithSpan().withMarkupLinkPointingToTarget("attr1", "val1", "direct");
 
-      let markup = makeFromDMB(dmb);
+      let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("val1");
     });
@@ -241,7 +223,7 @@ describe('markup', () => {
         .withMarkupLinkPointingToTarget("attr2", "val2", "direct")
         .withMarkupLinkPointingToTarget("attr3", "val3", "direct");
 
-      let markup = makeFromDMB(dmb);
+      let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("val1");
       expect(markup.get("attr2")).toBe("val2");
@@ -253,7 +235,7 @@ describe('markup', () => {
         .withMarkupLinkPointingToTarget("attr1", "first", "direct")
         .withMarkupLinkPointingToTarget("attr1", "second", "direct");
 
-      let markup = makeFromDMB(dmb);
+      let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("second");
     });
@@ -264,7 +246,7 @@ describe('markup', () => {
         .withClip(child)
         .withLinks(aMarkupLinkPointingTo("1", child.target, "attr1", "val1", "direct"));
 
-      let zettel = getZettel(aDMB(parent).build().build(), child.target.build());
+      let zettel = getZettel(aDmb(parent).build().build(), child.target.build());
 
       expect(zettel.markup.get("attr1")).toBe("val1");
     });
@@ -276,7 +258,7 @@ describe('markup', () => {
         .withClip(child)
         .withLinks(aMarkupLinkPointingTo("2", child.target, "attr1", "parent value", "direct"));
 
-      let zettel = getZettel(aDMB(parent).build().build(), child.target.build());
+      let zettel = getZettel(aDmb(parent).build().build(), child.target.build());
 
       expect(zettel.markup.get("attr1")).toBe("child value");
     });
@@ -285,7 +267,7 @@ describe('markup', () => {
       let dmb = aDmbWithSpan();
       dmb.withLinks(aMarkupLinkPointingTo("1", dmb.edl, "attr1", "val", "direct"));
 
-      let markup = makeFromDMB(dmb);
+      let markup = makeFromDmb(dmb);
 
       expect([...markup.values()]).toEqual([]);
     });
@@ -295,115 +277,114 @@ describe('markup', () => {
         .withLink(aMarkupLinkOnSpans("1", "attr1", "link value", "direct"))
         .withDefault(aMarkupLinkOnSpans("2", "attr1", "default value", "direct"));
 
-      let markup = makeFromDMB(dmb);
+      let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("link value");
     });
   });
 
-  // describe("content attributes", () => {
-  //   describe.each(
-  //     [["span"], ["edl"], ["parent edl"]]
-  //   )("%s level", level => {
+  describe("content attributes", () => {
+    describe.each(
+      [["span"], ["edl"], ["parent edl"]]
+    )("%s level", level => {
 
-  //     function anEdlHierarchy() {
-  //       let child = anEdlWithSpan({name: "child"});
-  //       let parent = anEdl({name: "parent"}).withClip(child);
+      function anEdlHierarchy() {
+        let child = anEdlWithSpan({name: "child"});
+        let parent = anEdl({ name: "parent" }).withClip(child);
+        let linkCount = 1;
 
-  //       let builder = Builder(() => parent.build(), {
-  //         parent,
-  //         child,
-  //         target: child.target,
-  //         defaults: undefined,
-  //         pointerBuilderForLevel: () =>
-  //           builder.level === "span" ? builder.target : level === "edl" ? builder.child : builder.parent,
-  //         withContentLink(attributeName, attributeValue) {
-  //           let links = aContentLinkAndMetalinkPointingTo(builder.pointerBuilderForLevel(level), attributeName, attributeValue);
-  //           builder.parent.withLinks(...links);
-  //           return builder;
-  //         },
-  //         withDefaults(attributeName, attributeValue) {
-  //           builder.defaults = aContentLinkAndMetalinkPointingTo(builder.pointerBuilderForLevel(level), attributeName, attributeValue);
-  //           return builder;
-  //         }
-  //       });
+        let builder = Builder(() => parent.build(), {
+          parent,
+          child,
+          target: child.target,
+          defaults: undefined,
+          pointerBuilderForLevel: () =>
+            level === "span"
+              ? builder.target : level === "edl"
+                ? builder.child : (level === "parent edl"
+                  ? builder.parent : undefined),
+          withContentLink(attributeName, attributeValue) {
+            let link = aMarkupLinkPointingTo("parent link " + linkCount++, builder.pointerBuilderForLevel(level), attributeName, attributeValue, "content");
+            builder.parent.withLink(link);
+            return builder;
+          },
+          withDefault(attributeName, attributeValue) {
+            builder.defaults = aMarkupLinkPointingTo("default link", builder.pointerBuilderForLevel(level), attributeName, attributeValue, "content");
+            return builder;
+          }
+        });
 
-  //       return builder;
-  //     };
+        return builder;
+      };
 
-  //     function make(hierarchy) {
-  //       let dmb = anEdlZettel({edl: hierarchy.parent})
-  //       if (hierarchy.defaults) { dmb.withDefaults(...hierarchy.defaults); }
-  //       return makeFromEdlZettel(hierarchy.target, dmb);
-  //     }
+      function make(hierarchy) {
+        let dmb = aDmb(hierarchy.parent);
+        if (hierarchy.defaults) { dmb.withDefault(hierarchy.defaults); }
+        return makeFromDmb(dmb, hierarchy.target);
+      }
 
-  //     it('returns the value endowed by a pointer', () => {
-  //       let hierarchy = anEdlHierarchy().withContentLink("attr1", "val1");
-  //       let attributes = make(hierarchy);
+      it('returns the value endowed by a pointer', () => {
+        let hierarchy = anEdlHierarchy().withContentLink("attr1", "val1");
 
-  //       let values = attributes.values();
+        let markup = make(hierarchy);
 
-  //       expect(values).hasAttribute("attr1", "val1");
-  //     });
+        expect(markup.get("attr1")).toBe("val1");
+      });
 
-  //     it('returns all values of all attributes', () => {
-  //       let hierarchy = anEdlHierarchy()
-  //         .withContentLink("attr1", "val1")
-  //         .withContentLink("attr2", "val2")
-  //         .withContentLink("attr3", "val3");
-  //       let attributes = make(hierarchy);
+      it('returns all values of all attributes', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "val1")
+          .withContentLink("attr2", "val2")
+          .withContentLink("attr3", "val3");
 
-  //       let values = attributes.values();
+        let markup = make(hierarchy);
 
-  //       expect(values).hasAttribute("attr1", "val1");
-  //       expect(values).hasAttribute("attr2", "val2");
-  //       expect(values).hasAttribute("attr3", "val3");
-  //     });
+        expect(markup.get("attr1")).toBe("val1");
+        expect(markup.get("attr2")).toBe("val2");
+        expect(markup.get("attr3")).toBe("val3");
+      });
 
-  //     it('returns the later value in the Zettel rather than the earlier one', () => {
-  //       let hierarchy = anEdlHierarchy()
-  //         .withContentLink("attr1", "first")
-  //         .withContentLink("attr1", "second");
-  //       let attributes = make(hierarchy);
+      it('returns the later value in the Zettel rather than the earlier one', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "first")
+          .withContentLink("attr1", "second");
 
-  //       let values = attributes.values();
+        let markup = make(hierarchy);
 
-  //       expect(values).hasAttribute("attr1", "second");
-  //     });
+        expect(markup.get("attr1")).toBe("second");
+      });
 
-  //     it('prefers a value from the links to a default value', () => {
-  //       let hierarchy = anEdlHierarchy()
-  //         .withContentLink("attr1", "content link value")
-  //         .withDefaults("attr1", "default");
-  //       let attributes = make(hierarchy);
+      it('prefers a value from the links to a default value', () => {
+        let hierarchy = anEdlHierarchy()
+          .withContentLink("attr1", "content link value")
+          .withDefault("attr1", "default");
 
-  //       let values = attributes.values();
+        let markup = make(hierarchy);
 
-  //       expect(values).hasAttribute("attr1", "content link value");
-  //     });
-  //   });
+        expect(markup.get("attr1")).toBe("content link value");
+      });
+    });
 
-  //   it('returns the value in the child in preference to that in the parent', () => {
-  //     let child = anEdlWithSpan({name: "child"});
-  //     child.withLinks(...aContentLinkAndMetalinkPointingTo(child.target, "attr1", "child value"));
-  //     let parent = anEdl({ name: "parent" })
-  //       .withClip(child)
-  //       .withLinks(...aContentLinkAndMetalinkPointingTo(child.target, "attr1", "parent value"));
+    it('returns the value in the child in preference to that in the parent', () => {
+      let child = anEdlWithSpan({name: "child"});
+      child.withLink(aMarkupLinkPointingTo("1", child.target, "attr1", "child value", "content"));
+      let parent = anEdl({ name: "parent" })
+        .withClip(child)
+        .withLink(aMarkupLinkPointingTo("2", child.target, "attr1", "parent value", "content"));
 
-  //     let values = make(child.target, parent).values();
+        let markup = makeFromDmb(aDmb(parent), child.target);
 
-  //     expect(values).hasAttribute("attr1", "child value");
-  //   });
+        expect(markup.get("attr1")).toBe("child value");
+    });
 
-  //   it('returns direct values in preference to content values', () => {
-  //     let edl = anEdlWithSpan();
-  //     edl
-  //       .withLinks(...aDirectLinkAndMetalinkPointingTo(edl.target, "attr1", "direct value"))
-  //       .withLinks(...aContentLinkAndMetalinkPointingTo(edl.target, "attr1", "content value"));
+    it('returns direct values in preference to content values', () => {
+      let dmb = aDmbWithSpan()
+        .withMarkupLinkPointingToTarget("attr1", "direct value", "direct")
+        .withMarkupLinkPointingToTarget("attr1", "content value", "content");
 
-  //     let values = make(edl.target, edl).values();
+        let markup = makeFromDmb(dmb);
 
-  //     expect(values).hasAttribute("attr1", "direct value");
-  //   });
-  // });
+        expect(markup.get("attr1")).toBe("direct value");
+    });
+  });
 });
