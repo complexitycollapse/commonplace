@@ -259,7 +259,7 @@ describe('markup', () => {
     });
 
     it('returns the value endowed by a link in the parent', () => {
-      let child = anEdlWithSpan({name: "child"});
+      let child = anEdlWithSpan({ name: "child" });
       let parent = anEdl({name: "parent"})
         .withClip(child)
         .withLinks(aMarkupLinkPointingTo("1", child.target, "attr1", "val1", "direct"));
@@ -269,37 +269,36 @@ describe('markup', () => {
       expect(zettel.markup.get("attr1")).toBe("val1");
     });
 
-  //   it('returns the value in the child in preference to that in the parent', () => {
-  //     let child = anEdlWithSpan({name: "child" });
-  //     child.withLinks(...aDirectLinkAndMetalinkPointingTo(child.target, "attr1", "child value"));
-  //     let parent = anEdl({ name: "parent" })
-  //       .withClip(child)
-  //       .withLinks(...aDirectLinkAndMetalinkPointingTo(child.target, "attr1", "parent value"));
-  //     let attributes = makeFromEdlZettel(child.target, anEdlZettel({edl: parent}));
+    it('returns the value in the child in preference to that in the parent', () => {
+      let child = anEdlWithSpan({ name: "child" });
+      child.withLinks(aMarkupLinkPointingTo("1", child.target, "attr1", "child value", "direct"));
+      let parent = anEdl({name: "parent"})
+        .withClip(child)
+        .withLinks(aMarkupLinkPointingTo("2", child.target, "attr1", "parent value", "direct"));
 
-  //     let values = attributes.values();
+      let zettel = getZettel(aDMB(parent).build().build(), child.target.build());
 
-  //     expect(values).hasAttribute("attr1", "child value");
-  //   });
+      expect(zettel.markup.get("attr1")).toBe("child value");
+    });
 
-  //   it('does not return direct attributes of containing objects', () => {
-  //     let dmb = aDmbWithSpan();
-  //     dmb.withLinks(...aDirectLinkAndMetalinkPointingTo(dmb.edl, "attr", "val"));
+    it('does not return direct attributes of containers', () => {
+      let dmb = aDmbWithSpan();
+      dmb.withLinks(aMarkupLinkPointingTo("1", dmb.edl, "attr1", "val", "direct"));
 
-  //     let values = makeFromEdlZettel(dmb.target, dmb).values();
+      let markup = makeFromDMB(dmb);
 
-  //     expect(values).hasExactlyAttributes();
-  //   });
+      expect([...markup.values()]).toEqual([]);
+    });
 
-  //   it('prefers a value from the links to a default value', () => {
-  //     let dmb = aDmbWithSpan().withMarkupLinkPointingToTarget("attr1", "link value");
-  //     dmb.withDefaults(...aDirectLinkAndMetalinkPointingTo(dmb.edl, "attr1", "default value"));
-  //     let attributes = makeFromEdlZettel(dmb.target, dmb);
+    it('prefers a value from the links to a default value', () => {
+      let dmb = aDmbWithSpan()
+        .withLink(aMarkupLinkOnSpans("1", "attr1", "link value", "direct"))
+        .withDefault(aMarkupLinkOnSpans("2", "attr1", "default value", "direct"));
 
-  //     let values = attributes.values();
+      let markup = makeFromDMB(dmb);
 
-  //     expect(values).hasAttribute("attr1", "link value");
-  //   });
+      expect(markup.get("attr1")).toBe("link value");
+    });
   });
 
   // describe("content attributes", () => {

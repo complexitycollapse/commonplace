@@ -61,12 +61,13 @@ export function LinkBuilder(type, ...endSpecs) {
     withEnd: e => obj.pushTo("ends", e),
     withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString())),
     defaultPart: () => Part(obj.pointer, obj.builtObject)
-    });
+  });
 
-    obj.withType(type);
-    if (endSpecs) {
-      endSpecs.forEach(e => obj.withEnd(EndBuilder(e)));
-    }
+  obj.withType(type);
+  if (endSpecs) {
+    endSpecs.forEach(e => obj.withEnd(EndBuilder(e)));
+  }
+  obj.withName();
 
   return obj;
 }
@@ -124,7 +125,6 @@ export function MarkupBuilder() {
 
 export function EdlBuilder(name = "foo") {
   let obj = Builder(obj => {
-    obj.links.map(x => x.build());
     let edl = Edl(obj.type, obj.clips.map(x => {x.build(); return x.pointer;}), obj.links.map(x => x.pointer));
     return edl;
   }, {
@@ -186,18 +186,18 @@ export function DocModelBuilderBuilder(edlBuilder) {
   }, {
     defaultLinks: [],
     links: [],
+    edl: edlBuilder,
     target: edlBuilder.target,
     linkCount: 1,
     defaultsEdl: EdlBuilder(defaultsPointer.edlName),
     withDefault: link => {
-      obj.defaultLinks.push(link);
       obj.defaultsEdl.withLink(link);
+      return obj.pushTo("defaultLinks", link);;
     },
-    withDefaults: (...links) => links.map(l => obj.withDefault(l)),
+    withDefaults: (...links) => { links.map(l => obj.withDefault(l)); return obj; },
     withLink: link => {
-      obj.links.push(link);
       edlBuilder.withLink(link);
-      return obj;
+      return obj.pushTo("links", link);
     },
     withLinks: (...links) => { links.map(l => obj.withLink(l)); return obj; },
     withMarkupLinkPointingToTarget: (attr, val, inherit) => {
