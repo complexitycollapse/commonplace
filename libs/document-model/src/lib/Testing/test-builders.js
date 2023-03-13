@@ -196,15 +196,28 @@ export function DocModelBuilderBuilder(edlBuilder) {
     },
     withDefaults: (...links) => { links.map(l => obj.withDefault(l)); return obj; },
     withLink: link => {
+      if (!link) {
+        throw "withLink called on EdlBuilder with null argument";
+      }
       edlBuilder.withLink(link);
       return obj.pushTo("links", link);
     },
     withLinks: (...links) => { links.map(l => obj.withLink(l)); return obj; },
-    withMarkupLinkPointingToTarget: (attr, val, inherit) => {
-      return obj.withLink(MarkupBuilder().withName(obj.linkCount++)
+    withMarkupLink: (target, endName, attr, val, inherit) => {
+      return obj.withLink(MarkupBuilder().withName("X-"+ obj.linkCount++)
         .endowing(attr, val, inherit)
-        .withEnd(EndBuilder(["targets", [obj.target]])));
+        .withEnd(EndBuilder([endName, [target]])));
     },
+    withMarkupLinkPointingToTarget: (attr, val, inherit) =>
+      obj.withMarkupLinkPointingTo(obj.target, attr, val, inherit),
+    withMarkupLinkPointingTo: (target, attr, val, inherit) =>
+      obj.withMarkupLink(target, "targets", attr, val, inherit),
+    withMarkupLinkOnSpans: (attr, val, inherit) =>
+      obj.withMarkupLink(InlinePointer("span"), "clip types", attr, val, inherit),
+    withMarkupLinkOnEdls: (type, attr, val, inherit) =>
+      obj.withMarkupLink(InlinePointer(type), "edl types", attr, val, inherit),
+    withMarkupLinkOnLinks: (type, attr, val, inherit) =>
+      obj.withMarkupLink(InlinePointer(type), "link types", attr, val, inherit),
     onEdl: callback => {
       callback(edlBuilder);
       return obj;

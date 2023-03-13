@@ -142,8 +142,8 @@ describe('markup', () => {
   it('does not return a content attribute value inherited through a non-sequence link', () => {
     let dmb = aDmbWithSpan();
     let intermediateLink = aLink(dmb.target);
-    let link = aMarkupLinkPointingTo("1", intermediateLink, "attr1", "val1", "content");
-    dmb.withLinks(link, intermediateLink);
+    dmb.withMarkupLinkPointingTo(intermediateLink, "attr1", "val1", "content");
+    dmb.withLink(intermediateLink);
 
     let markup = makeFromDmb(dmb);
 
@@ -155,9 +155,9 @@ describe('markup', () => {
     // The zettel receives the value by inheritance, because it is part of the sequence.
     let dmb = aDmbWithSpan();
     let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
-    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "content");
+    dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "content");
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
+    dmb.withLinks(sequenceLink, sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 
@@ -170,9 +170,9 @@ describe('markup', () => {
     // attribute can only be received by inheritance from a sequence, but the sequence link does not form a valid sequence here.
     let dmb = aDmbWithSpan();
     let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target, aSpan()]]).withName("sequence link");
-    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "content");
+    dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "content");
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
+    dmb.withLinks(sequenceLink, sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 
@@ -199,9 +199,9 @@ describe('markup', () => {
     // The zettel receives the value by inheritance, because it is part of the sequence.
     let dmb = aDmbWithSpan();
     let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
-    let contentLink = aMarkupLinkPointingTo("1", sequenceLink, "attr1", "val1", "direct");
+    dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "direct");
     let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, contentLink, sequenceMetalink);
+    dmb.withLinks(sequenceLink, sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 
@@ -254,18 +254,17 @@ describe('markup', () => {
     it('returns the value in the child in preference to that in the parent', () => {
       let child = anEdlWithSpan({ name: "child" });
       child.withLinks(aMarkupLinkPointingTo("1", child.target, "attr1", "child value", "direct"));
-      let parent = anEdl({name: "parent"})
-        .withClip(child)
-        .withLinks(aMarkupLinkPointingTo("2", child.target, "attr1", "parent value", "direct"));
+      let parent = aDmb(anEdl({name: "parent"}).withClip(child))
+        .withMarkupLinkPointingTo(child.target, "attr1", "parent value", "direct");
 
-      let zettel = getZettel(aDmb(parent).build().build(), child.target.build());
+      let zettel = getZettel(parent.build().build(), child.target.build());
 
       expect(zettel.markup.get("attr1")).toBe("child value");
     });
 
     it('does not return direct attributes of containers', () => {
       let dmb = aDmbWithSpan();
-      dmb.withLinks(aMarkupLinkPointingTo("1", dmb.edl, "attr1", "val", "direct"));
+      dmb.withMarkupLinkPointingTo(dmb.edl, "attr1", "val", "direct");
 
       let markup = makeFromDmb(dmb);
 
@@ -274,7 +273,7 @@ describe('markup', () => {
 
     it('prefers a value from the links to a default value', () => {
       let dmb = aDmbWithSpan()
-        .withLink(aMarkupLinkOnSpans("1", "attr1", "link value", "direct"))
+        .withMarkupLinkOnSpans("attr1", "link value", "direct")
         .withDefault(aMarkupLinkOnSpans("2", "attr1", "default value", "direct"));
 
       let markup = makeFromDmb(dmb);
@@ -368,11 +367,10 @@ describe('markup', () => {
     it('returns the value in the child in preference to that in the parent', () => {
       let child = anEdlWithSpan({name: "child"});
       child.withLink(aMarkupLinkPointingTo("1", child.target, "attr1", "child value", "content"));
-      let parent = anEdl({ name: "parent" })
-        .withClip(child)
-        .withLink(aMarkupLinkPointingTo("2", child.target, "attr1", "parent value", "content"));
+      let parent = aDmb(anEdl({ name: "parent" }).withClip(child))
+        .withMarkupLinkPointingTo(child.target, "attr1", "parent value", "content");
 
-        let markup = makeFromDmb(aDmb(parent), child.target);
+        let markup = makeFromDmb(parent, child.target);
 
         expect(markup.get("attr1")).toBe("child value");
     });
