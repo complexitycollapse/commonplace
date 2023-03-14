@@ -131,7 +131,7 @@ export function EdlBuilder(name = "foo") {
     links: [],
     clips: [],
     isEdl: true,
-    withType: type => { obj.withProperty("type", type); },
+    withType: type => obj.withProperty("type", type),
     withLink: link => obj.pushTo("links", link),
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
     withClip: clip => obj.pushTo("clips", clip),
@@ -214,6 +214,8 @@ export function DocModelBuilderBuilder(edlBuilder) {
       obj.withMarkupLink(target, "targets", attr, val, inherit),
     withMarkupLinkOnSpans: (attr, val, inherit) =>
       obj.withMarkupLink(InlinePointer("span"), "clip types", attr, val, inherit),
+    withMarkupLinkOnClips: (type, attr, val, inherit) =>
+      obj.withMarkupLink(InlinePointer(type), "clip types", attr, val, inherit),
     withMarkupLinkOnEdls: (type, attr, val, inherit) =>
       obj.withMarkupLink(InlinePointer(type), "edl types", attr, val, inherit),
     withMarkupLinkOnLinks: (type, attr, val, inherit) =>

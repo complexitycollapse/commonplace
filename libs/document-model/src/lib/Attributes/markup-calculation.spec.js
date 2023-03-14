@@ -209,12 +209,70 @@ describe('markup', () => {
   });
 
   describe("direct attributes", () => {
-    it('returns the value endowed by a pointer', () => {
+    it('returns the value endowed by a pointer targeting the object directly', () => {
       let dmb = aDmbWithSpan().withMarkupLinkPointingToTarget("attr1", "val1", "direct");
 
       let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("val1");
+    });
+
+    it('returns the value endowed by a clip type link if the target matches the clip type', () => {
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("span", "attr1", "span value", "direct");
+
+      let markup = makeFromDmb(dmb);
+
+      expect(markup.get("attr1")).toBe("span value");
+    });
+
+    it('does not return the value endowed by a clip type link if the target does not match the clip type', () => {
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("box", "attr1", "box value", "direct");
+
+      let markup = makeFromDmb(dmb);
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('returns the value endowed by an Edl type link if the target matches the Edl type', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
+        .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "direct");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect(markup.get("attr1")).toBe("edl type value");
+    });
+
+    it('does not return the value endowed by an Edl type link if the target does not match the Edl type', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
+        .withMarkupLinkOnEdls("wrong edl type", "attr1", "edl type value", "direct");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('returns the value endowed by a link type link if the target matches the link type', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkOnLinks("link type", "attr1", "link value", "direct");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect(markup.get("attr1")).toBe("link value");
+    });
+
+    it('does not return the value endowed by a link type link if the target does not match the link type', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "direct");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect([...markup.values()]).toEqual([]);
     });
 
     it('returns all values of all attributes', () => {
@@ -279,6 +337,39 @@ describe('markup', () => {
       let markup = makeFromDmb(dmb);
 
       expect(markup.get("attr1")).toBe("link value");
+    });
+
+    it('prefers a targeted value to a clip type value', () => {
+      let dmb = aDmbWithSpan()
+        .withMarkupLinkPointingToTarget("attr1", "targeted value", "direct")
+        .withMarkupLinkOnSpans("attr1", "span value", "direct");
+
+      let markup = makeFromDmb(dmb);
+
+      expect(markup.get("attr1")).toBe("targeted value");
+    });
+
+    it('prefers a targeted value to an Edl type value', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({ name: "parent" }).withClip(child))
+        .withMarkupLinkPointingTo(child, "attr1", "targeted value", "direct")
+        .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "direct");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect(markup.get("attr1")).toBe("targeted value");
+    });
+
+    it('prefers a targeted value to a link type value', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "direct")
+        .withMarkupLinkOnLinks("link type", "attr1", "link value", "direct");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect(markup.get("attr1")).toBe("targeted value");
     });
   });
 
@@ -383,6 +474,97 @@ describe('markup', () => {
         let markup = makeFromDmb(dmb);
 
         expect(markup.get("attr1")).toBe("direct value");
+    });
+
+    it('returns the value endowed by a clip type link if the target matches the clip type', () => {
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("span", "attr1", "span value", "content");
+
+      let markup = makeFromDmb(dmb);
+
+      expect(markup.get("attr1")).toBe("span value");
+    });
+
+    it('does not return the value endowed by a clip type link if the target does not match the clip type', () => {
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("box", "attr1", "box value", "content");
+
+      let markup = makeFromDmb(dmb);
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('returns the value endowed by an Edl type link if the target matches the Edl type', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
+        .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "content");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect(markup.get("attr1")).toBe("edl type value");
+    });
+
+    it('does not return the value endowed by an Edl type link if the target does not match the Edl type', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
+        .withMarkupLinkOnEdls("wrong edl type", "attr1", "edl type value", "content");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('returns the value endowed by a link type link if the target matches the link type', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkOnLinks("link type", "attr1", "link value", "content");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect(markup.get("attr1")).toBe("link value");
+    });
+
+    it('does not return the value endowed by a link type link if the target does not match the link type', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "content");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('prefers a targeted value to a clip type value', () => {
+      let dmb = aDmbWithSpan()
+        .withMarkupLinkPointingToTarget("attr1", "targeted value", "content")
+        .withMarkupLinkOnSpans("attr1", "span value", "content");
+
+      let markup = makeFromDmb(dmb);
+
+      expect(markup.get("attr1")).toBe("targeted value");
+    });
+
+    it('prefers a targeted value to an Edl type value', () => {
+      let child = anEdl({ name: "child" }).withType("edl type");
+      let dmb = aDmb(anEdl({ name: "parent" }).withClip(child))
+        .withMarkupLinkPointingTo(child, "attr1", "targeted value", "content")
+        .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "content");
+
+      let markup = makeFromDmb(dmb, PointerBuilder(child));
+
+      expect(markup.get("attr1")).toBe("targeted value");
+    });
+
+    it('prefers a targeted value to a link type value', () => {
+      let targetLink = LinkBuilder("link type");
+      let dmb = aDmb(anEdl())
+        .withLink(targetLink)
+        .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "content")
+        .withMarkupLinkOnLinks("link type", "attr1", "link value", "content");
+
+      let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect(markup.get("attr1")).toBe("targeted value");
     });
   });
 });
