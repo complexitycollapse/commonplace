@@ -1,6 +1,6 @@
 import { finalObject, memoize, listMap } from "@commonplace/utils";
 import { AttributeValue } from "./attribute-value";
-import { AttributeRoute } from "./AttributeRoute";
+import { AttributeRoute } from "./attribute-route";
 
 export function MarkupCalculation(edl, rules, objects, parentMap) {
   let obj = {};
