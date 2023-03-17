@@ -6,11 +6,7 @@ import { Part } from '@commonplace/core';
 
 export function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
 
-export function aTargetLink(spans, { endName = "grouping end", name = "target" } = {}) {
-  return LinkBuilder(undefined, [endName, spans]).withName(name);
-}
-
-export function aTargetLink2(spanBuilders, { endName = "grouping end", name = "target" } = {}) {
+export function aTargetLink(spanBuilders, { endName = "grouping end", name = "target" } = {}) {
   spanBuilders.forEach(s => s.build());
   return LinkBuilder(undefined, [endName, spanBuilders.map(s => s.pointer)]).withName(name);
 }

@@ -1,6 +1,6 @@
 import { it, describe, expect, test } from '@jest/globals';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
-import { anEdl, aSpan, aTargetLink2, } from '../Testing/group-testing';
+import { anEdl, aSpan, aTargetLink, } from '../Testing/group-testing';
 import { SequencePrototype } from './sequence-prototype';
 import { LinkPointer } from '@commonplace/core';
 import { Zettel } from './zettel';
@@ -11,12 +11,12 @@ import { SequenceBuilder, wrap } from '../Testing/test-builders';
 
 function make(sequenceElements) {
   let scenario = {};
-  let sequenceLinkBuilder = aTargetLink2(sequenceElements, {end: "grouping end"});
+  let sequenceLinkBuilder = aTargetLink(sequenceElements, {end: "grouping end"});
   let sequenceLink = DocumentModelLink(sequenceLinkBuilder.build(), 0, LinkPointer("group"), 0);
   let sequenceEnd = sequenceLink.getEnd("grouping end");
   let prototype = SequencePrototype("test type", sequenceEnd, sequenceLink, LinkPointer("metalink"));
   sequenceEnd.sequencePrototypes = [prototype];
-  
+
   sequenceElements.forEach(b => {
     let e = b.build();
     if (e.isLink) {
@@ -48,7 +48,7 @@ function make(sequenceElements) {
 }
 
 function sequenceAndLink(sequenceMemberBuilders, linkArg) {
-  let underlyingLinkBuilder = aTargetLink2(sequenceMemberBuilders, linkArg);
+  let underlyingLinkBuilder = aTargetLink(sequenceMemberBuilders, linkArg);
   let link = DocumentModelLink(underlyingLinkBuilder.build(), 0, underlyingLinkBuilder.pointer, 0);
   let prototype = SequencePrototype("child sequence", link.ends[0], link, LinkPointer("child sequence"));
   let members = sequenceMemberBuilders.map(b => {
@@ -96,7 +96,7 @@ describe('consumeZettel', () => {
     let span1 = aSpan(1), span2 = aSpan(2), span3 = aSpan(3);
 
     let scenario = make([span1, span2, span3]);
-    
+
     expect(scenario.consumeZettel(span1)).toBe(true);
     expect(scenario.consumeZettel(span3)).toBe(false);
   });
@@ -105,7 +105,7 @@ describe('consumeZettel', () => {
     let span1 = aSpan(1), span2 = aSpan(2);
 
     let scenario = make([span1, span2]);
-    
+
     expect(scenario.consumeZettel(span1)).toBe(true);
     expect(scenario.consumeZettel(span2)).toBe(true);
   });
@@ -204,7 +204,7 @@ describe('isComplete', () => {
     let scenario = make([span1, span2]);
 
     scenario.consumeZettel(span2);
-    
+
     expect(scenario.isComplete()).toBe(false);
   });
 
