@@ -1,7 +1,7 @@
 import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
-import { docModelBuilderTesting } from "../Builder/document-model-builder";
-import { Sequence } from "../Builder/sequence";
+import { docModelBuilderTesting } from "../DocumentModel/document-model-builder";
+import { Sequence } from "../DocumentModel/sequence";
 import { defaultsPointer } from "../defaults";
 
 export function Builder(buildFn, extensions) {

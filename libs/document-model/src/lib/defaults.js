@@ -1,5 +1,5 @@
 import { Edl, Link, InlinePointer, LinkPointer, EdlPointer } from "@commonplace/core";
-import { DocumentModelBuilder } from './Builder/document-model-builder';
+import { DocumentModelBuilder } from './DocumentModel/document-model-builder';
 
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
@@ -8,7 +8,7 @@ function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
     ["attribute", [InlinePointer(attribute)]],
     ["inheritance", [InlinePointer(inheritance)]]
   ];
-    
+
   if (value !== undefined) {
     ends.push(["value", [InlinePointer(value)]]);
   }
