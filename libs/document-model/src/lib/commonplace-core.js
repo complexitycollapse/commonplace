@@ -1,9 +1,7 @@
-import { MockRepository } from "./mock-repository";
 import { finalObject, addProperties } from "@commonplace/utils";
 
 export function CommonplaceCore(repository) {
   let obj = {};
-  repository = repository ?? MockRepository();
   addProperties(obj, {
     repository
   });
@@ -12,7 +10,7 @@ export function CommonplaceCore(repository) {
     if (!(await repository.getContent(content))) {
       await repository.addContent("Name", content, isPinned);
     }
-    
+
     return "Name";
   }
 
