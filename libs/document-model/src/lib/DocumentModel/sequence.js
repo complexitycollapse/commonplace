@@ -5,7 +5,8 @@ export function Sequence(sequencePrototype, members) {
     type: sequencePrototype.type,
     members,
     isSequence: true,
-    isSubordinated: false
+    isSubordinated: false,
+    key: undefined
   };
 
   return sequence;

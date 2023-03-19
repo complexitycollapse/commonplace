@@ -63,6 +63,10 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     return pointersToEdl;
   }
 
+  function populateSequenceKeys(sequences) {
+    sequences.forEach((sequence, i) => sequence.key = sequence.definingLink.key + "-" + i);
+  }
+
   function buildHierarchy() {
     // Calculate the model's key (i.e. the unique identifier that will be used to refer to the model)
     key = parent ? parent.key + ":" + indexInParent.toString() : "1";
@@ -95,6 +99,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     // Add sequences to the model
     let sequences = SequenceScanner(zettel, allLinks).sequences();
     model.setContainedSequences(sequences);
+    populateSequenceKeys(sequences);
 
     return finalObject(model, {});
   }

@@ -9,6 +9,23 @@ function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
 }
 
+function sequenceMetalink({ name, immediateTargets, linkTypes, clipTypes, edlTypes, end, type } = {}) {
+  let endSpecs = [];
+
+  if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
+  if (linkTypes) endSpecs.push(["link types", linkTypes]);
+  if (clipTypes) endSpecs.push(["clip types", clipTypes]);
+  if (edlTypes) endSpecs.push(["edl types", edlTypes]);
+  if (end) endSpecs.push(["end", end]);
+  if (type) endSpecs.push(["type", type]);
+  let link = [
+    name ?? "metalink",
+    Link("defines sequence", ...endSpecs)
+  ];
+
+  return link;
+}
+
 function make(clips = [], links = [], edlPointer) {
   edlPointer = edlPointer ?? EdlPointer("document");
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
@@ -374,33 +391,16 @@ describe('build', () => {
   });
 
   describe('metaSequenceRules', () => {
-    function metaLink({ name, immediateTargets, linkTypes, clipTypes, edlTypes, end, type } = {}) {
-      let endSpecs = [];
-
-      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
-      if (linkTypes) endSpecs.push(["link types", linkTypes]);
-      if (clipTypes) endSpecs.push(["clip types", clipTypes]);
-      if (edlTypes) endSpecs.push(["edl types", edlTypes]);
-      if (end) endSpecs.push(["end", end]);
-      if (type) endSpecs.push(["type", type]);
-      let link = [
-        name ?? "metalink",
-        Link("defines sequence", ...endSpecs)
-      ];
-
-      return link;
-    }
-
     it('is empty if there are no meta-sequence links', () => {
       expect(make([], [["not a meta-sequence link", true]]).metaSequenceRules).toEqual([]);
     });
 
     it('returns a rule if there is a meta-sequence link', () => {
-      expect(make([], [metaLink()]).metaSequenceRules).toHaveLength(1);
+      expect(make([], [sequenceMetalink()]).metaSequenceRules).toHaveLength(1);
     });
 
     it('adds the meta-sequence prototype to the targeted end', () => {
-      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
@@ -409,7 +409,7 @@ describe('build', () => {
     });
 
     it('sets the type property on the prototype to be the type specified in the metalink', () => {
-      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
@@ -418,7 +418,7 @@ describe('build', () => {
     });
 
     it('sets the definingLink property on the prototype to be the link it comes from', () => {
-      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
@@ -427,7 +427,7 @@ describe('build', () => {
     });
 
     it('sets the end property on the prototype to be the end that defines the sequence', () => {
-      let metalink = metaLink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
@@ -436,7 +436,7 @@ describe('build', () => {
     });
 
     it('sets the signature property on the prototype to an object with the pointers of the link and metalink', () => {
-      let metalink = metaLink({name: "meta", immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let metalink = sequenceMetalink({name: "meta", immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
       let link = ["target", Link(undefined, ["foo", []])];
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
@@ -448,11 +448,11 @@ describe('build', () => {
     });
 
     it('returns a rule for each meta-sequence link', () => {
-      expect(make([], [metaLink({name: "meta1"}), metaLink({name: "meta2"}), metaLink({name: "meta3"})]).metaSequenceRules).toHaveLength(3);
+      expect(make([], [sequenceMetalink({name: "meta1"}), sequenceMetalink({name: "meta2"}), sequenceMetalink({name: "meta3"})]).metaSequenceRules).toHaveLength(3);
     });
 
     it('sets all of the criteria properties to the content values of the link ends', () => {
-      let link = metaLink({
+      let link = sequenceMetalink({
         clipTypes: [InlinePointer("ct1"), InlinePointer("ct2")],
         linkTypes: [InlinePointer("lt1"), InlinePointer("lt2")],
         edlTypes: [InlinePointer("et1"), InlinePointer("et2")]
@@ -466,7 +466,7 @@ describe('build', () => {
     });
 
     it('sets the end value on the rule to the content of the end called end', () => {
-      let link = metaLink({
+      let link = sequenceMetalink({
         end: [InlinePointer("expected "), InlinePointer("end")],
       });
 
@@ -476,7 +476,7 @@ describe('build', () => {
     });
 
     it('sets the type value on the rule to the content of the end called type', () => {
-      let link = metaLink({
+      let link = sequenceMetalink({
         type: [InlinePointer("expected "), InlinePointer("type")],
       });
 
@@ -592,6 +592,28 @@ describe('build', () => {
       let zettel = make([[EdlPointer("edl1"), edl1]]).zettel;
 
       expect(zettel[0].zettel[0].key).toBe("1:0:0:0");
+    });
+
+    it('is an extension of the sequences defining link for a sequence', () => {
+      let clip1 = Span("x", 1, 10);
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let link = ["target", Link(undefined, ["foo", [clip1]])];
+
+      let sequence = make([[clip1, true]], [metalink, link]).rootSequences()[0];
+
+      expect(sequence.key).toEqual(sequence.definingLink.key + "-0");
+    });
+
+    it('is unique for each instance of a sequence', () => {
+      let clip1 = Span("x", 1, 10);
+      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
+      let link = ["target", Link(undefined, ["foo", [clip1]])];
+
+      let sequences = make([[clip1, true], [clip1, true], [clip1, true]], [metalink, link]).rootSequences();
+
+      expect(sequences[0].key).toEqual(sequences[0].definingLink.key + "-0");
+      expect(sequences[1].key).toEqual(sequences[1].definingLink.key + "-1");
+      expect(sequences[2].key).toEqual(sequences[2].definingLink.key + "-2");
     });
   });
 });
