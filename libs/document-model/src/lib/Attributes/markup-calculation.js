@@ -1,6 +1,7 @@
 import { finalObject, memoize, listMap } from "@commonplace/utils";
 import { AttributeValue } from "./attribute-value";
 import { AttributeRoute } from "./attribute-route";
+import { compareLinkPriority } from "../link-priority";
 
 export function MarkupCalculation(edl, rules, objects, parentMap) {
   let obj = {};
@@ -74,40 +75,9 @@ export function MarkupCalculation(edl, rules, objects, parentMap) {
         addContentValueFromContainer(edl);
       }
 
-      function routeToOrder(route) {
-        switch (route) {
-          case AttributeRoute.immediateDirectTarget:
-            return 1;
-          case AttributeRoute.immediateContentTarget:
-            return 2;
-          case AttributeRoute.immediateDirectType:
-            return 3;
-          case AttributeRoute.immediateContentType:
-            return 4;
-          case AttributeRoute.inheritedNonDefault:
-            return 5;
-          default:
-            // This is an error so relegate it to the bottom
-            return 6;
-        }
-      }
-
-      // Sorting the values by priority, from most significant factor to least:
-      // 1. Non-defaults preferred to defaults
-      // 2. High priority routes preferred over low priority routes
-      // 3. Inner links preferred over outer links
-      // 4. Links later in the EDL preferred to those earlier
+      // Sort links by priority
       for (let values of markupMap.values()) {
-        values.sort((a, b) => {
-          if (a.isDefault !== b.isDefault) {
-            return a.isDefault ? 1 : -1;
-          } else if (a.attributeRoute !== b.attributeRoute) {
-            return routeToOrder(a.attributeRoute) - routeToOrder(b.attributeRoute);
-          } else if (a.linkDepth != b.linkDepth) {
-            return a.linkDepth - b.linkDepth;
-          }
-          else { return b.linkIndex - a.linkIndex; }
-        });
+        values.sort(compareLinkPriority);
       }
 
       return markup;
