@@ -237,6 +237,11 @@ export function DocModelBuilderBuilder(edlBuilder) {
       let links = SequenceLinkBuilder(spanBuilders);
       return obj.withLinks(links.link, links.metalink);
     },
+    withBoxSequenceLink: spanBuilders => {
+      let links = SequenceLinkBuilder(spanBuilders);
+      let markup = MarkupBuilder().endowing("box", "true", "direct").pointingTo(links.link);
+      return obj.withLinks(links.link, links.metalink, markup);
+    },
     onEdl: callback => {
       callback(edlBuilder);
       return obj;
