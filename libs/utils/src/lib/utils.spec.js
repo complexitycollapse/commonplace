@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { memoize, mergeObjects, finalObject, decorateObject } from './utils';
+import { memoize, mergeObjects, finalObject, decorateObject, addUnenumerable } from './utils';
 
 describe('decorateObject', () => {
   it('adds new properties to a frozen object', () => {
@@ -46,5 +46,26 @@ describe('memoize', () => {
     m();
 
     expect(calls).toBe(2);
+  });
+});
+
+describe('addUnenumerable', () => {
+  it('creates a property and assigns the value', () => {
+    expect(addUnenumerable({}, "foo", 123).foo).toBe(123);
+  });
+
+  it('creates a value that is not enumerated', () => {
+    expect(Object.keys(addUnenumerable({}, "foo", 123))).toHaveLength(0);
+  });
+
+  it('makes the property read-only if the readWrite parameter is not passed', () => {
+    let obj = addUnenumerable({}, "foo", 123);
+    expect(() => obj.foo = 1).toThrow();
+  });
+
+  it('makes the property writeable if the readWrite parameter is set', () => {
+    let obj = addUnenumerable({}, "foo", 123, true);
+    obj.foo = 1;
+    expect(obj.foo).toBe(1);
   });
 });

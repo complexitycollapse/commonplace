@@ -27,6 +27,15 @@ export function addMethods(obj, props) {
   return obj;
 }
 
+export function addUnenumerable(obj, propertyName, initialValue, readWrite) {
+  Object.defineProperty(obj, propertyName, {
+    value: initialValue,
+    enumerable: false,
+    writable: readWrite
+  });
+  return obj;
+}
+
 export function forAllOwnProperties(obj, callback) {
   for (const key in obj) {
     if (Object.hasOwnProperty.call(obj, key)) {
@@ -34,7 +43,7 @@ export function forAllOwnProperties(obj, callback) {
     }
   }
 }
- 
+
 export function listMap() {
   let obj = {};
   let table = new Map();
@@ -61,7 +70,7 @@ export function listMap() {
 export function listMapFromList(keyFn, valueFn, list) {
   let map = listMap();
   list.forEach(item => map.push(keyFn(item), valueFn(item)));
-  return map;  
+  return map;
 }
 
 export function mergeObjects(target, source) {
