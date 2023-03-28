@@ -101,6 +101,19 @@ export function PointerBuilder(builder) {
   return Builder(() => builder.pointer, {});
 }
 
+export function SequenceLinkBuilder(spans) {
+  let link = LinkBuilder("sequence", ["seq", spans]).withName("seq");
+  let metalink = LinkBuilder("defines sequence", ["targets", [link]], ["end", [InlinePointer("seq")]])
+    .withName("metaseq");
+  return Builder(obj => {
+    return [obj.link.build(), obj.metalink.build()];
+  },
+    {
+      link,
+      metalink
+  });
+}
+
 export function MarkupBuilder() {
 
   let builder = LinkBuilder().withType("markup");
@@ -220,6 +233,10 @@ export function DocModelBuilderBuilder(edlBuilder) {
       obj.withMarkupLink(InlinePointer(type), "edl types", attr, val, inherit),
     withMarkupLinkOnLinks: (type, attr, val, inherit) =>
       obj.withMarkupLink(InlinePointer(type), "link types", attr, val, inherit),
+    withSequenceLink: spanBuilders => {
+      let links = SequenceLinkBuilder(spanBuilders);
+      return obj.withLinks(links.link, links.metalink);
+    },
     onEdl: callback => {
       callback(edlBuilder);
       return obj;
