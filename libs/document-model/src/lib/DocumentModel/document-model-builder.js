@@ -36,7 +36,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
   }
 
   function createLinks(edl, parent, defaults) {
-    let linkPairs = createLinkPairs(edl, repo, parent);
+    let linkPairs = createLinkPairs(edl, repo, parent, false);
     linksObject = Object.fromEntries(linkPairs);
     links = Object.values(linksObject);
     allLinks = links.concat(Object.values(defaults));
