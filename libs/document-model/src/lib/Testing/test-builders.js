@@ -52,10 +52,12 @@ export function SpanBuilder() {
   return obj;
 }
 
+let unique = 0;
 export function LinkBuilder(type, ...endSpecs) {
-  let unique = 0;
-
-  let obj = Builder(obj => Link(obj.type, ...obj.ends.map(e => e.build())), {
+  let obj = Builder(obj => {
+    obj.pointer = obj.pointer ?? LinkPointer((++unique).toString());
+    return Link(obj.type, ...obj.ends.map(e => e.build()));
+  }, {
     ends: [],
     withType: type => obj.withProperty("type", type),
     withEnd: e => obj.pushTo("ends", e),
@@ -102,9 +104,10 @@ export function PointerBuilder(builder) {
 }
 
 export function SequenceLinkBuilder(spans) {
-  let link = LinkBuilder("sequence", ["seq", spans]).withName("seq");
+  let name = "seq" + ++unique;
+  let link = LinkBuilder("sequence", ["seq", spans]).withName(name);
   let metalink = LinkBuilder("defines sequence", ["targets", [link]], ["end", [InlinePointer("seq")]])
-    .withName("metaseq");
+    .withName("metaseq"+ ++unique);
   return Builder(obj => {
     return [obj.link.build(), obj.metalink.build()];
   },
@@ -132,6 +135,8 @@ export function MarkupBuilder() {
     builder.withEnd(EndBuilder().withPointer(pointer));
     return builder;
   };
+
+  builder.endowsBoxTo = target => builder.endowing("box", "true", "direct").pointingTo(target);
 
   return builder;
 }
@@ -239,7 +244,7 @@ export function DocModelBuilderBuilder(edlBuilder) {
     },
     withBoxSequenceLink: spanBuilders => {
       let links = SequenceLinkBuilder(spanBuilders);
-      let markup = MarkupBuilder().endowing("box", "true", "direct").pointingTo(links.link);
+      let markup = MarkupBuilder().endowsBoxTo(links.link);
       return obj.withLinks(links.link, links.metalink, markup);
     },
     onEdl: callback => {
