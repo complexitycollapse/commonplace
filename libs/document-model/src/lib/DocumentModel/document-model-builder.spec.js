@@ -31,7 +31,7 @@ function make(clips = [], links = [], edlPointer) {
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
     .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
-  let builder = docModelBuilderTesting.makeMockedBuilder(edlPointer, parts);
+  let builder = docModelBuilderTesting.makeMockedBuilderFromParts(edlPointer, parts);
   let model = builder.build();
   return model;
 }

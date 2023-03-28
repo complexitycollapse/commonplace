@@ -179,7 +179,7 @@ export function DocModelBuilderBuilder(edlBuilder) {
     let edlParts = partsForEdl(edlBuilder);
     let defaultParts = obj.defaultLinks.map(link => Part(link.pointer, link.build()));
     obj.pointer = edlBuilder.pointer;
-    let b = docModelBuilderTesting.makeMockedBuilder(
+    let b = docModelBuilderTesting.makeMockedBuilderFromParts(
       obj.pointer,
       defaultParts.concat(edlParts).concat([Part(defaultsPointer, obj.defaultsEdl.build())]));
     return b;

@@ -190,7 +190,7 @@ function applyMetarules(model, links) {
 
 export let docModelBuilderTesting = {
   addIncomingPointers,
-  makeMockedBuilder: function (edlPointer, cachedParts) {
+  makeMockedBuilderFromParts: function (edlPointer, cachedParts) {
     let repo = testing.MockPartRepository(cachedParts);
     return DocumentModelBuilder(edlPointer, repo);
   }

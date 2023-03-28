@@ -39,7 +39,7 @@ export function buildMockedEdlModel(content, ...links) {
     b.build();
     return Part(b.pointer, b.builtObject);
   })
-  let builder = docModelBuilderTesting.makeMockedBuilder(docBuilder.pointer, parts);
+  let builder = docModelBuilderTesting.makeMockedBuilderFromParts(docBuilder.pointer, parts);
   let docModel = builder.build();
   return docModel;
 }
