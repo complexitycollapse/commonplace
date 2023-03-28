@@ -51,7 +51,7 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     }
 
     if (current === undefined) { current = remaining.shift(); }
-    
+
     let { nibbled, remainder } = current.nibble(zettel.pointer);
 
     if (nibbled) {
@@ -95,13 +95,14 @@ function SequenceBuildingCursorInternal(sequencePrototype, collected, remaining)
     if (!isComplete()) {
       throw "Cannot reify incomplete sequence";
     }
-    
+
     let sequence = Sequence(sequencePrototype, collected);
 
     sequence.members.forEach(z => {
       if (z.isSequence) {
         z.definingLink.sequences.push(sequence);
         z.isSubordinated = true;
+        z.parent = sequence;
       } else {
         z.sequences.push(sequence);
       }

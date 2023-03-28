@@ -1,3 +1,5 @@
+import { addMethods, addUnenumerable } from "@commonplace/utils";
+
 export function Sequence(sequencePrototype, members) {
   let sequence = {
     definingLink: sequencePrototype.definingLink,
@@ -8,6 +10,12 @@ export function Sequence(sequencePrototype, members) {
     isSubordinated: false,
     key: undefined
   };
+
+  addUnenumerable(sequence, "parent", undefined, true);
+
+  addMethods(sequence, {
+    getRoot: () => sequence.isSubordinated ? sequence.parent.getRoot() : sequence
+  });
 
   return sequence;
 }
