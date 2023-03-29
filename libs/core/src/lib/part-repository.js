@@ -8,7 +8,7 @@ export function PartRepository(fetcher) {
 
   function getPartLocally(pointer) {
     let cached = cache.getPart(pointer);
-    if (cached[0]) { 
+    if (cached[0]) {
       return cached[1];
      }
 
@@ -55,16 +55,16 @@ export function PartRepository(fetcher) {
 
   function docStatus(docName) {
     let docPart = getPartLocally(docName);
-  
+
     if (docPart === undefined) { return { required: [docName] }; }
-  
-    let doc = docPart.content;    
+
+    let doc = docPart.content;
     let linkResults = doc.links.map(l => [l, getPartLocally(l)]);
     let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
     let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
     let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
       .filter(p => p.specifiesContent && !getPartLocally(p));
-    let docContent = doc.clips.filter(c => !getPartLocally(c)); 
+    let docContent = doc.clips.filter(c => !getPartLocally(c));
     let required = missingLinkNames.concat(linkContentPointers).concat(docContent);
 
     return {
@@ -86,14 +86,16 @@ export function PartRepository(fetcher) {
 }
 
 export function MockPartRepository(parts) {
-  return { 
+  let obj = {
     parts,
     getPartLocally: pointer => {
       if (pointer.pointerType === "inline") {
         return Part(pointer, pointer.inlineText);
       } else {
-        return parts.find(p => p.pointer.hashableName === pointer.hashableName);
+        return obj.parts.find(p => p.pointer.hashableName === pointer.hashableName);
       }
     }
   };
+
+  return obj;
 }
