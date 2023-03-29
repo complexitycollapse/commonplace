@@ -26,7 +26,7 @@ export function Builder(buildFn, extensions) {
         if (obj.name === undefined && nameLookup) {
           obj.withName(nameLookup.get(obj));
         }
-        obj.builtObject = buildFn(obj, docuverse, nameLookup);
+        obj.builtObject = buildFn(obj, docuverse);
       }
       return obj.builtObject;
     }
@@ -40,7 +40,7 @@ export function Builder(buildFn, extensions) {
 export function SpanBuilder() {
   let obj = Builder(
     b => {
-      obj.pointer = Span(b.origin ?? "origin", b.start ?? 1, b.length ?? 10);
+      obj.pointer = Span(b.origin ?? b.name ?? "origin", b.start ?? 1, b.length ?? 10);
       return obj.pointer;
     }, {
       content: "##########",
