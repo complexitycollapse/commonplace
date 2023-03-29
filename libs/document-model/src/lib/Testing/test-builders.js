@@ -20,9 +20,13 @@ export function Builder(buildFn, extensions) {
       array.push(value);
       return obj;
     },
-    build() {
+    withName: name => obj.withProperty("name", name),
+    build(docuverse, nameLookup) {
       if (obj.builtObject === undefined) {
-        obj.builtObject = buildFn(obj);
+        if (obj.name === undefined && nameLookup) {
+          obj.withName(nameLookup.get(obj));
+        }
+        obj.builtObject = buildFn(obj, docuverse, nameLookup);
       }
       return obj.builtObject;
     }
@@ -55,13 +59,12 @@ export function SpanBuilder() {
 let unique = 0;
 export function LinkBuilder(type, ...endSpecs) {
   let obj = Builder(obj => {
-    obj.pointer = obj.pointer ?? LinkPointer((++unique).toString());
+    obj.forcePointer();
     return Link(obj.type, ...obj.ends.map(e => e.build()));
   }, {
     ends: [],
     withType: type => obj.withProperty("type", type),
     withEnd: e => obj.pushTo("ends", e),
-    withName: name => obj.withProperty("pointer", LinkPointer(name ?? (++unique).toString())),
     defaultPart: () => Part(obj.pointer, obj.builtObject)
   });
 
@@ -69,7 +72,19 @@ export function LinkBuilder(type, ...endSpecs) {
   if (endSpecs) {
     endSpecs.forEach(e => obj.withEnd(EndBuilder(e)));
   }
-  obj.withName();
+
+  let originalWithName = obj.withName;
+  obj.withName = name => {
+    originalWithName(name);
+    obj.pointer = LinkPointer(name);
+    return obj;
+  };
+
+  obj.forcePointer = () => {
+    if (obj.pointer) { return obj.pointer; }
+    obj.withName(obj.name ?? (++unique).toString());
+    return obj.pointer;
+  };
 
   return obj;
 }
@@ -143,7 +158,17 @@ export function MarkupBuilder() {
 
 export function EdlBuilder(name = "foo") {
   let obj = Builder(obj => {
-    let edl = Edl(obj.type, obj.clips.map(x => {x.build(); return x.pointer;}), obj.links.map(x => x.pointer));
+    // Links must be handled carefully to avoid circularities. Defer building
+    // them until after the Edl is built.
+    let edl = Edl(
+      obj.type,
+      obj.clips.map(x => { x.build(); return x.pointer; }),
+      obj.links.map(x => { return x.forcePointer(); }));
+
+    // Set the built object before building the links, to avoid circularity.
+    obj.builtObject = edl;
+    obj.links.forEach(link => link.build());
+
     return edl;
   }, {
     links: [],
@@ -195,6 +220,7 @@ function partsForEdl(edlBuilder) {
 export function DocModelBuilderBuilder(edlBuilder) {
   let obj = Builder(obj => {
     let edlParts = partsForEdl(edlBuilder);
+    obj.defaultLinks.forEach(d => d.build());
     let defaultParts = obj.defaultLinks.map(link => Part(link.pointer, link.build()));
     obj.pointer = edlBuilder.pointer;
     let b = docModelBuilderTesting.makeMockedBuilderFromParts(
