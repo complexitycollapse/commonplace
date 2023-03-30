@@ -37,7 +37,7 @@ export function buildMockedEdlModel(content, ...links) {
   let allBuilders = [docBuilder].concat(content, links);
   let parts = allBuilders.map(b => {
     b.build();
-    return Part(b.pointer, b.builtObject);
+    return b.defaultPart();
   })
   let builder = docModelBuilderTesting.makeMockedBuilderFromParts(docBuilder.pointer, parts);
   let docModel = builder.build();

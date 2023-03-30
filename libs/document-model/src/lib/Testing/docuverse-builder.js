@@ -39,7 +39,7 @@ export function DocuverseBuilder() {
       .filter(x => x && x.pointer && x.content);
 
     docuverse.repo = proxyBase.repo;
-    docuverse.repo.parts = parts;
+    docuverse.repo.addParts(parts);
 
     return docuverse;
   }

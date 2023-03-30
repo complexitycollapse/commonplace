@@ -1,10 +1,9 @@
 import { finalObject, listMapFromList } from "@commonplace/utils";
 import { LeafCache } from "./leaf-cache";
-import { Part } from "./part";
 
 export function PartRepository(fetcher) {
-  let obj = {};
   let cache = LeafCache();
+  let obj = { cache };
 
   function getPartLocally(pointer) {
     let cached = cache.getPart(pointer);
@@ -86,16 +85,16 @@ export function PartRepository(fetcher) {
 }
 
 export function MockPartRepository(parts) {
-  let obj = {
-    parts,
-    getPartLocally: pointer => {
-      if (pointer.pointerType === "inline") {
-        return Part(pointer, pointer.inlineText);
-      } else {
-        return obj.parts.find(p => p.pointer.hashableName === pointer.hashableName);
-      }
-    }
-  };
+  let repo = PartRepository(() => undefined);
 
+  let obj = {
+    repo,
+    getPartLocally: part => repo.getPartLocally(part),
+    addParts: parts => {
+      parts.forEach(part => repo.cache.addPart(part));
+    }
+  }
+
+  obj.addParts(parts);
   return obj;
 }
