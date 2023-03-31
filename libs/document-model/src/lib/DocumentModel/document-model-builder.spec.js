@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
-import { Doc, Part, LinkPointer, Link, Span, Box, Edl, EdlPointer, InlinePointer, testing } from '@commonplace/core';
+import { Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer, testing } from '@commonplace/core';
 import { defaultsPointer, defaultsType } from '../defaults';
 
 const mockRepo = testing.MockPartRepository;
@@ -151,7 +151,7 @@ describe('build', () => {
     });
 
     it('returns a zettel for each clip if there are no links that bisect them', () => {
-      let clip1 = Span("x", 1, 10), clip2 = Box("y", 1, 1, 10, 20), clip3 = Span("z", 20, 200);
+      let clip1 = Span("x", 1, 10), clip2 = Image("y", 1, 1, 10, 20), clip3 = Span("z", 20, 200);
 
       expect(make([[clip1, true], [clip2, true], [clip3, true]]).zettel).toMatchObject([
         { pointer: clip1 },
@@ -551,8 +551,8 @@ describe('build', () => {
       expect(make([[Span("x", 1, 10), true]]).zettel[0].key).toBe("1:0:0");
     });
 
-    it('is set to 1:0 on the first child box', () => {
-      expect(make([[Box("x", 1, 1, 10, 10), true]]).zettel[0].key).toBe("1:0");
+    it('is set to 1:0 on the first child image', () => {
+      expect(make([[Image("x", 1, 1, 10, 10), true]]).zettel[0].key).toBe("1:0");
     });
 
     it('is set to 1:0 on the first child EDL', () => {
@@ -565,7 +565,7 @@ describe('build', () => {
 
     it('is set to unique values on different children', () => {
       let model = make(
-        [[Span("x", 1, 10), true], [Box("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]],
+        [[Span("x", 1, 10), true], [Image("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]],
         [["link1", true], ["link2", true]]);
 
       expect(getLink(model.links, "link1").key).toBe("1:0");

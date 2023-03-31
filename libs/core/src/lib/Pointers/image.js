@@ -4,9 +4,9 @@ import { Clip, compareOriginalContexts } from "./clip";
 import { Part } from "../part";
 import { leafDataToPointer } from "./leaf-data-to-pointer";
 
-export function Box(origin, x, y, width, height, originalContext)
+export function Image(origin, x, y, width, height, originalContext)
 {
-  let obj = Clip("box", origin, r => buildPartFromContent(obj, r), () => `box:${origin}:${x}:${y}:${width}:${height}`, originalContext);
+  let obj = Clip("image", origin, r => buildPartFromContent(obj, r), () => `image:${origin}:${x}:${y}:${width}:${height}`, originalContext);
   let nextX = x + width, nextY = y + height;
   addProperties(obj, {
     x,
@@ -26,38 +26,38 @@ export function Box(origin, x, y, width, height, originalContext)
     y = obj.y,
     height = obj.height,
     width = obj.width } = {}) {
-    return Box(origin, x, y, width, height);
+    return Image(origin, x, y, width, height);
   }
 
-  function abutsHorizontally(box) {
-    return obj.equalOrigin(box) &&
-      y === box.y &&
-      height === box.height &&
-      obj.nextX === box.x;
+  function abutsHorizontally(image) {
+    return obj.equalOrigin(image) &&
+      y === image.y &&
+      height === image.height &&
+      obj.nextX === image.x;
   }
 
-  function abutsVertically(box) {
-    return obj.equalOrigin(box) &&
-      x === box.x &&
-      width === box.width &&
-      obj.nextY === box.y;
+  function abutsVertically(image) {
+    return obj.equalOrigin(image) &&
+      x === image.x &&
+      width === image.width &&
+      obj.nextY === image.y;
   }
 
-  function abuts(box) {
-    return abutsHorizontally(box) || abutsVertically(box);
+  function abuts(image) {
+    return abutsHorizontally(image) || abutsVertically(image);
   }
 
-  function overlaps(box) {
-    return (origin === box.origin
-      && x < box.x + box.width
-      && box.x < x + width
-      && y < box.y + box.height
-      && box.y < y + height);
+  function overlaps(image) {
+    return (origin === image.origin
+      && x < image.x + image.width
+      && image.x < x + width
+      && y < image.y + image.height
+      && image.y < y + height);
   }
 
   function merge(b) {
     let newX = Math.min(x, b.x), newY = Math.min(y, b.y);
-    return Box(
+    return Image(
       obj.origin,
       newX,
       newY,
@@ -65,7 +65,7 @@ export function Box(origin, x, y, width, height, originalContext)
       Math.max(obj.nextY, b.nextY) - newY);
   }
 
-  function boxCrop(xAdjust, yAdjust, newWidth, newHeight) {
+  function imageCrop(xAdjust, yAdjust, newWidth, newHeight) {
     xAdjust = xAdjust > 0 ? xAdjust : 0;
     yAdjust = yAdjust > 0 ? yAdjust : 0;
     newWidth = Math.min(newWidth ?? width, width - xAdjust);
@@ -90,23 +90,23 @@ export function Box(origin, x, y, width, height, originalContext)
     return false;
   }
 
-  function engulfs(box) {
-    return origin === box.origin 
-    && contains(box.x, box.y)
-    && contains(box.rightEdge, box.bottomEdge);
+  function engulfs(image) {
+    return origin === image.origin
+    && contains(image.x, image.y)
+    && contains(image.rightEdge, image.bottomEdge);
   }
 
-  function intersect(box) {
-    if (!overlaps(box)) {
+  function intersect(image) {
+    if (!overlaps(image)) {
       return [false, undefined];
     }
-    let newX = Math.max(box.x, x), newY = Math.max(box.y, y);
-    return [true, Box(
+    let newX = Math.max(image.x, x), newY = Math.max(image.y, y);
+    return [true, Image(
                     origin,
                     newX,
                     newY,
-                    Math.min(box.nextX, obj.nextX) - newX,
-                    Math.min(box.nextY, obj.nextY) - newY)];
+                    Math.min(image.nextX, obj.nextX) - newX,
+                    Math.min(image.nextY, obj.nextY) - newY)];
   }
 
   function clipPart(part) {
@@ -125,7 +125,7 @@ export function Box(origin, x, y, width, height, originalContext)
     abutsVertically,
     abuts,
     merge,
-    boxCrop,
+    imageCrop,
     crop: () => obj,
     leafData,
     overlaps,
@@ -136,11 +136,11 @@ export function Box(origin, x, y, width, height, originalContext)
   });
 }
 
-export function leafDataToBox(leafData) {
-  return Box(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht, leafData.ctx ? leafDataToPointer(leafData.ctx) : undefined);
+export function leafDataToImage(leafData) {
+  return Image(leafData.ori, leafData.x, leafData.y, leafData.wd, leafData.ht, leafData.ctx ? leafDataToPointer(leafData.ctx) : undefined);
 }
 
-function buildPartFromContent(originalBox, response) {
+function buildPartFromContent(originalImage, response) {
   return new Promise((resolve, reject) => {
     response.blob()
     .then(content => {
@@ -149,21 +149,21 @@ function buildPartFromContent(originalBox, response) {
       img.src = url;
       img.onload = function()
         {
-          let newBox = Box(originalBox.origin, 0, 0, this.width, this.height);
-          resolve(Part(newBox, content));
+          let newImage = Image(originalImage.origin, 0, 0, this.width, this.height);
+          resolve(Part(newImage, content));
         };
     })
     .catch(reason => reject(reason));
   });
 }
 
-export let boxTesting = {
-  makeBox({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {}) {
-    return Box(origin, x, y, width, height);
+export let imageTesting = {
+  makeImage({origin = "origin", x = 10, y = 11, width = 20, height = 25} = {}) {
+    return Image(origin, x, y, width, height);
   },
 
-  toEqualBox(actualBox, expectedBox) {
-    return spanTesting.compareElements(actualBox, expectedBox, (actual, expected) => {
+  toEqualImage(actualImage, expectedImage) {
+    return spanTesting.compareElements(actualImage, expectedImage, (actual, expected) => {
       return actual.origin === expected.origin &&
         actual.x === expected.x &&
         actual.y === expected.y &&

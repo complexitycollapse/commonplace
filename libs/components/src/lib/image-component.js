@@ -1,7 +1,7 @@
 import { CssStyle } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
-export function BoxComponent({ zettel }) {
+export function ImageComponent({ zettel }) {
   let [zettelPartState, setZettelPartState] = useState(zettel.part());
 
   useEffect(() => {
@@ -27,10 +27,10 @@ export function BoxComponent({ zettel }) {
   }
 
   return (
-    <cpla-box cpla-key={zettel.key}>
+    <cpla-image cpla-key={zettel.key}>
       <div style={style}>
         <div style={innerStyle}/>
       </div>
-    </cpla-box>
+    </cpla-image>
   );
 }

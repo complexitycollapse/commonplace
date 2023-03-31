@@ -1,6 +1,6 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { End, leafDataToEnd } from './end';
-import { Span, spanTesting, Box, LinkPointer, EdlPointer } from "../pointers";
+import { Span, spanTesting, Image, LinkPointer, EdlPointer } from "../pointers";
 
 let makeSpans = spanTesting.makeSpans;
 
@@ -39,9 +39,9 @@ describe('leafData', () => {
     });
   });
 
-  it('returns box serializer data for ptr if it contains a box', () => {
-    expect(End("foo", [Box("a", 101, 505, 22, 33)], 0).leafData().ptr[0]).toEqual({
-      typ: "box",
+  it('returns image serializer data for ptr if it contains a image', () => {
+    expect(End("foo", [Image("a", 101, 505, 22, 33)], 0).leafData().ptr[0]).toEqual({
+      typ: "image",
       ori: "a",
       x: 101,
       y: 505,
@@ -64,7 +64,7 @@ describe('leafData', () => {
 
 describe('leafDataToEnd', () => {
   test('is the inverse of leafData() when the end has a name', () => {
-    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), EdlPointer("edl name")];
+    let clips = [...makeSpans(5), Image("o", 1, 4, 5, 7), LinkPointer("link name"), EdlPointer("edl name")];
 
     let actual = leafDataToEnd(End("the name", clips, 0).leafData(), 0);
 
@@ -73,7 +73,7 @@ describe('leafDataToEnd', () => {
   });
 
   test('is the inverse of leafData() when the end has no name', () => {
-    let clips = [...makeSpans(5), Box("o", 1, 4, 5, 7), LinkPointer("link name"), EdlPointer("edl name")];
+    let clips = [...makeSpans(5), Image("o", 1, 4, 5, 7), LinkPointer("link name"), EdlPointer("edl name")];
 
     let actual = leafDataToEnd(End(undefined, clips, 0).leafData(), 0);
 

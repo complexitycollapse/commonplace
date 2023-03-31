@@ -1,6 +1,6 @@
 import { describe, expect, it, test, jest } from '@jest/globals';
 import { Span, leafDataToSpan, spanTesting } from './span';
-import { boxTesting, Box } from './box';
+import { imageTesting, Image } from './image';
 import { EdlPointer } from './edl-pointer';
 import { Part } from '../part';
 
@@ -66,7 +66,7 @@ describe('basic span functions', () => {
   test('isLink is false', () => {
     expect(make().isLink).toBeFalsy();
   });
-  
+
   test('clip type returns span', () => {
     expect(make().pointerType).toBe("span");
   });
@@ -75,8 +75,8 @@ describe('basic span functions', () => {
     expect(make().sameType(make())).toBeTruthy();
   });
 
-  test('same type returns false for a box', () => {
-    expect(make().sameType(boxTesting.makeBox())).toBeFalsy();
+  test('same type returns false for a image', () => {
+    expect(make().sameType(imageTesting.makeImage())).toBeFalsy();
   });
 
   test('next returns the position exactly after the end of the span', () => {
@@ -144,8 +144,8 @@ describe('contains', () => {
 });
 
 describe('abuts', () => {
-  it('is false for a box', () => {
-    expect(make().abuts(boxTesting.makeBox())).toBeFalsy();
+  it('is false for a image', () => {
+    expect(make().abuts(imageTesting.makeImage())).toBeFalsy();
   });
 
   it('returns true when the next position of the 1st span is equal to the start of the 2nd', () => {
@@ -180,8 +180,8 @@ describe('abuts', () => {
 });
 
 describe('overlaps', () => {
-  it('is false for a box', () => {
-    expect(make().overlaps(boxTesting.makeBox())).toBeFalsy();
+  it('is false for a image', () => {
+    expect(make().overlaps(imageTesting.makeImage())).toBeFalsy();
   });
 
   it('returns false if the span has a different origin', () => {
@@ -234,8 +234,8 @@ describe('overlaps', () => {
 });
 
 describe('canMergeWith', () => {
-  it('is false for a box', () => {
-    expect(make().canMergeWith(boxTesting.makeBox())).toBeFalsy();
+  it('is false for a image', () => {
+    expect(make().canMergeWith(imageTesting.makeImage())).toBeFalsy();
   });
 
   it('is false if the spans have different origins', () => {
@@ -577,8 +577,8 @@ describe('clipPart', () => {
 });
 
 describe('engulfs', () => {
-  it('is false for a box', () => {
-    expect(make().engulfs(boxTesting.makeBox())).toBeFalsy();
+  it('is false for a image', () => {
+    expect(make().engulfs(imageTesting.makeImage())).toBeFalsy();
   });
 
   it('returns true if the spans are equal', () => {
@@ -637,10 +637,10 @@ describe('equals', () => {
     expect(span.equals(span.clone({length: span.length + 1}))).toBeFalsy();
   });
 
-  it('returns false if the other is a box', () => {
+  it('returns false if the other is a image', () => {
     let span = make();
 
-    expect(span.equals(boxTesting.makeBox())).toBeFalsy();
+    expect(span.equals(imageTesting.makeImage())).toBeFalsy();
   });
 });
 
@@ -678,7 +678,7 @@ describe('overlappingButNotEngulfing', () => {
   });
 
   it('returns false if they have different clip types', () => {
-    expect(Span("x", 29, 10).overlappingButNotEngulfing(Box("x", 20, 5, 10, 5))).toBeFalsy();
+    expect(Span("x", 29, 10).overlappingButNotEngulfing(Image("x", 20, 5, 10, 5))).toBeFalsy();
   });
 });
 

@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, Box, spanTesting, LinkPointer } from "../pointers";
+import { hasClips, Image, spanTesting, LinkPointer } from "../pointers";
 import { Edl, leafDataToEdl } from './edl';
 
 expect.extend({
@@ -63,7 +63,7 @@ describe('leafData', () => {
 });
 
 test('leafDataToEdl is inverse of leafData', () => {
-  let clips = [...makeSpans(10), Box("orig3", 11, 22, 33, 44)];
+  let clips = [...makeSpans(10), Image("orig3", 11, 22, 33, 44)];
   let d = Edl("the type", clips, [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")]);
   expect(leafDataToEdl(d.leafData())).toEqual(d);
 });

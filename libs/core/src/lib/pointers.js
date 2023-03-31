@@ -1,4 +1,4 @@
-export { Box, leafDataToBox, boxTesting } from './Pointers/box';
+export { Image, leafDataToImage, imageTesting } from './Pointers/image';
 export { Clip } from './Pointers/clip';
 export { toEqualClip, hasClips } from './Pointers/clip.test-helpers';
 export { leafDataToPointer } from './Pointers/leaf-data-to-pointer';

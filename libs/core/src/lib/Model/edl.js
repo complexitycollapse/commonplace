@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/utils";
-import { leafDataToBox, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer } from '../pointers';
+import { leafDataToImage, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer } from '../pointers';
 
 export function Edl(type, clips, links) {
   let obj = {};
@@ -37,8 +37,8 @@ export function leafDataToEdl(leafData) {
 export function leafDataToClip(leafData) {
   if (leafData.typ === "span") {
     return leafDataToSpan(leafData);
-  } else if (leafData.typ === "box") {
-    return leafDataToBox(leafData);
+  } else if (leafData.typ === "image") {
+    return leafDataToImage(leafData);
   } else if (leafData.typ === "edl") {
     return leafDataToEdlPointer(leafData);
   } else {

@@ -42,13 +42,13 @@ function resolve(request, value) {
 describe('docStatus', () => {
   it('initially requests the EDL', async () => {
     let edlPointer = EdlPointer("p");
-    
+
     expect((await make()).docStatus(edlPointer).required).toEqual([edlPointer]);
   });
 
   it('initially requests the EDL', async () => {
     let edlPointer = EdlPointer("p");
-    
+
     let result = (await make()).docStatus(edlPointer);
 
     expect(result.docAvailable).toBeFalsy();
@@ -60,7 +60,7 @@ describe('docStatus', () => {
 
   it('has docAvailable truthy if the doc is in the cache', async () => {
     let edlPointer = EdlPointer("p");
-    
+
     expect((await make([[edlPointer, makeEdl()]])).docStatus(edlPointer).docAvailable).toBeTruthy();
   });
 
@@ -72,14 +72,14 @@ describe('docStatus', () => {
 
     it('has all statuses set to truthy if the doc is available and contains nothing', async () => {
       let result = await makeAndGetDocStatus();
-  
+
       expect(result.docAvailable).toBeTruthy();
       expect(result.linksAvailable).toBeTruthy();
       expect(result.linkContentAvailable).toBeTruthy();
       expect(result.docContentAvailable).toBeTruthy();
       expect(result.allAvailable).toBeTruthy();
     });
-  
+
     it('stops requesting the EDL', async () => {
       expect((await makeAndGetDocStatus()).required).toEqual([]);
     });
@@ -128,21 +128,21 @@ describe('docStatus', () => {
 
   describe("child zettel", () => {
   //   it('creates a child Zettel for each clip of content (in case where there are no links that split the clips)', async () => {
-  //     let ez = make(makeEdl([Span("x", 1, 10), Box("y", 1, 2, 3, 4)]));
-  
+  //     let ez = make(makeEdl([Span("x", 1, 10), Image("y", 1, 2, 3, 4)]));
+
   //     expect(ez.children.length).toBe(2);
   //   });
 
   //   it('sets containingEdl on the child zettel to itself', async () => {
   //     let ez = make(makeEdl([Span("x", 1, 10)]));
-  
+
   //     expect(ez.children[0].containingEdl).toBe(ez);
   //   });
 
   //   it('sets clip on the child zettel to the original clip', async () => {
   //     let clip = Span("x", 1, 10);
   //     let ez = make(makeEdl([clip]));
-  
+
   //     expect(ez.children[0].clip).toBe(clip);
   //   });
   });
@@ -178,7 +178,7 @@ describe('docStatus', () => {
   //   });
 
   //   it('requests all content of a resolved child EDL', async () => {
-  //     let clips = [Span("x", 1, 10), Box("y", 0, 0, 100, 100)];
+  //     let clips = [Span("x", 1, 10), Image("y", 0, 0, 100, 100)];
   //     let childEdlPointer = EdlPointer("name");
   //     let childEdl = makeEdl(clips);
   //     let ez = make(makeEdl([childEdlPointer]));

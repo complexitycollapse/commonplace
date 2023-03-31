@@ -226,7 +226,7 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by a clip type link if the target does not match the clip type', () => {
-      let dmb = aDmbWithSpan().withMarkupLinkOnClips("box", "attr1", "box value", "direct");
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("image", "attr1", "image value", "direct");
 
       let markup = makeFromDmb(dmb);
 
@@ -485,7 +485,7 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by a clip type link if the target does not match the clip type', () => {
-      let dmb = aDmbWithSpan().withMarkupLinkOnClips("box", "attr1", "box value", "content");
+      let dmb = aDmbWithSpan().withMarkupLinkOnClips("image", "attr1", "image value", "content");
 
       let markup = makeFromDmb(dmb);
 

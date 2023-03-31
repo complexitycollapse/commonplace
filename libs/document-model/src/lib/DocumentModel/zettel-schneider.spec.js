@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { ZettelSchneider } from './zettel-schneider';
-import { testing, Span, Box } from '@commonplace/core';
+import { testing, Span, Image } from '@commonplace/core';
 
 let makeSpanLink = (...args) => {
   let link = testing.links.makeSpanLink.call(null, ...args);
@@ -88,11 +88,11 @@ expect.extend({
 });
 
 describe('ZettelSchneider.zettel', () => {
-  it('returns a single zettel if the clip is a box', () => {
-    let box = Box("origin", 0, 0, 10, 10);
-    let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
+  it('returns a single zettel if the clip is a image', () => {
+    let image = Image("origin", 0, 0, 10, 10);
+    let l = makeSpanLink({ clipLists: [[Image("origin", 5, 5, 20, 20)]] });
 
-    expect(make(box, [l]).zettel()).toHaveLength(1);
+    expect(make(image, [l]).zettel()).toHaveLength(1);
   });
 
   it('returns a single zettel if the clip is a span and there are no links', () => {
@@ -101,20 +101,20 @@ describe('ZettelSchneider.zettel', () => {
     expect(make(s, []).zettel()).toHaveLength(1);
   });
 
-  it('attaches an end to a box that overlaps with it', () => {
-    let box = Box("origin", 0, 0, 10, 10);
-    let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
+  it('attaches an end to a image that overlaps with it', () => {
+    let image = Image("origin", 0, 0, 10, 10);
+    let l = makeSpanLink({ clipLists: [[Image("origin", 5, 5, 20, 20)]] });
 
-    let zettel = make(box, [l]).zettel();
+    let zettel = make(image, [l]).zettel();
 
     expect(zettel[0]).hasEnd(l, 0);
   });
 
-  it('does not attach an end to a box that does not overlap with it', () => {
-    let box = Box("origin", 100, 100, 10, 10);
-    let l = makeSpanLink({ clipLists: [[Box("origin", 5, 5, 20, 20)]] });
+  it('does not attach an end to a image that does not overlap with it', () => {
+    let image = Image("origin", 100, 100, 10, 10);
+    let l = makeSpanLink({ clipLists: [[Image("origin", 5, 5, 20, 20)]] });
 
-    let zettel = make(box, [l]).zettel();
+    let zettel = make(image, [l]).zettel();
 
     expect(zettel[0]).not.hasEnd(l, 0);
   });

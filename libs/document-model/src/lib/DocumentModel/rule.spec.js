@@ -69,7 +69,7 @@ describe('Rule.match', () => {
 
   it('returns false if the target is a clip but does not have the specified pointer type',  () => {
     let target = Span("origin", 1, 10);
-    let rule = make({clipTypes: ["box"]});
+    let rule = make({clipTypes: ["image"]});
 
     expect(rule.match(target)).toBeFalsy();
   });

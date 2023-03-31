@@ -3,7 +3,7 @@ import { EdlPointer, leafDataToEdlPointer } from './edl-pointer';
 import { LinkPointer, leafDataToLinkPointer } from './link-pointer';
 import { leafDataToPointer } from './leaf-data-to-pointer';
 import { Span } from './span';
-import { Box } from './box';
+import { Image } from './image';
 import { InlinePointer } from './inline-pointer';
 
 describe('pointerType', () => {
@@ -23,8 +23,8 @@ describe('pointerType', () => {
     expect(Span("or", 1, 2).pointerType).toBe("span");
   });
 
-  it('equals "box" for Box', () => {
-    expect(Box("or", 1, 2, 3, 4).pointerType).toBe("box");
+  it('equals "image" for Image', () => {
+    expect(Image("or", 1, 2, 3, 4).pointerType).toBe("image");
   });
 });
 
@@ -45,8 +45,8 @@ describe('isClip', () => {
     expect(Span("ori", 10, 20).isClip).toBeTruthy();
   });
 
-  it('returns true for a Box', () => {
-    expect(Box("ori", 1, 2, 3, 4).isClip).toBeTruthy();
+  it('returns true for a Image', () => {
+    expect(Image("ori", 1, 2, 3, 4).isClip).toBeTruthy();
   });
 });
 

@@ -1,5 +1,5 @@
 import { spanTesting } from "./span";
-import { boxTesting } from "./box";
+import { imageTesting } from "./image";
 import { ClipIterator } from "./clip-iterator";
 
 export function toEqualClip(actualClip, expectedClip) {
@@ -14,8 +14,8 @@ export function toEqualClip(actualClip, expectedClip) {
     return spanTesting.toEqualSpan(actualClip, expectedClip);
   }
 
-  if (expectedClip.pointerType == "box") {
-    return boxTesting.toEqualBox(actualClip, expectedClip);
+  if (expectedClip.pointerType == "image") {
+    return imageTesting.toEqualImage(actualClip, expectedClip);
   }
 
   return {

@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, boxTesting, Span, spanTesting, LinkPointer, EdlPointer } from "../pointers";
+import { hasClips, imageTesting, Span, spanTesting, LinkPointer, EdlPointer } from "../pointers";
 import { End } from './end';
 import { Link, leafDataToLink } from './link';
 
@@ -8,7 +8,7 @@ expect.extend({
 });
 
 let makeSpan = spanTesting.makeSpan;
-let makeBox = boxTesting.makeBox;
+let makeImage = imageTesting.makeImage;
 
 function toSpec(end) {
   return [end.name, end.pointers];
@@ -29,7 +29,7 @@ test('isClip is false', () => {
 test('ends is set on the link', () => {
   let ends = [
     ["foo", [makeSpan()]],
-    ["bar", [makeBox()]],
+    ["bar", [makeImage()]],
     [undefined, [LinkPointer("foo"), EdlPointer("bar")]]
   ];
 
@@ -59,7 +59,7 @@ describe('leafData', () => {
 });
 
 test('leafDataToLink is inverse of leafData', () => {
-  let l = Link("my type", ["name1", [makeSpan()]], ["name2", [makeBox(), makeSpan()]]);
+  let l = Link("my type", ["name1", [makeSpan()]], ["name2", [makeImage(), makeSpan()]]);
   expect(leafDataToLink(l.leafData())).toEqual(l);
 });
 
