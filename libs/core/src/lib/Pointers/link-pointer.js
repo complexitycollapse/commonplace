@@ -4,7 +4,7 @@ import { leafDataToLink } from "../model";
 
 export function LinkPointer(linkName) {
   function engulfs(obj, other) {
-    return obj.hasSamePointerType(other) && linkName === other.linkName;
+    return obj.sameType(other) && linkName === other.linkName;
   }
 
   let obj = Pointer(
@@ -17,7 +17,7 @@ export function LinkPointer(linkName) {
     { linkName },
     {
       leafData() { return { typ: "link", name: linkName }; },
-      clipPart(part) { 
+      clipPart(part) {
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {
           return [true, part];

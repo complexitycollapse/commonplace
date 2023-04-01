@@ -4,7 +4,7 @@ import { Pointer } from "./pointer";
 
 export function EdlPointer(edlName) {
   function engulfs(obj, other) {
-    return obj.hasSamePointerType(other) && edlName === other.edlName;
+    return obj.sameType(other) && edlName === other.edlName;
   }
 
   let obj = Pointer(
@@ -14,10 +14,10 @@ export function EdlPointer(edlName) {
     x => x.edlName,
     async response => Part(obj, leafDataToEdl(await response.json())),
     () => `edl:${edlName}`,
-    { edlName }, 
+    { edlName },
     {
       leafData() { return { typ: "edl", name: edlName }; },
-      clipPart(part) { 
+      clipPart(part) {
         let pointer = part.pointer;
         if (pointer.engulfs(obj)) {
           return [true, part];

@@ -22,9 +22,9 @@ export function Pointer(pointerType, isClip, specifiesContent, originFn, partBui
     return Object.entries(propsLeaf).every(e => e[0] === "ctx" || otherPropsLeaf[e[0]] == e[1]);
   }
 
-  addMethods(obj, { 
+  addMethods(obj, {
     partBuilder,
-    hasSamePointerType: pointer => pointer.pointerType === pointerType,
+    sameType: pointer => pointer.pointerType === pointerType,
     denotesSame
   });
   addMethods(obj, methods);

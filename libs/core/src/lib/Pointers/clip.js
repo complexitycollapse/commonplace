@@ -13,7 +13,6 @@ export function Clip(pointerType, origin, partBuilder, hashableNameFn, originalC
   addMethods(obj, {
     equalOrigin: clip => clip.origin == origin,
     clipSource: () => ClipIterator(x => x, [obj]),
-    sameType: clip => clip.pointerType === pointerType,
     endowsTo: clip => obj.overlaps(clip)
   });
 

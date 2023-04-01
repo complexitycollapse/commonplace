@@ -63,6 +63,7 @@ export function PartRepository(fetcher) {
     let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
     let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
       .filter(p => p.specifiesContent && !getPartLocally(p));
+    // TODO: needs to download content of child Edls too
     let docContent = doc.clips.filter(c => !getPartLocally(c));
     let required = missingLinkNames.concat(linkContentPointers).concat(docContent);
 
