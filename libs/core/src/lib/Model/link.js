@@ -1,9 +1,14 @@
 import { addProperties, finalObject } from "@commonplace/utils";
-import { End, leafDataToEnd } from "./end";
-import { Span, ClipIterator, LinkPointer } from "../pointers";
+import { Span, ClipIterator, LinkPointer, leafDataToPointer } from "../pointers";
 
 export function Link(type, ...endSpecs) {
-  let ends = endSpecs.map((e, i) => End(e[0], e[1], i));
+  let ends = endSpecs.map((e, i) => {
+    if (!Array.isArray(e[1])) {
+      throw "Pointers argument in end must be an array";
+    }
+    return { name: e[0], pointers: e[1], index: i };
+  });
+
   return makeLinkInternal(type, ends);
 }
 
@@ -20,8 +25,14 @@ function makeLinkInternal(type, ends) {
   function leafData() {
     return {
       typ: type,
-      es: ends.map(e => e.leafData())
+      es: ends.map(e => endLeafData(e))
     };
+  }
+
+  function endLeafData(end) {
+    let data = end.name ? { name: end.name } : {};
+    data.ptr = end.pointers.map(p => p.leafData());
+    return data;
   }
 
   function forEachPointer(fn) {
@@ -60,6 +71,13 @@ export function leafDataToLink(leafData) {
   return makeLinkInternal(leafData.typ, es);
 }
 
+function leafDataToEnd(leafData, index) {
+  let ptr = leafData.ptr;
+  let pointers = ptr.map(leafDataToPointer);
+
+  return { name: leafData?.name, pointers, index };
+}
+
 export let linkTesting = {
   makeSpanLink({ type = "typeA", clipLists } = {}) {
     if (clipLists === undefined) {
@@ -68,14 +86,14 @@ export let linkTesting = {
         [Span("origin", 40, 5), Span("origin", 50, 20)]
       ];
     }
-  
+
     let ends = [], i = 0;
-  
+
     clipLists.forEach(ss => {
       ends.push(["name" + i.toString(), ss]);
       i += 1;
     });
-  
+
     return Link(type ?? "typeA", ...ends);
   },
 

@@ -1,6 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
 import { hasClips, imageTesting, Span, spanTesting, LinkPointer, EdlPointer } from "../pointers";
-import { End } from './end';
 import { Link, leafDataToLink } from './link';
 
 expect.extend({
@@ -53,8 +52,9 @@ describe('leafData', () => {
   });
 
   it('converts the ends to their serialized form', () => {
-    let end = End("Name", [], 0);
-    expect(Link("type", toSpec(end)).leafData().es[0]).toEqual(end.leafData());
+    let span = Span("x", 10, 20);
+    let end = ["Name", [span]];
+    expect(Link("type", end).leafData().es[0]).toEqual({ name: "Name", ptr: [span.leafData()] });
   });
 });
 
