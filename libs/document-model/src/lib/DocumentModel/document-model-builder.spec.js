@@ -26,11 +26,12 @@ function sequenceMetalink({ name, immediateTargets, linkTypes, clipTypes, edlTyp
   return link;
 }
 
-function make(clips = [], links = [], edlPointer) {
+function make(clips = [], links = [], edlPointer, additionalParts = []) {
   edlPointer = edlPointer ?? EdlPointer("document");
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
-    .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : [Part(x[0], "x".repeat(x[0].length))]).flat())
-    .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))]);
+    .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : []).flat())
+    .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))])
+    .concat(additionalParts);
   let builder = docModelBuilderTesting.makeMockedBuilderFromParts(edlPointer, parts);
   let model = builder.build();
   return model;
@@ -189,6 +190,25 @@ describe('build', () => {
       let zettel = make([[clip1, true]], [["link1", link1]]).zettel;
 
       expect(zettel[0].incomingPointers).toEqual([]);
+    });
+
+    describe('getContent', () => {
+      it('returns the clipped content if it is available locally in the repo', () => {
+        let clip = Span("test origin", 5, 6);
+        let contentPart = Part(Span("test origin", 0, 15), "xxxxx123456xxxx");
+
+        let zettel = make([[clip, true]], [], undefined, [contentPart]).zettel[0];
+
+        expect(zettel.getContent()).toBe("123456");
+      });
+
+      it('returns undefined if the clipped content is not available locally in the repo', () => {
+        let clip = Span("test origin", 5, 6);
+
+        let zettel = make([[clip, true]], []).zettel[0];
+
+        expect(zettel.getContent()).toBe(undefined);
+      });
     });
 
     it('creates a nested structure for a nested EDL', () => {

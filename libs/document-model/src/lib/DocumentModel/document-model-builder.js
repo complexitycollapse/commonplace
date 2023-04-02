@@ -101,6 +101,9 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     model.setContainedSequences(sequences);
     populateSequenceKeys(sequences);
 
+    // Handle content
+    populateSpanContent(zettel, repo);
+
     return finalObject(model, {});
   }
 
@@ -185,6 +188,16 @@ function applyMetarules(model, links) {
         end.sequencePrototypes.push(SequencePrototype(rule.type, end, link, rule.originLink.pointer));
       }
     });
+  });
+}
+
+function populateSpanContent(zettel, repo) {
+  zettel.forEach(z => {
+    if (z.isEdl) { populateSpanContent(z.zettel, repo); }
+    else {
+      let contentPart = repo.getPartLocally(z.pointer);
+      if (contentPart) { z.setOriginContentPart(contentPart); }
+     }
   });
 }
 
