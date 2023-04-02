@@ -124,6 +124,25 @@ describe('docStatus', () => {
 
       expect(required).not.toContain(link[2]);
     });
+
+    it('starts requesting the clips and links of a child Edl once it has been downloaded', async () => {
+      let clip = aClip(), link = aLink(1);
+      let edl = anEdl([clip], [link]);
+
+      let required = (await makeAndGetDocStatus([clip], [link], [edl])).required;
+
+      expect(required).toContain(clip[0]);
+      expect(required).toContain(link[0]);
+    });
+
+    it('stops requesting the clips and links of a child Edl once they have been downloaded', async () => {
+      let clip = aClip(), link = aLink(1);
+      let edl = anEdl([clip], [link]);
+
+      let required = (await makeAndGetDocStatus([clip], [link], [edl, clip, link])).required;
+
+      expect(required).toEqual([]);
+    });
   });
 
   describe("child zettel", () => {

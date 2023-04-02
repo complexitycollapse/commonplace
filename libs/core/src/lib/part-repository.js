@@ -58,22 +58,51 @@ export function PartRepository(fetcher) {
     if (docPart === undefined) { return { required: [docName] }; }
 
     let doc = docPart.content;
-    let linkResults = doc.links.map(l => [l, getPartLocally(l)]);
-    let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
-    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
-    let linkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
-      .filter(p => p.specifiesContent && !getPartLocally(p));
-    // TODO: needs to download content of child Edls too
-    let docContent = doc.clips.filter(c => !getPartLocally(c));
-    let required = missingLinkNames.concat(linkContentPointers).concat(docContent);
+
+    let missingParts = missingContentForEdl(doc);
+    let required = missingParts.missingLinkNames
+      .concat(missingParts.missingLinkContentPointers)
+      .concat(missingParts.missingDocContent);
 
     return {
       docAvailable: true,
-      linksAvailable: missingLinkNames.length === 0,
-      linkContentAvailable: linkContentPointers.length === 0,
-      docContentAvailable: docContent.length === 0,
+      linksAvailable: missingParts.missingLinkNames.length === 0,
+      linkContentAvailable: missingParts.missingLinkContentPointers.length === 0,
+      docContentAvailable: missingParts.missingDocContent.length === 0,
       allAvailable: required.length === 0,
       required
+    };
+  }
+
+  function missingContentForEdl(edl) {
+    // Links & link content
+    let linkResults = edl.links.map(l => [l, getPartLocally(l)]);
+    let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
+    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
+    let missingLinkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
+      .filter(p => p.specifiesContent && !getPartLocally(p));
+
+    // Content
+    let docContent = edl.clips.map(c => [c, getPartLocally(c)]);
+    let missingDocContent = docContent.filter(c => c[1] === undefined).map(c => c[0]);
+
+    // Reccur on child Edls.
+    docContent.forEach(c => {
+      let part = c[1];
+      if (part === undefined) { return; }
+      if (!part.content.isEdl) { return; }
+
+      let childResults = missingContentForEdl(part.content);
+
+      missingLinkNames = missingLinkNames.concat(childResults.missingLinkNames);
+      missingLinkContentPointers = missingLinkContentPointers.concat(childResults.missingLinkContentPointers);
+      missingDocContent = missingDocContent.concat(childResults.missingDocContent);
+    });
+
+    return {
+      missingLinkNames,
+      missingLinkContentPointers,
+      missingDocContent
     };
   }
 
