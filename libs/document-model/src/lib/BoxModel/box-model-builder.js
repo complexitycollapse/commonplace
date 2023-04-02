@@ -1,5 +1,6 @@
 import { finalObject } from '@commonplace/utils';
 import { compareLinkPriority } from '../link-priority';
+import { Box } from './box';
 
 /*
   Rules of boxes:
@@ -24,10 +25,6 @@ export function BoxModelBuilder(docModel) {
 
   const isTrue = value => value && value !== "false";
   const isBox = item => isTrue(item.markup.get("box")); // TODO: it this the right attribute?
-
-  function Box(originObject, members) {
-    return { isBox: true, originObject, members };
-  }
 
   // This will return an ORDERED hierarchy of boxes (ordered by appearance in the EDL).
   // Edls and sequences that are not boxes will be flattened.
