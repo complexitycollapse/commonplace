@@ -1,5 +1,6 @@
-import { Edl, Link, InlinePointer, LinkPointer, EdlPointer } from "@commonplace/core";
+import { Edl, Link, InlinePointer, LinkPointer, EdlPointer, Part } from "@commonplace/core";
 import { DocumentModelBuilder } from './DocumentModel/document-model-builder';
+import { finalObject } from "@commonplace/utils";
 
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
@@ -22,15 +23,17 @@ function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
 
 function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
   let ends = makeEnds("content", type, attribute, value, hasValueEnd, valueEnd);
-  return Link("endows attributes", ...ends);
+  let link = Link("endows attributes", ...ends);
+  return Part(deriveLinkPointer(link), link);
 }
 
 function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
   let ends = makeEnds("direct", type, attribute, value, hasValueEnd, valueEnd);
-  return Link("endows attributes", ...ends);
+  let link = Link("endows attributes", ...ends);
+  return Part(deriveLinkPointer(link), link);
 }
 
-export let defaultsLinks = [
+export let defaultsLinksParts = [
   contentAttribute("bold", "bold", true),
   directAttribute("paragraph", "paragraph", true),
   contentAttribute("italic", "italic", true),
@@ -63,8 +66,25 @@ export const defaultsType = "defaults";
 
 export const defaultsPointer = EdlPointer("defaults");
 
-export const defaultsEdl = Edl(defaultsType, [], defaultsLinks.map(deriveLinkPointer));
+export const defaultsEdl = Edl(defaultsType, [], defaultsLinksParts.map(part => part.pointer));
 
 export function DefaultsDocModel(repo) {
   return DocumentModelBuilder(defaultsPointer, repo).build();
+}
+
+export function DefaultsPartFetcher() {
+  async function getPart(pointer) {
+    if (defaultsPointer.denotesSame(pointer)) {
+      return [true, Part(defaultsPointer, defaultsEdl)];
+    }
+
+    let part = defaultsLinksParts.find(part => part.pointer.denotesSame(pointer));
+    if (part) {
+      return [true, part];
+    }
+
+    return [false, undefined];
+  }
+
+  return finalObject({}, { getPart });
 }
