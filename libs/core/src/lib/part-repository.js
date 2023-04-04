@@ -34,21 +34,19 @@ export function PartRepository(fetcher) {
     }
   }
 
-  async function getPartsForOrigin(requests) {
+  async function getPartsForOrigin(pointers) {
     let results = [];
-    for (let i = 0; i < requests.length; i++) {
-      let request = requests[i];
-      results.push(request[0]);
-      let part = await getPart(request[0]);
-      // TODO: need to handle the error case too. An ignored request will
-      // simply be repeated in an infinite loop.
-      if (part) { request[1](part); }
+    for (let i = 0; i < pointers.length; i++) {
+      let pointer = pointers[i];
+      let part = await getPart(pointer);
+      results.push(part);
     }
+    // TODO: need to handle the case where one of these fails
     return results;
   }
 
   function getManyParts(requests) {
-    let asHash = listMapFromList(r => r[0].origin, r => r, requests);
+    let asHash = listMapFromList(r => r.origin, r => r, requests);
     return Promise.all([...asHash.values()].map(rs => getPartsForOrigin(rs)));
   }
 
