@@ -1,15 +1,17 @@
 import { render } from '@testing-library/react';
 import { FlightComponent } from './flight-component';
-import { PartRepository, EdlPointer } from '@commonplace/core';
-import { StaticPartFetcher } from '@commonplace/html';
-import { DefaultsDocModel } from '@commonplace/document-model';
+import { EdlPointer } from '@commonplace/core';
+import { DocuverseBuilder } from '@commonplace/document-model';
 
 describe('FlightComponent', () => {
   it('should render successfully', () => {
-    // TODO Need to add the defaults to the repo
-    let repository = PartRepository(StaticPartFetcher("/assets/content/", async () => { return { ok: true, json: () =>{ return {"cps":[],"lks":[]}; } }; }));
-    let defaults = DefaultsDocModel(repository);
-    const { baseElement } = render(<FlightComponent docPointers={[EdlPointer("test")]} repository={repository} defaults = {defaults} />);
+    let dv = DocuverseBuilder().add(obj => ({
+      test: obj.anEdl()
+    })).build();
+
+    let repo = dv.repo;
+
+    const { baseElement } = render(<FlightComponent docPointers={[EdlPointer("test")]} repository={repo} />);
     expect(baseElement).toBeTruthy();
   });
 });

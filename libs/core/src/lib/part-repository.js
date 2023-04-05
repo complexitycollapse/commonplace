@@ -120,7 +120,10 @@ export function MockPartRepository(parts) {
     getPartLocally: part => repo.getPartLocally(part),
     addParts: parts => {
       parts.forEach(part => repo.cache.addPart(part));
-    }
+    },
+    getPart: repo.getPart,
+    getManyParts: repo.getManyParts,
+    docStatus: repo.docStatus
   }
 
   obj.addParts(parts);

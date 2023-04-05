@@ -2,19 +2,19 @@ import { CssStyle } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
 export function ImageComponent({ zettel }) {
-  let [zettelPartState, setZettelPartState] = useState(zettel.part());
+  let [zettelContentState, setZettelContentState] = useState(zettel.getContent());
 
   useEffect(() => {
-    zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
+    zettel.setOnUpdate(() => setZettelContentState(zettel.getContent()));
   }, []);
 
-  let style = CssStyle(zettel.attributes().values()).css();
+  let style = CssStyle(zettel.markup.values()).css();
   let imagePath = "";
   let innerStyle = {};
 
-  if (zettelPartState) {
-    imagePath = URL.createObjectURL(zettelPartState.content);
-    let clip = zettelPartState.pointer;
+  if (zettelContentState) {
+    imagePath = URL.createObjectURL(zettelContentState);
+    let clip = zettel.pointer;
     innerStyle = {
       backgroundImage: `url("${imagePath}")`,
       width: clip.width,

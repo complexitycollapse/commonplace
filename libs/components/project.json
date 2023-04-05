@@ -5,13 +5,19 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nrwl/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/components",
-        "main": "libs/components/src/index.js",
-        "tsConfig": "libs/components/tsconfig.lib.json",
-        "assets": []
+        "outputPath": "dist/libs/components"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "publish": {

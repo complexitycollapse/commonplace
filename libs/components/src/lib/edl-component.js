@@ -2,11 +2,11 @@ import { CssStyle } from '@commonplace/html';
 import { ZettelComponent } from './zettel-component';
 
 export function EdlComponent({ edl }) {
-  let innerComponents = edl.children.map(f => f.pointer.pointerType === "edl"
+  let innerComponents = edl.zettel.map(f => f.pointer.pointerType === "edl"
     ? (<EdlComponent key={f.key} edl={f}/>)
     : <ZettelComponent key={f.key} zettel={f}/>);
 
-  let cssStyle = CssStyle(edl.attributes().values());
+  let cssStyle = CssStyle(edl.markup.values());
   let fragmentTags = cssStyle.fragmentTags();
   let style = cssStyle.css();
 

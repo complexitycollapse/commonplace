@@ -1,21 +1,19 @@
-import { EdlComponent } from './edl-component';
-import { emptyDocPointer } from '@commonplace/core';
-import { EdlZettel } from '@commonplace/document-model';
+import { BoxComponent } from './box-component';
+import { Box } from '@commonplace/document-model';
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
-export function DocumentComponent({ docPointer, repository, defaults }) {
+export function DocumentComponent({ docPointer, repository }) {
 
-  let [zettelTreeState, setZettelTreeState] = useState(EdlZettel(emptyDocPointer, undefined, defaults, "1"));
+  let [boxTreeState, setBoxTreeState] = useState(Box(undefined, []));
 
   useEffect(() => {
-    let root = EdlZettel(docPointer, undefined, defaults, "1");
-    Pouncer(repository).fetchDoc(root).then(tree => setZettelTreeState(tree));
+    Pouncer(repository, docPointer, setBoxTreeState).start();
   }, []);
 
   return (
     <div>
-      <EdlComponent key={zettelTreeState.key} edl={zettelTreeState}/>
+      <BoxComponent box={boxTreeState}/>
     </div>
   );
 }

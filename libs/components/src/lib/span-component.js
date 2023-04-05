@@ -1,16 +1,9 @@
 import { CssStyle } from '@commonplace/html';
-import { useState, useEffect } from 'react';
 
 export function SpanComponent({ zettel }) {
 
-  let [zettelPartState, setZettelPartState] = useState(zettel.part());
-
-  useEffect(() => {
-    zettel.setOnUpdate(() => setZettelPartState(zettel.part()));
-  }, []);
-
-  let style = CssStyle(zettel.attributes().values()).css();
-  let content = zettelPartState ? zettelPartState.content : "";
+  let style = CssStyle(zettel.markup).css();
+  let content = zettel.getContent();
 
   return (
     <cpla-span cpla-key={zettel.key} cpla-start={zettel.pointer.start} cpla-length={zettel.pointer.length}>
