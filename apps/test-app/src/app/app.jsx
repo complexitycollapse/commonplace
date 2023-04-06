@@ -1,6 +1,6 @@
-import { EdlPointer } from '@commonplace/core';
+import { EdlPointer, PartRepository } from '@commonplace/core';
 import { FlightComponent } from '@commonplace/components';
-import { StaticPartFetcher, PartRepository } from '@commonplace/html';
+import { StaticPartFetcher } from '@commonplace/html';
 
 let repository = PartRepository(StaticPartFetcher("/assets/content/", fetch));
 
