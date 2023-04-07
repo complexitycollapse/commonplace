@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 export function ImageComponent({ zettel }) {
   let [zettelContentState, setZettelContentState] = useState(zettel.getContent());
 
-  useEffect(() => {
-    zettel.setOnUpdate(() => setZettelContentState(zettel.getContent()));
-  }, []);
+  // useEffect(() => {
+  //   zettel.setOnUpdate(() => setZettelContentState(zettel.getContent()));
+  // }, []);
 
-  let style = CssStyle(zettel.markup.values()).css();
+  //let style = CssStyle(zettel.markup.values()).css();
   let imagePath = "";
   let innerStyle = {};
 
@@ -28,7 +28,7 @@ export function ImageComponent({ zettel }) {
 
   return (
     <cpla-image cpla-key={zettel.key}>
-      <div style={style}>
+      <div style={/*style*/{}}>
         <div style={innerStyle}/>
       </div>
     </cpla-image>

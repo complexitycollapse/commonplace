@@ -145,7 +145,7 @@ function buildPartFromContent(originalImage, response) {
     response.blob()
     .then(content => {
       let url = URL.createObjectURL(content);
-      let img = new Image();
+      let img = document.createElement("img");
       img.src = url;
       img.onload = function()
         {

@@ -2,7 +2,7 @@ import { CssStyle } from '@commonplace/html';
 
 export function SpanComponent({ zettel }) {
 
-  let style = CssStyle(zettel.markup).css();
+  let style //= CssStyle(zettel.markup).css();
   let content = zettel.getContent();
 
   return (

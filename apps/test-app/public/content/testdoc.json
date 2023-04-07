@@ -8,7 +8,7 @@
     {"typ": "edl", "name": "paragraphEdl3.json"},
     {"typ": "span", "ori": "origin", "st": 556, "ln": 59},
     {"typ": "edl", "name": "paragraphEdl4.json"},
-    {"typ": "box", "ori": "TestImage.jpg", "x": 1070, "y": 650, "wd": 770, "ht": 300}
+    {"typ": "image", "ori": "TestImage.jpg", "x": 1070, "y": 650, "wd": 770, "ht": 300}
   ],
   "lks": [
     { "typ": "link", "name": "titleLink.json" },

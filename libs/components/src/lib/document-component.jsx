@@ -7,8 +7,12 @@ export function DocumentComponent({ docPointer, repository }) {
 
   let [boxTreeState, setBoxTreeState] = useState(Box(undefined, []));
 
+  function pouncerCallback(box) {
+    setBoxTreeState(box);
+  }
+
   useEffect(() => {
-    Pouncer(repository, docPointer, setBoxTreeState).start();
+    Pouncer(repository, docPointer, pouncerCallback).start();
   }, []);
 
   return (
