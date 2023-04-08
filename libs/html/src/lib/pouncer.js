@@ -3,10 +3,13 @@ import { finalObject } from '@commonplace/utils';
 
 export function Pouncer(repo, docPointer, onPartsArrived) {
   function start() {
-    fireNext();
+    fireNext([]);
   }
 
-  function fireNext() {
+  function fireNext(previousResults) {
+    // TODO: need something better than this hack to stop the infinite loop
+    if (previousResults.find(r => r[0] === undefined)) { return; }
+
     let status = repo.docStatus(docPointer);
     if (status.allAvailable) {
       let docModel = DocumentModelBuilder(docPointer, repo).build();
@@ -14,7 +17,6 @@ export function Pouncer(repo, docPointer, onPartsArrived) {
       onPartsArrived(boxModel);
     } else {
       try {
-        // TODO: this is an infinite loop if a part is missing
         repo.getManyParts(status.required).then(fireNext);
       } catch (e) {
         console.log(`Failed to download: ${e}`);
