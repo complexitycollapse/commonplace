@@ -3,9 +3,9 @@ import { Box } from '@commonplace/document-model';
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
 
-export function DocumentComponent({ docPointer, repository }) {
+export function DocumentComponent({ unique, docPointer, repository }) {
 
-  let [boxTreeState, setBoxTreeState] = useState(Box(undefined, []));
+  let [boxTreeState, setBoxTreeState] = useState(Box({key: unique}, []));
 
   function pouncerCallback(box) {
     setBoxTreeState(box);
@@ -16,8 +16,8 @@ export function DocumentComponent({ docPointer, repository }) {
   }, []);
 
   return (
-    <div>
-      <BoxComponent box={boxTreeState}/>
-    </div>
+    <cpla-doc cpla-key={unique}>
+      <BoxComponent key={boxTreeState.key} box={boxTreeState}/>
+    </cpla-doc>
   );
 }
