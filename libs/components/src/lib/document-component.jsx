@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 export function DocumentComponent({ unique, docPointer, repository }) {
 
-  let [boxTreeState, setBoxTreeState] = useState(Box({key: unique}, []));
+  let [boxTreeState, setBoxTreeState] = useState(Box({key: unique}, [], new Map()));
 
   function pouncerCallback(box) {
     setBoxTreeState(box);

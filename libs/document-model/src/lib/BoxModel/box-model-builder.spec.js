@@ -89,6 +89,15 @@ describe('BoxModelBuilder', () => {
     expect(box.members[0].originObject.isSequence).toBeTruthy();
   });
 
+  it('sets the markup of the box to the markup of the defining ling of the box sequence that generated it', () => {
+    let spans = [aSpan(), aSpan(), aSpan()];
+    let model = makeModel(spans).withBoxSequenceLink(spans);
+
+    let box = make(model);
+
+    expect(box.members[0].markup).toBe(model.model.rootSequences()[0].definingLink.markup);
+  });
+
   it('adds the sequence content to the sequence box', () => {
     let spans = [aSpan(), aSpan(), aSpan()];
     let model = makeModel(spans).withBoxSequenceLink(spans);
@@ -141,6 +150,15 @@ describe('BoxModelBuilder', () => {
     expectMemberMatches(box.members[0], 0, spans[0]);
     expect(box.members[2].originObject).toBe(undefined);
     expectMemberMatches(box.members[2], 0, spans[2]);
+  });
+
+  it('sets the markup of an implicit box to an empty markup value', () => {
+    let spans = [aSpan(), aSpan(), aSpan()];
+    let model = makeModel(spans).withBoxSequenceLink([spans[1]]);
+
+    let box = make(model);
+
+    expect([...box.members[0].markup.entries()]).toEqual([]);
   });
 
   it('creates implicit boxes within a box sequence if it contains content and other box sequences', () => {
@@ -220,6 +238,16 @@ describe('BoxModelBuilder', () => {
     expectMemberMatches(box.members[0], 0, spans[0]);
     expectMemberMatches(box.members[0], 1, spans[1]);
     expectMemberMatches(box.members[0], 2, spans[2]);
+  });
+
+  it('sets the markup of the box the the markup of the box Edl that generates it', () => {
+    let spans = [aSpan(), aSpan(), aSpan()];
+    let child = anEdl().withClips(...spans);
+    let model = makeModel([child]).withLink(aBoxLink(child));
+
+    let box = make(model);
+
+    expect(box.members[0].markup).toBe(model.model.zettel[0].markup);
   });
 
   it('creates implicit boxes around an Edl box if that content is not in an explicit box', () => {

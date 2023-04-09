@@ -1,4 +1,4 @@
-export function Box(originObject, members) {
+export function Box(originObject, members, markup) {
   if (originObject === undefined && members.length === 0) {
     throw "Empty boxes are forbidden.";
   }
@@ -7,6 +7,7 @@ export function Box(originObject, members) {
     isBox: true,
     originObject,
     members,
-    key: "b" + (originObject ? originObject.key : members[0].key)
+    key: "b" + (originObject ? originObject.key : members[0].key),
+    markup
   };
 }

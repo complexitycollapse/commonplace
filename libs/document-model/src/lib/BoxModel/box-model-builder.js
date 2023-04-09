@@ -35,7 +35,7 @@ export function BoxModelBuilder(docModel) {
 
     function terminateImplicitBox() {
       if (currentImplicitBox.length > 0) {
-        childBoxes.push(Box(undefined, currentImplicitBox));
+        childBoxes.push(Box(undefined, currentImplicitBox, new Map()));
         currentImplicitBox = [];
       }
     }
@@ -119,7 +119,8 @@ export function BoxModelBuilder(docModel) {
       else { terminateImplicitBox(); }
     }
 
-    return Box(originObject, childBoxes);
+    let markup = originObject.isSequence ? originObject.definingLink.markup : originObject.markup;
+    return Box(originObject, childBoxes, markup);
   }
 
   return finalObject({}, {
