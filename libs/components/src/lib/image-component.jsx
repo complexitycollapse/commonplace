@@ -8,7 +8,7 @@ export function ImageComponent({ zettel }) {
   //   zettel.setOnUpdate(() => setZettelContentState(zettel.getContent()));
   // }, []);
 
-  //let style = CssStyle(zettel.markup.values()).css();
+  let style = CssStyle(zettel).css();
   let imagePath = "";
   let innerStyle = {};
 
@@ -28,7 +28,7 @@ export function ImageComponent({ zettel }) {
 
   return (
     <cpla-image cpla-key={zettel.key}>
-      <div style={/*style*/{}}>
+      <div style={style}>
         <div style={innerStyle}/>
       </div>
     </cpla-image>
