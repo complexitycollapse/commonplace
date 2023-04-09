@@ -1,4 +1,9 @@
 {
-  "typ": "capitalize",
-  "es": [{ "ptr": [{ "typ": "span", "ori": "origin", "st": 0, "ln": 18 }] }]
+  "typ": "markup",
+  "es": [
+    { "name": "target", "ptr": [{ "typ": "span", "ori": "origin", "st": 0, "ln": 18 }] },
+    { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "capitalize"}]},
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "true"}] },
+    { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct"}] }
+  ]
 }

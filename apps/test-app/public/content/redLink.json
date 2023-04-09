@@ -1,7 +1,9 @@
 {
-  "typ": "color",
+  "typ": "markup",
   "es": [
-    { "ptr": [{ "typ": "span", "ori": "origin", "st": 8, "ln": 10 }] },
-    { "name": "value", "ptr": [{ "typ": "inline", "txt": "red"}] }
+    { "name": "target", "ptr": [{ "typ": "span", "ori": "origin", "st": 8, "ln": 10 }] },
+    { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "colour"}]},
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "red"}] },
+    { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct"}] }
   ]
 }

@@ -1,7 +1,13 @@
 {
-  "typ": "italic",
-  "es": [{ "ptr": [
-    { "typ": "span", "ori": "origin", "st": 8, "ln": 10 },
-    { "typ": "span", "ori": "origin", "st": 35, "ln": 4 },
-    { "typ": "span", "ori": "origin", "st": 293, "ln": 5 }] }]
+  "typ": "markup",
+  "es": [
+    { "name": "target", "ptr": [
+      { "typ": "span", "ori": "origin", "st": 8, "ln": 10 },
+      { "typ": "span", "ori": "origin", "st": 35, "ln": 4 },
+      { "typ": "span", "ori": "origin", "st": 293, "ln": 5 }]
+    },
+    { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "italic"}]},
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "true"}] },
+    { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct"}] }
+  ]
 }
