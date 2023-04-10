@@ -10,4 +10,5 @@ export const decorators = [
   compoundingStyleDecorator("text align", "textAlign"),
   compoundingStyleDecorator("colour", "color"),
   compoundingStyleDecorator("background colour", "backgroundColor"),
+  compoundingStyleDecorator("layout mode", "display")
 ];

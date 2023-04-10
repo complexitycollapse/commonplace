@@ -33,6 +33,22 @@ function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
   return Part(deriveLinkPointer(link), link);
 }
 
+function markupRule(name, attributeDescriptions, { clipType, edlType, linkType } = {}) {
+  let ends = [];
+
+  attributeDescriptions.forEach(desc => {
+    ends.push(["attribute", [InlinePointer(desc[0])]]);
+    ends.push(["value", [InlinePointer(desc[1])]]);
+    ends.push(["inherit", [InlinePointer(desc[2])]]);
+  });
+
+  if (clipType) { ends.push(["clip types", [InlinePointer(clipType)]]); }
+  if (edlType) { ends.push(["edl types", [InlinePointer(edlType)]]); }
+  if (linkType) { ends.push(["link types", [InlinePointer(linkType)]]); }
+
+  return Part(LinkPointer(name), Link("markup", ...ends));
+}
+
 export let defaultsLinksParts = [
   contentAttribute("bold", "bold", true),
   directAttribute("paragraph", "paragraph", true),
@@ -52,7 +68,13 @@ export let defaultsLinksParts = [
   directAttribute(["background colour", "background color"], "background colour", undefined, true, "value"),
   contentAttribute("inline", "layout mode", "inline"),
   directAttribute("block", "layout mode", "block"),
-  directAttribute("break", "break", true)
+  directAttribute("break", "break", true),
+  markupRule("defaults:spans", [["layout mode", "inline", "direct"]], {clipType: "span"}),
+  markupRule("defaults:blocks", [["layout mode", "block", "direct"]], {clipType: "image"}),
+  markupRule("defaults:paragraphs", [
+    ["layout mode", "block", "direct"],
+    ["box", "true", "direct"]
+  ], { edlType: "paragraph", linkType: "paragraph" })
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]])
 ];
