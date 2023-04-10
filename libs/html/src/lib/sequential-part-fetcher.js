@@ -6,7 +6,7 @@ export function SequentialPartFetcher(...fetchers) {
     let lastResult = [false, "No fetchers"];
 
     for (let fetcher of fetchers) {
-      lastResult = await fetcher(pointer);
+      lastResult = await fetcher.getPart(pointer);
       if (lastResult[0]) { return lastResult; }
     }
 
