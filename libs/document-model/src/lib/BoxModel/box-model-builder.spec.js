@@ -66,6 +66,17 @@ describe('BoxModelBuilder', () => {
     expectMemberMatches(box, 2, spans[2]);
   });
 
+  it('never generates a box for a span', () => {
+    let span = aSpan();
+    let model = makeModel([span])
+      .withLink(aBoxLink(span));
+
+    let element = make(model).members[0];
+
+    expect(element.markup.get("box")).toBeTruthy();
+    expect(element.isBox).toBeFalsy();
+  });
+
   it('flattens a non-box sequence into the containing box', () => {
     let spans = [aSpan(), aSpan(), aSpan()];
     let model = makeModel(spans).withSequenceLink(spans);
