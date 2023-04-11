@@ -1,4 +1,4 @@
-import { Part, Edl, Link } from "@commonplace/core";
+import { Part, Edl, Link, Image } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
 import { docModelBuilderTesting } from "../DocumentModel/document-model-builder";
 import { Sequence } from "../DocumentModel/sequence";
@@ -48,6 +48,32 @@ export function SpanBuilder() {
       withContent: content => obj.withProperty("content", content),
       withOrigin: origin => obj.withProperty("origin", origin),
       withStart: start => obj.withProperty("start", start),
+      defaultPart: () => Part(obj.builtObject, obj.content),
+      pointer: undefined
+    }
+  );
+
+  return obj;
+}
+
+export function ImageBuilder() {
+  let obj = Builder(
+    b => {
+      obj.pointer = Image(
+        b.origin ?? b.name ?? "origin",
+        b.x ?? 1,
+        b.y ?? 1,
+        b.width ?? 10,
+        b.height ?? 10);
+      return obj.pointer;
+    }, {
+      content: "##########",
+      withWidth: len => obj.withProperty("width", len),
+      withHeight: len => obj.withProperty("height", len),
+      withContent: content => obj.withProperty("content", content),
+      withOrigin: origin => obj.withProperty("origin", origin),
+      withX: start => obj.withProperty("x", start),
+      withY: start => obj.withProperty("x", start),
       defaultPart: () => Part(obj.builtObject, obj.content),
       pointer: undefined
     }

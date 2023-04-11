@@ -1,10 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 import { BoxModelBuilder } from './box-model-builder';
-import { DocModelBuilderBuilder, EdlBuilder, MarkupBuilder, SequenceLinkBuilder, SpanBuilder } from '../Testing/test-builders';
+import {
+  DocModelBuilderBuilder, EdlBuilder, MarkupBuilder, SequenceLinkBuilder, SpanBuilder, ImageBuilder
+} from '../Testing/test-builders';
 
 let unique = 1;
 function aSpan() {
   return SpanBuilder().withOrigin((unique++).toString());
+}
+
+function anImage() {
+  return ImageBuilder().withOrigin((unique++).toString());
 }
 
 function anEdl() {
@@ -66,10 +72,21 @@ describe('BoxModelBuilder', () => {
     expectMemberMatches(box, 2, spans[2]);
   });
 
-  it('never generates a box for a span', () => {
+  it('never generates a box for a span, as a span is never a box', () => {
     let span = aSpan();
     let model = makeModel([span])
       .withLink(aBoxLink(span));
+
+    let element = make(model).members[0];
+
+    expect(element.markup.get("box")).toBeTruthy();
+    expect(element.isBox).toBeFalsy();
+  });
+
+  it('never generates a box for an image, because images are themselves boxes', () => {
+    let image = anImage();
+    let model = makeModel([image])
+      .withLink(aBoxLink(image));
 
     let element = make(model).members[0];
 
