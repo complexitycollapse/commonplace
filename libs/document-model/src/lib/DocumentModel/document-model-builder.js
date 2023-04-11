@@ -5,7 +5,7 @@ import { testing } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
-import { defaultsPointer } from "../defaults";
+import { defaultsPointer } from "../Defaults/defaults";
 import { MarkupCalculation } from "../Attributes/markup-calculation";
 
 export function DocumentModelBuilder(edlPointer, repo) {

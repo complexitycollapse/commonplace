@@ -1,5 +1,5 @@
 import { Edl, Link, InlinePointer, LinkPointer, EdlPointer, Part } from "@commonplace/core";
-import { DocumentModelBuilder } from './DocumentModel/document-model-builder';
+import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {

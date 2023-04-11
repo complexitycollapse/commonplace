@@ -1,6 +1,6 @@
 export {
   DefaultsDocModel, defaultsType, defaultsPointer, defaultsEdl, DefaultsPartFetcher, defaultsLinksParts
-} from './lib/defaults';
+} from './lib/Defaults/defaults';
 
 export { Box } from './lib/BoxModel/box';
 export { DocumentModelBuilder } from './lib/DocumentModel/document-model-builder';
