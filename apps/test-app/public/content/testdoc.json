@@ -27,6 +27,7 @@
     { "typ": "link", "name": "italicLink.json" },
     { "typ": "link", "name": "rightAlignLink.json" },
     { "typ": "link", "name": "backgroundColourLink.json" },
-    { "typ": "link", "name": "greenBackgroundLink.json" }
+    { "typ": "link", "name": "greenBackgroundLink.json" },
+    { "typ": "link", "name": "titleFontSizeLink.json" }
   ]
 }

@@ -6,9 +6,12 @@ export const decorators = [
   compoundingStyleDecorator("underline", "textDecoration", "underline"),
   compoundingStyleDecorator("overline", "textDecoration", "overline"),
   compoundingStyleDecorator("strike through", "textDecoration", "line-through"),
-  compoundingStyleDecorator("capitalization", "textTransform"),
+  compoundingStyleDecorator("upper case", "textTransform", "uppercase"),
+  compoundingStyleDecorator("lower case", "textTransform", "lowercase"),
+  compoundingStyleDecorator("capitalize", "textTransform", "capitalize"),
   compoundingStyleDecorator("text align", "textAlign"),
   compoundingStyleDecorator("colour", "color"),
   compoundingStyleDecorator("background colour", "backgroundColor"),
-  compoundingStyleDecorator("layout mode", "display")
+  compoundingStyleDecorator("layout mode", "display"),
+  compoundingStyleDecorator("font size", "fontSize")
 ];
