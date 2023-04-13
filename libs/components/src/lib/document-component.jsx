@@ -12,7 +12,9 @@ export function DocumentComponent({ unique, docPointer, repository }) {
   }
 
   useEffect(() => {
-    Pouncer(repository, docPointer, pouncerCallback).start();
+    let pouncer = Pouncer(repository, docPointer);
+    pouncer.boxModelCallback = pouncerCallback;
+    pouncer.start();
   }, []);
 
   return (

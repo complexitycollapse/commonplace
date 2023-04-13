@@ -1,7 +1,9 @@
-import { DocumentModelBuilder, BoxModelBuilder } from '@commonplace/document-model';
-import { finalObject } from '@commonplace/utils';
+import { DocumentModelBuilder, BoxModelBuilder, DocumentModelSerializer } from '@commonplace/document-model';
+import { addProperties } from '@commonplace/utils';
 
-export function Pouncer(repo, docPointer, onPartsArrived) {
+export function Pouncer(repo, docPointer) {
+  let obj = {};
+
   function start() {
     fireNext([]);
   }
@@ -13,8 +15,17 @@ export function Pouncer(repo, docPointer, onPartsArrived) {
     let status = repo.docStatus(docPointer);
     if (status.allAvailable) {
       let docModel = DocumentModelBuilder(docPointer, repo).build();
-      let boxModel = BoxModelBuilder(docModel).build();
-      onPartsArrived(boxModel);
+
+      if (obj.docModelJsonCallback) {
+        let json = DocumentModelSerializer(docModel).serialize();
+        obj.docModelJsonCallback(json);
+      }
+
+      if (obj.boxModelCallback) {
+        let boxModel = BoxModelBuilder(docModel).build();
+        obj.boxModelCallback(boxModel);
+      }
+
     } else {
       try {
         repo.getManyParts(status.required).then(fireNext);
@@ -24,5 +35,13 @@ export function Pouncer(repo, docPointer, onPartsArrived) {
      }
   }
 
-  return finalObject({}, { start });
+  addProperties(obj, { start });
+  addProperties(obj, {
+    boxModelCallback: undefined,
+    docModelJsonCallback: undefined,
+    boxModelJsonCallback: undefined
+  },
+    true);
+
+  return obj;
 }

@@ -1,20 +1,17 @@
-import { EdlPointer, Part, PartRepository } from '@commonplace/core';
-import { FlightComponent } from '@commonplace/components';
-import { SequentialPartFetcher, StaticPartFetcher } from '@commonplace/html';
-import { DefaultsPartFetcher, defaultsEdl, defaultsPointer } from '@commonplace/document-model';
-import { defaultsLinksParts } from '@commonplace/document-model';
-
-let fetcher = SequentialPartFetcher(
-  DefaultsPartFetcher(),
-  StaticPartFetcher("/content/", fetch));
-
-let repository = PartRepository(fetcher);
-repository.injectPart(Part(defaultsPointer, defaultsEdl));
-defaultsLinksParts.forEach(part => repository.injectPart(part));
+import { DocumentModelComponent, FlightComponent } from '@commonplace/components';
+import { EdlPointer } from '@commonplace/core';
+import { Route, Routes } from 'react-router-dom'
 
 export function App() {
-    return (
-    <FlightComponent docPointers={[EdlPointer("testdoc.json")]} repository={repository}/>
+  return (
+    <Routes>
+      <Route path="/" exact Component={Flight} />
+      <Route path="/model" exact Component={DocModel} />
+    </Routes>
+
   );
 }
 export default App;
+
+const Flight = () => <FlightComponent docPointers={[EdlPointer("testdoc.json")]} />;
+const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("testdoc.json")} />
