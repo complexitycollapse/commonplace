@@ -4,11 +4,12 @@ export function finalObject(obj, methods) {
   return obj;
 }
 
-export function addProperties(obj, props) {
+export function addProperties(obj, props, writable) {
   forAllOwnProperties(props, key => {
     Object.defineProperty(obj, key, {
       value: props[key],
       enumerable: true,
+      writable
     })
   });
   return obj;
