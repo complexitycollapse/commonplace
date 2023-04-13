@@ -44,12 +44,12 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     return pointers.map(p => repo.getPartLocally(p).content);
   }
 
-  function buildRule(attributeEnds, extraContentEnds = []) { 
+  function buildRule(attributeEnds, extraContentEnds = []) {
     function resolveAttribute(attribute) {
       return Object.fromEntries(
         Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
     }
-  
+
     let targets = getPointers("targets");
     let linkTypes = getContent(getPointers("link types"));
     let edlTypes = getContent(getPointers("edl types"));
@@ -58,7 +58,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     let extraEnds = Object.fromEntries(extraContentEnds.map(e => [e, getContent(getPointers(e)).join("")]));
 
     let attributes = unresolvedAttributes.map(resolveAttribute);
-  
+
     let rule = decorateObject(Rule(newLink, targets, linkTypes, clipTypes, edlTypes, attributes), extraEnds);
     return rule;
   }
@@ -70,7 +70,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.pointer = linkPointer;
   newLink.depth = depth;
   newLink.key = undefined; // set later
-  newLink.rules = [];
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   if (link.type === "markup") { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
