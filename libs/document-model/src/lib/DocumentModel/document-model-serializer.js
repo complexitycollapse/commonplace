@@ -109,7 +109,7 @@ export function DocumentModelSerializer(docModel) {
   function serializeEnd(model) {
     return {
       name: model.name,
-      pointers: model.pointers.map(p => p.leftData()),
+      pointers: model.pointers.map(p => p.leafData()),
       sequencePrototypes: model.sequencePrototypes.map(serializeSequencePrototype)
     };
   }
@@ -133,7 +133,7 @@ export function DocumentModelSerializer(docModel) {
 
   const linkName = model => model.pointer.linkName;
 
-  const markup = m => m.entries();
+  const markup = m => Object.fromEntries(m.entries());
 
   return finalObject({}, { serialize });
 }
