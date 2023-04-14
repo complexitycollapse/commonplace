@@ -30,6 +30,7 @@ export function Builder(buildFn, extensions) {
     build(docuverse) {
       if (obj.builtObject === undefined) {
         obj.builtObject = buildFn(obj, docuverse);
+        if (docuverse) { docuverse.allBuilders.push(obj); }
       }
       return obj.builtObject;
     },
@@ -44,7 +45,7 @@ export function Builder(buildFn, extensions) {
 export function SpanBuilder(span) {
   let obj = Builder(
     b => {
-      return Span(b.origin ?? b.name ?? "origin", b.start ?? 1, b.length ?? 10);
+      return obj.getPointer();
     }, {
       content: "##########",
       withLength: len => obj.withProperty("length", len),
@@ -52,7 +53,7 @@ export function SpanBuilder(span) {
       withOrigin: origin => obj.withProperty("origin", origin),
       withStart: start => obj.withProperty("start", start),
       getPart: () => Part(obj.builtObject, obj.content),
-      getPointer: () => obj.build()
+      getPointer: () => Span(obj.origin ?? obj.name ?? "origin", obj.start ?? 1, obj.length ?? 10)
     }
   );
 
@@ -66,13 +67,16 @@ export function SpanBuilder(span) {
 let unique = 0;
 export function LinkBuilder(type, ...endSpecs) {
   let obj = Builder(obj => {
-    obj.forcePointer();
     return Link(obj.type, ...obj.ends.map(([name, pointers]) => [name, pointers.map(p => p.pointer)]));
   }, {
     ends: [],
     withType: type => obj.withProperty("type", type),
     withEnd: e => obj.pushTo("ends", e),
-    getPointer: name => LinkPointer(name)
+    getPointer: name => {
+      if (name) { obj.withName(name); }
+      obj.withName(obj.name ?? (++unique).toString());
+      return LinkPointer(obj.name);
+    }
   });
 
   obj.withType(type);
@@ -87,12 +91,6 @@ export function LinkBuilder(type, ...endSpecs) {
     return obj;
   };
 
-  obj.forcePointer = () => {
-    if (obj.pointer) { return obj.pointer; }
-    obj.withName(obj.name ?? (++unique).toString());
-    return obj.pointer;
-  };
-
   return obj;
 }
 
@@ -104,8 +102,8 @@ export function InlineBuilder(content) {
 export function SequenceLinkBuilder(spans) {
   let link = LinkBuilder("sequence", ["seq", spans]);
   let metalink = LinkBuilder("defines sequence", ["targets", [link]], ["end", [InlineBuilder("seq")]]);
-  return Builder(obj => {
-    return [obj.link.build(), obj.metalink.build()];
+  return Builder((obj, dv) => {
+    return [obj.link.build(dv), obj.metalink.build(dv)];
   },
     {
       link,
@@ -139,11 +137,13 @@ export function MarkupBuilder() {
 }
 
 export function EdlBuilder() {
-  let obj = Builder(obj => {
+  let obj = Builder((obj, dv) => {
+    obj.clips.forEach(x => x.build(dv));
+    obj.links.forEach(x => x.build(dv));
     let edl = Edl(
       obj.type,
-      obj.clips.map(x => x.pointer),
-      obj.links.map(x => x.pointer));
+      obj.clips.map(x => x.getPointer()),
+      obj.links.map(x => x.getPointer()));
     return edl;
   }, {
     links: [],

@@ -35,7 +35,7 @@ export function DocuverseBuilder() {
     let builders = Object.entries(proxyBase).filter(([key, val]) => val.build);
     builders.forEach(([key, builder]) => builder.resolvePointer(nameLookup));
     let docuverse = Object.fromEntries(builders.map(([key, builder]) => [key, builder.build(proxyBase)]));
-    let parts = builders.map(([key, builder]) => builder.getPart ? builder.getPart(proxyBase) : undefined)
+    let parts = proxyBase.allBuilders.map(builder => builder.getPart ? builder.getPart(proxyBase) : undefined)
       .filter(x => x && x.pointer && x.content);
 
     docuverse.repo = proxyBase.repo;
@@ -79,7 +79,8 @@ function makeDocuverseProxy() {
     aLink: LinkBuilder,
     anEdl: EdlBuilder,
     aDocModelBuilder: DocModelBuilderBuilder,
-    repo: testing.MockPartRepository([])
+    repo: testing.MockPartRepository([]),
+    allBuilders: []
   };
   return dv;
 }
