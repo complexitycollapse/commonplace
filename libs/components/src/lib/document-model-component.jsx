@@ -26,5 +26,5 @@ export function DocumentModelComponent({ docPointer }) {
     pouncer.start();
   }, []);
 
-  return (<div>{JSON.stringify(docJsonState)}</div>);
+  return (<div><pre>{JSON.stringify(docJsonState, undefined, 2)}</pre></div>);
 }
