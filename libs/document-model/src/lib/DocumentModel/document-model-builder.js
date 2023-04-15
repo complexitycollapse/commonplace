@@ -1,11 +1,10 @@
 import { finalObject, mergeMaps } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider } from "./zettel-schneider";
-import { testing } from '@commonplace/core';
+import { testing, defaultsPointer } from '@commonplace/core';
 import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
-import { defaultsPointer } from "../Defaults/defaults";
 import { MarkupCalculation } from "../Attributes/markup-calculation";
 
 export function DocumentModelBuilder(edlPointer, repo) {

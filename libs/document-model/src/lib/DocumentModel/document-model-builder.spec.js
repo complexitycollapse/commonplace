@@ -1,7 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
-import { Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer, testing } from '@commonplace/core';
-import { defaultsPointer, defaultsType } from '../Defaults/defaults';
+import {
+  Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer,
+  testing, defaultsPointer, defaultsType
+} from '@commonplace/core';
 
 const mockRepo = testing.MockPartRepository;
 

@@ -1,8 +1,8 @@
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
-import { Part, PartRepository } from '@commonplace/core';
+import { PartRepository } from '@commonplace/core';
 import { SequentialPartFetcher, StaticPartFetcher } from '@commonplace/html';
-import { DefaultsPartFetcher, defaultsEdl, defaultsLinksParts, defaultsPointer } from '@commonplace/document-model';
+import { DefaultsPartFetcher } from '@commonplace/document-model';
 import TreeComponent from './tree-component';
 
 export function DocumentModelComponent({ docPointer }) {
@@ -14,8 +14,6 @@ export function DocumentModelComponent({ docPointer }) {
   StaticPartFetcher("/content/", fetch));
 
   const repository = PartRepository(fetcher);
-  repository.injectPart(Part(defaultsPointer, defaultsEdl));
-  defaultsLinksParts.forEach(part => repository.injectPart(part));
 
   function pouncerCallback(json) {
     setDocJsonState(json);

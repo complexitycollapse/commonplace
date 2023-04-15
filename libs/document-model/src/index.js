@@ -1,5 +1,5 @@
 export {
-  DefaultsDocModel, defaultsType, defaultsPointer, defaultsEdl, DefaultsPartFetcher, defaultsLinksParts
+  DefaultsDocModel, defaultsEdl, DefaultsPartFetcher, defaultsLinksParts
 } from './lib/Defaults/defaults';
 
 export { Box } from './lib/BoxModel/box';

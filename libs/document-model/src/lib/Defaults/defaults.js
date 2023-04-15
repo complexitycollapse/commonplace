@@ -1,4 +1,4 @@
-import { Edl, Link, InlinePointer, LinkPointer, EdlPointer, Part } from "@commonplace/core";
+import { Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer } from "@commonplace/core";
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
@@ -83,10 +83,6 @@ function deriveLinkPointer(link) {
   let targetType = link.getEnd("link types").pointers[0].inlineText;
   return LinkPointer("defaults:" + targetType);
 }
-
-export const defaultsType = "defaults";
-
-export const defaultsPointer = EdlPointer("defaults");
 
 export const defaultsEdl = Edl(defaultsType, [], defaultsLinksParts.map(part => part.pointer));
 

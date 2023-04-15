@@ -1,5 +1,6 @@
 import { finalObject, listMapFromList } from "@commonplace/utils";
 import { LeafCache } from "./leaf-cache";
+import { defaultsPointer } from "./defaults";
 
 export function PartRepository(fetcher) {
   let cache = LeafCache();
@@ -55,9 +56,33 @@ export function PartRepository(fetcher) {
   }
 
   function docStatus(docName) {
+    let defaultsDocPart = getPartLocally(defaultsPointer);
+
+    if (defaultsDocPart === undefined) {
+      return {
+        required: [defaultsPointer]
+      };
+    }
+
+    let defaultsLinksResults = defaultsDocPart.content.links.map(l => [l, getPartLocally(l)]);
+    let missingDefaultsLinkNames = defaultsLinksResults.filter(l => l[1] === undefined).map(l => l[0]);
+
+    if (missingDefaultsLinkNames.length > 0) {
+      return {
+        defaultsDocAvailable: true,
+        required: missingDefaultsLinkNames
+      };
+    }
+
     let docPart = getPartLocally(docName);
 
-    if (docPart === undefined) { return { required: [docName] }; }
+    if (docPart === undefined) {
+      return {
+        defaultsDocAvailable: true,
+        defaultsLinksAvailable: true,
+        required: [docName]
+      };
+    }
 
     let doc = docPart.content;
 
@@ -67,6 +92,8 @@ export function PartRepository(fetcher) {
       .concat(missingParts.missingDocContent);
 
     return {
+      defaultsDocAvailable: true,
+      defaultsLinksAvailable: true,
       docAvailable: true,
       linksAvailable: missingParts.missingLinkNames.length === 0,
       linkContentAvailable: missingParts.missingLinkContentPointers.length === 0,

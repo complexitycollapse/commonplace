@@ -1,8 +1,7 @@
 import { Part, Edl, Link, Image } from "@commonplace/core";
-import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
+import { EdlPointer, InlinePointer, LinkPointer, Span, defaultsPointer } from "@commonplace/core";
 import { docModelBuilderTesting } from "../DocumentModel/document-model-builder";
 import { Sequence } from "../DocumentModel/sequence";
-import { defaultsPointer } from "../Defaults/defaults";
 
 export function Builder(buildFn, extensions) {
   let obj = {
