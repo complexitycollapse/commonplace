@@ -1,4 +1,4 @@
-import { DocumentModelComponent, FlightComponent, BoxModelComponent } from '@commonplace/components';
+import { DocumentModelComponent, FlightComponent, BoxModelComponent } from '@commonplace/ui';
 import { EdlPointer } from '@commonplace/core';
 import { Route, Routes } from 'react-router-dom'
 
