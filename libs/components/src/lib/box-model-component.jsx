@@ -6,27 +6,27 @@ import { DefaultsPartFetcher } from '@commonplace/document-model';
 import TreeComponent from './tree-component';
 import { convertJsonToNodes } from './Utilities/convert-json-to-nodes';
 
-export function DocumentModelComponent({ docPointer }) {
+export function BoxModelComponent({ docPointer }) {
 
-  let [docJsonState, setDocJsonState] = useState({});
+  let [boxJsonState, setBoxJsonState] = useState({});
 
-  const fetcher = SequentialPartFetcher(
+  let fetcher = SequentialPartFetcher(
   DefaultsPartFetcher(),
   StaticPartFetcher("/content/", fetch));
 
-  const repository = PartRepository(fetcher);
+  let repository = PartRepository(fetcher);
 
-  function pouncerCallback(json) {
-    setDocJsonState(json);
+    function pouncerCallback(json) {
+    setBoxJsonState(json);
   }
 
   useEffect(() => {
     let pouncer = Pouncer(repository, docPointer);
-    pouncer.docModelJsonCallback = pouncerCallback;
+    pouncer.boxModelJsonCallback = pouncerCallback;
     pouncer.start();
   }, []);
 
   return (<div style = {{fontFamily: "monospace", fontSize: "1.03em"}}>
-    <TreeComponent treeData={[convertJsonToNodes(docJsonState, "document", 0, true)]} />
+    <TreeComponent treeData={[convertJsonToNodes(boxJsonState, "root", 0, true)]} />
     </div>);
 }

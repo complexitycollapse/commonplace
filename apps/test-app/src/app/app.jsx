@@ -1,4 +1,4 @@
-import { DocumentModelComponent, FlightComponent } from '@commonplace/components';
+import { DocumentModelComponent, FlightComponent, BoxModelComponent } from '@commonplace/components';
 import { EdlPointer } from '@commonplace/core';
 import { Route, Routes } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ export function App() {
     <Routes>
       <Route path="/" exact Component={Flight} />
       <Route path="/model" exact Component={DocModel} />
+      <Route path="/box" exact Component={BoxModel} />
     </Routes>
 
   );
@@ -15,3 +16,4 @@ export default App;
 
 const Flight = () => <FlightComponent docPointers={[EdlPointer("testdoc.json")]} />;
 const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("testdoc.json")} />
+const BoxModel = () => <BoxModelComponent docPointer={EdlPointer("testdoc.json")} />

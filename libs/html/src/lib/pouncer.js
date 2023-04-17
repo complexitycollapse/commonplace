@@ -1,4 +1,4 @@
-import { DocumentModelBuilder, BoxModelBuilder, DocumentModelSerializer } from '@commonplace/document-model';
+import { DocumentModelBuilder, BoxModelBuilder, DocumentModelSerializer, BoxModelSerializer } from '@commonplace/document-model';
 import { addProperties } from '@commonplace/utils';
 
 export function Pouncer(repo, docPointer) {
@@ -21,9 +21,17 @@ export function Pouncer(repo, docPointer) {
         obj.docModelJsonCallback(json);
       }
 
-      if (obj.boxModelCallback) {
+      if (obj.boxModelCallback || obj.boxModelJsonCallback) {
         let boxModel = BoxModelBuilder(docModel).build();
-        obj.boxModelCallback(boxModel);
+
+        if (obj.boxModelJsonCallback) {
+          let json = BoxModelSerializer(boxModel).serialize();
+          obj.boxModelJsonCallback(json);
+        }
+
+        if (obj.boxModelCallback) {
+          obj.boxModelCallback(boxModel);
+        }
       }
 
     } else {

@@ -1,7 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocuverseBuilder } from './Testing/docuverse-builder';
 import { DocumentModelSerializer } from './document-model-serializer';
-import { LinkPointer } from '@commonplace/core';
 
 describe('DocumentModelSerializer.serialize', () => {
   it('serializes something without throwing an exception', () => {
