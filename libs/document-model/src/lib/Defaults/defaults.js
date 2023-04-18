@@ -2,6 +2,10 @@ import { Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPoin
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
+export const markupType = "markup";
+export const definesSequenceType = "defines sequence";
+export const endowsAttributesType = "endows attributes";
+
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
   let ends = [
@@ -23,13 +27,13 @@ function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
 
 function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
   let ends = makeEnds("content", type, attribute, value, hasValueEnd, valueEnd);
-  let link = Link("endows attributes", ...ends);
+  let link = Link(endowsAttributesType, ...ends);
   return Part(deriveLinkPointer(link), link);
 }
 
 function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
   let ends = makeEnds("direct", type, attribute, value, hasValueEnd, valueEnd);
-  let link = Link("endows attributes", ...ends);
+  let link = Link(endowsAttributesType, ...ends);
   return Part(deriveLinkPointer(link), link);
 }
 
@@ -46,7 +50,7 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType }
   if (edlType) { ends.push(["edl types", [InlinePointer(edlType)]]); }
   if (linkType) { ends.push(["link types", [InlinePointer(linkType)]]); }
 
-  return Part(LinkPointer(name), Link("markup", ...ends));
+  return Part(LinkPointer(name), Link(markupType, ...ends));
 }
 
 export let defaultsLinksParts = [

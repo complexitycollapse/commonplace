@@ -1,6 +1,7 @@
 import { expect, it, describe } from '@jest/globals';
 import { MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder } from '../Testing/test-builders';
 import { InlinePointer } from '@commonplace/core';
+import { definesSequenceType } from '../Defaults/defaults';
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
@@ -31,7 +32,7 @@ function aLink(targetBuilder, ...attributePairs) {
 }
 
 function aSequenceMetalink(endowingLink, sequenceEndName) {
-  let metalink = LinkBuilder("defines sequence")
+  let metalink = LinkBuilder(definesSequenceType)
     .withName(`sequence metalink for ${endowingLink.type}`)
     .withEnd(EndBuilder().withName("targets").withPointer(endowingLink))
     .withEnd(EndBuilder().withName("end").withPointer(InlinePointer(sequenceEndName)));

@@ -2,6 +2,7 @@ import { Part, Edl, Link } from "@commonplace/core";
 import { EdlPointer, InlinePointer, LinkPointer, Span, defaultsPointer, defaultsType } from "@commonplace/core";
 import { DocumentModelBuilder } from "../DocumentModel/document-model-builder";
 import { Sequence } from "../DocumentModel/sequence";
+import { definesSequenceType, markupType } from "../Defaults/defaults";
 
 export function Builder(buildFn, extensions) {
   let obj = {
@@ -100,7 +101,7 @@ export function InlineBuilder(content) {
 
 export function SequenceLinkBuilder(spans) {
   let link = LinkBuilder("sequence", ["seq", spans]);
-  let metalink = LinkBuilder("defines sequence", ["targets", [link]], ["end", [InlineBuilder("seq")]]);
+  let metalink = LinkBuilder(definesSequenceType, ["targets", [link]], ["end", [InlineBuilder("seq")]]);
   return Builder((obj, dv) => {
     return [obj.link.build(dv), obj.metalink.build(dv)];
   },
@@ -113,7 +114,7 @@ export function SequenceLinkBuilder(spans) {
 
 export function MarkupBuilder() {
 
-  let builder = LinkBuilder().withType("markup");
+  let builder = LinkBuilder().withType(markupType);
 
   builder.endowing = (...attributeDescriptors) => {
     for (let i = 0; i < attributeDescriptors.length; i += 3) {

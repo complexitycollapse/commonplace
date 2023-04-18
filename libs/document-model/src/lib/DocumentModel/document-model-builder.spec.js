@@ -4,6 +4,7 @@ import {
   Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer,
   testing, defaultsPointer, defaultsType
 } from '@commonplace/core';
+import { definesSequenceType, endowsAttributesType, markupType } from '../Defaults/defaults';
 
 const mockRepo = testing.MockPartRepository;
 
@@ -22,7 +23,7 @@ function sequenceMetalink({ name, immediateTargets, linkTypes, clipTypes, edlTyp
   if (type) endSpecs.push(["type", type]);
   let link = [
     name ?? "metalink",
-    Link("defines sequence", ...endSpecs)
+    Link(definesSequenceType, ...endSpecs)
   ];
 
   return link;
@@ -289,7 +290,7 @@ describe('build', () => {
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);
       let link = [
         name ?? "markup",
-        Link("markup", ...endSpecs)
+        Link(markupType, ...endSpecs)
       ];
 
       return link;
@@ -356,7 +357,7 @@ describe('build', () => {
       if (end) endSpecs.push(["end", end]);
       let link = [
         name ?? "metalink",
-        Link("endows attributes", ...endSpecs)
+        Link(endowsAttributesType, ...endSpecs)
       ];
 
       return link;

@@ -1,3 +1,4 @@
+import { definesSequenceType, endowsAttributesType, markupType } from "../Defaults/defaults";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
@@ -72,8 +73,8 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.key = undefined; // set later
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
-  if (link.type === "markup") { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
-  if (link.type === "endows attributes") { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
-  if (link.type === "defines sequence") { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
+  if (link.type === markupType) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
+  if (link.type === endowsAttributesType) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
+  if (link.type === definesSequenceType) { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
   return newLink;
 }

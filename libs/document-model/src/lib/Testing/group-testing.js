@@ -2,7 +2,7 @@ import { InlinePointer } from "@commonplace/core";
 import { EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "./test-builders";
 import { SequenceScanner } from '../DocumentModel/sequence-scanner';
 import { docModelBuilderTesting } from '../DocumentModel/document-model-builder';
-import { Part } from '@commonplace/core';
+import { definesSequenceType } from "../Defaults/defaults";
 
 export function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
 
@@ -12,7 +12,7 @@ export function aTargetLink(spanBuilders, { endName = "grouping end", name = "ta
 }
 
 export function aMetalink(target, name = "metalink", type) {
-  let builder = LinkBuilder("defines sequence", ["targets", [target]], ["end", [InlinePointer("grouping end")]]).withName(name);
+  let builder = LinkBuilder(definesSequenceType, ["targets", [target]], ["end", [InlinePointer("grouping end")]]).withName(name);
   if (type !== undefined) { builder.withEnd(EndBuilder(["type", [InlinePointer(type)]])); }
   return builder;
 }
