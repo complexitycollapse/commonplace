@@ -27,6 +27,6 @@ export function DocumentModelComponent({ docPointer }) {
   }, []);
 
   return (<div style = {{fontFamily: "monospace", fontSize: "1.03em"}}>
-    <TreeComponent treeData={[convertJsonToNodes(docJsonState, "document", 0, true)]} />
+    <TreeComponent treeData={convertJsonToNodes(docJsonState, "document", 0, true).children} />
     </div>);
 }

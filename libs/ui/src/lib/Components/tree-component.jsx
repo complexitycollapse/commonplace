@@ -24,7 +24,7 @@ function TreeNodeComponent({ node }) {
       paddingLeft: "0.5em",
       listStyleType: showChildren ? "\"-\"" : "\"+\""
     }}>
-      <div onClick={handleClick} style={{ marginBottom: "0.2em" }}>
+      <div onClick={handleClick} style={{ marginBottom: "0.5em" }}>
         <span>{ label }</span>
         {value && <span style={{ color: "rgb(0, 116, 232)" }}>{value}</span>}
       </div>

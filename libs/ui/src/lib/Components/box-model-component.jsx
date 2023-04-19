@@ -27,6 +27,6 @@ export function BoxModelComponent({ docPointer }) {
   }, []);
 
   return (<div style = {{fontFamily: "monospace", fontSize: "1.03em"}}>
-    <TreeComponent treeData={[convertJsonToNodes(boxJsonState, "root", 0, true)]} />
+    <TreeComponent treeData={convertJsonToNodes(boxJsonState, "root", 0, true).children} />
     </div>);
 }

@@ -7,7 +7,7 @@ export function serializeEdl(model) {
   return {
     key: model.key,
     type: model.type,
-    pointer: model.pointer.leafData(),
+    pointer: model.pointer,
     zettel,
     links,
     incomingPointers,
@@ -27,7 +27,7 @@ function markupRule(link) {
     return {
       link: linkName(link),
       attributes: link.markupRule.attributeDescriptors,
-      targets: link.markupRule.targets.map(x => x.leafData()),
+      targets: link.markupRule.targets,
       clipTypes: link.markupRule.clipTypes,
       edlTypes: link.markupRule.edlTypes,
       linkTypes: link.markupRule.linkTypes
@@ -41,7 +41,7 @@ function metaEndowmentRule(link) {
       link: linkName(link),
       end: link.metaEndowmentRule.end,
       attributes: link.metaEndowmentRule.attributeDescriptors,
-      targets: link.metaEndowmentRule.targets.map(x => x.leafData()),
+      targets: link.metaEndowmentRule.targets,
       clipTypes: link.metaEndowmentRule.clipTypes,
       edlTypes: link.metaEndowmentRule.edlTypes,
       linkTypes: link.metaEndowmentRule.linkTypes
@@ -55,7 +55,7 @@ function metaSequenceRule(link) {
       link: linkName(link),
       type: link.metaEndowmentRule.type,
       end: link.metaEndowmentRule.end,
-      targets: link.metaSequenceRule.targets.map(x => x.leafData()),
+      targets: link.metaSequenceRule.targets,
       clipTypes: link.metaSequenceRule.clipTypes,
       edlTypes: link.metaSequenceRule.edlTypes,
       linkTypes: link.metaSequenceRule.linkTypes
@@ -74,7 +74,7 @@ export function serializeAtom(model) {
 
   return {
     key: model.key,
-    pointer: model.pointer.leafData(),
+    pointer: model.pointer,
     incomingPointers,
     sequences,
     markup: markup(model.markup),
@@ -102,7 +102,7 @@ export function serializeLink(model) {
 function serializeEnd(model) {
   return {
     name: model.name,
-    pointers: model.pointers.map(p => p.leafData()),
+    pointers: model.pointers,
     sequencePrototypes: model.sequencePrototypes.map(serializeSequencePrototype)
   };
 }
@@ -111,8 +111,8 @@ function serializeSequencePrototype(prototype) {
   return {
     type: prototype.type,
     signature: {
-      linkPointer: prototype.linkPointer.leafData(),
-      metalinkPointer: prototype.metalinkPointer.leafData()
+      linkPointer: prototype.linkPointer,
+      metalinkPointer: prototype.metalinkPointer
     }
   };
 }
