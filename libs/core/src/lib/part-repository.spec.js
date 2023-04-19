@@ -3,6 +3,7 @@ import { Link, Edl } from './model';
 import { Span, EdlPointer, LinkPointer } from './pointers';
 import { Part } from './part';
 import { PartRepository } from './part-repository';
+import { defaultsPointer } from './defaults';
 
 async function make(nameContentPairs = []) {
   let repo = PartRepository({ getPart: p => {
@@ -35,44 +36,80 @@ function makeEdl(clips = [], links = []) {
   return Edl(undefined, clips.map(x => x[0]), links.map(x => x[0]));
 }
 
-function resolve(request, value) {
-  request[1].call(undefined, Part(request[0], value));
-}
-
 describe('docStatus', () => {
-  it('initially requests the EDL', async () => {
-    let edlPointer = EdlPointer("p");
+  describe('before defaults', () => {
+    function makeDefaults() {
+      return [defaultsPointer, makeEdl([], [[LinkPointer("first default")], [LinkPointer("second default")]])];
+    }
 
-    expect((await make()).docStatus(edlPointer).required).toEqual([edlPointer]);
+    it('initially requests the defaults Edl', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make()).docStatus(edlPointer).required).toEqual([defaultsPointer]);
+    });
+
+    it('all predicates are initially false', async () => {
+      let edlPointer = EdlPointer("p");
+
+      let result = (await make()).docStatus(edlPointer);
+
+      expect(result.defaultsDocAvailable).toBeFalsy();
+      expect(result.defaultsLinksAvailable).toBeFalsy();
+      expect(result.linksAvailable).toBeFalsy();
+      expect(result.linkContentAvailable).toBeFalsy();
+      expect(result.docContentAvailable).toBeFalsy();
+      expect(result.allAvailable).toBeFalsy();
+    });
+
+    it('has defaultsDocAvailable set to truthy if the defaults doc is in the cache', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([makeDefaults()])).docStatus(edlPointer).defaultsDocAvailable).toBeTruthy();
+    });
+
+    it('has defaultsLinksAvailable set to falsy if the defaults links are not yet in the cache', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([makeDefaults()])).docStatus(edlPointer).defaultsLinksAvailable).toBeFalsy();
+    });
+
+    it('has defaultsLinksAvailable set to truthy once the defaults links are in the cache', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([
+        makeDefaults(),
+        [LinkPointer("first default"), Link("1st")],
+        [LinkPointer("second default"), Link("2nd")]
+      ])).docStatus(edlPointer).defaultsLinksAvailable).toBeTruthy();
+    });
   });
 
-  it('initially requests the EDL', async () => {
-    let edlPointer = EdlPointer("p");
+  describe('after defaults downloaded', () => {
+    it('requests the Edl', async () => {
+      let edlPointer = EdlPointer("p");
 
-    let result = (await make()).docStatus(edlPointer);
+      expect((await make([[defaultsPointer, makeEdl()]])).docStatus(edlPointer).required).toEqual([edlPointer]);
+    });
 
-    expect(result.docAvailable).toBeFalsy();
-    expect(result.linksAvailable).toBeFalsy();
-    expect(result.linkContentAvailable).toBeFalsy();
-    expect(result.docContentAvailable).toBeFalsy();
-    expect(result.allAvailable).toBeFalsy();
-  });
+    it('has docAvailable set to truthy if the doc is in the cache', async () => {
+      let edlPointer = EdlPointer("p");
 
-  it('has docAvailable truthy if the doc is in the cache', async () => {
-    let edlPointer = EdlPointer("p");
-
-    expect((await make([[edlPointer, makeEdl()]])).docStatus(edlPointer).docAvailable).toBeTruthy();
+      expect((await make([[defaultsPointer, makeEdl()], [edlPointer, makeEdl()]]))
+        .docStatus(edlPointer).docAvailable).toBeTruthy();
+    });
   });
 
   describe('after EDL downloaded', () => {
     async function makeAndGetDocStatus(clips = [], links = [], cached = []) {
       let edlPair = anEdl(clips, links);
-      return (await make([edlPair, ...cached])).docStatus(edlPair[0]);
+      return (await make([[defaultsPointer, makeEdl()], edlPair, ...cached])).docStatus(edlPair[0]);
     }
 
     it('has all statuses set to truthy if the doc is available and contains nothing', async () => {
       let result = await makeAndGetDocStatus();
 
+      expect(result.defaultsDocAvailable).toBeTruthy();
+    expect(result.defaultsLinksAvailable).toBeTruthy();
       expect(result.docAvailable).toBeTruthy();
       expect(result.linksAvailable).toBeTruthy();
       expect(result.linkContentAvailable).toBeTruthy();
