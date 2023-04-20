@@ -12,7 +12,7 @@ export function Pointer(pointerType, isClip, specifiesContent, originFn, partBui
   addProperties(obj, properties);
 
   function denotesSame(otherPointer) {
-    if (pointerType !== otherPointer.pointerType) {
+    if (pointerType !== otherPointer?.pointerType) {
       return false;
     }
 
