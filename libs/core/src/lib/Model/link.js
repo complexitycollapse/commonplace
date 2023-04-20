@@ -24,7 +24,7 @@ function makeLinkInternal(type, ends) {
 
   function leafData() {
     return {
-      typ: type,
+      typ: typeof type === "string" ? type : type.leafData(),
       es: ends.map(e => endLeafData(e))
     };
   }
@@ -68,7 +68,8 @@ function makeLinkInternal(type, ends) {
 export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
   let es = leafData.es.map((e, i) => leafDataToEnd(e, i));
-  return makeLinkInternal(leafData.typ, es);
+  let type = typeof leafData.typ === "string" ? leafData.typ : leafDataToPointer(leafData.typ);
+  return makeLinkInternal(type, es);
 }
 
 function leafDataToEnd(leafData, index) {

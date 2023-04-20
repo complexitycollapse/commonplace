@@ -1,5 +1,5 @@
 {
-  "typ": "markup",
+  "typ": {"typ": "link", "name": "markup"},
   "es": [
     { "name": "target", "ptr": [{"typ": "edl", "name": "titleEdl1.json"}] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "font size"}] },

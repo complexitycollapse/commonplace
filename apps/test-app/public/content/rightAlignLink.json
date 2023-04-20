@@ -1,5 +1,5 @@
 {
-  "typ": "markup",
+  "typ": {"typ": "link", "name": "markup"},
   "es": [
     { "name": "target", "ptr": [{ "typ": "link", "name": "paragraphLink4.json"}] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "text align"}]},

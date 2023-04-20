@@ -73,8 +73,8 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.key = undefined; // set later
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
-  if (link.type === markupType) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
-  if (link.type === endowsAttributesType) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
-  if (link.type === definesSequenceType) { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
+  if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
+  if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
+  if (definesSequenceType.denotesSame(link.type)) { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
   return newLink;
 }

@@ -1,5 +1,5 @@
 {
-  "typ": "markup",
+  "typ": {"typ": "link", "name": "markup"},
   "es": [
     { "name": "target", "ptr": [{ "typ": "span", "ori": "origin", "st": 586, "ln": 29 }] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "lower case"}]},

@@ -2,9 +2,9 @@ import { Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPoin
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
-export const markupType = "markup";
-export const definesSequenceType = "defines sequence";
-export const endowsAttributesType = "endows attributes";
+export const markupType = LinkPointer("markup");
+export const definesSequenceType = LinkPointer("defines sequence");
+export const endowsAttributesType = LinkPointer("endows attributes");
 
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
@@ -78,9 +78,10 @@ export let defaultsLinksParts = [
   markupRule("defaults:paragraphs", [
     ["layout mode", "block", "direct"],
     ["box", "true", "direct"]
-  ], { edlType: "paragraph", linkType: "paragraph" })
+  ], { edlType: "paragraph", linkType: "paragraph" }),
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
-  //Link("block", [undefined, [EdlTypePointer("paragraph")]])
+  //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
+  Part(LinkPointer("markup"), Link(InlinePointer("type"), ["name", [InlinePointer("markup")]]))
 ];
 
 function deriveLinkPointer(link) {
