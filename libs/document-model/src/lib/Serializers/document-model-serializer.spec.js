@@ -65,7 +65,7 @@ describe('DocumentModelSerializer.serialize', () => {
     let json = DocumentModelSerializer(dv.dmb.build()).serialize();
     let zettel = json.zettel[0];
 
-    expect(zettel.pointer).toEqual(dv.span.leafData());
+    expect(zettel.pointer).toEqual(dv.span);
   });
 
   it('populates a serialized link correctly', () => {
@@ -82,6 +82,6 @@ describe('DocumentModelSerializer.serialize', () => {
     expect(link.ends).toHaveLength(1);
     expect(link.ends[0].name).toBe("foo");
     expect(link.ends[0].pointers).toHaveLength(1);
-    expect(link.ends[0].pointers[0]).toEqual(dv.span.leafData());
+    expect(link.ends[0].pointers[0]).toEqual(dv.span);
   });
 });
