@@ -16,6 +16,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
     getEnd: (name, index = 0) => {
       if (index < 0) { throw `Invalid index passed to getEnd: ${index}`; }
+      if (name === "") { name = undefined; }
       for(let i = 0; i < newLink.ends.length; ++i) {
         let cur = newLink.ends[i];
         if (cur.name === name) {

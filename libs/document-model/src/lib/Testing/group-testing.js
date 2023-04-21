@@ -6,13 +6,19 @@ import { definesSequenceType } from "../Defaults/defaults";
 
 export function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
 
-export function aTargetLink(spanBuilders, { endName = "grouping end", name = "target" } = {}) {
+export function aTargetLink(spanBuilders, { endName, name = "target" } = {}) {
+  endName = endName === undefined ? "grouping end" : endName;
+  endName = endName === "" ? undefined : endName;
   spanBuilders.forEach(s => s.build());
   return LinkBuilder(undefined, [endName, spanBuilders.map(s => s.pointer)]).withName(name);
 }
 
-export function aMetalink(target, name = "metalink", type) {
-  let builder = LinkBuilder(definesSequenceType, ["targets", [target]], ["end", [InlinePointer("grouping end")]]).withName(name);
+export function aMetalink(target, name = "metalink", type, groupingEndName) {
+  groupingEndName = groupingEndName === undefined ? "grouping end" : groupingEndName;
+  let builder = LinkBuilder(
+    definesSequenceType,
+    ["targets", [target]], ["end", [InlinePointer(groupingEndName)]])
+    .withName(name);
   if (type !== undefined) { builder.withEnd(EndBuilder(["type", [InlinePointer(type)]])); }
   return builder;
 }
@@ -25,9 +31,9 @@ export function content(n = 3) {
   return [...Array(n).keys()].map(x => aSpan(x));
 }
 
-export function makeSequenceLink(spans, name = "target", type) {
-  let link = aTargetLink(spans, { name });
-  let metalink = aMetalink(link, "metalink-" + name, type);
+export function makeSequenceLink(spans, name = "target", type, groupingEnd) {
+  let link = aTargetLink(spans, { name, endName: groupingEnd });
+  let metalink = aMetalink(link, "metalink-" + name, type, groupingEnd);
   return [link, metalink];
 }
 

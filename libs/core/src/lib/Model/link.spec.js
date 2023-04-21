@@ -106,6 +106,12 @@ describe('getEnd', () => {
     expect(link.getEnd("bar")).toBe(link.ends[1]);
   });
 
+  it('returns the first unnamed end if the given end name is an empty string', () => {
+    let link = Link(undefined, ["foo", []], [undefined, []]);
+
+    expect(link.getEnd("")).toBe(link.ends[1]);
+  });
+
   it('returns a subsequent end if the index is positive', () => {
     let link = Link(undefined, ["foo", []], ["foo", []]);
 

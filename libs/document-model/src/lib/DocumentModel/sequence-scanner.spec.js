@@ -11,6 +11,11 @@ describe('first level sequences', () => {
     expect(scan(spans, makeSequenceLink(spans))).toHaveLength(1);
   });
 
+  it('returns a sequence if the end name is an empty string and the target link has an unnamed grouping end', () => {
+    let spans = content();
+    expect(scan(spans, makeSequenceLink(spans, "target", undefined, ""))).toHaveLength(1);
+  });
+
   it('returns no sequences for an empty sequence', () => {
     let spans = content();
     expect(scan(spans, makeSequenceLink([]))).toHaveLength(0);
