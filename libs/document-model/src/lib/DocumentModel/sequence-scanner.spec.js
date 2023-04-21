@@ -1,5 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
 import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Testing/group-testing';
+import { LinkPointer } from '@commonplace/core';
 
 describe('first level sequences', () => {
   it('returns no sequences if there were none in the EDL', () => {
@@ -70,9 +71,9 @@ describe('first level sequences', () => {
   it('returns a sequence that has the type specified by the metapointer', () => {
     let spans = content();
 
-    let sequence = scan(spans, makeSequenceLink(spans, "target", "expected type"))[0];
+    let sequence = scan(spans, makeSequenceLink(spans, "target", LinkPointer("expected type")))[0];
 
-    expect(sequence.type).toBe("expected type");
+    expect(sequence.type).toEqual(LinkPointer("expected type"));
   });
 });
 

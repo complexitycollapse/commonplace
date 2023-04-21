@@ -19,7 +19,7 @@ export function aMetalink(target, name = "metalink", type, groupingEndName) {
     definesSequenceType,
     ["targets", [target]], ["end", [InlinePointer(groupingEndName)]])
     .withName(name);
-  if (type !== undefined) { builder.withEnd(EndBuilder(["type", [InlinePointer(type)]])); }
+  if (type !== undefined) { builder.withEnd(EndBuilder(["type", [type]])); }
   return builder;
 }
 

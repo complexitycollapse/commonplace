@@ -46,7 +46,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     return pointers.map(p => repo.getPartLocally(p).content);
   }
 
-  function buildRule(attributeEnds, extraContentEnds = []) {
+  function buildRule(attributeEnds, hasEnd, hasType) {
     function resolveAttribute(attribute) {
       return Object.fromEntries(
         Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
@@ -57,11 +57,15 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     let edlTypes = getContent(getPointers("edl types"));
     let clipTypes = getContent(getPointers("clip types"));
     let unresolvedAttributes = RecordLinkParser(link, attributeEnds);
-    let extraEnds = Object.fromEntries(extraContentEnds.map(e => [e, getContent(getPointers(e)).join("")]));
+    let extraEnds = [];
+    if (hasEnd) { extraEnds.push(["end", getContent(getPointers("end")).join("")]); }
+    if (hasType) { extraEnds.push(["type", link.getEnd("type")?.pointers[0]]); }
 
     let attributes = unresolvedAttributes.map(resolveAttribute);
 
-    let rule = decorateObject(Rule(newLink, targets, linkTypes, clipTypes, edlTypes, attributes), extraEnds);
+    let rule = decorateObject(
+      Rule(newLink, targets, linkTypes, clipTypes, edlTypes, attributes),
+      Object.fromEntries(extraEnds));
     return rule;
   }
 
@@ -75,7 +79,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
-  if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], ["end"]); }
-  if (definesSequenceType.denotesSame(link.type)) { newLink.metaSequenceRule = buildRule([], ["end", "type"]); }
+  if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], true); }
+  if (definesSequenceType.denotesSame(link.type)) { newLink.metaSequenceRule = buildRule([], true, true); }
   return newLink;
 }

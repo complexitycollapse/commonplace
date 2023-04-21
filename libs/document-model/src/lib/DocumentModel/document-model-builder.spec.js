@@ -437,7 +437,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], [metalink, link]).links, "target");
 
-      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toBe("expected");
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toEqual(InlinePointer("expected"));
     });
 
     it('sets the definingLink property on the prototype to be the link it comes from', () => {
@@ -500,12 +500,12 @@ describe('build', () => {
 
     it('sets the type value on the rule to the content of the end called type', () => {
       let link = sequenceMetalink({
-        type: [InlinePointer("expected "), InlinePointer("type")],
+        type: [InlinePointer("expected type")],
       });
 
       let rule = make([], [link]).metaSequenceRules[0];
 
-      expect(rule.type).toEqual("expected type");
+      expect(rule.type).toEqual(InlinePointer("expected type"));
     });
   });
 
