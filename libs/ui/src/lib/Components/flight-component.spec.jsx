@@ -9,9 +9,7 @@ describe('FlightComponent', () => {
       test: obj.anEdl()
     })).build();
 
-    let repo = dv.repo;
-
-    const { baseElement } = render(<FlightComponent docPointers={[EdlPointer("test")]} repository={repo} />);
+    const { baseElement } = render(<FlightComponent docPointers={[EdlPointer("test")]} repository={ dv.repo } />);
     expect(baseElement).toBeTruthy();
   });
 });

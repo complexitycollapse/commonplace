@@ -32,8 +32,8 @@ export function DocuverseBuilder() {
     }
 
     let nameLookup = new Map(Object.entries(proxyBase).map(([key, value]) => [value, key]));
-    let builders = Object.entries(proxyBase).filter(([key, val]) => val.build);
-    builders.forEach(([key, builder]) => builder.resolvePointer(nameLookup));
+    let builders = Object.entries(proxyBase).filter(([, val]) => val.build);
+    builders.forEach(([, builder]) => builder.resolvePointer(nameLookup));
     let docuverse = Object.fromEntries(builders.map(([key, builder]) => [key, builder.build(proxyBase)]));
     let parts = proxyBase.allBuilders.map(builder => builder.getPart ? builder.getPart(proxyBase) : undefined)
       .filter(x => x && x.pointer && x.content);

@@ -1,20 +1,11 @@
 import { Pouncer } from '@commonplace/html';
 import { useState, useEffect } from 'react';
-import { PartRepository } from '@commonplace/core';
-import { SequentialPartFetcher, StaticPartFetcher } from '@commonplace/html';
-import { DefaultsPartFetcher } from '@commonplace/document-model';
 import TreeComponent from './tree-component';
 import { convertJsonToNodes } from '../Utilities/convert-json-to-nodes';
 
-export function DocumentModelComponent({ docPointer }) {
+export function DocumentModelComponent({ docPointer, repository }) {
 
   let [docJsonState, setDocJsonState] = useState({});
-
-  const fetcher = SequentialPartFetcher(
-  DefaultsPartFetcher(),
-  StaticPartFetcher("/content/", fetch));
-
-  const repository = PartRepository(fetcher);
 
   function pouncerCallback(json) {
     setDocJsonState(json);

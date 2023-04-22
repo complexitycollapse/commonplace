@@ -51,10 +51,6 @@ export function PartRepository(fetcher) {
     return Promise.all([...asHash.values()].map(rs => getPartsForOrigin(rs)));
   }
 
-  function injectPart(part) {
-    cache.addPart(part);
-  }
-
   function docStatus(docName) {
     let defaultsDocPart = getPartLocally(defaultsPointer);
 
@@ -139,13 +135,12 @@ export function PartRepository(fetcher) {
     getPart,
     getManyParts,
     getPartLocally,
-    injectPart,
     docStatus
   });
 }
 
 export function MockPartRepository(parts) {
-  let repo = PartRepository(() => undefined);
+  let repo = PartRepository({ getPart: async () => [false] });
 
   let obj = {
     repo,

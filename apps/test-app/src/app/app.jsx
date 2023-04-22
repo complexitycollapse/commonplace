@@ -1,6 +1,9 @@
 import { DocumentModelComponent, FlightComponent, BoxModelComponent } from '@commonplace/ui';
 import { EdlPointer } from '@commonplace/core';
 import { Route, Routes } from 'react-router-dom'
+import liveRepository from './live-repository';
+
+let repository = liveRepository();
 
 export function App() {
   return (
@@ -14,6 +17,6 @@ export function App() {
 }
 export default App;
 
-const Flight = () => <FlightComponent docPointers={[EdlPointer("testdoc.json")]} />;
-const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("testdoc.json")} />
-const BoxModel = () => <BoxModelComponent docPointer={EdlPointer("testdoc.json")} />
+const Flight = () => <FlightComponent docPointers={[EdlPointer("testdoc.json")]} repository={ repository } />;
+const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("testdoc.json")} repository={ repository } />
+const BoxModel = () => <BoxModelComponent docPointer={EdlPointer("testdoc.json")} repository={ repository } />
