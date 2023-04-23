@@ -22,10 +22,14 @@ function anEdl(clips = [], links = []) {
   return [EdlPointer("p"), makeEdl(clips, links)];
 }
 
-function aLink(n = 1, linkContent) {
+function aLink(n = 1, linkContent, type) {
+  type = type ?? n.toString();
   let content = linkContent ? aClip(100 + n) : [];
   let ends = linkContent ? [["content", [content[0]]]] : [];
-  return [LinkPointer(n.toString()), Link(n.toString(), ...ends), ...content];
+  return [
+    LinkPointer(n.toString()),
+    Link(type, ...ends), ...content
+  ];
 }
 
 function aClip(n = 1) {
@@ -73,13 +77,44 @@ describe('docStatus', () => {
       expect((await make([makeDefaults()])).docStatus(edlPointer).defaultsLinksAvailable).toBeFalsy();
     });
 
-    it('has defaultsLinksAvailable set to truthy once the defaults links are in the cache', async () => {
+    it('requests default links that are not in the cache', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([
+        makeDefaults(),
+        [LinkPointer("first default"), Link("1st")]
+      ])).docStatus(edlPointer).required).toEqual([LinkPointer("second default")]);
+    });
+
+    it('requests the type link of a default link once the link is in the cache', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([
+        makeDefaults(),
+        [LinkPointer("first default"), Link(LinkPointer("type link"))],
+        [LinkPointer("second default"), Link("2nd")]
+      ])).docStatus(edlPointer).required).toEqual([LinkPointer("type link")]);
+    });
+
+    it('requests type links recursively', async () => {
+      let edlPointer = EdlPointer("p");
+
+      expect((await make([
+        makeDefaults(),
+        [LinkPointer("first default"), Link(LinkPointer("type link"))],
+        [LinkPointer("second default"), Link("2nd")],
+        [LinkPointer("type link"), Link(LinkPointer("second type link"))]
+      ])).docStatus(edlPointer).required).toEqual([LinkPointer("second type link")]);
+    });
+
+    it('has defaultsLinksAvailable set to truthy once the defaults links and their types are in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
       expect((await make([
         makeDefaults(),
         [LinkPointer("first default"), Link("1st")],
-        [LinkPointer("second default"), Link("2nd")]
+        [LinkPointer("second default"), Link(LinkPointer("type link"))],
+        [LinkPointer("type link"), Link("type link")]
       ])).docStatus(edlPointer).defaultsLinksAvailable).toBeTruthy();
     });
   });
@@ -136,6 +171,23 @@ describe('docStatus', () => {
       let required = (await makeAndGetDocStatus([], [link], [link])).required;
 
       expect(required).toEqual([]);
+    });
+
+    it('starts requesting the type link for a link once it has been downloaded', async () => {
+      let link = aLink(1, undefined, LinkPointer("type link"));
+
+      let required = (await makeAndGetDocStatus([], [link], [link])).required;
+
+      expect(required).toEqual([LinkPointer("type link")]);
+    });
+
+    it('requests type links recursively', async () => {
+      let link = aLink(1, undefined, LinkPointer("2"));
+      let typeLink = aLink(2, undefined, LinkPointer("second type link"));
+
+      let required = (await makeAndGetDocStatus([], [link], [link, typeLink])).required;
+
+      expect(required).toEqual([LinkPointer("second type link")]);
     });
 
     it('stops requesting a clip once it has been downloaded', async () => {

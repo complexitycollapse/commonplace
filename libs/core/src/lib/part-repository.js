@@ -60,8 +60,7 @@ export function PartRepository(fetcher) {
       };
     }
 
-    let defaultsLinksResults = defaultsDocPart.content.links.map(l => [l, getPartLocally(l)]);
-    let missingDefaultsLinkNames = defaultsLinksResults.filter(l => l[1] === undefined).map(l => l[0]);
+    let [missingDefaultsLinkNames] = getMissingLinks(defaultsDocPart.content);
 
     if (missingDefaultsLinkNames.length > 0) {
       return {
@@ -101,9 +100,7 @@ export function PartRepository(fetcher) {
 
   function missingContentForEdl(edl) {
     // Links & link content
-    let linkResults = edl.links.map(l => [l, getPartLocally(l)]);
-    let missingLinkNames = linkResults.filter(l => l[1] === undefined).map(l => l[0]);
-    let foundLinks = linkResults.filter(l => l[1] !== undefined).map(l => l[1].content);
+    let [missingLinkNames, foundLinks] = getMissingLinks(edl);
     let missingLinkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
       .filter(p => p.specifiesContent && !getPartLocally(p));
 
@@ -129,6 +126,22 @@ export function PartRepository(fetcher) {
       missingLinkContentPointers,
       missingDocContent
     };
+  }
+
+  function getMissingLinks(doc) {
+    let found = [], missing = [];
+
+    function recurThroughLinkTypes(links) {
+      if (links.length === 0) { return; }
+      let results = links.map(l => [l, getPartLocally(l)]);
+      missing = missing.concat(results.filter(l => l[1] === undefined).map(l => l[0]));
+      let newFound = results.filter(l => l[1] !== undefined).map(l => l[1].content);
+      found = found.concat(newFound);
+      recurThroughLinkTypes(newFound.map(link => link.type).filter(type => type?.pointerType === "link"));
+    }
+
+    recurThroughLinkTypes(doc.links);
+    return [missing, found];
   }
 
   return finalObject(obj, {
