@@ -131,16 +131,31 @@ export function PartRepository(fetcher) {
   function getMissingLinks(doc) {
     let found = [], missing = [];
 
-    function recurThroughLinkTypes(links) {
+    // If the type of a link is also a link, it needs to be downloaded too.
+    function recurThroughLinkTypes(links, areTypes) {
       if (links.length === 0) { return; }
       let results = links.map(l => [l, getPartLocally(l)]);
       missing = missing.concat(results.filter(l => l[1] === undefined).map(l => l[0]));
       let newFound = results.filter(l => l[1] !== undefined).map(l => l[1].content);
       found = found.concat(newFound);
-      recurThroughLinkTypes(newFound.map(link => link.type).filter(type => type?.pointerType === "link"));
+
+      // For links that are types, we need to download all the links they contain.
+      if (areTypes) {
+        newFound.forEach(link => {
+          link.forEachPointer(pointer => {
+            if (pointer.pointerType === "link") {
+              let childResult = getPartLocally(pointer);
+              if (childResult) { found.push(childResult); }
+              else { missing.push(pointer); }
+            }
+          });
+        });
+      }
+
+      recurThroughLinkTypes(newFound.map(link => link.type).filter(type => type?.pointerType === "link"), true);
     }
 
-    recurThroughLinkTypes(doc.links);
+    recurThroughLinkTypes(doc.links, false);
     return [missing, found];
   }
 

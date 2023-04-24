@@ -190,6 +190,14 @@ describe('docStatus', () => {
       expect(required).toEqual([LinkPointer("second type link")]);
     });
 
+  it('starts requesting link content once the link has been downloaded', async () => {
+      let link = aLink(1, true);
+
+      let required = (await makeAndGetDocStatus([], [link], [link])).required;
+
+      expect(required).toContain(link[2]);
+  });
+
     it('stops requesting a clip once it has been downloaded', async () => {
       let clip = aClip();
 
@@ -198,12 +206,14 @@ describe('docStatus', () => {
       expect(required).toEqual([]);
     });
 
-    it('starts requesting link content once the link has been downloaded', async () => {
-      let link = aLink(1, true);
+    it('starts requesting the links in a type link', async () => {
+      let link = aLink(1, undefined, LinkPointer("type link"));
+      let typeLink = Link("type", [undefined, [LinkPointer("child")]]);
 
-      let required = (await makeAndGetDocStatus([], [link], [link])).required;
 
-      expect(required).toContain(link[2]);
+      let required = (await makeAndGetDocStatus([], [link], [link, [LinkPointer("type link"), typeLink]])).required;
+
+      expect(required).toEqual([LinkPointer("child")]);
     });
 
     it('stops requesting link content once the link content has been downloaded', async () => {
