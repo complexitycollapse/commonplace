@@ -46,8 +46,8 @@ function makeLinkInternal(type, ends) {
   function getEnd(name, index = 0) {
     if (index < 0) { throw `Invalid index passed to getEnd: ${index}`; }
     if (name === "") { name = undefined; }
-    for(let i = 0; i < ends.length; ++i) {
-      let cur = ends[i];
+    for(let i = 0; i < this.ends.length; ++i) {
+      let cur = this.ends[i];
       if (cur.name === name) {
         if (index > 0) {
           --index;
@@ -58,11 +58,20 @@ function makeLinkInternal(type, ends) {
     }
   }
 
+  function getEnds(name) {
+    let result = [];
+    this.ends.forEach(end => {
+      if (end.name === name) { result.push(end); }
+    });
+    return result;
+  }
+
   return finalObject(obj, {
     leafData,
     clipSource: () => ClipIterator(x => x, []),
     forEachPointer,
-    getEnd
+    getEnd,
+    getEnds
   });
 }
 
