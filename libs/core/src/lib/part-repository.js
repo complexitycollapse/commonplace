@@ -1,6 +1,6 @@
 import { finalObject, listMapFromList } from "@commonplace/utils";
 import { LeafCache } from "./leaf-cache";
-import { defaultsPointer } from "./defaults";
+import { defaultsPointer } from "./well-known-objects";
 
 export function PartRepository(fetcher) {
   let cache = LeafCache();
@@ -137,22 +137,25 @@ export function PartRepository(fetcher) {
       let results = links.map(l => [l, getPartLocally(l)]);
       missing = missing.concat(results.filter(l => l[1] === undefined).map(l => l[0]));
       let newFound = results.filter(l => l[1] !== undefined).map(l => l[1].content);
-      found = found.concat(newFound);
 
-      // For links that are types, we need to download all the links they contain.
+      // For links that are types, we need to download all the links they contain,
+      // and their types.
       if (areTypes) {
-        newFound.forEach(link => {
+        [...newFound].forEach(link => {
           link.forEachPointer(pointer => {
             if (pointer.pointerType === "link") {
               let childResult = getPartLocally(pointer);
-              if (childResult) { found.push(childResult); }
+              if (childResult) { newFound.push(childResult); }
               else { missing.push(pointer); }
             }
           });
         });
       }
 
-      recurThroughLinkTypes(newFound.map(link => link.type).filter(type => type?.pointerType === "link"), true);
+      found = found.concat(newFound);
+
+      let typesToResolve = newFound.map(link => link.type).filter(type => type?.pointerType === "link");
+      recurThroughLinkTypes(typesToResolve, true);
     }
 
     recurThroughLinkTypes(doc.links, false);
@@ -172,7 +175,7 @@ export function MockPartRepository(parts) {
 
   let obj = {
     repo,
-    getPartLocally: part => repo.getPartLocally(part),
+    getPartLocally: pointer => repo.getPartLocally(pointer),
     addParts: parts => {
       parts.forEach(part => repo.cache.addPart(part));
     },

@@ -3,7 +3,7 @@ import { Link, Edl } from './model';
 import { Span, EdlPointer, LinkPointer } from './pointers';
 import { Part } from './part';
 import { PartRepository } from './part-repository';
-import { defaultsPointer } from './defaults';
+import { defaultsPointer } from './well-known-objects';
 
 async function make(nameContentPairs = []) {
   let repo = PartRepository({ getPart: p => {

@@ -1,7 +1,8 @@
 import { expect, it, describe } from '@jest/globals';
-import { MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder } from '../Testing/test-builders';
-import { InlinePointer } from '@commonplace/core';
-import { definesSequenceType } from '../Defaults/defaults';
+import {
+  MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder
+} from '../Testing/test-builders';
+import { InlinePointer, definesSequenceType } from '@commonplace/core';
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));

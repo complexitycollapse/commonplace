@@ -1,4 +1,4 @@
-import { definesSequenceType, endowsAttributesType, markupType } from "../Defaults/defaults";
+import { definesSequenceType, endowsAttributesType, markupType } from "@commonplace/core";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";

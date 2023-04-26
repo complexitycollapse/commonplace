@@ -1,11 +1,12 @@
-import { PartRepository } from "@commonplace/core";
+import { PartRepository, SequentialPartFetcher, WellKnownObjectsPartFetcher } from "@commonplace/core";
 import { DefaultsPartFetcher } from "@commonplace/document-model";
-import { SequentialPartFetcher, StaticPartFetcher } from "@commonplace/html";
+import { StaticPartFetcher } from "@commonplace/html";
 
 export default function liveRepository() {
   let fetcher = SequentialPartFetcher(
-  DefaultsPartFetcher(),
-  StaticPartFetcher("/content/", fetch));
+    WellKnownObjectsPartFetcher(),
+    DefaultsPartFetcher(),
+    StaticPartFetcher("/content/", fetch));
 
   let repository = PartRepository(fetcher);
 

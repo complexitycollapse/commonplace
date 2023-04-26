@@ -1,8 +1,7 @@
-import { InlinePointer } from "@commonplace/core";
+import { InlinePointer, definesSequenceType } from "@commonplace/core";
 import { EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "./test-builders";
 import { SequenceScanner } from '../DocumentModel/sequence-scanner';
 import { docModelBuilderTesting } from '../DocumentModel/document-model-builder';
-import { definesSequenceType } from "../Defaults/defaults";
 
 export function aSpan(n = 1, length = 10) { return SpanBuilder().withOrigin(n.toString()).withLength(length); }
 

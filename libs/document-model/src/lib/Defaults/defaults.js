@@ -1,10 +1,9 @@
-import { Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer } from "@commonplace/core";
+import {
+  Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer,
+  endowsAttributesType, markupType, definesSequenceType
+} from "@commonplace/core";
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
-
-export const markupType = LinkPointer("markup");
-export const definesSequenceType = LinkPointer("defines sequence");
-export const endowsAttributesType = LinkPointer("endows attributes");
 
 function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   if (!Array.isArray(types)) { types = [types]; }
@@ -53,6 +52,11 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType }
   return Part(LinkPointer(name), Link(markupType, ...ends));
 }
 
+function sequence(name, type, end) {
+  return Part(LinkPointer(name),
+    Link(definesSequenceType, ["type", [InlinePointer(type)]], ["end", [InlinePointer(end ?? "")]]));
+}
+
 export let defaultsLinksParts = [
   contentAttribute("bold", "bold", true),
   directAttribute("paragraph", "paragraph", true),
@@ -79,9 +83,9 @@ export let defaultsLinksParts = [
     ["layout mode", "block", "direct"],
     ["box", "true", "direct"]
   ], { edlType: "paragraph", linkType: "paragraph" }),
+  sequence("defaults:paragraph sequence", "paragraph", undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
-  Part(LinkPointer("markup"), Link(InlinePointer("type"), ["name", [InlinePointer("markup")]]))
 ];
 
 function deriveLinkPointer(link) {
