@@ -14,7 +14,7 @@ export const markupPart = Part(LinkPointer("markup"), Link(metatype, ["name", [I
 export const definesSequencePart = Part(LinkPointer("defines sequence"), Link(metatype, ["name", [InlinePointer("defines sequence")]]));
 export const endowsAttributePart = Part(LinkPointer("endows attributes"), Link(metatype, ["name", [InlinePointer("endows attributes")]]));
 
-const wellKnownParts = [markupPart, definesSequencePart, endowsAttributePart];
+export const wellKnownParts = [markupPart, definesSequencePart, endowsAttributePart];
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {
