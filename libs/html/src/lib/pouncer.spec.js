@@ -1,21 +1,14 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link, Edl } from './model';
-import { Span, EdlPointer, LinkPointer } from './pointers';
-import { Part } from './part';
-import { PartRepository } from './part-repository';
-import { defaultsPointer } from './well-known-objects';
+import { Link, Edl, Span, EdlPointer, LinkPointer, Part, PartRepository, defaultsPointer } from '@commonplace/core';
+import { TestPouncer } from './pouncer';
 
-async function make(nameContentPairs = []) {
-  let repo = PartRepository({ getPart: p => {
-      let pair = nameContentPairs.find(x => x[0] === p);
-      return pair ? [true, Part(pair[0], pair[1])] : [false, undefined];
+async function make(docPointer, nameContentPairs = []) {
+  let repo = PartRepository({ getPart: () => {
+      return [false, undefined];
     }
   });
-  for (let n of nameContentPairs) {
-    await repo.getPart(n[0]);
-  }
 
-  return repo;
+  return TestPouncer(repo, docPointer, nameContentPairs.map(pair => Part(pair[0], pair[1])));
 }
 
 function anEdl(clips = [], links = []) {
@@ -49,13 +42,14 @@ describe('docStatus', () => {
     it('initially requests the defaults Edl', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make()).docStatus(edlPointer).required).toEqual([defaultsPointer]);
+      let pouncer = (await make(edlPointer));
+      expect(pouncer.docStatus().required).toEqual([defaultsPointer]);
     });
 
     it('all predicates are initially false', async () => {
       let edlPointer = EdlPointer("p");
 
-      let result = (await make()).docStatus(edlPointer);
+      let result = (await make(edlPointer)).docStatus();
 
       expect(result.defaultsDocAvailable).toBeFalsy();
       expect(result.defaultsLinksAvailable).toBeFalsy();
@@ -68,54 +62,54 @@ describe('docStatus', () => {
     it('has defaultsDocAvailable set to truthy if the defaults doc is in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([makeDefaults()])).docStatus(edlPointer).defaultsDocAvailable).toBeTruthy();
+      expect((await make(edlPointer, [makeDefaults()])).docStatus().defaultsDocAvailable).toBeTruthy();
     });
 
     it('has defaultsLinksAvailable set to falsy if the defaults links are not yet in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([makeDefaults()])).docStatus(edlPointer).defaultsLinksAvailable).toBeFalsy();
+      expect((await make([edlPointer, makeDefaults()])).docStatus().defaultsLinksAvailable).toBeFalsy();
     });
 
     it('requests default links that are not in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([
+      expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link("1st")]
-      ])).docStatus(edlPointer).required).toEqual([LinkPointer("second default")]);
+      ])).docStatus().required).toEqual([LinkPointer("second default")]);
     });
 
     it('requests the type link of a default link once the link is in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([
+      expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link(LinkPointer("type link"))],
         [LinkPointer("second default"), Link("2nd")]
-      ])).docStatus(edlPointer).required).toEqual([LinkPointer("type link")]);
+      ])).docStatus().required).toEqual([LinkPointer("type link")]);
     });
 
     it('requests type links recursively', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([
+      expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link(LinkPointer("type link"))],
         [LinkPointer("second default"), Link("2nd")],
         [LinkPointer("type link"), Link(LinkPointer("second type link"))]
-      ])).docStatus(edlPointer).required).toEqual([LinkPointer("second type link")]);
+      ])).docStatus().required).toEqual([LinkPointer("second type link")]);
     });
 
     it('has defaultsLinksAvailable set to truthy once the defaults links and their types are in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([
+      expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link("1st")],
         [LinkPointer("second default"), Link(LinkPointer("type link"))],
         [LinkPointer("type link"), Link("type link")]
-      ])).docStatus(edlPointer).defaultsLinksAvailable).toBeTruthy();
+      ])).docStatus().defaultsLinksAvailable).toBeTruthy();
     });
   });
 
@@ -123,28 +117,28 @@ describe('docStatus', () => {
     it('requests the Edl', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([[defaultsPointer, makeEdl()]])).docStatus(edlPointer).required).toEqual([edlPointer]);
+      expect((await make(edlPointer, [[defaultsPointer, makeEdl()]])).docStatus().required).toEqual([edlPointer]);
     });
 
     it('has docAvailable set to truthy if the doc is in the cache', async () => {
       let edlPointer = EdlPointer("p");
 
-      expect((await make([[defaultsPointer, makeEdl()], [edlPointer, makeEdl()]]))
-        .docStatus(edlPointer).docAvailable).toBeTruthy();
+      expect((await make(edlPointer, [[defaultsPointer, makeEdl()], [edlPointer, makeEdl()]]))
+        .docStatus().docAvailable).toBeTruthy();
     });
   });
 
   describe('after EDL downloaded', () => {
     async function makeAndGetDocStatus(clips = [], links = [], cached = []) {
       let edlPair = anEdl(clips, links);
-      return (await make([[defaultsPointer, makeEdl()], edlPair, ...cached])).docStatus(edlPair[0]);
+      return (await make(edlPair[0], [[defaultsPointer, makeEdl()], edlPair, ...cached])).docStatus();
     }
 
     it('has all statuses set to truthy if the doc is available and contains nothing', async () => {
       let result = await makeAndGetDocStatus();
 
       expect(result.defaultsDocAvailable).toBeTruthy();
-    expect(result.defaultsLinksAvailable).toBeTruthy();
+      expect(result.defaultsLinksAvailable).toBeTruthy();
       expect(result.docAvailable).toBeTruthy();
       expect(result.linksAvailable).toBeTruthy();
       expect(result.linkContentAvailable).toBeTruthy();
@@ -190,13 +184,13 @@ describe('docStatus', () => {
       expect(required).toEqual([LinkPointer("second type link")]);
     });
 
-  it('starts requesting link content once the link has been downloaded', async () => {
+    it('starts requesting link content once the link has been downloaded', async () => {
       let link = aLink(1, true);
 
       let required = (await makeAndGetDocStatus([], [link], [link])).required;
 
       expect(required).toContain(link[2]);
-  });
+    });
 
     it('stops requesting a clip once it has been downloaded', async () => {
       let clip = aClip();
@@ -242,70 +236,5 @@ describe('docStatus', () => {
 
       expect(required).toEqual([]);
     });
-  });
-
-  describe("child zettel", () => {
-  //   it('creates a child Zettel for each clip of content (in case where there are no links that split the clips)', async () => {
-  //     let ez = make(makeEdl([Span("x", 1, 10), Image("y", 1, 2, 3, 4)]));
-
-  //     expect(ez.children.length).toBe(2);
-  //   });
-
-  //   it('sets containingEdl on the child zettel to itself', async () => {
-  //     let ez = make(makeEdl([Span("x", 1, 10)]));
-
-  //     expect(ez.children[0].containingEdl).toBe(ez);
-  //   });
-
-  //   it('sets clip on the child zettel to the original clip', async () => {
-  //     let clip = Span("x", 1, 10);
-  //     let ez = make(makeEdl([clip]));
-
-  //     expect(ez.children[0].clip).toBe(clip);
-  //   });
-  });
-
-  describe('nested EDLs', () => {
-  //   it('returns a request for the child EDL', async () => {
-  //     let childEdlPointer = EdlPointer("name");
-  //     let ez = make(makeEdl([childEdlPointer]));
-
-  //     expect(ez.outstandingRequests()[0][0]).toBe(childEdlPointer);
-  //   });
-
-  //   it('does not request the child EDL once it has been resolved', async () => {
-  //     let childEdlPointer = EdlPointer("name");
-  //     let childEdl = makeEdl();
-  //     let ez = make(makeEdl([childEdlPointer]));
-  //     let firstRequest = ez.outstandingRequests()[0];
-
-  //     resolve(firstRequest, childEdl);
-
-  //     expect(ez.outstandingRequests()).toEqual([]);
-  //   });
-
-  //   it('replaces the dummy EDL with an EdlZettel for the resolved EDL', async () => {
-  //     let childEdlPointer = EdlPointer("name");
-  //     let childEdl = makeEdl();
-  //     let ez = make(makeEdl([childEdlPointer]));
-  //     let firstRequest = ez.outstandingRequests()[0];
-
-  //     resolve(firstRequest, childEdl);
-
-  //     expect(ez.children[0].edl).toBe(childEdl);
-  //   });
-
-  //   it('requests all content of a resolved child EDL', async () => {
-  //     let clips = [Span("x", 1, 10), Image("y", 0, 0, 100, 100)];
-  //     let childEdlPointer = EdlPointer("name");
-  //     let childEdl = makeEdl(clips);
-  //     let ez = make(makeEdl([childEdlPointer]));
-  //     let firstRequest = ez.outstandingRequests()[0];
-  //     resolve(firstRequest, childEdl);
-
-  //     let actualRequests = ez.outstandingRequests();
-
-  //     expect(actualRequests.map(x => x[0])).toEqual(clips);
-  //   });
   });
 });

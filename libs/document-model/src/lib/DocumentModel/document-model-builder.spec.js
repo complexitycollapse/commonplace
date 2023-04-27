@@ -6,8 +6,6 @@ import {
   markupType
 } from '@commonplace/core';
 
-const mockRepo = testing.MockPartRepository;
-
 function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
 }
@@ -45,7 +43,10 @@ describe('build', () => {
     it('should equal the type of the EDL', () => {
       let edl = Edl("expected type", [], []);
       let edlPointer = EdlPointer("testedl");
-      expect(DocumentModelBuilder(edlPointer, mockRepo([Part(edlPointer, edl)])).build().type).toBe("expected type");
+      expect(DocumentModelBuilder(
+        edlPointer,
+        testing.createTestCache([Part(edlPointer, edl)])).build().type)
+      .toBe("expected type");
     });
   });
 
@@ -526,7 +527,7 @@ describe('build', () => {
         Part(LinkPointer("default2"), defaultLink2)
       ];
 
-      let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
+      let defaults = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build().defaultsLinks;
 
       expect(getLink(defaults, "default1")).toMatchObject(defaultLink1);
       expect(getLink(defaults, "default2")).toMatchObject(defaultLink2);
@@ -542,7 +543,7 @@ describe('build', () => {
         Part(LinkPointer("default1"), Link("d1")),
       ];
 
-      let defaults = DocumentModelBuilder(edlPointer, mockRepo(parts)).build().defaultsLinks;
+      let defaults = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build().defaultsLinks;
 
       expect(getLink(defaults, "default1").isDefault).toBeTruthy();
     });
@@ -559,7 +560,7 @@ describe('build', () => {
         Part(LinkPointer("link1"), targetLink)
       ];
 
-      let model = DocumentModelBuilder(edlPointer, mockRepo(parts)).build();
+      let model = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build();
 
       expect(getLink(model.links, "link1").incomingPointers[0].link).toMatchObject(defaultLink);
     });
