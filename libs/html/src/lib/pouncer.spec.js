@@ -1,5 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { Link, Edl, Span, EdlPointer, LinkPointer, Part, PartRepository, defaultsPointer } from '@commonplace/core';
+import {
+  Link, Edl, Span, EdlPointer, LinkPointer, InlinePointer, Part, PartRepository, defaultsPointer
+} from '@commonplace/core';
 import { TestPouncer } from './pouncer';
 
 async function make(docPointer, nameContentPairs = []) {
