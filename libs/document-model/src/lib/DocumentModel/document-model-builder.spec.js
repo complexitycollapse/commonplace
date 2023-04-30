@@ -10,21 +10,21 @@ function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
 }
 
-function sequenceMetalink({ name, immediateTargets, linkTypes, clipTypes, edlTypes, end, type } = {}) {
+function sequenceMetalink({ name, end, type, clipsInSequence = [] } = {}) {
   let endSpecs = [];
+  name = name ?? "metalink";
 
-  if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
-  if (linkTypes) endSpecs.push(["link types", linkTypes]);
-  if (clipTypes) endSpecs.push(["clip types", clipTypes]);
-  if (edlTypes) endSpecs.push(["edl types", edlTypes]);
   if (end) endSpecs.push(["end", end]);
   if (type) endSpecs.push(["type", type]);
-  let link = [
-    name ?? "metalink",
+  let metalink = [
+    name,
     Link(definesSequenceType, ...endSpecs)
   ];
 
-  return link;
+  let link = ["target", Link(LinkPointer("type link"), ["foo", clipsInSequence])];
+  let typeLink = ["type link", Link(InlinePointer("type"), [undefined, [LinkPointer(name)]])]
+
+  return [link, typeLink, metalink];
 }
 
 function make(clips = [], links = [], edlPointer, additionalParts = []) {
@@ -68,29 +68,29 @@ describe('build', () => {
     });
 
     it('returns links in an EDL AND its parent', () => {
-      let link1 = Link("link1"), link2 = Link("link2");
+      let link1 = Link(InlinePointer("link1")), link2 = Link(InlinePointer("link2"));
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
       let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
 
       expect(Object.values(zettel[0].links).length).toBe(2);
-      expect(getLink(zettel[0].links, "link1").type).toBe("link1");
-      expect(getLink(zettel[0].links, "link2").type).toBe("link2");
+      expect(getLink(zettel[0].links, "link1").type).toEqual(InlinePointer("link1"));
+      expect(getLink(zettel[0].links, "link2").type).toEqual(InlinePointer("link2"));
     });
 
     it('does not return links in a child EDL', () => {
-      let link1 = Link("link1"), link2 = Link("link2");
+      let link1 = Link(InlinePointer("link1")), link2 = Link(InlinePointer("link2"));
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
       let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
 
       expect(Object.values(links)).toHaveLength(1);
-      expect(getLink(links, "link1").type).toBe("link1");
+      expect(getLink(links, "link1").type).toEqual(InlinePointer("link1"));
       expect(links).not.toHaveProperty("links2");
     });
 
     it('links in the EDL have depth 0 and those from the parent have depth 1', () => {
-      let link1 = Link("link1"), link2 = Link("link2");
+      let link1 = Link(InlinePointer("link1")), link2 = Link(InlinePointer("link2"));
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
       let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
@@ -107,7 +107,7 @@ describe('build', () => {
     });
 
     it('interlinks links that point to each other through the incomingPointers property', () => {
-      let link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let link2 = Link(InlinePointer("link2"), [undefined, [LinkPointer("link1")]]);
       let links = make([], [["link1", true], ["link2", link2]]).links;
 
       let incoming = getLink(links, "link1").incomingPointers;
@@ -118,7 +118,7 @@ describe('build', () => {
     });
 
     it('interlinks all links in the scope of a child EDL', () => {
-      let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let link1 = Link(InlinePointer("link1"), [undefined, [LinkPointer("link2")]]), link2 = Link(InlinePointer("link2"), [undefined, [LinkPointer("link1")]]);
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
       let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
@@ -132,7 +132,7 @@ describe('build', () => {
     });
 
     it('does not interlink child EDL links to links in the parent', () => {
-      let link1 = Link("link1", [undefined, [LinkPointer("link2")]]), link2 = Link("link2", [undefined, [LinkPointer("link1")]]);
+      let link1 = Link(InlinePointer("link1"), [undefined, [LinkPointer("link2")]]), link2 = Link(InlinePointer("link2"), [undefined, [LinkPointer("link1")]]);
       let edl1 = Edl(undefined, [], [LinkPointer("link2")]);
 
       let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
@@ -141,7 +141,7 @@ describe('build', () => {
     });
 
     it('links to the EDL itself', () => {
-      let link = Link("link1", [undefined, [EdlPointer("edl1")]]);
+      let link = Link(InlinePointer("link1"), [undefined, [EdlPointer("edl1")]]);
 
       let model = make([], [["link1", link]], EdlPointer("edl1"));
 
@@ -178,8 +178,8 @@ describe('build', () => {
 
     it('attaches link pointers to the zettel that they point to', () => {
       let clip1 = Span("x", 1, 10);
-      let link1 = Link("link1", [undefined, [Span("x", 1, 20)]]);
-      let link2 = Link("link2", [undefined, [Span("x", 1, 30)]]);
+      let link1 = Link(InlinePointer("link1"), [undefined, [Span("x", 1, 20)]]);
+      let link2 = Link(InlinePointer("link2"), [undefined, [Span("x", 1, 30)]]);
 
       let zettel = make([[clip1, true]], [["link1", link1], ["link2", link2]]).zettel;
 
@@ -258,8 +258,8 @@ describe('build', () => {
 
     it('attaches link pointers to the EDL that they point to', () => {
       let edl1 = Edl(undefined, [], []);
-      let link1 = Link("link1", [undefined, [EdlPointer("edl1")]]);
-      let link2 = Link("link2", [undefined, [EdlPointer("edl1")]]);
+      let link1 = Link(InlinePointer("link1"), [undefined, [EdlPointer("edl1")]]);
+      let link2 = Link(InlinePointer("link2"), [undefined, [EdlPointer("edl1")]]);
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1], ["link2", link2]]).zettel;
 
@@ -269,7 +269,7 @@ describe('build', () => {
 
     it('does not attach a link to an EDL if it does not point to it', () => {
       let edl1 = Edl(undefined, [], []);
-      let link1 = Link("link1", [undefined, [EdlPointer("different-edl")]]);
+      let link1 = Link(InlinePointer("link1"), [undefined, [EdlPointer("different-edl")]]);
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
 
@@ -290,7 +290,7 @@ describe('build', () => {
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);
       let link = [
-        name ?? "markup",
+        name ?? "markup link",
         Link(markupType, ...endSpecs)
       ];
 
@@ -312,7 +312,7 @@ describe('build', () => {
     });
 
     it('returns a rule for each markup link', () => {
-      expect(make([], [markupLink({name: "markup1"}), markupLink({name: "markup"}), markupLink({name: "markup3"})]).markupRules).toHaveLength(3);
+      expect(make([], [markupLink({name: "markup1"}), markupLink({name: "markup2"}), markupLink({name: "markup3"})]).markupRules).toHaveLength(3);
     });
 
     it('sets all of the criteria properties to the content values of the link ends', () => {
@@ -414,99 +414,48 @@ describe('build', () => {
     });
   });
 
-  describe('metaSequenceRules', () => {
-    it('is empty if there are no meta-sequence links', () => {
-      expect(make([], [["not a meta-sequence link", true]]).metaSequenceRules).toEqual([]);
-    });
-
-    it('returns a rule if there is a meta-sequence link', () => {
-      expect(make([], [sequenceMetalink()]).metaSequenceRules).toHaveLength(1);
-    });
-
+  describe('Sequence prototypes', () => {
     it('adds the meta-sequence prototype to the targeted end', () => {
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
-      let link = ["target", Link(undefined, ["foo", []])];
+      let links = sequenceMetalink({end: [InlinePointer("foo")]});
 
-      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      let actualLink = getLink(make([], links).links, "target");
 
-      expect(actualLink.getEnd("foo").sequencePrototypes).toBeTruthy();
+      expect(actualLink.getEnd("foo").sequencePrototypes).toHaveLength(1);
     });
 
     it('sets the type property on the prototype to be the type specified in the metalink', () => {
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
-      let link = ["target", Link(undefined, ["foo", []])];
+      let links = sequenceMetalink({end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
 
-      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      let actualLink = getLink(make([], links).links, "target");
 
-      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toEqual(InlinePointer("expected"));
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toEqual("expected");
     });
 
     it('sets the definingLink property on the prototype to be the link it comes from', () => {
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
-      let link = ["target", Link(undefined, ["foo", []])];
+      let links = sequenceMetalink({end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
 
-      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      let actualLink = getLink(make([], links).links, "target");
 
       expect(actualLink.getEnd("foo").sequencePrototypes[0].definingLink).toBe(actualLink);
     });
 
     it('sets the end property on the prototype to be the end that defines the sequence', () => {
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
-      let link = ["target", Link(undefined, ["foo", []])];
+      let links = sequenceMetalink({end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
 
-      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      let actualLink = getLink(make([], links).links, "target");
 
       expect(actualLink.getEnd("foo").sequencePrototypes[0].end).toBe(actualLink.getEnd("foo"));
     });
 
     it('sets the signature property on the prototype to an object with the pointers of the link and metalink', () => {
-      let metalink = sequenceMetalink({name: "meta", immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
-      let link = ["target", Link(undefined, ["foo", []])];
+      let links = sequenceMetalink({name: "meta", end: [InlinePointer("foo")]});
 
-      let actualLink = getLink(make([], [metalink, link]).links, "target");
+      let actualLink = getLink(make([], links).links, "target");
 
       expect(actualLink.getEnd("foo").sequencePrototypes[0].signature).toMatchObject({
         metalinkPointer: LinkPointer("meta"),
         linkPointer: LinkPointer("target")
       });
-    });
-
-    it('returns a rule for each meta-sequence link', () => {
-      expect(make([], [sequenceMetalink({name: "meta1"}), sequenceMetalink({name: "meta2"}), sequenceMetalink({name: "meta3"})]).metaSequenceRules).toHaveLength(3);
-    });
-
-    it('sets all of the criteria properties to the content values of the link ends', () => {
-      let link = sequenceMetalink({
-        clipTypes: [InlinePointer("ct1"), InlinePointer("ct2")],
-        linkTypes: [InlinePointer("lt1"), InlinePointer("lt2")],
-        edlTypes: [InlinePointer("et1"), InlinePointer("et2")]
-      });
-
-      let rule = make([], [link]).metaSequenceRules[0];
-
-      expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
-      expect(rule.linkTypes).toEqual(["lt1", "lt2"]);
-      expect(rule.edlTypes).toEqual(["et1", "et2"]);
-    });
-
-    it('sets the end value on the rule to the content of the end called end', () => {
-      let link = sequenceMetalink({
-        end: [InlinePointer("expected "), InlinePointer("end")],
-      });
-
-      let rule = make([], [link]).metaSequenceRules[0];
-
-      expect(rule.end).toEqual("expected end");
-    });
-
-    it('sets the type value on the rule to the content of the end called type', () => {
-      let link = sequenceMetalink({
-        type: [InlinePointer("expected type")],
-      });
-
-      let rule = make([], [link]).metaSequenceRules[0];
-
-      expect(rule.type).toEqual(InlinePointer("expected type"));
     });
   });
 
@@ -519,7 +468,7 @@ describe('build', () => {
       let edl = Edl("expected type", [], []);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1"), LinkPointer("default2")]);
-      let defaultLink1 = Link("d1"), defaultLink2 = Link("d2");
+      let defaultLink1 = Link(InlinePointer("d1")), defaultLink2 = Link(InlinePointer("d2"));
       let parts = [
         Part(edlPointer, edl),
         Part(defaultsPointer, defaultsEdl),
@@ -540,7 +489,7 @@ describe('build', () => {
       let parts = [
         Part(edlPointer, edl),
         Part(defaultsPointer, defaultsEdl),
-        Part(LinkPointer("default1"), Link("d1")),
+        Part(LinkPointer("default1"), Link(InlinePointer("d1"))),
       ];
 
       let defaults = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build().defaultsLinks;
@@ -550,7 +499,7 @@ describe('build', () => {
 
     it('will be interlinked to Edl links', () => {
       let edl = Edl("expected type", [], [LinkPointer("link1")]);
-      let targetLink = Link("target type"), defaultLink = Link("d1", [undefined, [LinkPointer("link1")]]);
+      let targetLink = Link(InlinePointer("target type")), defaultLink = Link(InlinePointer("d1"), [undefined, [LinkPointer("link1")]]);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1")]);
       let parts = [
@@ -620,20 +569,18 @@ describe('build', () => {
 
     it('is an extension of the sequences defining link for a sequence', () => {
       let clip1 = Span("x", 1, 10);
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
-      let link = ["target", Link(undefined, ["foo", [clip1]])];
+      let links = sequenceMetalink({clipsInSequence: [clip1], end: [InlinePointer("foo")]});
 
-      let sequence = make([[clip1, true]], [metalink, link]).rootSequences()[0];
+      let sequence = make([[clip1, true]], links).rootSequences()[0];
 
       expect(sequence.key).toEqual(sequence.definingLink.key + "-0");
     });
 
     it('is unique for each instance of a sequence', () => {
       let clip1 = Span("x", 1, 10);
-      let metalink = sequenceMetalink({immediateTargets: [LinkPointer("target")], end: [InlinePointer("foo")]});
-      let link = ["target", Link(undefined, ["foo", [clip1]])];
+      let links = sequenceMetalink({clipsInSequence: [clip1], end: [InlinePointer("foo")]});
 
-      let sequences = make([[clip1, true], [clip1, true], [clip1, true]], [metalink, link]).rootSequences();
+      let sequences = make([[clip1, true], [clip1, true], [clip1, true]], links).rootSequences();
 
       expect(sequences[0].key).toEqual(sequences[0].definingLink.key + "-0");
       expect(sequences[1].key).toEqual(sequences[1].definingLink.key + "-1");

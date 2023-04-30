@@ -28,8 +28,7 @@ describe('DocumentModelSerializer.serialize', () => {
     expect(json.contentMarkup).toEqual({});
     expect(json.rules).toEqual({
       markup: [],
-      metaEndowments: [],
-      metaSequences: []
+      metaEndowments: []
     });
   });
 

@@ -90,7 +90,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     // Process all the links and their consequences
     connectLinks(allLinks);
     gatherRules(model, allLinks);
-    applyMetarules(model, allLinks);
+    //applyMetarules(model, allLinks);
 
     // Add Zettel to the model, and gather all the builders for the EDL children, ready for the next pass.
     edl.clips.forEach(addZettelAndChildBuildersForClip);
@@ -172,9 +172,6 @@ function gatherRules(model, links) {
     if (link.metaEndowmentRule) {
       model.metaEndowmentRules.push(link.metaEndowmentRule);
     }
-    if (link.metaSequenceRule) {
-      model.metaSequenceRules.push(link.metaSequenceRule);
-    }
   });
 }
 
@@ -203,7 +200,7 @@ function populateSpanContent(zettel, repo) {
 export let docModelBuilderTesting = {
   addIncomingPointers,
   makeMockedBuilderFromParts: function (edlPointer, cachedParts) {
-    let repo = testing.MockPartRepository(cachedParts);
-    return DocumentModelBuilder(edlPointer, repo);
-  }
+    let cache = testing.createTestCache(cachedParts, true);
+    return DocumentModelBuilder(edlPointer, cache);
+  },
 };

@@ -2,6 +2,7 @@ import { definesSequenceType, endowsAttributesType, markupType } from "@commonpl
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
+import { SequencePrototype } from "./sequence-prototype";
 
 export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefault) {
   function docModelEnd(end) {
@@ -14,20 +15,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
 
   addMethods(newLink, {
     sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
-    getEnd: (name, index = 0) => {
-      if (index < 0) { throw `Invalid index passed to getEnd: ${index}`; }
-      if (name === "") { name = undefined; }
-      for(let i = 0; i < newLink.ends.length; ++i) {
-        let cur = newLink.ends[i];
-        if (cur.name === name) {
-          if (index > 0) {
-            --index;
-          } else {
-            return cur;
-          }
-        }
-      }
-    },
     forEachPointer: fn => {
       newLink.ends.forEach(e => {
         e.pointers.forEach(p => {
@@ -46,10 +33,35 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     return pointers.map(p => repo.getPartLocally(p).content);
   }
 
-  function buildRule(attributeEnds, hasEnd, hasType) {
+  function concatenateContent(pointers) {
+    return getContent(pointers).join("");
+  }
+
+  function calculateSequenceType(metalink, linkType) {
+    let typeEnd = metalink.getEnd("type");
+    if (typeEnd === undefined) { return linkType; }
+    else if (typeEnd.pointers.length === 1 && typeEnd.pointers[0].pointerType === "link") {
+      return typeEnd.pointers[0];
+    } else {
+      let content = concatenateContent(typeEnd.pointers);
+      return content === "" ? undefined : content;
+    }
+  }
+
+  function resolveType() {
+    if (link.type === undefined) {
+      return undefined;
+    } else if (link.type.pointerType === "link") {
+      return repo.getPartLocally(link.type).content;
+    } else {
+      return link.type.inlineText;
+    }
+  }
+
+  function buildRule(attributeEnds, hasEnd) {
     function resolveAttribute(attribute) {
       return Object.fromEntries(
-        Object.entries(attribute).map(([key, val]) => [key, getContent(val).join("")]));
+        Object.entries(attribute).map(([key, val]) => [key, concatenateContent(val)]));
     }
 
     let targets = getPointers("targets");
@@ -59,7 +71,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     let unresolvedAttributes = RecordLinkParser(link, attributeEnds);
     let extraEnds = [];
     if (hasEnd) { extraEnds.push(["end", getContent(getPointers("end")).join("")]); }
-    if (hasType) { extraEnds.push(["type", link.getEnd("type")?.pointers[0]]); }
 
     let attributes = unresolvedAttributes.map(resolveAttribute);
 
@@ -78,8 +89,28 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   newLink.key = undefined; // set later
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
+  newLink.metalinks = [];
+  newLink.resolvedType = resolveType()
+
   if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
   if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], true); }
-  if (definesSequenceType.denotesSame(link.type)) { newLink.metaSequenceRule = buildRule([], true, true); }
+
+  if (newLink.resolvedType?.isLink) {
+    newLink.resolvedType.forEachPointer(metalinkPointer => {
+      if (metalinkPointer.pointerType === "link") {
+        let metalink = repo.getPartLocally(metalinkPointer).content;
+        newLink.metalinks.push(metalink);
+        if (definesSequenceType.denotesSame(metalink.type)) {
+          let endEnd = metalink.getEnd("end");
+          let end = concatenateContent(endEnd?.pointers);
+          let type = calculateSequenceType(metalink, newLink.resolvedType);
+          newLink.getEnds(end.length === 0 ? undefined : end)
+            .forEach(newLinkEnd => newLinkEnd.sequencePrototypes.push(
+              SequencePrototype(type, newLinkEnd, newLink, metalinkPointer)));
+        }
+      }
+    });
+  }
+
   return newLink;
 }

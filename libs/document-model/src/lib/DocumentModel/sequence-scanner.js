@@ -33,7 +33,7 @@ export function SequenceScanner(zettel, links) {
   function makeAllBuilders() {
     // A sequence of length zero is not valid, so exclude them.
     let validEnds = links.map(l => l.ends.filter(e => e.pointers.length > 0)).flat();
-    let allSequencePrototypes = validEnds.map(e => e.sequencePrototypes ?? []).flat();
+    let allSequencePrototypes = validEnds.map(e => e.sequencePrototypes).flat();
     let builders = allSequencePrototypes.map(SequenceBuilder);
     return builders;
   }
@@ -51,7 +51,7 @@ export function SequenceScanner(zettel, links) {
     while (builders.length > 0) {
       let newSequencesMade = false;
       let buildersToTry = getBuildersWithSatisfiedDependencies(builders, linksWithSequences);
-      
+
       buildersToTry.forEach(b => {
         let sequences = b.sequences(zettel, createdSequences);
         if (sequences.length > 0) {
@@ -69,6 +69,6 @@ export function SequenceScanner(zettel, links) {
   }
 
   return finalObject(obj, {
-    sequences    
+    sequences
   });
 }

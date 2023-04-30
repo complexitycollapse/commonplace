@@ -78,7 +78,7 @@ describe('docStatus', () => {
 
       expect((await make(edlPointer, [
         makeDefaults(),
-        [LinkPointer("first default"), Link("1st")]
+        [LinkPointer("first default"), Link(InlinePointer("1st"))]
       ])).docStatus().required).toEqual([LinkPointer("second default")]);
     });
 
@@ -88,7 +88,7 @@ describe('docStatus', () => {
       expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link(LinkPointer("type link"))],
-        [LinkPointer("second default"), Link("2nd")]
+        [LinkPointer("second default"), Link(InlinePointer("2nd"))]
       ])).docStatus().required).toEqual([LinkPointer("type link")]);
     });
 
@@ -98,7 +98,7 @@ describe('docStatus', () => {
       expect((await make(edlPointer, [
         makeDefaults(),
         [LinkPointer("first default"), Link(LinkPointer("type link"))],
-        [LinkPointer("second default"), Link("2nd")],
+        [LinkPointer("second default"), Link(InlinePointer("2nd"))],
         [LinkPointer("type link"), Link(LinkPointer("second type link"))]
       ])).docStatus().required).toEqual([LinkPointer("second type link")]);
     });
@@ -108,9 +108,9 @@ describe('docStatus', () => {
 
       expect((await make(edlPointer, [
         makeDefaults(),
-        [LinkPointer("first default"), Link("1st")],
+        [LinkPointer("first default"), Link(InlinePointer("1st"))],
         [LinkPointer("second default"), Link(LinkPointer("type link"))],
-        [LinkPointer("type link"), Link("type link")]
+        [LinkPointer("type link"), Link(InlinePointer("type link"))]
       ])).docStatus().defaultsLinksAvailable).toBeTruthy();
     });
   });
@@ -204,7 +204,7 @@ describe('docStatus', () => {
 
     it('starts requesting the links in a type link', async () => {
       let link = aLink(1, undefined, LinkPointer("type link"));
-      let typeLink = Link("type", [undefined, [LinkPointer("child")]]);
+      let typeLink = Link(InlinePointer("type"), [undefined, [LinkPointer("child")]]);
 
 
       let required = (await makeAndGetDocStatus([], [link], [link, [LinkPointer("type link"), typeLink]])).required;

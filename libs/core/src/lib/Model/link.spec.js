@@ -1,5 +1,5 @@
 import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, imageTesting, Span, spanTesting, LinkPointer, EdlPointer } from "../pointers";
+import { hasClips, imageTesting, Span, spanTesting, LinkPointer, EdlPointer, InlinePointer } from "../pointers";
 import { Link, leafDataToLink } from './link';
 
 expect.extend({
@@ -14,15 +14,15 @@ function toSpec(end) {
 }
 
 test('type is set on the link', () => {
-  expect(Link("my type").type).toBe("my type");
+  expect(Link(InlinePointer("my type")).type).toEqual(InlinePointer("my type"));
 });
 
 test('isLink is true', () => {
-  expect(Link("myType").isLink).toBeTruthy();
+  expect(Link(InlinePointer("myType")).isLink).toBeTruthy();
 });
 
 test('isClip is false', () => {
-  expect(Link("myType").isClip).toBeFalsy();
+  expect(Link(InlinePointer("myType")).isClip).toBeFalsy();
 });
 
 test('ends is set on the link', () => {
@@ -32,7 +32,7 @@ test('ends is set on the link', () => {
     [undefined, [LinkPointer("foo"), EdlPointer("bar")]]
   ];
 
-  let lk = Link("my type", ...ends);
+  let lk = Link(InlinePointer("my type"), ...ends);
 
   expect(lk.ends.length).toBe(3);
   expect(toSpec(lk.ends[0])).toEqual(ends[0]);
@@ -41,37 +41,40 @@ test('ends is set on the link', () => {
 
 describe('leafData', () => {
   it('has the type and ends properties', () => {
-    expect(Link("type").leafData()).toEqual({
-      typ: "type",
+    expect(Link(InlinePointer("type")).leafData()).toEqual({
+      typ: InlinePointer("type").leafData(),
       es: []
     });
   });
 
   it('has no own properties other than type and end', () => {
-    expect(Object.getOwnPropertyNames(Link("type").leafData())).toHaveLength(2);
+    expect(Object.getOwnPropertyNames(Link(InlinePointer("type")).leafData())).toHaveLength(2);
   });
 
   it('converts the ends to their serialized form', () => {
     let span = Span("x", 10, 20);
     let end = ["Name", [span]];
-    expect(Link("type", end).leafData().es[0]).toEqual({ name: "Name", ptr: [span.leafData()] });
+    expect(Link(InlinePointer("type"), end).leafData().es[0]).toEqual({ name: "Name", ptr: [span.leafData()] });
   });
 });
 
 test('leafDataToLink is inverse of leafData', () => {
-  let l = Link("my type", ["name1", [makeSpan()]], ["name2", [makeImage(), makeSpan()]]);
+  let l = Link(InlinePointer("my type"), ["name1", [makeSpan()]], ["name2", [makeImage(), makeSpan()]]);
   expect(leafDataToLink(l.leafData())).toEqual(l);
 });
 
 test('leafDataToLink can convert an array to an array of links', () => {
-  let expectedLinks = [Link("t1", ["e1", [Span("x", 1, 2)]]), Link("t2", ["e2", [Span("y", 3, 4)]])];
+  let expectedLinks = [
+    Link(InlinePointer("t1"), ["e1", [Span("x", 1, 2)]]),
+    Link(InlinePointer("t2"), ["e2", [Span("y", 3, 4)]])
+  ];
   let leafData = [
     {
-      "typ": "t1",
+      "typ": InlinePointer("t1").leafData(),
       "es": [{ "name": "e1", "ptr": [{ "typ": "span", "ori": "x", "st": 1, "ln": 2 }] }]
     },
     {
-      "typ": "t2",
+      "typ": InlinePointer("t2").leafData(),
       "es": [{ "name": "e2", "ptr": [{ "typ": "span", "ori": "y", "st": 3, "ln": 4 }] }]
     }
   ];

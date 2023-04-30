@@ -4,7 +4,7 @@ import { DefaultsDocModel, defaultsEdl, defaultsLinksParts } from './defaults';
 
 describe('DefaultsDocModel', () => {
   it('returns a valid DocModel', () => {
-    let repo = testing.createTestCache([Part(defaultsPointer, defaultsEdl)].concat(defaultsLinksParts));
+    let repo = testing.createTestCache([Part(defaultsPointer, defaultsEdl)].concat(defaultsLinksParts), true);
 
     let defaults = DefaultsDocModel(repo);
 

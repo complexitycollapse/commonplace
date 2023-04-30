@@ -17,7 +17,7 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
       return true;
     }
 
-    if (target.isLink && linkTypes.some(t => t == target.type)) {
+    if (target.isLink && linkTypes.some(t => t.denotesSame(target.type))) {
       return true;
     }
 
@@ -25,7 +25,7 @@ export function Rule(originLink, immediateTargets, linkTypes, clipTypes, edlType
       return true;
     }
 
-    if (target.isEdl && edlTypes.some(t => t === target.type)) {
+    if (target.isEdl && edlTypes.some(t => t.denotesSame(target.type))) {
       return true;
     }
 

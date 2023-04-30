@@ -1,6 +1,7 @@
 import { it, describe, expect } from '@jest/globals';
 import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Testing/group-testing';
-import { LinkPointer } from '@commonplace/core';
+import { LinkPointer, metatype } from '@commonplace/core';
+import { LinkBuilder } from '../Testing/test-builders';
 
 describe('first level sequences', () => {
   it('returns no sequences if there were none in the EDL', () => {
@@ -41,10 +42,11 @@ describe('first level sequences', () => {
 
   it('returns a sequence for each metalink on a matching link', () => {
     let spans = content();
-    let target = aTargetLink(spans);
-    let metalink1 = aMetalink(target, "metalink1");
-    let metalink2 = aMetalink(target, "metalink2");
-    expect(scan(spans, [target, metalink1, metalink2])).toHaveLength(2);
+    let metalink1 = aMetalink(undefined, "metalink1");
+    let metalink2 = aMetalink(undefined, "metalink2");
+    let type = LinkBuilder(metatype, [undefined, [metalink1]], [undefined, [metalink2]]).withName("type of target");
+    let target = aTargetLink(spans, { type: LinkPointer("type of target") });
+    expect(scan(spans, [target, metalink1, metalink2, type])).toHaveLength(2);
   });
 
   it('returns a sequence whose members correspond to the matched sequence items', () => {
@@ -61,9 +63,9 @@ describe('first level sequences', () => {
 
   it('returns a sequence that has definingLink set to the link that defines it', () => {
     let spans = content();
-    let [definingLink, metalink] = makeSequenceLink(spans);
+    let [definingLink, metalink, definingLinkType] = makeSequenceLink(spans);
 
-    let sequence = scan(spans, [definingLink, metalink])[0];
+    let sequence = scan(spans, [definingLink, metalink, definingLinkType])[0];
 
     expect(sequence.definingLink).toMatchObject(definingLink.builtObject);
   });

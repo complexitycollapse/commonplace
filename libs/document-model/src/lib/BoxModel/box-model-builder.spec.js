@@ -143,7 +143,8 @@ describe('BoxModelBuilder', () => {
     let childSequenceLinks = SequenceLinkBuilder(spans);
     let model = makeModel(spans)
       .withLinks(childSequenceLinks.link, childSequenceLinks.metalink)
-      .withBoxSequenceLink([childSequenceLinks.link]);
+      .withBoxSequenceLink([childSequenceLinks.link])
+      .withExtraLinks([childSequenceLinks.type, childSequenceLinks.metalink]);
 
     let box = make(model).members[0];
 
@@ -159,7 +160,8 @@ describe('BoxModelBuilder', () => {
     let model = makeModel(spans)
       .withLinks(childSequenceLinks.link, childSequenceLinks.metalink)
       .withLink(aBoxLink(childSequenceLinks.link))
-      .withBoxSequenceLink([childSequenceLinks.link]);
+      .withBoxSequenceLink([childSequenceLinks.link])
+      .withExtraLinks([childSequenceLinks.type, childSequenceLinks.metalink]);
 
     let box = make(model).members[0];
 
@@ -195,7 +197,8 @@ describe('BoxModelBuilder', () => {
     let model = makeModel(spans)
       .withLinks(childSequenceLinks.link, childSequenceLinks.metalink)
       .withLink(aBoxLink(childSequenceLinks.link))
-      .withBoxSequenceLink([spans[0], childSequenceLinks.link, spans[2]]);
+      .withBoxSequenceLink([spans[0], childSequenceLinks.link, spans[2]])
+      .withExtraLinks([childSequenceLinks.type, childSequenceLinks.metalink]);
 
     let box = make(model).members[0];
 
@@ -215,7 +218,9 @@ describe('BoxModelBuilder', () => {
       .withLinks(childSequenceLinks2.link, childSequenceLinks2.metalink)
       .withLink(aBoxLink(childSequenceLinks1.link))
       .withLink(aBoxLink(childSequenceLinks2.link))
-      .withBoxSequenceLink([childSequenceLinks1.link, childSequenceLinks2.link]);
+      .withBoxSequenceLink([childSequenceLinks1.link, childSequenceLinks2.link])
+      .withExtraLinks([childSequenceLinks1.type, childSequenceLinks1.metalink])
+      .withExtraLinks([childSequenceLinks2.type, childSequenceLinks2.metalink]);
 
     let box = make(model).members[0];
 
@@ -233,7 +238,9 @@ describe('BoxModelBuilder', () => {
       .withLinks(childSequenceLinks2.link, childSequenceLinks2.metalink)
       .withLink(aBoxLink(childSequenceLinks1.link))
       .withLink(aBoxLink(childSequenceLinks2.link))
-      .withSequenceLink([childSequenceLinks1.link, childSequenceLinks2.link]);
+      .withSequenceLink([childSequenceLinks1.link, childSequenceLinks2.link])
+      .withExtraLinks([childSequenceLinks1.type, childSequenceLinks1.metalink])
+      .withExtraLinks([childSequenceLinks2.type, childSequenceLinks2.metalink]);
 
     let box = make(model);
 
@@ -331,7 +338,8 @@ describe('BoxModelBuilder', () => {
     let model = makeModel([edl])
       .withLinks(sequence.link, sequence.metalink)
       .withLink(aBoxLink(edl))
-      .withLink(aBoxLink(sequence.link));
+      .withLink(aBoxLink(sequence.link))
+      .withExtraLinks([sequence.type, sequence.metalink]);
 
     let box = make(model);
 
@@ -358,7 +366,9 @@ describe('BoxModelBuilder', () => {
     let edl = anEdl().withClips(...spans);
     let model = makeModel([edl])
       .withLinks(sequence.link, sequence.metalink)
-      .withLink(aBoxLink(edl));
+      .withLink(aBoxLink(edl))
+      .withExtraLinks([sequence.type, sequence.metalink]);
+
 
     let box = make(model);
 

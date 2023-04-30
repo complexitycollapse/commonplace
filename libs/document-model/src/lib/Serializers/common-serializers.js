@@ -16,8 +16,7 @@ export function serializeEdl(model) {
     contentMarkup: markup(model.contentMarkup),
     rules: {
       markup: links.map(markupRule).filter(x => x),
-      metaEndowments: links.map(metaEndowmentRule).filter(x => x),
-      metaSequences: links.map(metaSequenceRule).filter(x => x)
+      metaEndowments: links.map(metaEndowmentRule).filter(x => x)
     }
   };
 }
@@ -45,20 +44,6 @@ function metaEndowmentRule(link) {
       clipTypes: link.metaEndowmentRule.clipTypes,
       edlTypes: link.metaEndowmentRule.edlTypes,
       linkTypes: link.metaEndowmentRule.linkTypes
-    };
-  }
-}
-
-function metaSequenceRule(link) {
-  if (link.metaSequenceRule) {
-    return {
-      link: linkName(link),
-      type: link.metaEndowmentRule.type,
-      end: link.metaEndowmentRule.end,
-      targets: link.metaSequenceRule.targets,
-      clipTypes: link.metaSequenceRule.clipTypes,
-      edlTypes: link.metaSequenceRule.edlTypes,
-      linkTypes: link.metaSequenceRule.linkTypes
     };
   }
 }

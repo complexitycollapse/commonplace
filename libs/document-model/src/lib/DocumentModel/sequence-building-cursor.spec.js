@@ -7,11 +7,12 @@ import { Zettel } from './zettel';
 import { IncomingPointer } from './incoming-pointer';
 import { DocumentModelLink } from './document-model-link';
 import { EdlModel } from './edl-model';
-import { SequenceBuilder, wrap } from '../Testing/test-builders';
+import { LinkBuilder, SequenceBuilder, wrap } from '../Testing/test-builders';
+import { metatype } from '../Defaults/defaults';
 
 function make(sequenceElements) {
   let scenario = {};
-  let sequenceLinkBuilder = aTargetLink(sequenceElements, {end: "grouping end"});
+  let sequenceLinkBuilder = aTargetLink(sequenceElements, {end: "grouping end", type: LinkBuilder(metatype)});
   let sequenceLink = DocumentModelLink(sequenceLinkBuilder.build(), 0, LinkPointer("group"), 0);
   let sequenceEnd = sequenceLink.getEnd("grouping end");
   let prototype = SequencePrototype("test type", sequenceEnd, sequenceLink, LinkPointer("metalink"));
@@ -48,7 +49,7 @@ function make(sequenceElements) {
 }
 
 function sequenceAndLink(sequenceMemberBuilders, linkArg) {
-  let underlyingLinkBuilder = aTargetLink(sequenceMemberBuilders, linkArg);
+  let underlyingLinkBuilder = aTargetLink(sequenceMemberBuilders, {...linkArg, type: LinkBuilder(metatype) });
   let link = DocumentModelLink(underlyingLinkBuilder.build(), 0, underlyingLinkBuilder.pointer, 0);
   let prototype = SequencePrototype("child sequence", link.ends[0], link, LinkPointer("child sequence"));
   let members = sequenceMemberBuilders.map(b => {

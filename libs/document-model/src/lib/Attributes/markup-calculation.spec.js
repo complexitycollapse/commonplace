@@ -2,7 +2,7 @@ import { expect, it, describe } from '@jest/globals';
 import {
   MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder
 } from '../Testing/test-builders';
-import { InlinePointer, definesSequenceType } from '@commonplace/core';
+import { InlinePointer, definesSequenceType, metatype, LinkPointer } from '@commonplace/core';
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
@@ -32,12 +32,12 @@ function aLink(targetBuilder, ...attributePairs) {
   return builder;
 }
 
-function aSequenceMetalink(endowingLink, sequenceEndName) {
+function aSequenceMetalinkType(sequenceEndName) {
   let metalink = LinkBuilder(definesSequenceType)
-    .withName(`sequence metalink for ${endowingLink.type}`)
-    .withEnd(EndBuilder().withName("targets").withPointer(endowingLink))
+    .withName(`sequence metalink`)
     .withEnd(EndBuilder().withName("end").withPointer(InlinePointer(sequenceEndName)));
-  return metalink;
+  let type = LinkBuilder(metatype, [undefined, [LinkPointer("sequence metalink")]]).withName("target type");
+  return [type, metalink];
 }
 
 function aDmbWithSpan() {
@@ -156,10 +156,10 @@ describe('markup', () => {
     // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
     // The zettel receives the value by inheritance, because it is part of the sequence.
     let dmb = aDmbWithSpan();
-    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
+    let sequenceLink = LinkBuilder(LinkPointer("target type"), ["sequence", [dmb.target]]).withName("sequence link");
     dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "content");
-    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, sequenceMetalink);
+    let sequenceMetalink = aSequenceMetalinkType("sequence");
+    dmb.withLinks(sequenceLink, ...sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 
@@ -171,10 +171,10 @@ describe('markup', () => {
     // The attribute is not on the zettel because the second link points to the sequence link, not the zettel, and therefore the
     // attribute can only be received by inheritance from a sequence, but the sequence link does not form a valid sequence here.
     let dmb = aDmbWithSpan();
-    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target, aSpan()]]).withName("sequence link");
+    let sequenceLink = LinkBuilder(LinkPointer("target type"), ["sequence", [dmb.target, aSpan()]]).withName("sequence link");
     dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "content");
-    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, sequenceMetalink);
+    let sequenceMetalink = aSequenceMetalinkType("sequence");
+    dmb.withLinks(sequenceLink, ...sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 
@@ -200,10 +200,10 @@ describe('markup', () => {
     // Here we have a sequence link, and a second link that points to the sequence link and endows a content attribute.
     // The zettel receives the value by inheritance, because it is part of the sequence.
     let dmb = aDmbWithSpan();
-    let sequenceLink = LinkBuilder(undefined, ["sequence", [dmb.target]]).withName("sequence link");
+    let sequenceLink = LinkBuilder(LinkPointer("target type"), ["sequence", [dmb.target]]).withName("sequence link");
     dmb.withMarkupLinkPointingTo(sequenceLink, "attr1", "val1", "direct");
-    let sequenceMetalink = aSequenceMetalink(sequenceLink, "sequence");
-    dmb.withLinks(sequenceLink, sequenceMetalink);
+    let sequenceMetalink = aSequenceMetalinkType("sequence");
+    dmb.withLinks(sequenceLink, ...sequenceMetalink);
 
     let markup = makeFromDmb(dmb);
 

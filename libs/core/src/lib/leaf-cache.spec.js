@@ -20,7 +20,7 @@ describe('getPart/addPart', () => {
   test('getPart returns true if the part is in the cache', () => {
     let pc = LeafCache();
     let part = makePart();
-    
+
     pc.addPart(part);
 
     expect(pc.getPart(part.pointer)[0]).toEqual(true);
@@ -29,7 +29,7 @@ describe('getPart/addPart', () => {
   test('getPart retrieves an added part', () => {
     let pc = LeafCache();
     let part = makePart();
-    
+
     pc.addPart(part);
 
     expect(pc.getPart(part.pointer)[1]).toEqual(part);
@@ -38,7 +38,7 @@ describe('getPart/addPart', () => {
   test('getPart retrieves the part if it has 100% of the content in the cache', () => {
     let pc = LeafCache();
     let part = makePart();
-    
+
     pc.addPart(part);
 
     expect(pc.getPart(part.pointer.clone({start: part.pointer.start + 1, length: part.pointer.length - 1}))[0]).toBe(true);
@@ -47,7 +47,7 @@ describe('getPart/addPart', () => {
   test('getPart returns false if any part of the requested content is missing', () => {
     let pc = LeafCache();
     let part = makePart();
-    
+
     pc.addPart(part);
 
     expect(pc.getPart(part.pointer.clone({start: part.start + 1}))[0]).toBe(false);
@@ -60,7 +60,7 @@ describe('getPart/addPart', () => {
   test('getPart still works even if we override hasOwnProperty', () => {
     let pc = LeafCache();
     let part = Part(Span("HasOwnPProperty", 1, 1), "a");
-    
+
     pc.addPart(part);
 
     expect(pc.getPart(part.pointer)[0]).toBe(true);
@@ -68,9 +68,9 @@ describe('getPart/addPart', () => {
 
   test('getPart can retrieve a link when passed a link pointer', () => {
     let cache = LeafCache();
-    let link = Link("type");
+    let link = Link(InlinePointer("type"));
     let part = Part(LinkPointer("link name"), link);
-    
+
     cache.addPart(part);
 
     expect(cache.getPart(LinkPointer("link name"))[1]).toBe(part);
@@ -78,9 +78,9 @@ describe('getPart/addPart', () => {
 
   test('getPart returns undefined if the link name doesnt match any link', () => {
     let cache = LeafCache();
-    let link = Link("type");
+    let link = Link(InlinePointer("type"));
     let part = Part(LinkPointer("link name"), link);
-    
+
     cache.addPart(part);
 
     expect(cache.getPart(LinkPointer("other link name"))[0]).toBe(false);
@@ -90,7 +90,7 @@ describe('getPart/addPart', () => {
     let cache = LeafCache();
     let link = Doc([], []);
     let part = Part(EdlPointer("doc name"), link);
-    
+
     cache.addPart(part);
 
     expect(cache.getPart(EdlPointer("doc name"))[1]).toBe(part);

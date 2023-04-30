@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from '@jest/globals';
 import { Rule } from './rule';
 import { docModelBuilderTesting } from './document-model-builder';
-import { LinkPointer, Link, Span, Edl } from '@commonplace/core';
+import { LinkPointer, Link, Span, Edl, InlinePointer } from '@commonplace/core';
 import { DocumentModelLink } from './document-model-link';
 
 const makeLink = DocumentModelLink;
@@ -12,7 +12,7 @@ function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = []
 }
 
 function link(name, incomingPointers = []) {
-  let l = makeLink(Link(name), 0, LinkPointer(name), 0);
+  let l = makeLink(Link(InlinePointer(name)), 0, LinkPointer(name), 0);
   addIncoming(l, incomingPointers);
   return l;
 }
@@ -48,14 +48,14 @@ describe('Rule.match', () => {
 
   it('returns true if the target is a link and has the specified link type',  () => {
     let target = link("link1");
-    let rule = make({linkTypes: ["link1"]});
+    let rule = make({linkTypes: [InlinePointer("link1")]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
   it('returns false if the target is a link but does not have the specified link type',  () => {
     let target = link("link1");
-    let rule = make({linkTypes: ["other type"]});
+    let rule = make({linkTypes: [InlinePointer("other type")]});
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -75,15 +75,15 @@ describe('Rule.match', () => {
   });
 
   it('returns true if the target is an EDL and has the specified EDL type',  () => {
-    let target = Edl("edl1", [], []);
-    let rule = make({edlTypes: ["edl1"]});
+    let target = Edl(InlinePointer("edl1"), [], []);
+    let rule = make({edlTypes: [InlinePointer("edl1")]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
   it('returns false if the target is an EDL but it does NOT have the specified EDL type',  () => {
-    let target = Edl("edl1", [], []);
-    let rule = make({edlTypes: ["other EDL type"]});
+    let target = Edl(InlinePointer("edl1"), [], []);
+    let rule = make({edlTypes: [InlinePointer("other EDL type")]});
 
     expect(rule.match(target)).toBeFalsy();
   });

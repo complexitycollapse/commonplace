@@ -1,5 +1,7 @@
 import { finalObject, listMapFromList } from "@commonplace/utils";
 import { LeafCache } from "./leaf-cache";
+import { WellKnownObjectsPartFetcher } from "./well-known-objects";
+import { SequentialPartFetcher } from "./sequential-part-fetcher";
 
 export function PartRepository(fetcher) {
   let cache = LeafCache();
@@ -58,7 +60,10 @@ export function PartRepository(fetcher) {
 }
 
 export function MockPartRepository(parts) {
-  let repo = PartRepository({ getPart: async () => [false] });
+  let repo = PartRepository(
+    SequentialPartFetcher(
+      WellKnownObjectsPartFetcher(),
+      { getPart: async () => [false] }));
 
   let obj = {
     repo,
