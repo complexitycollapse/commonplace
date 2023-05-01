@@ -71,9 +71,9 @@ describe('DocuverseBuilder', () => {
         z: obj.aSpan(Span("foo", 5, 20))
       })).build();
 
-      let linkPart = await dv.cache.getPartLocally(LinkPointer("x"));
-      let edlPart = await dv.cache.getPartLocally(EdlPointer("y"));
-      let spanPart = await dv.cache.getPartLocally(Span("foo", 5, 20));
+      let linkPart = await dv.cache.getPart(LinkPointer("x"));
+      let edlPart = await dv.cache.getPart(EdlPointer("y"));
+      let spanPart = await dv.cache.getPart(Span("foo", 5, 20));
 
       expect(linkPart.pointer).toEqual(LinkPointer("x"));
       expect(linkPart.content).toEqual(Link());
@@ -96,9 +96,9 @@ describe('DocuverseBuilder', () => {
         z: obj.aSpan(Span("foo", 5, 20))
       })).build();
 
-      let linkPart = await dv.repo.getPartLocally(LinkPointer("x"));
-      let edlPart = await dv.repo.getPartLocally(EdlPointer("y"));
-      let spanPart = await dv.repo.getPartLocally(Span("foo", 5, 20));
+      let linkPart = await dv.repo.getPart(LinkPointer("x"));
+      let edlPart = await dv.repo.getPart(EdlPointer("y"));
+      let spanPart = await dv.repo.getPart(Span("foo", 5, 20));
 
       expect(linkPart.pointer).toEqual(LinkPointer("x"));
       expect(linkPart.content).toEqual(Link());

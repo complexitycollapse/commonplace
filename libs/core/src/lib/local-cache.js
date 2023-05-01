@@ -1,11 +1,10 @@
 import { LeafCache } from "./leaf-cache";
 import { finalObject } from "@commonplace/utils";
 import { wellKnownParts } from "./well-known-objects";
-import { toEqualClip } from "./pointers";
 
 export function LocalCache(cache) {
   return finalObject({}, {
-    getPartLocally: pointer => {
+    getPart: pointer => {
       let cached = cache.getPart(pointer);
       if (cached[0]) {
         return cached[1];

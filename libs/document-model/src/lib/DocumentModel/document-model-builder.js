@@ -29,7 +29,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
   let edl, model, allLinks, links, linksObject, key;
 
   function createDefaults() {
-    let defaultsEdl = cache.getPartLocally(defaultsPointer)?.content;
+    let defaultsEdl = cache.getPart(defaultsPointer)?.content;
     let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, cache, undefined, true)) : {};
     return defaults;
   }
@@ -71,7 +71,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     key = parent ? parent.key + ":" + indexInParent.toString() : "1";
 
     // Fetch the EDL from the cache
-    let edlPart = cache.getPartLocally(edlPointer);
+    let edlPart = cache.getPart(edlPointer);
     if (edlPart === undefined) {
       return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {}, key);
     }
@@ -138,7 +138,7 @@ function createLinkPairs(edl, cache, parent, isDefault) {
       .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
   }
 
-  let childParts = edl.links.map((x, index) => [cache.getPartLocally(x), index]);
+  let childParts = edl.links.map((x, index) => [cache.getPart(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
   .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, cache, isDefault)]);
@@ -191,7 +191,7 @@ function populateSpanContent(zettel, cache) {
   zettel.forEach(z => {
     if (z.isEdl) { populateSpanContent(z.zettel, cache); }
     else {
-      let contentPart = cache.getPartLocally(z.pointer);
+      let contentPart = cache.getPart(z.pointer);
       if (contentPart) { z.setOriginContentPart(contentPart); }
      }
   });

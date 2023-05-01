@@ -30,7 +30,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   }
 
   function getContent(pointers) {
-    return pointers.map(p => cache.getPartLocally(p).content);
+    return pointers.map(p => cache.getPart(p).content);
   }
 
   function concatenateContent(pointers) {
@@ -52,7 +52,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     if (link.type === undefined) {
       return undefined;
     } else if (link.type.pointerType === "link") {
-      return cache.getPartLocally(link.type).content;
+      return cache.getPart(link.type).content;
     } else {
       return link.type.inlineText;
     }
@@ -98,7 +98,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   if (newLink.resolvedType?.isLink) {
     newLink.resolvedType.forEachPointer(metalinkPointer => {
       if (metalinkPointer.pointerType === "link") {
-        let metalink = cache.getPartLocally(metalinkPointer).content;
+        let metalink = cache.getPart(metalinkPointer).content;
         newLink.metalinks.push(metalink);
         if (definesSequenceType.denotesSame(metalink.type)) {
           let endEnd = metalink.getEnd("end");
