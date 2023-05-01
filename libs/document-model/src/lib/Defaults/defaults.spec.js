@@ -4,9 +4,9 @@ import { DefaultsDocModel, defaultsEdl, defaultsLinksParts } from './defaults';
 
 describe('DefaultsDocModel', () => {
   it('returns a valid DocModel', () => {
-    let repo = testing.createTestCache([Part(defaultsPointer, defaultsEdl)].concat(defaultsLinksParts), true);
+    let cache = testing.createTestCache([Part(defaultsPointer, defaultsEdl)].concat(defaultsLinksParts), true);
 
-    let defaults = DefaultsDocModel(repo);
+    let defaults = DefaultsDocModel(cache);
 
     expect(Object.values(defaults.links)).toHaveLength(defaultsEdl.links.length);
   });

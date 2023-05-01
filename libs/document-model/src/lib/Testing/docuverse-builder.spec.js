@@ -58,6 +58,31 @@ describe('DocuverseBuilder', () => {
       expect(model.pointer).toEqual(EdlPointer("edl"));
     });
 
+    it('creates a mock cache', () => {
+      let dv = DocuverseBuilder().build();
+
+      expect(dv.cache).toBeTruthy();
+    });
+
+    it('populates the mock cache with the contents of the docuverse', async () => {
+      let dv = DocuverseBuilder().add(obj => ({
+        x: obj.aLink(),
+        y: obj.anEdl(),
+        z: obj.aSpan(Span("foo", 5, 20))
+      })).build();
+
+      let linkPart = await dv.cache.getPartLocally(LinkPointer("x"));
+      let edlPart = await dv.cache.getPartLocally(EdlPointer("y"));
+      let spanPart = await dv.cache.getPartLocally(Span("foo", 5, 20));
+
+      expect(linkPart.pointer).toEqual(LinkPointer("x"));
+      expect(linkPart.content).toEqual(Link());
+      expect(edlPart.pointer).toEqual(EdlPointer("y"));
+      expect(edlPart.content).toEqual(Edl());
+      expect(spanPart.pointer).toEqual(Span("foo", 5, 20));
+      expect(spanPart.content).toEqual("##########");
+    });
+
     it('creates a mock repo', () => {
       let dv = DocuverseBuilder().build();
 

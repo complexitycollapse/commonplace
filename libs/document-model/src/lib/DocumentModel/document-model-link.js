@@ -4,7 +4,7 @@ import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype";
 
-export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefault) {
+export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
@@ -30,7 +30,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   }
 
   function getContent(pointers) {
-    return pointers.map(p => repo.getPartLocally(p).content);
+    return pointers.map(p => cache.getPartLocally(p).content);
   }
 
   function concatenateContent(pointers) {
@@ -52,7 +52,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
     if (link.type === undefined) {
       return undefined;
     } else if (link.type.pointerType === "link") {
-      return repo.getPartLocally(link.type).content;
+      return cache.getPartLocally(link.type).content;
     } else {
       return link.type.inlineText;
     }
@@ -98,7 +98,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, repo, isDefau
   if (newLink.resolvedType?.isLink) {
     newLink.resolvedType.forEachPointer(metalinkPointer => {
       if (metalinkPointer.pointerType === "link") {
-        let metalink = repo.getPartLocally(metalinkPointer).content;
+        let metalink = cache.getPartLocally(metalinkPointer).content;
         newLink.metalinks.push(metalink);
         if (definesSequenceType.denotesSame(metalink.type)) {
           let endEnd = metalink.getEnd("end");

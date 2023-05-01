@@ -95,8 +95,8 @@ function deriveLinkPointer(link) {
 
 export const defaultsEdl = Edl(defaultsType, [], defaultsLinksParts.map(part => part.pointer));
 
-export function DefaultsDocModel(repo) {
-  return DocumentModelBuilder(defaultsPointer, repo).build();
+export function DefaultsDocModel(cache) {
+  return DocumentModelBuilder(defaultsPointer, cache).build();
 }
 
 export function DefaultsPartFetcher() {

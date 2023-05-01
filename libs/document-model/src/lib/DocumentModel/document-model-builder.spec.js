@@ -55,11 +55,11 @@ describe('build', () => {
       expect(make().links).toEqual({});
     });
 
-    it('returns a link under its hashable name if it is present in the repo', () => {
+    it('returns a link under its hashable name if it is present in the cache', () => {
       expect(getLink(make([], [["link1", true]]).links, "link1").type).toEqual("link1");
     });
 
-    it('does not return a link under its hashable name if it is NOT present in the repo', () => {
+    it('does not return a link under its hashable name if it is NOT present in the cache', () => {
       expect(getLink(make([], [["link1", false]]).links, "link1")).toBeFalsy();
     });
 
@@ -197,7 +197,7 @@ describe('build', () => {
     });
 
     describe('getContent', () => {
-      it('returns the clipped content if it is available locally in the repo', () => {
+      it('returns the clipped content if it is available locally in the cache', () => {
         let clip = Span("test origin", 5, 6);
         let contentPart = Part(Span("test origin", 0, 15), "xxxxx123456xxxx");
 
@@ -206,7 +206,7 @@ describe('build', () => {
         expect(zettel.getContent()).toBe("123456");
       });
 
-      it('returns undefined if the clipped content is not available locally in the repo', () => {
+      it('returns undefined if the clipped content is not available locally in the cache', () => {
         let clip = Span("test origin", 5, 6);
 
         let zettel = make([[clip, true]], []).zettel[0];
@@ -464,7 +464,7 @@ describe('build', () => {
       expect(make().defaultsLinks).toEqual({});
     });
 
-    it('returns all defaults links found in the repo', () => {
+    it('returns all defaults links found in the cache', () => {
       let edl = Edl("expected type", [], []);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1"), LinkPointer("default2")]);

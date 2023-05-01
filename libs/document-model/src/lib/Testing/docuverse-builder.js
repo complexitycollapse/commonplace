@@ -38,7 +38,9 @@ export function DocuverseBuilder() {
     let parts = proxyBase.allBuilders.map(builder => builder.getPart ? builder.getPart(proxyBase) : undefined)
       .filter(x => x && x.pointer && x.content);
 
+    docuverse.cache = proxyBase.cache;
     docuverse.repo = proxyBase.repo;
+    docuverse.cache.addParts(parts);
     docuverse.repo.addParts(parts);
 
     return docuverse;
@@ -79,6 +81,7 @@ function makeDocuverseProxy() {
     aLink: LinkBuilder,
     anEdl: EdlBuilder,
     aDocModelBuilder: DocModelBuilderBuilder,
+    cache: testing.createTestCache([], true),
     repo: testing.MockPartRepository([]),
     allBuilders: []
   };

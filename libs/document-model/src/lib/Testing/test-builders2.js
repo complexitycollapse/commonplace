@@ -174,7 +174,7 @@ export function DefaultsBuilder() {
 
 export function DocModelBuilderBuilder(edlBuilder) {
   let obj = Builder((obj, docuverse) => {
-    let b = DocumentModelBuilder(edlBuilder.pointer, docuverse.repo);
+    let b = DocumentModelBuilder(edlBuilder.pointer, docuverse.cache);
     return b;
   }, {
     links: [],

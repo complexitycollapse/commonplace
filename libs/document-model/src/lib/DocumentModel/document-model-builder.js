@@ -7,8 +7,8 @@ import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { MarkupCalculation } from "../Attributes/markup-calculation";
 
-export function DocumentModelBuilder(edlPointer, repo) {
-  let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, repo, undefined, undefined);
+export function DocumentModelBuilder(edlPointer, cache) {
+  let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, cache, undefined, undefined);
   return finalObject({}, {
     build: () => {
       // DocModels are built using two passes. The first assembles a hierarchy of models with
@@ -22,20 +22,20 @@ export function DocumentModelBuilder(edlPointer, repo) {
     }});
 }
 
-function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) {
+function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent) {
   let obj = {};
   let childBuilders = [];
   let zettel = [];
   let edl, model, allLinks, links, linksObject, key;
 
   function createDefaults() {
-    let defaultsEdl = repo.getPartLocally(defaultsPointer)?.content;
-    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, repo, undefined, true)) : {};
+    let defaultsEdl = cache.getPartLocally(defaultsPointer)?.content;
+    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, cache, undefined, true)) : {};
     return defaults;
   }
 
   function createLinks(edl, parent, defaults) {
-    let linkPairs = createLinkPairs(edl, repo, parent, false);
+    let linkPairs = createLinkPairs(edl, cache, parent, false);
     linksObject = Object.fromEntries(linkPairs);
     links = Object.values(linksObject);
     allLinks = links.concat(Object.values(defaults));
@@ -45,7 +45,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
   function addZettelAndChildBuildersForClip(clip, index) {
     if (clip.pointerType === "edl")
     {
-      let childBuilder = RecursiveDocumentModelBuilder(clip, repo, model, index);
+      let childBuilder = RecursiveDocumentModelBuilder(clip, cache, model, index);
       childBuilders.push(childBuilder);
       zettel.push(childBuilder.buildHierarchy());
     } else {
@@ -70,8 +70,8 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     // Calculate the model's key (i.e. the unique identifier that will be used to refer to the model)
     key = parent ? parent.key + ":" + indexInParent.toString() : "1";
 
-    // Fetch the EDL from the repo
-    let edlPart = repo.getPartLocally(edlPointer);
+    // Fetch the EDL from the cache
+    let edlPart = cache.getPartLocally(edlPointer);
     if (edlPart === undefined) {
       return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {}, key);
     }
@@ -101,7 +101,7 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
     populateSequenceKeys(sequences);
 
     // Handle content
-    populateSpanContent(zettel, repo);
+    populateSpanContent(zettel, cache);
 
     return finalObject(model, {});
   }
@@ -130,18 +130,18 @@ function RecursiveDocumentModelBuilder(edlPointer, repo, parent, indexInParent) 
   });
 }
 
-function createLinkPairs(edl, repo, parent, isDefault) {
+function createLinkPairs(edl, cache, parent, isDefault) {
   let linkPairs = [];
 
   if (parent) {
     linkPairs = Object.entries(parent.links)
-      .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, repo)]);
+      .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
   }
 
-  let childParts = edl.links.map((x, index) => [repo.getPartLocally(x), index]);
+  let childParts = edl.links.map((x, index) => [cache.getPartLocally(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
-  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, repo, isDefault)]);
+  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, cache, isDefault)]);
 
   linkPairs = linkPairs.concat(childPairs);
 
@@ -187,11 +187,11 @@ function applyMetarules(model, links) {
   });
 }
 
-function populateSpanContent(zettel, repo) {
+function populateSpanContent(zettel, cache) {
   zettel.forEach(z => {
-    if (z.isEdl) { populateSpanContent(z.zettel, repo); }
+    if (z.isEdl) { populateSpanContent(z.zettel, cache); }
     else {
-      let contentPart = repo.getPartLocally(z.pointer);
+      let contentPart = cache.getPartLocally(z.pointer);
       if (contentPart) { z.setOriginContentPart(contentPart); }
      }
   });
