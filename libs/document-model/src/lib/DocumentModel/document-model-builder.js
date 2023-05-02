@@ -2,7 +2,6 @@ import { finalObject, mergeMaps } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider } from "./zettel-schneider";
 import { testing, defaultsPointer } from '@commonplace/core';
-import { SequencePrototype } from "./sequence-prototype";
 import { EdlModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { MarkupCalculation } from "../Attributes/markup-calculation";
@@ -172,18 +171,6 @@ function gatherRules(model, links) {
     if (link.metaEndowmentRule) {
       model.metaEndowmentRules.push(link.metaEndowmentRule);
     }
-  });
-}
-
-function applyMetarules(model, links) {
-  links.forEach(link => {
-    let matching = model.metaSequenceRules.filter(r => r.match(link));
-    matching.forEach(rule => {
-      let end = link.getEnd(rule.end);
-      if (end) {
-        end.sequencePrototypes.push(SequencePrototype(rule.type, end, link, rule.originLink.pointer));
-      }
-    });
   });
 }
 
