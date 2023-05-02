@@ -431,6 +431,14 @@ describe('build', () => {
       expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toEqual("expected");
     });
 
+    it('sets the type property on the prototype to be the type of the defining link if no type is specified in the metalink', () => {
+      let links = sequenceMetalink({end: [InlinePointer("foo")]});
+
+      let actualLink = getLink(make([], links).links, "target");
+
+      expect(actualLink.getEnd("foo").sequencePrototypes[0].type).toEqual(links[1][1]);
+    });
+
     it('sets the definingLink property on the prototype to be the link it comes from', () => {
       let links = sequenceMetalink({end: [InlinePointer("foo")], type: [InlinePointer("expected")]});
 
