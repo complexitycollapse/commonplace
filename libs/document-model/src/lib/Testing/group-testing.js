@@ -41,7 +41,7 @@ export function makeSequenceLink(spans, name = "target", sequenceType, groupingE
 
 export function buildMockedEdlModel(content, ...links) {
   links = links.flat()
-  let docBuilder = EdlBuilder("document").withClips(...content).withLinks(...links);
+  let docBuilder = EdlBuilder("doc").withClips(...content).withLinks(...links);
   let allBuilders = [docBuilder].concat(content, links);
   let parts = allBuilders.map(b => {
     b.build();

@@ -29,12 +29,12 @@ export function MarkupCalculation(edl, rules, objects, parentMap) {
       // Add rules that target the type of this object.
 
       if (object.isLink) {
-        let rulesForType = linkTypeMap.get(object.type);
+        let rulesForType = linkTypeMap.get(object.type?.hashableName);
         rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
       }
 
       if (object.isEdl) {
-        let rulesForType = edlTypeMap.get(object.type);
+        let rulesForType = edlTypeMap.get(object.type?.hashableName);
         rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
       }
 
@@ -123,8 +123,8 @@ function buildTypeMaps(rules) {
   let clipTypeMap = listMap();
 
   rules.forEach(rule => {
-    rule.linkTypes.forEach(type => linkTypeMap.push(type, rule));
-    rule.edlTypes.forEach(type => edlTypeMap.push(type, rule));
+    rule.linkTypes.forEach(type => linkTypeMap.push(type.hashableName, rule));
+    rule.edlTypes.forEach(type => edlTypeMap.push(type.hashableName, rule));
     rule.clipTypes.forEach(type => clipTypeMap.push(type, rule));
   });
 

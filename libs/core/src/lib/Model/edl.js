@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/utils";
-import { leafDataToImage, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer } from '../pointers';
+import { leafDataToImage, leafDataToSpan, leafDataToLinkPointer, leafDataToEdlPointer, leafDataToPointer } from '../pointers';
 
 export function Edl(type, clips, links) {
   let obj = {};
@@ -15,7 +15,7 @@ export function Edl(type, clips, links) {
 
   function leafData() {
     return {
-      typ: type,
+      typ: type?.leafData(),
       cps: clips.map(c => c.leafData()),
       lks: links.map(l => l.leafData())
     };
@@ -29,7 +29,7 @@ export function Edl(type, clips, links) {
 
 export function leafDataToEdl(leafData) {
   return Edl(
-    leafData.typ,
+    leafDataToPointer(leafData.typ),
     leafData.cps.map(leafDataToClip),
     leafData.lks.map(leafDataToLinkPointer));
 }

@@ -28,7 +28,7 @@ function sequenceMetalink({ name, end, type, clipsInSequence = [] } = {}) {
 }
 
 function make(clips = [], links = [], edlPointer, additionalParts = []) {
-  edlPointer = edlPointer ?? EdlPointer("document");
+  edlPointer = edlPointer ?? EdlPointer("doc");
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : []).flat())
     .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))])
@@ -41,12 +41,12 @@ function make(clips = [], links = [], edlPointer, additionalParts = []) {
 describe('build', () => {
   describe('type', () => {
     it('should equal the type of the EDL', () => {
-      let edl = Edl("expected type", [], []);
+      let edl = Edl(InlinePointer("expected type"), [], []);
       let edlPointer = EdlPointer("testedl");
       expect(DocumentModelBuilder(
         edlPointer,
         testing.createTestCache([Part(edlPointer, edl)])).build().type)
-      .toBe("expected type");
+      .toEqual(InlinePointer("expected type"));
     });
   });
 
@@ -218,13 +218,13 @@ describe('build', () => {
     it('creates a nested structure for a nested EDL', () => {
       let clip1 = Span("x", 1, 10);
       let link1 = Link(undefined, [undefined, [Span("x", 1, 20)]]);
-      let edl1 = Edl("nested EDL", [clip1], [LinkPointer("link1")]);
+      let edl1 = Edl(InlinePointer("nested EDL"), [clip1], [LinkPointer("link1")]);
 
       let zettel = make([[EdlPointer("edl1"), edl1]], [["link1", link1]]).zettel;
 
       expect(zettel).toHaveLength(1);
       let child = zettel[0];
-      expect(child.type).toBe("nested EDL");
+      expect(child.type).toEqual(InlinePointer("nested EDL"));
       expect(child.zettel).toHaveLength(1);
       expect(child.zettel[0].pointer).toEqual(clip1);
       expect(Object.entries(child.links)).toHaveLength(1);
@@ -325,8 +325,8 @@ describe('build', () => {
       let rule = make([], [link]).markupRules[0];
 
       expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
-      expect(rule.linkTypes).toEqual(["lt1", "lt2"]);
-      expect(rule.edlTypes).toEqual(["et1", "et2"]);
+      expect(rule.linkTypes).toEqual([InlinePointer("lt1"), InlinePointer("lt2")]);
+      expect(rule.edlTypes).toEqual([InlinePointer("et1"), InlinePointer("et2")]);
     });
 
     it('sets the attributeDescriptors on the rule from the link', () => {
@@ -386,8 +386,8 @@ describe('build', () => {
       let rule = make([], [link]).metaEndowmentRules[0];
 
       expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
-      expect(rule.linkTypes).toEqual(["lt1", "lt2"]);
-      expect(rule.edlTypes).toEqual(["et1", "et2"]);
+      expect(rule.linkTypes).toEqual([InlinePointer("lt1"), InlinePointer("lt2")]);
+      expect(rule.edlTypes).toEqual([InlinePointer("et1"), InlinePointer("et2")]);
     });
 
     it('sets the attributeDescriptors on the rule from the link', () => {
@@ -473,7 +473,7 @@ describe('build', () => {
     });
 
     it('returns all defaults links found in the cache', () => {
-      let edl = Edl("expected type", [], []);
+      let edl = Edl(InlinePointer("expected type"), [], []);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1"), LinkPointer("default2")]);
       let defaultLink1 = Link(InlinePointer("d1")), defaultLink2 = Link(InlinePointer("d2"));
@@ -491,7 +491,7 @@ describe('build', () => {
     });
 
     it('returns defaults with isDefault set to true', () => {
-      let edl = Edl("expected type", [], []);
+      let edl = Edl(InlinePointer("expected type"), [], []);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1")]);
       let parts = [
@@ -506,7 +506,7 @@ describe('build', () => {
     });
 
     it('will be interlinked to Edl links', () => {
-      let edl = Edl("expected type", [], [LinkPointer("link1")]);
+      let edl = Edl(InlinePointer("expected type"), [], [LinkPointer("link1")]);
       let targetLink = Link(InlinePointer("target type")), defaultLink = Link(InlinePointer("d1"), [undefined, [LinkPointer("link1")]]);
       let edlPointer = EdlPointer("testedl");
       let defaultsEdl = Edl(defaultsType, [], [LinkPointer("default1")]);
@@ -568,7 +568,7 @@ describe('build', () => {
 
     it('is set to a subkey on children of a child EDL', () => {
       let clip1 = Span("x", 1, 10);
-      let edl1 = Edl("nested EDL", [clip1], []);
+      let edl1 = Edl(InlinePointer("nested EDL"), [clip1], []);
 
       let zettel = make([[EdlPointer("edl1"), edl1]]).zettel;
 

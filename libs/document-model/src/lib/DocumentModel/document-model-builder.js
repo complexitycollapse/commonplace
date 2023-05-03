@@ -2,9 +2,10 @@ import { finalObject, mergeMaps } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider } from "./zettel-schneider";
 import { testing, defaultsPointer } from '@commonplace/core';
-import { EdlModel } from "./edl-model";
+import { EdlModel, MissingEdlReplacementModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { MarkupCalculation } from "../Attributes/markup-calculation";
+import resolveType from "./resolve-type";
 
 export function DocumentModelBuilder(edlPointer, cache) {
   let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, cache, undefined, undefined);
@@ -65,6 +66,24 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     sequences.forEach((sequence, i) => sequence.key = sequence.definingLink.key + "-" + i);
   }
 
+  function createModel(incommingPointers, defaults) {
+    let [resolvedType, metalinkPairs] = resolveType(edl.type, cache);
+    let metalinks = metalinkPairs.map(x => x[1]);
+
+    let model = EdlModel(
+      edlPointer,
+      edl.type,
+      resolvedType,
+      metalinks,
+      zettel,
+      linksObject,
+      parent,
+      incommingPointers,
+      defaults,
+      key);
+    return model;
+  }
+
   function buildHierarchy() {
     // Calculate the model's key (i.e. the unique identifier that will be used to refer to the model)
     key = parent ? parent.key + ":" + indexInParent.toString() : "1";
@@ -72,7 +91,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     // Fetch the EDL from the cache
     let edlPart = cache.getPart(edlPointer);
     if (edlPart === undefined) {
-      return EdlModel(edlPointer, "missing EDL", [], [], undefined, [], {}, key);
+      return MissingEdlReplacementModel(edlPointer, key);
     }
     edl = edlPart.content;
 
@@ -84,7 +103,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     let pointersToEdl = getPointersToEdl();
 
     // Create the EDL model
-    model = EdlModel(edlPointer, edl.type, zettel, linksObject, parent, pointersToEdl, defaults, key);
+    model = createModel(pointersToEdl, defaults);
 
     // Process all the links and their consequences
     connectLinks(allLinks);

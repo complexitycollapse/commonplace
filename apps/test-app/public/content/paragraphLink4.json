@@ -1,4 +1,4 @@
 {
-  "typ": "paragraph",
+  "typ": { "typ": "link", "name": "paragraph" },
   "es": [{ "ptr": [{ "typ": "edl", "name": "paragraphEdl4.json" }] }]
 }

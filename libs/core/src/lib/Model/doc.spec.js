@@ -1,6 +1,7 @@
 import { expect, test } from '@jest/globals';
 import { hasClips, spanTesting } from "../pointers";
 import { Doc } from './doc';
+import { documentType } from '../well-known-objects';
 
 expect.extend({
   hasClips,
@@ -9,12 +10,12 @@ expect.extend({
 
 let makeSpans = spanTesting.makeSpans;
 
-test('type is set to "doc"', () => {
+test('type is set to the document type', () => {
   let spans = makeSpans(3);
 
   let d = Doc(spans);
 
-  expect(d.type).toBe("doc");
+  expect(d.type).toEqual(documentType);
 });
 
 test('clips is set on the doc', () => {
@@ -33,10 +34,10 @@ test('links is set on the doc', () => {
   expect(d.links).toEqual(links);
 });
 
-test('can pass no arguments and get an EDL of type "doc"', () => {
+test('can pass no arguments and get an EDL of document type', () => {
   let d = Doc();
 
-  expect(d.type).toBe("doc");
+  expect(d.type).toEqual(documentType);
 });
 
 test('can pass no arguments and get an empty spanSet', () => {

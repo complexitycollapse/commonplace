@@ -26,7 +26,7 @@ function expectMemberMatches(box, memberIndex, clipBuilder) {
 }
 
 function makeModel(clips) {
-  let builder = DocModelBuilderBuilder(EdlBuilder("document").withClips(...clips));
+  let builder = DocModelBuilderBuilder(EdlBuilder("doc").withClips(...clips));
   return builder;
 }
 

@@ -1,5 +1,5 @@
 {
-  "typ": "title",
+  "typ": { "typ": "link", "name": "title" },
   "cps": [
     {"typ": "span", "ori": "origin", "st": 0, "ln": 18}
   ],

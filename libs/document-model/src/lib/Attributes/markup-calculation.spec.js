@@ -24,7 +24,7 @@ function anEdlWithSpan(args) {
 function aLink(targetBuilder, ...attributePairs) {
   let type = attributePairs.length >= 2 ? `${attributePairs[0]}:${attributePairs[1]}` : "unspecified type";
   let target = PointerBuilder(targetBuilder);
-  let builder = LinkBuilder().withName(type).withType(type);
+  let builder = LinkBuilder().withName(type).withType(InlinePointer(type));
   if (target) {
     builder.withEnd(anEnd().withPointer(target));
   }
@@ -103,7 +103,7 @@ describe('markup', () => {
   });
 
   it('does not return the default direct value from the containing EDL', () => {
-    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType(InlinePointer("edl type")));
     dmb.withDefault(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "direct"));
     let markup = makeFromDmb(dmb);
 
@@ -111,7 +111,7 @@ describe('markup', () => {
   });
 
   it('returns the default content value if there are no links', () => {
-    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType(InlinePointer("edl type")));
     dmb.withDefault(aMarkupLinkOnSpans("1", "attr1", "val1", "content"));
     let markup = makeFromDmb(dmb);
 
@@ -119,7 +119,7 @@ describe('markup', () => {
   });
 
   it('returns the default content value from the containing EDL if there are no links', () => {
-    let dmb = aDmbWithSpan().onEdl(edl => edl.withType("edl type"));
+    let dmb = aDmbWithSpan().onEdl(edl => edl.withType(InlinePointer("edl type")));
     dmb.withDefault(aMarkupLinkOnEdls("1", "edl type", "attr1", "val1", "content"));
     let markup = makeFromDmb(dmb);
 
@@ -236,7 +236,7 @@ describe('markup', () => {
     });
 
     it('returns the value endowed by an Edl type link if the target matches the Edl type', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
         .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "direct");
 
@@ -246,7 +246,7 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by an Edl type link if the target does not match the Edl type', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
         .withMarkupLinkOnEdls("wrong edl type", "attr1", "edl type value", "direct");
 
@@ -256,7 +256,7 @@ describe('markup', () => {
     });
 
     it('returns the value endowed by a link type link if the target matches the link type', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "direct");
@@ -352,7 +352,7 @@ describe('markup', () => {
     });
 
     it('prefers a targeted value to an Edl type value', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({ name: "parent" }).withClip(child))
         .withMarkupLinkPointingTo(child, "attr1", "targeted value", "direct")
         .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "direct");
@@ -495,7 +495,7 @@ describe('markup', () => {
     });
 
     it('returns the value endowed by an Edl type link if the target matches the Edl type', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
         .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "content");
 
@@ -505,7 +505,7 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by an Edl type link if the target does not match the Edl type', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({name: "parent"}).withClip(child))
         .withMarkupLinkOnEdls("wrong edl type", "attr1", "edl type value", "content");
 
@@ -515,7 +515,7 @@ describe('markup', () => {
     });
 
     it('returns the value endowed by a link type link if the target matches the link type', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "content");
@@ -547,7 +547,7 @@ describe('markup', () => {
     });
 
     it('prefers a targeted value to an Edl type value', () => {
-      let child = anEdl({ name: "child" }).withType("edl type");
+      let child = anEdl({ name: "child" }).withType(InlinePointer("edl type"));
       let dmb = aDmb(anEdl({ name: "parent" }).withClip(child))
         .withMarkupLinkPointingTo(child, "attr1", "targeted value", "content")
         .withMarkupLinkOnEdls("edl type", "attr1", "edl type value", "content");

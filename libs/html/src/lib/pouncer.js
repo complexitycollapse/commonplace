@@ -77,7 +77,7 @@ function PouncerInternal(repo, docPointer, cache) {
       };
     }
 
-    let [missingDefaultsLinkNames] = getMissingLinks(defaultsDocPart.content);
+    let [missingDefaultsLinkNames] = getMissingLinks(defaultsDocPart.content.links);
 
     if (missingDefaultsLinkNames.length > 0) {
       return {
@@ -116,8 +116,14 @@ function PouncerInternal(repo, docPointer, cache) {
   }
 
   function missingContentForEdl(edl) {
+    // Type
+    let requiredLinks = edl.links;
+    if (edl.type?.pointerType === "link") {
+      requiredLinks = requiredLinks.concat([edl.type]);
+    }
+
     // Links & link content
-    let [missingLinkNames, foundLinks] = getMissingLinks(edl);
+    let [missingLinkNames, foundLinks] = getMissingLinks(requiredLinks);
     let missingLinkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
       .filter(p => p.specifiesContent && !getFromCache(p));
 
@@ -145,7 +151,7 @@ function PouncerInternal(repo, docPointer, cache) {
     };
   }
 
-  function getMissingLinks(doc) {
+  function getMissingLinks(links) {
     let found = [], missing = [];
 
     // If the type of a link is also a link, it needs to be downloaded too.
@@ -175,7 +181,7 @@ function PouncerInternal(repo, docPointer, cache) {
       recurThroughLinkTypes(typesToResolve, true);
     }
 
-    recurThroughLinkTypes(doc.links, false);
+    recurThroughLinkTypes(links, false);
     return [missing, found];
   }
 

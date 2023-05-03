@@ -1,5 +1,5 @@
 {
-  "typ": "doc",
+  "typ": { "typ": "link", "name": "document" },
   "cps": [
     {"typ": "edl", "name": "titleEdl1.json"},
     {"typ": "edl", "name": "paragraphEdl1.json"},

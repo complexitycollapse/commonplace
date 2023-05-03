@@ -1,0 +1,6 @@
+{
+  "typ": {"typ": "inline", "txt": "type"},
+  "es": [
+    { "name": "name", "ptr": [{"typ": "inline", "txt": "title"}] }
+  ]
+}

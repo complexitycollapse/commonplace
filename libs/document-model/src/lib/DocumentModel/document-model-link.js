@@ -3,6 +3,7 @@ import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype";
+import resolveType from "./resolve-type";
 
 export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
@@ -48,16 +49,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     }
   }
 
-  function resolveType() {
-    if (link.type === undefined) {
-      return undefined;
-    } else if (link.type.pointerType === "link") {
-      return cache.getPart(link.type).content;
-    } else {
-      return link.type.inlineText;
-    }
-  }
-
   function buildRule(attributeEnds, hasEnd) {
     function resolveAttribute(attribute) {
       return Object.fromEntries(
@@ -65,8 +56,8 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     }
 
     let targets = getPointers("targets");
-    let linkTypes = getContent(getPointers("link types"));
-    let edlTypes = getContent(getPointers("edl types"));
+    let linkTypes = getPointers("link types");
+    let edlTypes = getPointers("edl types");
     let clipTypes = getContent(getPointers("clip types"));
     let unresolvedAttributes = RecordLinkParser(link, attributeEnds);
     let extraEnds = [];
@@ -90,27 +81,24 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   newLink.metalinks = [];
-  newLink.resolvedType = resolveType()
+
+  let [resolvedType, metalinkPairs] = resolveType(link.type, cache);
+  newLink.resolvedType = resolvedType;
 
   if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
   if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], true); }
 
-  if (newLink.resolvedType?.isLink) {
-    newLink.resolvedType.forEachPointer(metalinkPointer => {
-      if (metalinkPointer.pointerType === "link") {
-        let metalink = cache.getPart(metalinkPointer).content;
-        newLink.metalinks.push(metalink);
-        if (definesSequenceType.denotesSame(metalink.type)) {
-          let endEnd = metalink.getEnd("end");
-          let end = concatenateContent(endEnd?.pointers);
-          let type = calculateSequenceType(metalink, newLink.resolvedType);
-          newLink.getEnds(end.length === 0 ? undefined : end)
-            .forEach(newLinkEnd => newLinkEnd.sequencePrototypes.push(
-              SequencePrototype(type, newLinkEnd, newLink, metalinkPointer)));
-        }
-      }
-    });
-  }
+  metalinkPairs.forEach(([metalinkPointer, metalink]) => {
+    newLink.metalinks.push(metalink);
+    if (definesSequenceType.denotesSame(metalink.type)) {
+      let endEnd = metalink.getEnd("end");
+      let end = concatenateContent(endEnd?.pointers);
+      let type = calculateSequenceType(metalink, newLink.resolvedType);
+      newLink.getEnds(end.length === 0 ? undefined : end)
+        .forEach(newLinkEnd => newLinkEnd.sequencePrototypes.push(
+          SequencePrototype(type, newLinkEnd, newLink, metalinkPointer)));
+    }
+  });
 
   return newLink;
 }

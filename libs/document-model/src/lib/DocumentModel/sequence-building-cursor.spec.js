@@ -2,7 +2,7 @@ import { it, describe, expect, test } from '@jest/globals';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
 import { anEdl, aSpan, aTargetLink, } from '../Testing/group-testing';
 import { SequencePrototype } from './sequence-prototype';
-import { LinkPointer } from '@commonplace/core';
+import { LinkPointer, InlinePointer } from '@commonplace/core';
 import { Zettel } from './zettel';
 import { IncomingPointer } from './incoming-pointer';
 import { DocumentModelLink } from './document-model-link';
@@ -37,7 +37,9 @@ function make(sequenceElements) {
   scenario.consumeEdl = edlBuilder => {
     let edl = edlBuilder.build();
     let incomingPointer = IncomingPointer(edlBuilder.pointer, sequenceEnd, sequenceLink);
-    return scenario.cursor.consumeZettel(EdlModel(edlBuilder.pointer, edl.type, [], [], undefined, [incomingPointer]));
+    // TODO: using inlineText below is a hack. Need to support links as types properly.
+    return scenario.cursor.consumeZettel(
+      EdlModel(edlBuilder.pointer, edl.type, edl.type?.inlineText, [], [], [], undefined, [incomingPointer]));
   }
   scenario.consumeSequence = sequence => {
     return scenario.cursor.consumeSequence(sequence.build());
@@ -70,7 +72,7 @@ describe('consumeZettel', () => {
   });
 
   it('returns true if clip matches the first pointer in the endset (EDL case)', () => {
-    let edl1 = anEdl("edl1"), span2 = aSpan(2);
+    let edl1 = anEdl(InlinePointer("edl1")), span2 = aSpan(2);
 
     expect(make([edl1, span2]).consumeEdl(edl1)).toBe(true);
   });
@@ -82,7 +84,7 @@ describe('consumeZettel', () => {
   });
 
   it('returns false if clip does not match the first pointer in the endset (EDL case)', () => {
-    let edl1 = anEdl("edl1"), edl2 = anEdl("end2"), span2 = aSpan(2);
+    let edl1 = anEdl(InlinePointer("edl1")), edl2 = anEdl(InlinePointer("end2")), span2 = aSpan(2);
 
     expect(make([edl1, span2, edl2]).consumeEdl(edl2)).toBe(false);
   });

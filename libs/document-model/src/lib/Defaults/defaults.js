@@ -1,6 +1,6 @@
 import {
   Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer,
-  endowsAttributesType, markupType, definesSequenceType
+  endowsAttributesType, markupType, definesSequenceType, paragraphType
 } from "@commonplace/core";
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
@@ -22,6 +22,10 @@ function makeEnds(inheritance, types, attribute, value, hasValueEnd, valueEnd) {
   }
 
   return ends;
+}
+
+function wrapInline(pointer) {
+  return typeof pointer === "string" ? InlinePointer(pointer) : pointer;
 }
 
 function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
@@ -46,15 +50,15 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType }
   });
 
   if (clipType) { ends.push(["clip types", [InlinePointer(clipType)]]); }
-  if (edlType) { ends.push(["edl types", [InlinePointer(edlType)]]); }
-  if (linkType) { ends.push(["link types", [InlinePointer(linkType)]]); }
+  if (edlType) { ends.push(["edl types", [wrapInline(edlType)]]); }
+  if (linkType) { ends.push(["link types", [wrapInline(linkType)]]); }
 
   return Part(LinkPointer(name), Link(markupType, ...ends));
 }
 
 function sequence(name, type, end) {
   return Part(LinkPointer(name),
-    Link(definesSequenceType, ["type", [InlinePointer(type)]], ["end", [InlinePointer(end ?? "")]]));
+    Link(definesSequenceType, ["type", [wrapInline(type)]], ["end", [InlinePointer(end ?? "")]]));
 }
 
 export let defaultsLinksParts = [
@@ -82,8 +86,8 @@ export let defaultsLinksParts = [
   markupRule("defaults:paragraphs", [
     ["layout mode", "block", "direct"],
     ["box", "true", "direct"]
-  ], { edlType: "paragraph", linkType: "paragraph" }),
-  sequence("defaults:paragraph sequence", "paragraph", undefined)
+  ], { edlType: paragraphType, linkType: paragraphType }),
+  sequence("defaults:paragraph sequence", paragraphType, undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
 ];
