@@ -6,8 +6,8 @@ export function StaticPartFetcher(origin, fetch) {
   async function getPart(pointer) {
     let url = origin + pointer.origin;
     let response = await fetch(url);
-    if (response.ok) { 
-      let part = await pointer.partBuilder(response);
+    if (response.ok) {
+      let part = await pointer.partBuilder(response, pointer.origin);
       return [true, part];
     }
     else {

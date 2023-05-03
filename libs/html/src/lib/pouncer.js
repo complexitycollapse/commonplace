@@ -29,7 +29,8 @@ function PouncerInternal(repo, docPointer, cache) {
 
     let status = docStatus();
     if (status.allAvailable) {
-      let docModel = DocumentModelBuilder(docPointer, LocalCache(cache)).build();
+      let localCache = LocalCache(cache);
+      let docModel = DocumentModelBuilder(docPointer, localCache).build();
 
       if (obj.docModelJsonCallback) {
         let json = DocumentModelSerializer(docModel).serialize();

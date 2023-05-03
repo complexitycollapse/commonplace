@@ -1,6 +1,7 @@
 import { Part } from "../part";
 import { Pointer } from "./pointer";
 import { leafDataToLink } from "../model";
+import jsonParse from "../json-parse";
 
 export function LinkPointer(linkName) {
   function engulfs(obj, other) {
@@ -12,7 +13,7 @@ export function LinkPointer(linkName) {
     false,
     false,
     x => x.linkName,
-    async response => Part(LinkPointer(linkName), leafDataToLink(await response.json())),
+    async (response, origin) => Part(LinkPointer(linkName), leafDataToLink(await jsonParse(response, origin))),
     () => `link:${linkName}`,
     { linkName },
     {

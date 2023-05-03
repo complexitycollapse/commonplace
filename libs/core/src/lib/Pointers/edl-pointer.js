@@ -1,3 +1,4 @@
+import jsonParse from "../json-parse";
 import { leafDataToEdl } from "../model";
 import { Part } from "../part";
 import { Pointer } from "./pointer";
@@ -12,7 +13,7 @@ export function EdlPointer(edlName) {
     false,
     false,
     x => x.edlName,
-    async response => Part(obj, leafDataToEdl(await response.json())),
+    async response => Part(obj, leafDataToEdl(await jsonParse(response, origin))),
     () => `edl:${edlName}`,
     { edlName },
     {
