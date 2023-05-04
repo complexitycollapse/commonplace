@@ -17,10 +17,15 @@ export function LocalCache(cache) {
 
 export function createTestCache(parts, includeWellKnownObjects) {
   let cache = LeafCache();
-  if (includeWellKnownObjects) { wellKnownParts.forEach(part => cache.addPart(part)); }
-  parts.forEach(part => cache.addPart(part));
   let testCache = Object.create(LocalCache(cache));
-  testCache.addPart = part => cache.addPart(part);
+  testCache.parts = [];
+  testCache.addPart = part => {
+    cache.addPart(part);
+    testCache.parts.push(part);
+  }
+  if (includeWellKnownObjects) { wellKnownParts.forEach(part => testCache.addPart(part)); }
+  parts.forEach(part => testCache.addPart(part));
   testCache.addParts = parts => parts.forEach(part => testCache.addPart(part));
+  testCache.internalCache = cache;
   return testCache;
 }
