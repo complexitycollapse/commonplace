@@ -3,8 +3,16 @@ import { Link } from "./model";
 import { Part } from "./part";
 import { EdlPointer, InlinePointer, LinkPointer } from "./pointers";
 
-export const defaultsType = "defaults";
-export const defaultsPointer = EdlPointer("defaults");
+export const wellKnownParts = [];
+
+function makePart(pointer) {
+  let part = Part(pointer, Link(metatype, ["name", [InlinePointer(pointer.linkName)]]));
+  wellKnownParts.push(part);
+  return part;
+}
+
+export const defaultsType = LinkPointer("defaults");
+export const defaultsPointer = EdlPointer("defaults Edl");
 export const markupType = LinkPointer("markup");
 export const definesSequenceType = LinkPointer("defines sequence");
 export const endowsAttributesType = LinkPointer("endows attributes");
@@ -13,13 +21,12 @@ export const documentType = LinkPointer("document");
 export const missingEdlType = InlinePointer("missing Edl");
 export const paragraphType = LinkPointer("paragraph");
 
-export const markupPart = Part(LinkPointer("markup"), Link(metatype, ["name", [InlinePointer("markup")]]));
-export const definesSequencePart = Part(LinkPointer("defines sequence"), Link(metatype, ["name", [InlinePointer("defines sequence")]]));
-export const endowsAttributePart = Part(LinkPointer("endows attributes"), Link(metatype, ["name", [InlinePointer("endows attributes")]]));
-export const documentPart = Part(LinkPointer("document"), Link(metatype, ["name", [InlinePointer("document")]]));
-export const paragraphPart = Part(LinkPointer("paragraph"), Link(metatype, ["name", [InlinePointer("paragraph")]]));
-
-export const wellKnownParts = [markupPart, definesSequencePart, endowsAttributePart, documentPart, paragraphPart];
+export const defaultsPart = makePart(defaultsType);
+export const markupPart = makePart(markupType);
+export const definesSequencePart = makePart(definesSequenceType);
+export const endowsAttributePart = makePart(endowsAttributesType);
+export const documentPart = makePart(documentType);
+export const paragraphPart = makePart(paragraphType);
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {
