@@ -74,7 +74,7 @@ export function serializeLink(model) {
 
   return {
     key: model.key,
-    name: model.pointer.linkName,
+    name: linkName(model),
     type: model.type,
     ends,
     incomingPointers,
@@ -109,6 +109,17 @@ function serializeIncomingPointer(model) {
   };
 }
 
-const linkName = model => model.pointer.linkName;
+const linkName = model => {
+  let name = model.pointer.linkName;
+  if (model.resolvedType) {
+    if (typeof model.resolvedType === "string") {
+      name = name + " (" + model.resolvedType + ")";
+    }
+    if (model.resolvedType.isLink) {
+      name = name + " (" + model.resolvedType.getEnd("name").pointers[0].inlineText + ")";
+    }
+  }
+  return name;
+}
 
 const markup = m => Object.fromEntries(m.entries());
