@@ -15,14 +15,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   let newLink = Object.create(link, {ends: {value: link.ends.map(docModelEnd), enumerable: true}});
 
   addMethods(newLink, {
-    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
-    forEachPointer: fn => {
-      newLink.ends.forEach(e => {
-        e.pointers.forEach(p => {
-          fn(p, e, newLink);
-        });
-      });
-    }
+    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat()
   })
 
   function getPointers(name) {

@@ -36,9 +36,9 @@ function makeLinkInternal(type, ends) {
   }
 
   function forEachPointer(fn) {
-    ends.forEach(e => {
+    this.ends.forEach(e => {
       e.pointers.forEach(p => {
-        fn(p, e, obj);
+        fn(p, e, this);
       });
     });
   }
