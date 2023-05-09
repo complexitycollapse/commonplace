@@ -20,6 +20,7 @@ export const metatype = InlinePointer("type");
 export const documentType = LinkPointer("document");
 export const missingEdlType = InlinePointer("missing Edl");
 export const paragraphType = LinkPointer("paragraph");
+export const definesSemanticClassType = LinkPointer("defines semantic class");
 
 export const defaultsPart = makePart(defaultsType);
 export const markupPart = makePart(markupType);
@@ -27,6 +28,7 @@ export const definesSequencePart = makePart(definesSequenceType);
 export const endowsAttributePart = makePart(endowsAttributesType);
 export const documentPart = makePart(documentType);
 export const paragraphPart = makePart(paragraphType);
+export const definesSemanticClassPart = makePart(definesSemanticClassType);
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {

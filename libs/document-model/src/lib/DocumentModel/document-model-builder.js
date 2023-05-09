@@ -5,7 +5,7 @@ import { testing, defaultsPointer } from '@commonplace/core';
 import { EdlModel, MissingEdlReplacementModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { MarkupCalculation } from "../Attributes/markup-calculation";
-import resolveType from "./resolve-type";
+import resolveTypeAndMetalinks from "./resolve-type";
 
 export function DocumentModelBuilder(edlPointer, cache) {
   let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, cache, undefined, undefined);
@@ -67,7 +67,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
   }
 
   function createModel(incommingPointers, defaults) {
-    let [resolvedType, metalinkPairs] = resolveType(edl.type, cache);
+    let [resolvedType, metalinkPairs] = resolveTypeAndMetalinks(edl.type, cache);
     let metalinks = metalinkPairs.map(x => x[1]);
 
     let model = EdlModel(

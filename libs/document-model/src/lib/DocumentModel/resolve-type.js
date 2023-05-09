@@ -1,4 +1,4 @@
-export default function resolveType(typePointer, cache) {
+export default function resolveTypeAndMetalinks(typePointer, cache) {
   function getType() {
     if (typePointer === undefined) {
       return undefined;

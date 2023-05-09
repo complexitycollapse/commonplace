@@ -1,14 +1,17 @@
-import { definesSequenceType, endowsAttributesType, markupType } from "@commonplace/core";
+import {
+  definesSemanticClassType, definesSequenceType, endowsAttributesType, markupType
+} from "@commonplace/core";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype";
-import resolveType from "./resolve-type";
+import resolveTypeAndMetalinks from "./resolve-type";
 
 export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
+    dme.semanticClasses = [];
     return dme;
   }
 
@@ -64,6 +67,28 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     return rule;
   }
 
+  function processMetalinks() {
+    metalinkPairs.forEach(([metalinkPointer, metalink]) => {
+      newLink.metalinks.push(metalink);
+
+      if (definesSequenceType.denotesSame(metalink.type)) {
+        let endEnd = metalink.getEnd("end");
+        let end = concatenateContent(endEnd?.pointers);
+        let type = calculateSequenceType(metalink, newLink.resolvedType);
+        newLink.getEnds(end.length === 0 ? undefined : end)
+          .forEach(newLinkEnd => newLinkEnd.sequencePrototypes.push(
+            SequencePrototype(type, newLinkEnd, newLink, metalinkPointer)));
+      }
+
+      if (definesSemanticClassType.denotesSame(metalink.type)) {
+        let endEnd = metalink.getEnd("end");
+        let end = concatenateContent(endEnd?.pointers);
+        newLink.getEnds(end.length === 0 ? undefined : end)
+          .forEach(newLinkEnd => newLinkEnd.semanticClasses.push(newLink.resolvedType));
+      }
+    });
+  }
+
   newLink.isDefault = isDefault
   newLink.incomingPointers = [];
   newLink.sequences = [];
@@ -75,23 +100,13 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   newLink.contentMarkup = new Map();
   newLink.metalinks = [];
 
-  let [resolvedType, metalinkPairs] = resolveType(link.type, cache);
+  let [resolvedType, metalinkPairs] = resolveTypeAndMetalinks(link.type, cache);
   newLink.resolvedType = resolvedType;
 
   if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
   if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], true); }
 
-  metalinkPairs.forEach(([metalinkPointer, metalink]) => {
-    newLink.metalinks.push(metalink);
-    if (definesSequenceType.denotesSame(metalink.type)) {
-      let endEnd = metalink.getEnd("end");
-      let end = concatenateContent(endEnd?.pointers);
-      let type = calculateSequenceType(metalink, newLink.resolvedType);
-      newLink.getEnds(end.length === 0 ? undefined : end)
-        .forEach(newLinkEnd => newLinkEnd.sequencePrototypes.push(
-          SequencePrototype(type, newLinkEnd, newLink, metalinkPointer)));
-    }
-  });
+  processMetalinks();
 
   return newLink;
 }

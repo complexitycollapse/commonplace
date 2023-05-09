@@ -3,7 +3,7 @@ import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-b
 import {
   Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer,
   testing, defaultsPointer, defaultsType, definesSequenceType, endowsAttributesType,
-  markupType
+  markupType, definesSemanticClassType, metatype
 } from '@commonplace/core';
 
 function getLink(links, name) {
@@ -23,6 +23,26 @@ function sequenceMetalink({ name, end, type, clipsInSequence = [] } = {}) {
 
   let link = ["target", Link(LinkPointer("type link"), ["foo", clipsInSequence])];
   let typeLink = ["type link", Link(InlinePointer("type"), [undefined, [LinkPointer(name)]])]
+
+  return [link, typeLink, metalink];
+}
+
+function classMetalink({ name, ends = [] } = {}) {
+  let metalinkEndSpecs = [], linkEndSpecs = [];
+  name = name ?? "metalink";
+
+  ends.forEach(end => {
+    metalinkEndSpecs.push(["end", [InlinePointer(end)]]);
+    linkEndSpecs.push([end, []]);
+  });
+
+  let metalink = [
+    name,
+    Link(definesSemanticClassType, ...metalinkEndSpecs)
+  ];
+
+  let link = ["target", Link(LinkPointer("type link"), ...linkEndSpecs)];
+  let typeLink = ["type link", Link(metatype, [undefined, [LinkPointer(name)]])]
 
   return [link, typeLink, metalink];
 }
@@ -464,6 +484,24 @@ describe('build', () => {
         metalinkPointer: LinkPointer("meta"),
         linkPointer: LinkPointer("target")
       });
+    });
+  });
+
+  describe('Semantic classes on ends', () => {
+    it('adds the class to the targeted end', () => {
+      let links = classMetalink({ends: ["foo"]});
+
+      let actualLink = getLink(make([], links).links, "target");
+
+      expect(actualLink.getEnd("foo").semanticClasses).toHaveLength(1);
+    });
+
+    it('sets the class on semanticClass to be the type of the link', () => {
+      let links = classMetalink({ends: ["foo"]});
+
+      let actualLink = getLink(make([], links).links, "target");
+
+      expect(actualLink.getEnd("foo").semanticClasses[0]).toEqual(links[1][1]);
     });
   });
 
