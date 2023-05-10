@@ -6,6 +6,7 @@ import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype";
 import resolveTypeAndMetalinks from "./resolve-type";
+import getClasses from "../Attributes/get-classes";
 
 export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
@@ -96,6 +97,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   newLink.pointer = linkPointer;
   newLink.depth = depth;
   newLink.key = undefined; // set later
+  newLink.getClasses = getClasses;
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   newLink.metalinks = [];

@@ -1,5 +1,6 @@
 import { missingEdlType } from "@commonplace/core";
 import { addProperties, finalObject } from "@commonplace/utils";
+import getClasses from "../Attributes/get-classes";
 
 export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, parent, incomingPointers, defaultsLinks, key) {
   let containedSequences = [];
@@ -19,7 +20,8 @@ export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, 
     markup: new Map(),
     contentMarkup: new Map(),
     resolvedType,
-    metalinks
+    metalinks,
+    getClasses
   });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return finalObject(model, {

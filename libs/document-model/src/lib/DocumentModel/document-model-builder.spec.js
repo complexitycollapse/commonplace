@@ -27,13 +27,13 @@ function sequenceMetalink({ name, end, type, clipsInSequence = [] } = {}) {
   return [link, typeLink, metalink];
 }
 
-function classMetalink({ name, ends = [] } = {}) {
+function classMetalink({ name, ends = [], pointers = [] } = {}) {
   let metalinkEndSpecs = [], linkEndSpecs = [];
   name = name ?? "metalink";
 
   ends.forEach(end => {
     metalinkEndSpecs.push(["end", [InlinePointer(end)]]);
-    linkEndSpecs.push([end, []]);
+    linkEndSpecs.push([end, pointers]);
   });
 
   let metalink = [
@@ -487,7 +487,7 @@ describe('build', () => {
     });
   });
 
-  describe('Semantic classes on ends', () => {
+  describe('Semantic class link', () => {
     it('adds the class to the targeted end', () => {
       let links = classMetalink({ends: ["foo"]});
 
@@ -496,12 +496,39 @@ describe('build', () => {
       expect(actualLink.getEnd("foo").semanticClasses).toHaveLength(1);
     });
 
-    it('sets the class on semanticClass to be the type of the link', () => {
+    it('sets the class endowed by the end to the type of the link', () => {
       let links = classMetalink({ends: ["foo"]});
 
       let actualLink = getLink(make([], links).links, "target");
 
       expect(actualLink.getEnd("foo").semanticClasses[0]).toEqual(links[1][1]);
+    });
+
+    it('will endow a class to a zettel', () => {
+      let span = Span("x", 1, 10);
+      let links = classMetalink({ ends: ["foo"], pointers: [span] });
+
+      let zettel = make([[span, true]], links).zettel[0];
+
+      expect(zettel.getClasses()).toEqual([links[1][1]]);
+    });
+
+    it('will endow a class to a link', () => {
+      let link = ["subject", Link()];
+      let links = classMetalink({ ends: ["foo"], pointers: [LinkPointer("subject")] });
+
+      let linkModel = getLink(make([], [...links, link]).links, "subject");
+
+      expect(linkModel.getClasses()).toEqual([links[1][1]]);
+    });
+
+    it('will endow a class to an Edl', () => {
+      let edl1 = Edl([], []);
+      let links = classMetalink({ ends: ["foo"], pointers: [EdlPointer("edl1")] });
+
+      let edlModel = make([[EdlPointer("edl1"), edl1, []]], links).zettel[0];
+
+      expect(edlModel.getClasses()).toEqual([links[1][1]]);
     });
   });
 
