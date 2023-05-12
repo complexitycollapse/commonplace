@@ -3,12 +3,20 @@ import { Rule } from './rule';
 import { docModelBuilderTesting } from './document-model-builder';
 import { LinkPointer, Link, Span, Edl, InlinePointer } from '@commonplace/core';
 import { DocumentModelLink } from './document-model-link';
+import SemanticClass from './semantic-class';
 
 const makeLink = DocumentModelLink;
 const addIncoming = docModelBuilderTesting.addIncomingPointers;
 
-function make({originLink, immediateTargets = [], linkTypes = [], clipTypes = [], edlTypes = [], attributeDescriptors = []} = {}) {
-  return Rule(originLink ?? link("origin"), immediateTargets, linkTypes, clipTypes, edlTypes, attributeDescriptors);
+function make({
+  originLink,
+  immediateTargets = [],
+  classes = [],
+  linkTypes = [],
+  clipTypes = [],
+  edlTypes = [],
+  attributeDescriptors = [] } = {}) {
+  return Rule(originLink ?? link("origin"), immediateTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors);
 }
 
 function link(name, incomingPointers = []) {
@@ -17,12 +25,12 @@ function link(name, incomingPointers = []) {
   return l;
 }
 
-test('originLink set in constructor',  () => {
-  let originLink = link("link1");
-  let rule = make({originLink});
-
-  expect(rule.originLink).toBe(originLink);
-});
+function classLink(...ends) {
+  let klass = Link("class");
+  let type = Link("type", [undefined, [LinkPointer("class")]]);
+  let link = Link(LinkPointer("type"), ...ends);
+  return { link, type, klass };
+}
 
 test('attributrDescriptors set in constructor',  () => {
   let expectedAttributeDescriptors = [["attr1", "val1", "direct"]];
@@ -58,6 +66,50 @@ describe('Rule.match', () => {
     let rule = make({linkTypes: [InlinePointer("other type")]});
 
     expect(rule.match(target)).toBeFalsy();
+  });
+
+  it('returns false if the target has the correct link type but not the correct class',  () => {
+    let target = {
+      isLink: true,
+      type: InlinePointer("link1"),
+      getClasses: () => [SemanticClass(LinkPointer("type"))]
+    };
+    let rule = make({linkTypes: [InlinePointer("link1")], classes: [LinkPointer("incorrect class")]});
+
+    expect(rule.match(target)).toBeFalsy();
+  });
+
+  it('returns false if the target has the correct class but not the correct link type', () => {
+    let target = {
+      isLink: true,
+      type: InlinePointer("link1"),
+      getClasses: () => [SemanticClass(LinkPointer("type"))]
+    };
+    let rule = make({linkTypes: [InlinePointer("incorrect type")], classes: [LinkPointer("type")]});
+
+    expect(rule.match(target)).toBeFalsy();
+  });
+
+  it('returns true if the target has the correct link type AND the correct class', () => {
+    let target = {
+      isLink: true,
+      type: InlinePointer("link1"),
+      getClasses: () => [SemanticClass(LinkPointer("type"))]
+    };
+    let rule = make({linkTypes: [InlinePointer("link1")], classes: [LinkPointer("type")]});
+
+    expect(rule.match(target)).toBeTruthy();
+  });
+
+  it('returns true if the target has the correct class and no link type is specified', () => {
+    let target = {
+      isLink: true,
+      type: InlinePointer("whatever"),
+      getClasses: () => [SemanticClass(LinkPointer("type"))]
+    };
+    let rule = make({classes: [LinkPointer("type")]});
+
+    expect(rule.match(target)).toBeTruthy();
   });
 
   it('returns true if the target is a clip and has the specified pointer type',  () => {
