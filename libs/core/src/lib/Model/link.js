@@ -9,10 +9,10 @@ export function Link(type, ...endSpecs) {
     return { name: e[0], pointers: e[1], index: i };
   });
 
-  return makeLinkInternal(type, ends);
+  return LinkWithEnds(type, ends);
 }
 
-function makeLinkInternal(type, ends) {
+export function LinkWithEnds(type, ends) {
   let obj = {};
 
   addProperties(obj, {
@@ -79,7 +79,7 @@ export function leafDataToLink(leafData) {
   if (Array.isArray(leafData)) { return leafData.map(leafDataToLink); }
   let es = leafData.es.map((e, i) => leafDataToEnd(e, i));
   let type = typeof leafData.typ === "string" ? leafData.typ : leafDataToPointer(leafData.typ);
-  return makeLinkInternal(type, es);
+  return LinkWithEnds(type, es);
 }
 
 function leafDataToEnd(leafData, index) {
