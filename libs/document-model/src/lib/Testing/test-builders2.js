@@ -33,6 +33,10 @@ export function Builder(buildFn, extensions) {
       }
       return obj.builtObject;
     },
+    buildAndReturnPointer(docuverse) {
+      obj.build(docuverse);
+      return obj.getPointer();
+    },
     getPart: () => Part(obj.pointer, obj.builtObject)
   };
 
@@ -66,7 +70,12 @@ export function SpanBuilder(span) {
 let unique = 0;
 export function LinkBuilder(type, ...endSpecs) {
   let obj = Builder(obj => {
-    return Link(obj.type, ...obj.ends.map(([name, pointers]) => [name, pointers.map(p => p.pointer)]));
+    let builtType = obj.type?.build ? obj.type.buildAndReturnPointer() : obj.type;
+    try {
+      return Link(builtType, ...obj.ends.map(([name, pointers]) => [name, pointers.map(p => p.getPointer() ?? p)]));
+    } catch (e) {
+      console.log(e);
+    }
   }, {
     ends: [],
     withType: type => obj.withProperty("type", type),
@@ -113,14 +122,17 @@ export function SequenceLinkBuilder(spans) {
 
 export function MarkupBuilder() {
 
-  let builder = LinkBuilder().withType(markupType);
+  let builder = LinkBuilder().withType(wrap(markupType, markupType));
 
   builder.endowing = (...attributeDescriptors) => {
     for (let i = 0; i < attributeDescriptors.length; i += 3) {
       builder
-        .withEnd(["attribute", [InlinePointer(attributeDescriptors[i])]])
-        .withEnd(["value", [InlinePointer(attributeDescriptors[i+1])]])
-        .withEnd(["inheritance", [InlinePointer(attributeDescriptors[i+2])]]);
+        .withEnd(["attribute", [InlineBuilder(attributeDescriptors[i])]])
+        .withEnd(["value", [InlineBuilder(attributeDescriptors[i+1])]])
+        .withEnd(["inheritance", [InlineBuilder(attributeDescriptors[i+2])]]);
+    }
+    builder.withClasses = (...classes) => {
+      return builder.withEnd(["classes", classes]);
     }
     return builder;
   };

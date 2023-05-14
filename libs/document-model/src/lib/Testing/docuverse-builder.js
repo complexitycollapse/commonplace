@@ -1,6 +1,6 @@
 import { finalObject } from "@commonplace/utils";
 import { testing } from "@commonplace/core";
-import { DocModelBuilderBuilder, EdlBuilder, LinkBuilder, SpanBuilder } from "./test-builders2";
+import { DocModelBuilderBuilder, EdlBuilder, LinkBuilder, MarkupBuilder, SpanBuilder } from "./test-builders2";
 
 export function DocuverseBuilder() {
   let proxyBase = makeDocuverseProxy();
@@ -79,6 +79,7 @@ function makeDocuverseProxy() {
   let dv = {
     aSpan: SpanBuilder,
     aLink: LinkBuilder,
+    aMarkupRule: MarkupBuilder,
     anEdl: EdlBuilder,
     aDocModelBuilder: DocModelBuilderBuilder,
     cache: testing.createTestCache([], true),

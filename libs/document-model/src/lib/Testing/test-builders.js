@@ -294,6 +294,8 @@ export function DocModelBuilderBuilder(edlBuilder) {
       obj.withMarkupLink(InlinePointer(type), "edl types", attr, val, inherit),
     withMarkupLinkOnLinks: (type, attr, val, inherit) =>
       obj.withMarkupLink(InlinePointer(type), "link types", attr, val, inherit),
+    withMarkupLinkOnClass: (klass, attr, val, inherit) =>
+      obj.withMarkupLink(InlinePointer(klass), "classes", attr, val, inherit),
     withSequenceLink: spanBuilders => {
       let links = SequenceLinkBuilder(spanBuilders);
       obj.edl.extraLinks.push(links.type);
