@@ -3,6 +3,9 @@ import { addProperties, finalObject } from "@commonplace/utils";
 export function Rule(originLink, immediateTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors) {
   let obj = {};
 
+  let hasTypeCriteria = linkTypes.length > 0 || clipTypes.length > 0 || edlTypes.length > 0;
+  let hasClassCriteria = classes.length > 0;
+
   addProperties(obj, {
     originLink,
     attributeDescriptors,
@@ -10,7 +13,9 @@ export function Rule(originLink, immediateTargets, classes, linkTypes, clipTypes
     linkTypes,
     clipTypes,
     edlTypes,
-    classes
+    classes,
+    hasTypeCriteria,
+    hasClassCriteria
   });
 
   function match(target) {
@@ -35,7 +40,7 @@ export function Rule(originLink, immediateTargets, classes, linkTypes, clipTypes
       return true;
     }
 
-    if (target.isClip && clipTypes.some(t => t === target.pointerType)) {
+    if (target.isClip && clipTypes.some(t => t === target.pointer.pointerType)) {
       return true;
     }
 

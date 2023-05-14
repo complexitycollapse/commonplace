@@ -113,14 +113,14 @@ describe('Rule.match', () => {
   });
 
   it('returns true if the target is a clip and has the specified pointer type',  () => {
-    let target = Span("origin", 1, 10);
+    let target = { isClip: true, pointer: Span("origin", 1, 10) };
     let rule = make({clipTypes: ["span"]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
   it('returns false if the target is a clip but does not have the specified pointer type',  () => {
-    let target = Span("origin", 1, 10);
+    let target = { isClip: true, pointer: Span("origin", 1, 10) };
     let rule = make({clipTypes: ["image"]});
 
     expect(rule.match(target)).toBeFalsy();
@@ -138,5 +138,49 @@ describe('Rule.match', () => {
     let rule = make({edlTypes: [InlinePointer("other EDL type")]});
 
     expect(rule.match(target)).toBeFalsy();
+  });
+});
+
+describe('hasTypeCriteria', () => {
+  it('is true if the rule as a link type', () => {
+    let rule = make({ linkTypes: [InlinePointer("link type")] });
+
+    expect(rule.hasTypeCriteria).toBeTruthy();
+  });
+
+  it('is true if the rule as an Edl type', () => {
+    let rule = make({ edlTypes: [InlinePointer("edl type")] });
+
+    expect(rule.hasTypeCriteria).toBeTruthy();
+  });
+
+  it('is true if the rule as a clip type', () => {
+    let rule = make({ clipTypes: [InlinePointer("span")] });
+
+    expect(rule.hasTypeCriteria).toBeTruthy();
+  });
+
+  it('is false if the rule as no link types, edl types or clip types', () => {
+    let rule = make({ classes: [SemanticClass(InlinePointer("some class"))] });
+
+    expect(rule.hasTypeCriteria).toBeFalsy();
+  });
+});
+
+describe('hasClassCriteria', () => {
+  it('is true if the rule as a class criterion', () => {
+    let rule = make({ classes: [SemanticClass(InlinePointer("class"))] });
+
+    expect(rule.hasClassCriteria).toBeTruthy();
+  });
+
+  it('is false if the rule as no class criteria', () => {
+    let rule = make({
+      linkTypes: [InlinePointer("link types")],
+      edlTypes: [InlinePointer("edl types")],
+      clipTypes: [InlinePointer("span")]
+    });
+
+    expect(rule.hasClassCriteria).toBeFalsy();
   });
 });
