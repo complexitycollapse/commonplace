@@ -22,14 +22,18 @@ function routeToOrder(route) {
       return 1;
     case AttributeRoute.immediateContentTarget:
       return 2;
-    case AttributeRoute.immediateDirectType:
+    case AttributeRoute.immediateDirectClass:
       return 3;
-    case AttributeRoute.immediateContentType:
+    case AttributeRoute.immediateContentClass:
       return 4;
-    case AttributeRoute.inheritedNonDefault:
+    case AttributeRoute.immediateDirectType:
       return 5;
+    case AttributeRoute.immediateContentType:
+      return 6;
+    case AttributeRoute.inheritedNonDefault:
+      return 7;
     default:
       // This is an error so relegate it to the bottom
-      return 6;
+      return 8;
   }
 }
