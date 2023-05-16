@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
 import {
   Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer,
-  testing, defaultsPointer, defaultsType, definesSequenceType, endowsAttributesType,
+  testing, defaultsPointer, defaultsType, definesSequenceType,
   markupType, definesSemanticClassType, metatype
 } from '@commonplace/core';
 
@@ -360,77 +360,6 @@ describe('build', () => {
       expect(actual[1].attribute).toEqual("attr2");
       expect(actual[1].value).toEqual("val2");
       expect(actual[1].inheritance).toEqual("content");
-    });
-  });
-
-  describe('metaEndowmentRules', () => {
-    function metaLink({ name, attributeDescriptors = [], immediateTargets, linkTypes, clipTypes, edlTypes, end } = {}) {
-      let endSpecs = attributeDescriptors.map(av =>
-        [["attribute",[InlinePointer(av[0])]],
-        ["value", [InlinePointer(av[1])]],
-        ["inheritance", [InlinePointer(av[2])]]])
-      .flat();
-
-      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
-      if (linkTypes) endSpecs.push(["link types", linkTypes]);
-      if (clipTypes) endSpecs.push(["clip types", clipTypes]);
-      if (edlTypes) endSpecs.push(["edl types", edlTypes]);
-      if (end) endSpecs.push(["end", end]);
-      let link = [
-        name ?? "metalink",
-        Link(endowsAttributesType, ...endSpecs)
-      ];
-
-      return link;
-    }
-
-    it('is empty if there are no meta-endowment links', () => {
-      expect(make([], [["not a meta-endowment link", true]]).metaEndowmentRules).toEqual([]);
-    });
-
-    it('returns a rule if there is a meta-endowment link', () => {
-      expect(make([], [metaLink()]).metaEndowmentRules).toHaveLength(1);
-    });
-
-    it('returns a rule for each meta-endowment link', () => {
-      expect(make([], [metaLink({name: "meta1"}), metaLink({name: "meta2"}), metaLink({name: "meta3"})]).metaEndowmentRules).toHaveLength(3);
-    });
-
-    it('sets all of the criteria properties to the content values of the link ends', () => {
-      let link = metaLink({
-        clipTypes: [InlinePointer("ct1"), InlinePointer("ct2")],
-        linkTypes: [InlinePointer("lt1"), InlinePointer("lt2")],
-        edlTypes: [InlinePointer("et1"), InlinePointer("et2")]
-      });
-
-      let rule = make([], [link]).metaEndowmentRules[0];
-
-      expect(rule.clipTypes).toEqual(["ct1", "ct2"]);
-      expect(rule.linkTypes).toEqual([InlinePointer("lt1"), InlinePointer("lt2")]);
-      expect(rule.edlTypes).toEqual([InlinePointer("et1"), InlinePointer("et2")]);
-    });
-
-    it('sets the attributeDescriptors on the rule from the link', () => {
-      let attributeDescriptors = [["attr1", "val1", "direct"], ["attr2", "val2", "content"]];
-
-      let actual = make([], [metaLink({attributeDescriptors})]).metaEndowmentRules[0].attributeDescriptors;
-
-      expect(actual[0].attribute).toEqual("attr1");
-      expect(actual[0].value).toEqual("val1");
-      expect(actual[0].inheritance).toEqual("direct");
-      expect(actual[1].attribute).toEqual("attr2");
-      expect(actual[1].value).toEqual("val2");
-      expect(actual[1].inheritance).toEqual("content");
-    });
-
-    it('sets the end value on the rule to the content of the end called end', () => {
-      let link = metaLink({
-        end: [InlinePointer("expected "), InlinePointer("end")],
-      });
-
-      let rule = make([], [link]).metaEndowmentRules[0];
-
-      expect(rule.end).toEqual("expected end");
     });
   });
 

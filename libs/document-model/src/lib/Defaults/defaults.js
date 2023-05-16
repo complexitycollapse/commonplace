@@ -1,6 +1,6 @@
 import {
   Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer,
-  endowsAttributesType, markupType, definesSequenceType, paragraphType
+  markupType, definesSequenceType, paragraphType
 } from "@commonplace/core";
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
@@ -28,17 +28,17 @@ function wrapInline(pointer) {
   return typeof pointer === "string" ? InlinePointer(pointer) : pointer;
 }
 
-function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
-  let ends = makeEnds("content", type, attribute, value, hasValueEnd, valueEnd);
-  let link = Link(endowsAttributesType, ...ends);
-  return Part(deriveLinkPointer(link), link);
-}
+// function contentAttribute(type, attribute, value, hasValueEnd, valueEnd) {
+//   let ends = makeEnds("content", type, attribute, value, hasValueEnd, valueEnd);
+//   let link = Link(endowsAttributesType, ...ends);
+//   return Part(deriveLinkPointer(link), link);
+// }
 
-function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
-  let ends = makeEnds("direct", type, attribute, value, hasValueEnd, valueEnd);
-  let link = Link(endowsAttributesType, ...ends);
-  return Part(deriveLinkPointer(link), link);
-}
+// function directAttribute(type, attribute, value, hasValueEnd, valueEnd) {
+//   let ends = makeEnds("direct", type, attribute, value, hasValueEnd, valueEnd);
+//   let link = Link(endowsAttributesType, ...ends);
+//   return Part(deriveLinkPointer(link), link);
+// }
 
 function markupRule(name, attributeDescriptions, { clipType, edlType, linkType } = {}) {
   let ends = [];
@@ -62,25 +62,15 @@ function sequence(name, type, end) {
 }
 
 export let defaultsLinksParts = [
-  contentAttribute("bold", "bold", true),
-  directAttribute("paragraph", "paragraph", true),
-  contentAttribute("italic", "italic", true),
-  directAttribute("title", "title", true),
-  contentAttribute("underline", "underline", true),
-  contentAttribute("overline", "overline", true),
-  contentAttribute("strike through", "strike through", true),
-  contentAttribute("capitalize", "capitalization", "capitalize"),
-  contentAttribute("uppercase", "capitalization", "uppercase"),
-  contentAttribute("lowercase", "capitalization", "lowercase"),
-  contentAttribute("left aligned text", "text align", "left"),
-  contentAttribute("right aligned text", "text align", "right"),
-  contentAttribute("centre aligned text", "text align", "center"),
-  contentAttribute("justified aligned text", "text align", "justify"),
-  contentAttribute(["colour", "color"], "colour", undefined, true, "value"),
-  directAttribute(["background colour", "background color"], "background colour", undefined, true, "value"),
-  contentAttribute("inline", "layout mode", "inline"),
-  directAttribute("block", "layout mode", "block"),
-  directAttribute("break", "break", true),
+  // directAttribute("paragraph", "paragraph", true),
+  // directAttribute("title", "title", true),
+  // contentAttribute("left aligned text", "text align", "left"),
+  // contentAttribute("right aligned text", "text align", "right"),
+  // contentAttribute("centre aligned text", "text align", "center"),
+  // contentAttribute("justified aligned text", "text align", "justify"),
+  // contentAttribute("inline", "layout mode", "inline"),
+  // directAttribute("block", "layout mode", "block"),
+  // directAttribute("break", "break", true),
   markupRule("defaults:spans", [["layout mode", "inline", "direct"]], {clipType: "span"}),
   markupRule("defaults:blocks", [["layout mode", "block", "direct"]], {clipType: "image"}),
   markupRule("defaults:paragraphs", [

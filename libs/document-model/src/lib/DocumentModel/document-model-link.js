@@ -1,5 +1,5 @@
 import {
-  definesSemanticClassType, definesSequenceType, endowsAttributesType, markupType
+  definesSemanticClassType, definesSequenceType, markupType
 } from "@commonplace/core";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
@@ -109,7 +109,6 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
   newLink.resolvedType = resolvedType;
 
   if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
-  if (endowsAttributesType.denotesSame(link.type)) { newLink.metaEndowmentRule = buildRule(["attribute", "value", "inheritance"], true); }
 
   processMetalinks();
 
