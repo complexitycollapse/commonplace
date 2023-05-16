@@ -7,6 +7,7 @@ import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype";
 import resolveTypeAndMetalinks from "./resolve-type";
 import getClasses from "../Attributes/get-classes";
+import SemanticClass from "./semantic-class";
 
 export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
@@ -53,6 +54,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     }
 
     let targets = getPointers("targets");
+    let classes = getPointers("classes");
     let linkTypes = getPointers("link types");
     let edlTypes = getPointers("edl types");
     let clipTypes = getContent(getPointers("clip types"));
@@ -63,7 +65,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
     let attributes = unresolvedAttributes.map(resolveAttribute);
 
     let rule = decorateObject(
-      Rule(newLink, targets, linkTypes, clipTypes, edlTypes, attributes),
+      Rule(newLink, targets, classes, linkTypes, clipTypes, edlTypes, attributes),
       Object.fromEntries(extraEnds));
     return rule;
   }
@@ -85,7 +87,8 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
         let endEnd = metalink.getEnd("end");
         let end = concatenateContent(endEnd?.pointers);
         newLink.getEnds(end.length === 0 ? undefined : end)
-          .forEach(newLinkEnd => newLinkEnd.semanticClasses.push(newLink.resolvedType));
+          .forEach(newLinkEnd =>
+            newLinkEnd.semanticClasses.push(SemanticClass(newLink.type, newLink.resolvedType)));
       }
     });
   }

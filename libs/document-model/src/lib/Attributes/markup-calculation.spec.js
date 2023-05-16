@@ -2,7 +2,9 @@ import { expect, it, describe } from '@jest/globals';
 import {
   MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder
 } from '../Testing/test-builders';
-import { InlinePointer, definesSequenceType, metatype, LinkPointer } from '@commonplace/core';
+import { InlinePointer, definesSequenceType, metatype, LinkPointer, definesSemanticClassType } from '@commonplace/core';
+import { DocuverseBuilder } from '../Testing/docuverse-builder';
+import { InlineBuilder } from '../Testing/test-builders2';
 
 function aSpan() {
   return SpanBuilder().withLength(10).withContent(new Array(11).join( "#" ));
@@ -267,12 +269,46 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by a link type link if the target does not match the link type', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "direct");
 
       let markup = Object.values(dmb.build().build().links)[0].markup;
+
+      expect([...markup.values()]).toEqual([]);
+    });
+
+    it('returns the value endowed by a class link if the target has the class', () => {
+      let dv = DocuverseBuilder().add(obj => ({
+        target: obj.aLink(),
+        klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+        endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+        attr1: obj.aMarkupRule().endowing("attr1", "class value", "direct")
+          .withClasses(obj.type),
+        edl: obj.anEdl().withLinks(obj.target, obj.attr1, obj.endower),
+        dmb: obj.aDocModelBuilder(obj.edl)
+      })).build();
+
+      let markup = Object.values(dv.dmb.build().links)[0].markup;
+
+      expect(markup.get("attr1")).toBe("class value");
+    });
+
+    it('does not return the value endowed by a class link if the target has the wrong class', () => {
+      let dv = DocuverseBuilder().add(obj => ({
+        target: obj.aLink(),
+        klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+        endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+        attr1: obj.aMarkupRule().endowing("attr1", "class value", "direct")
+          .withClasses(InlinePointer("bad class")),
+        edl: obj.anEdl().withLinks(obj.target, obj.attr1, obj.endower),
+        dmb: obj.aDocModelBuilder(obj.edl)
+      })).build();
+
+      let markup = Object.values(dv.dmb.build().links)[0].markup;
 
       expect([...markup.values()]).toEqual([]);
     });
@@ -363,7 +399,7 @@ describe('markup', () => {
     });
 
     it('prefers a targeted value to a link type value', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "direct")
@@ -526,7 +562,7 @@ describe('markup', () => {
     });
 
     it('does not return the value endowed by a link type link if the target does not match the link type', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "content");
@@ -558,7 +594,7 @@ describe('markup', () => {
     });
 
     it('prefers a targeted value to a link type value', () => {
-      let targetLink = LinkBuilder("link type");
+      let targetLink = LinkBuilder(InlinePointer("link type"));
       let dmb = aDmb(anEdl())
         .withLink(targetLink)
         .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "content")

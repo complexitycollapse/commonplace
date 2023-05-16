@@ -501,7 +501,7 @@ describe('build', () => {
 
       let actualLink = getLink(make([], links).links, "target");
 
-      expect(actualLink.getEnd("foo").semanticClasses[0]).toEqual(links[1][1]);
+      expect(actualLink.getEnd("foo").semanticClasses[0].link).toEqual(links[1][1]);
     });
 
     it('will endow a class to a zettel', () => {
@@ -510,7 +510,7 @@ describe('build', () => {
 
       let zettel = make([[span, true]], links).zettel[0];
 
-      expect(zettel.getClasses()).toEqual([links[1][1]]);
+      expect(zettel.getClasses().map(c => c.link)).toEqual([links[1][1]]);
     });
 
     it('will endow a class to a link', () => {
@@ -519,7 +519,7 @@ describe('build', () => {
 
       let linkModel = getLink(make([], [...links, link]).links, "subject");
 
-      expect(linkModel.getClasses()).toEqual([links[1][1]]);
+      expect(linkModel.getClasses().map(c => c.link)).toEqual([links[1][1]]);
     });
 
     it('will endow a class to an Edl', () => {
@@ -528,7 +528,7 @@ describe('build', () => {
 
       let edlModel = make([[EdlPointer("edl1"), edl1, []]], links).zettel[0];
 
-      expect(edlModel.getClasses()).toEqual([links[1][1]]);
+      expect(edlModel.getClasses().map(c => c.link)).toEqual([links[1][1]]);
     });
   });
 

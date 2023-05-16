@@ -8,7 +8,7 @@ export function MarkupCalculation(edl, rules, objects, parentMap) {
   let objectMap = new Map(parentMap);
 
   function populateObjectMap() {
-    let [linkTypeMap, edlTypeMap, clipTypeMap] = buildTypeMaps(rules);
+    let [classMap, linkTypeMap, edlTypeMap, clipTypeMap] = buildTypeMaps(rules);
 
     function createMarkupForObject(object) {
       // Only process each object once.
@@ -26,21 +26,25 @@ export function MarkupCalculation(edl, rules, objects, parentMap) {
       let rules = object.incomingPointers.map(p => p.link.markupRule).filter(x => x);
       rules.forEach(rule => pushRule(markupMap, rule, "target"));
 
+      // Add rules that target the classes of this object.
+      let classes = object.getClasses();
+      classes.forEach(c => classMap.get(c.pointer.hashableName).forEach(rule => pushRule(markupMap, rule, undefined)));
+
       // Add rules that target the type of this object.
 
       if (object.isLink) {
         let rulesForType = linkTypeMap.get(object.type?.hashableName);
-        rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
+        rulesForType.forEach(rule => { if (rule.match(object)) { pushRule(markupMap, rule, "type"); } });
       }
 
       if (object.isEdl) {
         let rulesForType = edlTypeMap.get(object.type?.hashableName);
-        rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
+        rulesForType.forEach(rule => { if (rule.match(object)) { pushRule(markupMap, rule, "type"); } });
       }
 
       if (object.isClip) {
         let rulesForType = clipTypeMap.get(object.pointer.pointerType);
-        rulesForType.forEach(rule => pushRule(markupMap, rule, "type"));
+        rulesForType.forEach(rule => { if (rule.match(object)) { pushRule(markupMap, rule, "type"); } });
       }
 
       // Add any attributes inherited from the object's containers.
@@ -118,17 +122,21 @@ export function MarkupCalculation(edl, rules, objects, parentMap) {
 }
 
 function buildTypeMaps(rules) {
+  let classMap = listMap();
   let linkTypeMap = listMap();
   let edlTypeMap = listMap();
   let clipTypeMap = listMap();
 
   rules.forEach(rule => {
+    if (!rule.hasTypeCriteria) {
+      rule.classes.forEach(classPointer => classMap.push(classPointer.hashableName, rule));
+    }
     rule.linkTypes.forEach(type => linkTypeMap.push(type.hashableName, rule));
     rule.edlTypes.forEach(type => edlTypeMap.push(type.hashableName, rule));
     rule.clipTypes.forEach(type => clipTypeMap.push(type, rule));
   });
 
-  return [linkTypeMap, edlTypeMap, clipTypeMap];
+  return [classMap, linkTypeMap, edlTypeMap, clipTypeMap];
 }
 
 function pushRule(markupMap, rule, connection) {
@@ -138,6 +146,12 @@ function pushRule(markupMap, rule, connection) {
     if (connection == "target") {
       if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectTarget; }
       else { route = AttributeRoute.immediateContentTarget; }
+    } else if (rule.hasClassCriteria && !rule.hasTypeCriteria) {
+      if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectClass; }
+      else { route = AttributeRoute.immediateContentClass; }
+    } else if (rule.hasClassCriteria && rule.hasTypeCriteria) {
+      if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectClassAndType; }
+      else { route = AttributeRoute.immediateContentClassAndType; }
     } else {
       if (pair.inheritance == "direct") { route = AttributeRoute.immediateDirectType; }
       else { route = AttributeRoute.immediateContentType; }
