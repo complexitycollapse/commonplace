@@ -11,7 +11,9 @@ export const decorators = [
   compoundingStyleDecorator("capitalize", "textTransform", "capitalize"),
   compoundingStyleDecorator("text align", "textAlign"),
   compoundingStyleDecorator("colour", "color"),
+  compoundingStyleDecorator("color", "color"),
   compoundingStyleDecorator("background colour", "backgroundColor"),
+  compoundingStyleDecorator("background color", "backgroundColor"),
   compoundingStyleDecorator("layout mode", "display"),
   compoundingStyleDecorator("font size", "fontSize")
 ];
