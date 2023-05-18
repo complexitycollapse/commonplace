@@ -1,6 +1,6 @@
 import {
   definesSemanticClassType, definesSequenceType, markupType
-} from "@commonplace/core";
+} from "../well-known-objects";
 import { RecordLinkParser } from "../record-link-parser";
 import { Rule } from "./rule";
 import { decorateObject, addMethods } from "@commonplace/utils";

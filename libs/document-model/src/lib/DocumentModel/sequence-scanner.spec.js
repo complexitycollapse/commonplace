@@ -1,6 +1,7 @@
 import { it, describe, expect } from '@jest/globals';
 import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Testing/group-testing';
-import { LinkPointer, metatype } from '@commonplace/core';
+import { LinkPointer } from '@commonplace/core';
+import { metatype } from '../well-known-objects';
 import { LinkBuilder } from '../Testing/test-builders';
 
 describe('first level sequences', () => {

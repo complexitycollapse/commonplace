@@ -1,7 +1,5 @@
 import { finalObject } from "@commonplace/utils";
-import { Link } from "./model";
-import { Part } from "./part";
-import { EdlPointer, InlinePointer, LinkPointer } from "./pointers";
+import { Link, Part, EdlPointer, InlinePointer, LinkPointer } from "@commonplace/core";
 
 export const wellKnownParts = [];
 

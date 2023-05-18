@@ -2,7 +2,7 @@ import { expect, test, describe } from '@jest/globals';
 import { LinkPointer, EdlPointer, Span, InlinePointer } from './pointers';
 import { LeafCache } from './leaf-cache';
 import { Part } from './part';
-import { Link, Doc } from './model';
+import { Link, Edl } from './model';
 
 function makePart() {
   return Part(Span("orig", 10, 20), "This is the content!");
@@ -88,7 +88,7 @@ describe('getPart/addPart', () => {
 
   test('getPart can retrieve an Edl when passed an Edl pointer', () => {
     let cache = LeafCache();
-    let link = Doc([], []);
+    let link = Edl(InlinePointer("document"), [], []);
     let part = Part(EdlPointer("doc name"), link);
 
     cache.addPart(part);

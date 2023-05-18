@@ -1,10 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
 import {
-  Doc, Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer,
-  testing, defaultsPointer, defaultsType, definesSequenceType,
-  markupType, definesSemanticClassType, metatype
+  Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer
 } from '@commonplace/core';
+import {
+  defaultsType, definesSequenceType, markupType, definesSemanticClassType, metatype,
+  defaultsPointer
+} from '../well-known-objects';
+import { createTestCache } from '../Testing/docuverse-builder';
 
 function getLink(links, name) {
   return links[LinkPointer(name).hashableName];
@@ -51,7 +54,7 @@ function make(clips = [], links = [], edlPointer, additionalParts = []) {
   edlPointer = edlPointer ?? EdlPointer("doc");
   let parts = links.filter(x => x[1]).map(x => Part(LinkPointer(x[0]), x[1] === true ?  Link(x[0]) : x[1]))
     .concat(clips.filter(x => x[1]).map(x => x[0].pointerType === "edl" ? x.slice(2).map(y => Part(LinkPointer(y[0]), y[1])).concat(Part(x[0], x[1])) : []).flat())
-    .concat([Part(edlPointer, Doc(clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))])
+    .concat([Part(edlPointer, Edl(InlinePointer("document"), clips.map(x => x[0]), links.map(x => LinkPointer(x[0]))))])
     .concat(additionalParts);
   let builder = docModelBuilderTesting.makeMockedBuilderFromParts(edlPointer, parts);
   let model = builder.build();
@@ -65,7 +68,7 @@ describe('build', () => {
       let edlPointer = EdlPointer("testedl");
       expect(DocumentModelBuilder(
         edlPointer,
-        testing.createTestCache([Part(edlPointer, edl)])).build().type)
+        createTestCache([Part(edlPointer, edl)])).build().type)
       .toEqual(InlinePointer("expected type"));
     });
   });
@@ -478,7 +481,7 @@ describe('build', () => {
         Part(LinkPointer("default2"), defaultLink2)
       ];
 
-      let defaults = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build().defaultsLinks;
+      let defaults = DocumentModelBuilder(edlPointer, createTestCache(parts)).build().defaultsLinks;
 
       expect(getLink(defaults, "default1")).toMatchObject(defaultLink1);
       expect(getLink(defaults, "default2")).toMatchObject(defaultLink2);
@@ -494,7 +497,7 @@ describe('build', () => {
         Part(LinkPointer("default1"), Link(InlinePointer("d1"))),
       ];
 
-      let defaults = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build().defaultsLinks;
+      let defaults = DocumentModelBuilder(edlPointer, createTestCache(parts)).build().defaultsLinks;
 
       expect(getLink(defaults, "default1").isDefault).toBeTruthy();
     });
@@ -511,7 +514,7 @@ describe('build', () => {
         Part(LinkPointer("link1"), targetLink)
       ];
 
-      let model = DocumentModelBuilder(edlPointer, testing.createTestCache(parts)).build();
+      let model = DocumentModelBuilder(edlPointer, createTestCache(parts)).build();
 
       expect(getLink(model.links, "link1").incomingPointers[0].link).toMatchObject(defaultLink);
     });

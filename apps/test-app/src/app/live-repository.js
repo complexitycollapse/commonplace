@@ -1,5 +1,5 @@
-import { PartRepository, SequentialPartFetcher, WellKnownObjectsPartFetcher } from "@commonplace/core";
-import { DefaultsPartFetcher } from "@commonplace/document-model";
+import { PartRepository, SequentialPartFetcher } from "@commonplace/core";
+import { DefaultsPartFetcher, WellKnownObjectsPartFetcher } from "@commonplace/document-model";
 import { StaticPartFetcher } from "@commonplace/html";
 
 export default function liveRepository() {

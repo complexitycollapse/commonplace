@@ -8,7 +8,7 @@ import { IncomingPointer } from './incoming-pointer';
 import { DocumentModelLink } from './document-model-link';
 import { EdlModel } from './edl-model';
 import { LinkBuilder, SequenceBuilder, wrap } from '../Testing/test-builders';
-import { metatype } from '../Defaults/defaults';
+import { metatype } from '../well-known-objects';
 
 function make(sequenceElements) {
   let scenario = {};

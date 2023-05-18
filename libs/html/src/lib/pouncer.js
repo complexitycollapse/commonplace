@@ -1,6 +1,7 @@
-import { LeafCache, defaultsPointer, LocalCache } from '@commonplace/core';
+import { LeafCache, LocalCache } from '@commonplace/core';
 import {
-  DocumentModelBuilder, BoxModelBuilder, DocumentModelSerializer, BoxModelSerializer
+  DocumentModelBuilder, BoxModelBuilder, DocumentModelSerializer, BoxModelSerializer,
+  defaultsPointer
 } from '@commonplace/document-model';
 import { addMethods, addProperties } from '@commonplace/utils';
 

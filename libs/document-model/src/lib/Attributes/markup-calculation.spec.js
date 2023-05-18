@@ -2,7 +2,8 @@ import { expect, it, describe } from '@jest/globals';
 import {
   MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder
 } from '../Testing/test-builders';
-import { InlinePointer, definesSequenceType, metatype, LinkPointer, definesSemanticClassType } from '@commonplace/core';
+import { InlinePointer, LinkPointer } from '@commonplace/core';
+import { definesSemanticClassType, definesSequenceType, metatype } from '../well-known-objects';
 import { DocuverseBuilder } from '../Testing/docuverse-builder';
 import { InlineBuilder } from '../Testing/test-builders2';
 

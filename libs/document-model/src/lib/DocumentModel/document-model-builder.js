@@ -1,11 +1,12 @@
 import { finalObject, mergeMaps } from "@commonplace/utils";
 import { DocumentModelLink } from "./document-model-link";
 import { ZettelSchneider } from "./zettel-schneider";
-import { testing, defaultsPointer } from '@commonplace/core';
+import { defaultsPointer } from '../well-known-objects';
 import { EdlModel, MissingEdlReplacementModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
 import { MarkupCalculation } from "../Attributes/markup-calculation";
 import resolveTypeAndMetalinks from "./resolve-type";
+import { createTestCache } from "../Testing/docuverse-builder";
 
 export function DocumentModelBuilder(edlPointer, cache) {
   let recursiveBuilder = RecursiveDocumentModelBuilder(edlPointer, cache, undefined, undefined);
@@ -206,7 +207,7 @@ function populateSpanContent(zettel, cache) {
 export let docModelBuilderTesting = {
   addIncomingPointers,
   makeMockedBuilderFromParts: function (edlPointer, cachedParts) {
-    let cache = testing.createTestCache(cachedParts, true);
+    let cache = createTestCache(cachedParts, true);
     return DocumentModelBuilder(edlPointer, cache);
   },
 };

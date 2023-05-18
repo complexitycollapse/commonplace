@@ -1,5 +1,6 @@
-import { Part, Edl, Link, definesSequenceType, markupType } from "@commonplace/core";
-import { EdlPointer, InlinePointer, LinkPointer, Span, defaultsPointer, defaultsType } from "@commonplace/core";
+import { Part, Edl, Link } from "@commonplace/core";
+import { EdlPointer, InlinePointer, LinkPointer, Span } from "@commonplace/core";
+import { definesSequenceType, markupType, defaultsPointer, defaultsType } from '../well-known-objects';
 import { DocumentModelBuilder } from "../DocumentModel/document-model-builder";
 import { Sequence } from "../DocumentModel/sequence";
 

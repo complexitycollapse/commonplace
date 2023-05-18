@@ -1,4 +1,5 @@
-import { InlinePointer, definesSequenceType, metatype, LinkPointer } from "@commonplace/core";
+import { InlinePointer, LinkPointer } from "@commonplace/core";
+import { definesSequenceType, metatype } from '../well-known-objects';
 import { EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder } from "./test-builders";
 import { SequenceScanner } from '../DocumentModel/sequence-scanner';
 import { docModelBuilderTesting } from '../DocumentModel/document-model-builder';

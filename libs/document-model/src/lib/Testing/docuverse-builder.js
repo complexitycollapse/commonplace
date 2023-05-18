@@ -1,6 +1,7 @@
 import { finalObject } from "@commonplace/utils";
-import { testing } from "@commonplace/core";
+import { LeafCache, LocalCache, PartRepository } from "@commonplace/core";
 import { DocModelBuilderBuilder, EdlBuilder, LinkBuilder, MarkupBuilder, SpanBuilder } from "./test-builders2";
+import { WellKnownObjectsPartFetcher, wellKnownParts } from '../well-known-objects';
 
 export function DocuverseBuilder() {
   let proxyBase = makeDocuverseProxy();
@@ -75,6 +76,38 @@ function BuilderProxy(name) {
   });
 }
 
+export function MockPartRepository(parts) {
+  let repo = PartRepository(WellKnownObjectsPartFetcher());
+
+  let obj = {
+    repo,
+    getPartLocally: pointer => repo.getPartLocally(pointer),
+    addParts: parts => {
+      parts.forEach(part => repo.cache.addPart(part));
+    },
+    getPart: repo.getPart,
+    getManyParts: repo.getManyParts
+  }
+
+  obj.addParts(parts);
+  return obj;
+}
+
+export function createTestCache(parts, includeWellKnownObjects) {
+  let cache = LeafCache();
+  let testCache = Object.create(LocalCache(cache));
+  testCache.parts = [];
+  testCache.addPart = part => {
+    cache.addPart(part);
+    testCache.parts.push(part);
+  }
+  if (includeWellKnownObjects) { wellKnownParts.forEach(part => testCache.addPart(part)); }
+  parts.forEach(part => testCache.addPart(part));
+  testCache.addParts = parts => parts.forEach(part => testCache.addPart(part));
+  testCache.internalCache = cache;
+  return testCache;
+}
+
 function makeDocuverseProxy() {
   let dv = {
     aSpan: SpanBuilder,
@@ -82,8 +115,8 @@ function makeDocuverseProxy() {
     aMarkupRule: MarkupBuilder,
     anEdl: EdlBuilder,
     aDocModelBuilder: DocModelBuilderBuilder,
-    cache: testing.createTestCache([], true),
-    repo: testing.MockPartRepository([]),
+    cache: createTestCache([], true),
+    repo: MockPartRepository([]),
     allBuilders: []
   };
   return dv;

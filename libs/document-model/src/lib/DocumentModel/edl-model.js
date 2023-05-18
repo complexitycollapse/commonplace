@@ -1,4 +1,4 @@
-import { missingEdlType } from "@commonplace/core";
+import { missingEdlType } from "../well-known-objects";
 import { addProperties, finalObject } from "@commonplace/utils";
 import getClasses from "../Attributes/get-classes";
 

@@ -1,7 +1,7 @@
 import {
-  Edl, Link, InlinePointer, LinkPointer, Part, defaultsType, defaultsPointer,
-  markupType, definesSequenceType, paragraphType
+  Edl, Link, InlinePointer, LinkPointer, Part
 } from "@commonplace/core";
+import { markupType, definesSequenceType, defaultsType, defaultsPointer, paragraphType } from '../well-known-objects';
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
