@@ -3,28 +3,30 @@ import { Link, Part, EdlPointer, InlinePointer, LinkPointer } from "@commonplace
 
 export const wellKnownParts = [];
 
-function makePart(pointer) {
-  let part = Part(pointer, Link(metatype, ["name", [InlinePointer(pointer.linkName)]]));
+
+function makeType(name, ...metalinks) {
+  let pointer = LinkPointer(name);
+
+  let metalinkParts = metalinks.map(m => Part(LinkPointer(m[0], m[1])));
+  let ends = metalinkParts.map(p => [undefined, [p.pointer]]);
+  let part = Part(pointer, Link(metatype, ["name", [InlinePointer(pointer.linkName)]], ...ends));
+
+  metalinkParts.forEach(part => wellKnownParts.push(part));
   wellKnownParts.push(part);
-  return part;
+
+  return [pointer, part];
 }
 
-export const defaultsType = LinkPointer("defaults");
 export const defaultsPointer = EdlPointer("defaults Edl");
-export const markupType = LinkPointer("markup");
-export const definesSequenceType = LinkPointer("defines sequence");
 export const metatype = InlinePointer("type");
-export const documentType = LinkPointer("document");
-export const missingEdlType = InlinePointer("missing Edl");
-export const paragraphType = LinkPointer("paragraph");
-export const definesSemanticClassType = LinkPointer("defines semantic class");
 
-export const defaultsPart = makePart(defaultsType);
-export const markupPart = makePart(markupType);
-export const definesSequencePart = makePart(definesSequenceType);
-export const documentPart = makePart(documentType);
-export const paragraphPart = makePart(paragraphType);
-export const definesSemanticClassPart = makePart(definesSemanticClassType);
+export const [defaultsType, defaultsPart] = makeType("defaults");
+export const [markupType, markupPart] = makeType("markup");
+export const [definesSequenceType, definesSequencePart] = makeType("defines sequence");
+export const [documentType, documentPart] = makeType("document");
+export const [missingEdlType, missingEdlPart] = makeType("missing Edl");
+export const [paragraphType, paragraphPart] = makeType("paragraph");
+export const [definesSemanticClassType, definesSemanticClassPart] = makeType("defines semantic class");
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {
