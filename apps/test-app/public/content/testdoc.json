@@ -24,7 +24,7 @@
     { "typ": "link", "name": "paragraphLink4.json" },
     { "typ": "link", "name": "boldLink.json" },
     { "typ": "link", "name": "capitalizeLink.json" },
-    { "typ": "link", "name": "italicLink.json" },
+    { "typ": "link", "name": "emphasisLink.json" },
     { "typ": "link", "name": "rightAlignLink.json" },
     { "typ": "link", "name": "backgroundColourLink.json" },
     { "typ": "link", "name": "greenBackgroundLink.json" },

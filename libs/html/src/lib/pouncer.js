@@ -125,8 +125,16 @@ function PouncerInternal(repo, docPointer, cache) {
 
     // Links & link content
     let [missingLinkNames, foundLinks] = getMissingLinks(requiredLinks);
-    let missingLinkContentPointers = foundLinks.map(l => l.ends).flat().map(e => e.pointers).flat()
-      .filter(p => p.specifiesContent && !getFromCache(p));
+    let missingLinkContentPointers = [];
+    foundLinks.forEach(l => {
+      l.ends.forEach(e => {
+        e.pointers.forEach(p => {
+          if (p.specifiesContent && !getFromCache(p)) {
+            missingLinkContentPointers.push(p);
+          }
+        });
+      });
+    });
 
     // Content
     let docContent = edl.clips.map(c => [c, getFromCache(c)]);
@@ -169,7 +177,7 @@ function PouncerInternal(repo, docPointer, cache) {
           link.forEachPointer(pointer => {
             if (pointer.pointerType === "link") {
               let childResult = getFromCache(pointer);
-              if (childResult) { newFound.push(childResult); }
+              if (childResult) { newFound.push(childResult.content); }
               else { missing.push(pointer); }
             }
           });

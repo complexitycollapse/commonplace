@@ -7,8 +7,8 @@ export const wellKnownParts = [];
 function makeType(name, ...metalinks) {
   let pointer = LinkPointer(name);
 
-  let metalinkParts = metalinks.map(m => Part(LinkPointer(m[0], m[1])));
-  let ends = metalinkParts.map(p => [undefined, [p.pointer]]);
+  let metalinkParts = metalinks.map(m => Part(m[0], m[1]));
+  let ends = metalinks.map(m => [undefined, [m[0]]]);
   let part = Part(pointer, Link(metatype, ["name", [InlinePointer(pointer.linkName)]], ...ends));
 
   metalinkParts.forEach(part => wellKnownParts.push(part));
@@ -27,6 +27,18 @@ export const [documentType, documentPart] = makeType("document");
 export const [missingEdlType, missingEdlPart] = makeType("missing Edl");
 export const [paragraphType, paragraphPart] = makeType("paragraph");
 export const [definesSemanticClassType, definesSemanticClassPart] = makeType("defines semantic class");
+
+function makeClass(name, description = "", ...endSpecs) {
+  return [
+    LinkPointer(name + " class"),
+    Link(definesSemanticClassType,
+      ["name", [InlinePointer(name)]],
+      ["description", [InlinePointer(description)]],
+      ...endSpecs)
+  ];
+}
+
+export const [emphasisType, emphasisPart] = makeType("emphasis", makeClass("emphasis", "", ["end", [InlinePointer("")]]));
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {

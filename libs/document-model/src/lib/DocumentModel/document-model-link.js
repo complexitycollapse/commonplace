@@ -85,7 +85,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
 
       if (definesSemanticClassType.denotesSame(metalink.type)) {
         let endEnd = metalink.getEnd("end");
-        let end = concatenateContent(endEnd?.pointers);
+        let end = concatenateContent(endEnd?.pointers ?? []);
         newLink.getEnds(end.length === 0 ? undefined : end)
           .forEach(newLinkEnd =>
             newLinkEnd.semanticClasses.push(SemanticClass(newLink.type, newLink.resolvedType)));

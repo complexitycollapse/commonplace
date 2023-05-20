@@ -40,7 +40,7 @@ function wrapInline(pointer) {
 //   return Part(deriveLinkPointer(link), link);
 // }
 
-function markupRule(name, attributeDescriptions, { clipType, edlType, linkType } = {}) {
+function markupRule(name, attributeDescriptions, { clipType, edlType, linkType, classes } = {}) {
   let ends = [];
 
   attributeDescriptions.forEach(desc => {
@@ -52,6 +52,7 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType }
   if (clipType) { ends.push(["clip types", [InlinePointer(clipType)]]); }
   if (edlType) { ends.push(["edl types", [wrapInline(edlType)]]); }
   if (linkType) { ends.push(["link types", [wrapInline(linkType)]]); }
+  if (classes) { ends.push(["classes", [classes]]); }
 
   return Part(LinkPointer(name), Link(markupType, ...ends));
 }
@@ -75,8 +76,9 @@ export let defaultsLinksParts = [
   markupRule("defaults:blocks", [["layout mode", "block", "direct"]], {clipType: "image"}),
   markupRule("defaults:paragraphs", [
     ["layout mode", "block", "direct"],
-    ["box", "true", "direct"]
+    ["box", "true", "direct"],
   ], { edlType: paragraphType, linkType: paragraphType }),
+  markupRule("defaults:emphasis", [["italic", "true", "direct"]], {classes: LinkPointer("emphasis")}),
   sequence("defaults:paragraph sequence", paragraphType, undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
