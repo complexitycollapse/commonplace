@@ -14,24 +14,23 @@ export function serializeEdl(model) {
     sequences,
     markup: markup(model.markup),
     contentMarkup: markup(model.contentMarkup),
+    classes: model.getClasses().map(c => c.pointer.linkName),
     rules: {
-      markup: links.map(markupRule).filter(x => x),
+      markup: model.markupRules.map(markupRule).filter(x => x),
       metaEndowments: links.map(metaEndowmentRule).filter(x => x)
     }
   };
 }
 
-function markupRule(link) {
-  if (link.markupRule) {
-    return {
-      link: linkName(link),
-      attributes: link.markupRule.attributeDescriptors,
-      targets: link.markupRule.targets,
-      clipTypes: link.markupRule.clipTypes,
-      edlTypes: link.markupRule.edlTypes,
-      linkTypes: link.markupRule.linkTypes
-    };
-  }
+function markupRule(markupRule) {
+  return {
+    attributes: markupRule.attributeDescriptors,
+    targets: markupRule.targets,
+    clipTypes: markupRule.clipTypes,
+    edlTypes: markupRule.edlTypes,
+    linkTypes: markupRule.linkTypes,
+    classes: markupRule.classes
+  };
 }
 
 function metaEndowmentRule(link) {
@@ -63,7 +62,8 @@ export function serializeAtom(model) {
     incomingPointers,
     sequences,
     markup: markup(model.markup),
-    contentMarkup: markup(model.contentMarkup)
+    contentMarkup: markup(model.contentMarkup),
+    classes: model.getClasses().map(c => c.pointer.linkName)
   };
 }
 
@@ -80,7 +80,9 @@ export function serializeLink(model) {
     incomingPointers,
     sequences,
     markup: markup(model.markup),
-    contentMarkup: markup(model.contentMarkup)
+    contentMarkup: markup(model.contentMarkup),
+    classes: model.getClasses().map(c => c.pointer.linkName),
+    markupRule: model.markupRule ? true : false
   };
 }
 
