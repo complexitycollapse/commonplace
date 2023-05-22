@@ -26,10 +26,7 @@ describe('DocumentModelSerializer.serialize', () => {
     expect(json.sequences).toEqual([]);
     expect(json.markup).toEqual({});
     expect(json.contentMarkup).toEqual({});
-    expect(json.rules).toEqual({
-      markup: [],
-      metaEndowments: []
-    });
+    expect(json.markupRules).toEqual([]);
   });
 
   it('returns a serialized zettel for each zettel in the Edl', () => {

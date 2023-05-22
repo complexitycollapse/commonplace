@@ -188,9 +188,6 @@ function gatherRules(model, links) {
     if (link.markupRule) {
       model.markupRules.push(link.markupRule);
     }
-    if (link.metaEndowmentRule) {
-      model.metaEndowmentRules.push(link.metaEndowmentRule);
-    }
   });
 }
 

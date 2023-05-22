@@ -15,10 +15,7 @@ export function serializeEdl(model) {
     markup: markup(model.markup),
     contentMarkup: markup(model.contentMarkup),
     classes: model.getClasses().map(c => c.pointer.linkName),
-    rules: {
-      markup: model.markupRules.map(markupRule).filter(x => x),
-      metaEndowments: links.map(metaEndowmentRule).filter(x => x)
-    }
+    markupRules: model.markupRules.map(markupRule).filter(x => x)
   };
 }
 
@@ -31,20 +28,6 @@ function markupRule(markupRule) {
     linkTypes: markupRule.linkTypes,
     classes: markupRule.classes
   };
-}
-
-function metaEndowmentRule(link) {
-  if (link.metaEndowmentRule) {
-    return {
-      link: linkName(link),
-      end: link.metaEndowmentRule.end,
-      attributes: link.metaEndowmentRule.attributeDescriptors,
-      targets: link.metaEndowmentRule.targets,
-      clipTypes: link.metaEndowmentRule.clipTypes,
-      edlTypes: link.metaEndowmentRule.edlTypes,
-      linkTypes: link.metaEndowmentRule.linkTypes
-    };
-  }
 }
 
 function serializeZettel(model) {
