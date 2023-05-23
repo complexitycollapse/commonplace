@@ -39,6 +39,8 @@ function makeClass(name, description = "", ...endSpecs) {
 }
 
 export const [emphasisType, emphasisPart] = makeType("emphasis", makeClass("emphasis", "", ["end", [InlinePointer("")]]));
+export const [titleType, titlePart] = makeType("title");
+export const [headingType, headingPart] = makeType("heading");
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {

@@ -1,7 +1,10 @@
 import {
   Edl, Link, InlinePointer, LinkPointer, Part
 } from "@commonplace/core";
-import { markupType, definesSequenceType, defaultsType, defaultsPointer, paragraphType } from '../well-known-objects';
+import {
+  markupType, definesSequenceType, defaultsType, defaultsPointer, paragraphType,
+  headingType
+} from '../well-known-objects';
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
 
@@ -76,8 +79,14 @@ export let defaultsLinksParts = [
   markupRule("defaults:blocks", [["layout mode", "block", "direct"]], {clipType: "image"}),
   markupRule("defaults:paragraphs", [
     ["layout mode", "block", "direct"],
-    ["box", "true", "direct"],
+    ["box", "true", "direct"]
   ], { edlType: paragraphType, linkType: paragraphType }),
+  markupRule("defaults:heading markup", [
+    ["layout mode", "block", "direct"],
+    ["box", "true", "direct"],
+    ["bold", "true", "content"],
+    ["font size", "2em", "content"]
+  ], { linkTypes: [headingType], edlTypes: [headingType] }),
   markupRule("defaults:emphasis", [["italic", "true", "direct"]], {classes: LinkPointer("emphasis")}),
   sequence("defaults:paragraph sequence", paragraphType, undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
