@@ -1,7 +1,7 @@
 {
   "typ": {"typ": "link", "name": "markup"},
   "es": [
-    { "name": "target", "ptr": [{ "typ": "span", "ori": "origin", "st": 556, "ln": 29 }] },
+    { "name": "target", "ptr": [{ "typ": "span", "ori": "originalTest/origin", "st": 556, "ln": 29 }] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "upper case"}]},
     { "name": "value", "ptr": [{ "typ": "inline", "txt": "true"}] },
     { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct"}] }

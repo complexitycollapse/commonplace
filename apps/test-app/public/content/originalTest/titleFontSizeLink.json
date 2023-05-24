@@ -1,7 +1,7 @@
 {
   "typ": {"typ": "link", "name": "markup"},
   "es": [
-    { "name": "target", "ptr": [{"typ": "edl", "name": "titleEdl1.json"}] },
+    { "name": "target", "ptr": [{"typ": "edl", "name": "originalTest/titleEdl1.json"}] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "font size"}] },
     { "name": "value", "ptr": [{ "typ": "inline", "txt": "larger"}] },
     { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "content"}] }

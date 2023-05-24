@@ -1,7 +1,7 @@
 {
   "typ": { "typ": "link", "name": "title" },
   "cps": [
-    {"typ": "span", "ori": "origin", "st": 0, "ln": 18}
+    {"typ": "span", "ori": "originalTest/origin", "st": 0, "ln": 18}
   ],
   "lks": []
 }

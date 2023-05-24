@@ -1,0 +1,33 @@
+{
+  "typ": { "typ": "link", "name": "document" },
+  "cps": [
+    {"typ": "edl", "name": "originalTest/titleEdl1.json"},
+    {"typ": "edl", "name": "originalTest/paragraphEdl1.json"},
+    {"typ": "span", "ori": "originalTest/origin", "st": 281, "ln": 28},
+    {"typ": "edl", "name": "originalTest/paragraphEdl2.json"},
+    {"typ": "edl", "name": "originalTest/paragraphEdl3.json"},
+    {"typ": "span", "ori": "originalTest/origin", "st": 556, "ln": 59},
+    {"typ": "edl", "name": "originalTest/paragraphEdl4.json"},
+    {"typ": "image", "ori": "TestImage.jpg", "x": 1070, "y": 650, "wd": 770, "ht": 300}
+  ],
+  "lks": [
+    { "typ": "link", "name": "originalTest/titleLink.json" },
+    { "typ": "link", "name": "originalTest/redLink.json"},
+    { "typ": "link", "name": "originalTest/blueLink.json"},
+    { "typ": "link", "name": "originalTest/paragraphLink1.json" },
+    { "typ": "link", "name": "originalTest/paragraphLink2.json" },
+    { "typ": "link", "name": "originalTest/paragraphLink3.json" },
+    { "typ": "link", "name": "originalTest/underlineLink.json" },
+    { "typ": "link", "name": "originalTest/strikethroughLink.json" },
+    { "typ": "link", "name": "originalTest/uppercaseLink.json" },
+    { "typ": "link", "name": "originalTest/lowercaseLink.json" },
+    { "typ": "link", "name": "originalTest/paragraphLink4.json" },
+    { "typ": "link", "name": "originalTest/boldLink.json" },
+    { "typ": "link", "name": "originalTest/capitalizeLink.json" },
+    { "typ": "link", "name": "originalTest/emphasisLink.json" },
+    { "typ": "link", "name": "originalTest/rightAlignLink.json" },
+    { "typ": "link", "name": "originalTest/backgroundColourLink.json" },
+    { "typ": "link", "name": "originalTest/greenBackgroundLink.json" },
+    { "typ": "link", "name": "originalTest/titleFontSizeLink.json" }
+  ]
+}

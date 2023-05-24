@@ -17,6 +17,6 @@ export function App() {
 }
 export default App;
 
-const Flight = () => <FlightComponent docPointers={[EdlPointer("testdoc.json")]} repository={ repository } />;
-const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("testdoc.json")} repository={ repository } />
-const BoxModel = () => <BoxModelComponent docPointer={EdlPointer("testdoc.json")} repository={ repository } />
+const Flight = () => <FlightComponent docPointers={[EdlPointer("originalTest/testdoc.json")]} repository={ repository } />;
+const DocModel = () => <DocumentModelComponent docPointer={EdlPointer("originalTest/testdoc.json")} repository={ repository } />
+const BoxModel = () => <BoxModelComponent docPointer={EdlPointer("originalTest/testdoc.json")} repository={ repository } />

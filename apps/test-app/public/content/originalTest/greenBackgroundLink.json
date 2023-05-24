@@ -1,9 +1,9 @@
 {
   "typ": {"typ": "link", "name": "markup"},
   "es": [
-    { "name": "target", "ptr": [{ "typ": "span", "ori": "origin", "st": 20, "ln": 256 }] },
+    { "name": "target", "ptr": [{ "typ": "edl", "name": "originalTest/testdoc.json" }] },
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "background colour"}]},
-    { "name": "value", "ptr": [{ "typ": "inline", "txt": "lightblue"}] },
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "green"}] },
     { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct"}] }
   ]
 }

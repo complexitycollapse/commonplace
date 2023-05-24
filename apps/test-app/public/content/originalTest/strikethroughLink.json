@@ -2,10 +2,10 @@
   "typ": {"typ": "link", "name": "markup"},
   "es": [
     { "name": "target", "ptr": [
-      { "typ": "span", "ori": "origin", "st": 406, "ln": 29 },
-      { "typ": "span", "ori": "origin", "st": 437, "ln": 23 },
-      {"typ": "span", "ori": "origin", "st": 514, "ln": 39},
-      {"typ": "span", "ori": "origin", "st": 462, "ln": 54}
+      { "typ": "span", "ori": "originalTest/origin", "st": 406, "ln": 29 },
+      { "typ": "span", "ori": "originalTest/origin", "st": 437, "ln": 23 },
+      {"typ": "span", "ori": "originalTest/origin", "st": 514, "ln": 39},
+      {"typ": "span", "ori": "originalTest/origin", "st": 462, "ln": 54}
     ]},
     { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "strike through"}]},
     { "name": "value", "ptr": [{ "typ": "inline", "txt": "true"}] },
