@@ -39,6 +39,8 @@ function makeClass(name, description = "", ...endSpecs) {
 }
 
 export const [emphasisType, emphasisPart] = makeType("emphasis", makeClass("emphasis", "", ["end", [InlinePointer("")]]));
+export const [foreignWordType, foreignWordPart] = makeType("foreign word", makeClass("foreign word", "", ["end", [InlinePointer("")]]));
+export const [quoteEmphasisType, quoteEmphasisPart] = makeType("quote emphasis", makeClass("quote emphasis", "", ["end", [InlinePointer("")]]));
 export const [titleType, titlePart] = makeType("title");
 export const [headingType, headingPart] = makeType("heading");
 

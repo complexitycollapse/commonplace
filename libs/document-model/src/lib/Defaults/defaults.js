@@ -88,6 +88,8 @@ export let defaultsLinksParts = [
     ["font size", "2em", "content"]
   ], { linkTypes: [headingType], edlTypes: [headingType] }),
   markupRule("defaults:emphasis", [["italic", "true", "direct"]], {classes: LinkPointer("emphasis")}),
+  markupRule("defaults:foreign word", [["italic", "true", "direct"]], {classes: LinkPointer("foreign word")}),
+  markupRule("defaults:quote emphasis", [["italic", "true", "direct"]], {classes: LinkPointer("quote emphasis")}),
   sequence("defaults:paragraph sequence", paragraphType, undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
