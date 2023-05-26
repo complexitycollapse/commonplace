@@ -25,7 +25,6 @@ export const [markupType, markupPart] = makeType("markup");
 export const [definesSequenceType, definesSequencePart] = makeType("defines sequence");
 export const [documentType, documentPart] = makeType("document");
 export const [missingEdlType, missingEdlPart] = makeType("missing Edl");
-export const [paragraphType, paragraphPart] = makeType("paragraph");
 export const [definesSemanticClassType, definesSemanticClassPart] = makeType("defines semantic class");
 
 function makeClass(name, description = "", ...endSpecs) {
@@ -38,6 +37,17 @@ function makeClass(name, description = "", ...endSpecs) {
   ];
 }
 
+function wrapInline(pointer) {
+  return typeof pointer === "string" ? InlinePointer(pointer) : pointer;
+}
+
+function makeSequence(name, end, type) {
+  let ends = [["end", [InlinePointer(end ?? "")]]];
+  if (type) { ends.push(["type", [wrapInline(type)]]) }
+  return [LinkPointer(name + " sequence"), Link(definesSequenceType, ...ends)];
+}
+
+export const [paragraphType, paragraphPart] = makeType("paragraph", makeSequence("paragraph"));
 export const [emphasisType, emphasisPart] = makeType("emphasis", makeClass("emphasis", "", ["end", [InlinePointer("")]]));
 export const [foreignWordType, foreignWordPart] = makeType("foreign word", makeClass("foreign word", "", ["end", [InlinePointer("")]]));
 export const [quoteEmphasisType, quoteEmphasisPart] = makeType("quote emphasis", makeClass("quote emphasis", "", ["end", [InlinePointer("")]]));

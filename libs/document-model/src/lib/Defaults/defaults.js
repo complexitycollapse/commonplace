@@ -2,8 +2,7 @@ import {
   Edl, Link, InlinePointer, LinkPointer, Part
 } from "@commonplace/core";
 import {
-  markupType, definesSequenceType, defaultsType, defaultsPointer, paragraphType,
-  headingType
+  markupType, defaultsType, defaultsPointer, paragraphType, headingType
 } from '../well-known-objects';
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
@@ -60,11 +59,6 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType, 
   return Part(LinkPointer(name), Link(markupType, ...ends));
 }
 
-function sequence(name, type, end) {
-  return Part(LinkPointer(name),
-    Link(definesSequenceType, ["type", [wrapInline(type)]], ["end", [InlinePointer(end ?? "")]]));
-}
-
 export let defaultsLinksParts = [
   // directAttribute("paragraph", "paragraph", true),
   // directAttribute("title", "title", true),
@@ -90,7 +84,6 @@ export let defaultsLinksParts = [
   markupRule("defaults:emphasis", [["italic", "true", "content"]], {classes: LinkPointer("emphasis")}),
   markupRule("defaults:foreign word", [["italic", "true", "content"]], {classes: LinkPointer("foreign word")}),
   markupRule("defaults:quote emphasis", [["italic", "true", "content"]], {classes: LinkPointer("quote emphasis")}),
-  sequence("defaults:paragraph sequence", paragraphType, undefined)
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
   //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
 ];
