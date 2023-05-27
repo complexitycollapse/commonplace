@@ -55,6 +55,7 @@ export const [titleType, titlePart] = makeType("title", makeSequence("title"));
 export const [headingType, headingPart] = makeType("heading", makeSequence("heading"));
 export const [listType, listPart] = makeType("list", makeSequence("list", "items"));
 export const [listItemType, listItemPart] = makeType("list item", makeSequence("list item"));
+export const [boxType, boxPart] = makeType("box", makeSequence("box"));
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {

@@ -3,7 +3,7 @@ import {
 } from "@commonplace/core";
 import {
   markupType, defaultsType, defaultsPointer, paragraphType, headingType,
-  listType, listItemType
+  listType, listItemType, boxType
 } from '../well-known-objects';
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
@@ -96,7 +96,12 @@ export let defaultsLinksParts = [
 
   markupRule("defaults:emphasis", [["italic", "true", "content"]], {classes: LinkPointer("emphasis")}),
   markupRule("defaults:foreign word", [["italic", "true", "content"]], {classes: LinkPointer("foreign word")}),
-  markupRule("defaults:quote emphasis", [["italic", "true", "content"]], {classes: LinkPointer("quote emphasis")}),
+  markupRule("defaults:quote emphasis", [["italic", "true", "content"]], { classes: LinkPointer("quote emphasis") }),
+
+  markupRule("defaults:box", [
+    ["layout level", "block", "direct"],
+    ["box", "true", "direct"]
+  ], { edlType: boxType, linkType: boxType })
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
 ];
 
