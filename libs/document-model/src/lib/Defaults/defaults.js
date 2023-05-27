@@ -65,30 +65,30 @@ export let defaultsLinksParts = [
   // contentAttribute("right aligned text", "text align", "right"),
   // contentAttribute("centre aligned text", "text align", "center"),
   // contentAttribute("justified aligned text", "text align", "justify"),
-  // contentAttribute("inline", "layout mode", "inline"),
-  // directAttribute("block", "layout mode", "block"),
+  // contentAttribute("inline", "layout level", "inline"),
+  // directAttribute("block", "layout level", "block"),
   // directAttribute("break", "break", true),
-  markupRule("defaults:spans", [["layout mode", "inline", "direct"]], {clipType: "span"}),
-  markupRule("defaults:blocks", [["layout mode", "block", "direct"]], { clipType: "image" }),
+  markupRule("defaults:spans", [["layout level", "inline", "direct"]], {clipType: "span"}),
+  markupRule("defaults:blocks", [["layout level", "block", "direct"]], { clipType: "image" }),
 
   markupRule("defaults:paragraph", [
-    ["layout mode", "block", "direct"],
+    ["layout level", "block", "direct"],
     ["box", "true", "direct"]
   ], { edlType: paragraphType, linkType: paragraphType }),
 
   markupRule("defaults:list", [
-    ["layout mode", "block", "direct"],
+    ["layout level", "block", "direct"],
     ["box", "true", "direct"],
     ["list", "true", "direct"]
   ], { edlType: listType, linkType: listType }),
   markupRule("defaults:list item", [
-    ["layout mode", "block", "direct"],
+    ["layout level", "block", "direct"],
     ["box", "true", "direct"],
     ["list item", "true", "direct"]
   ], { edlType: listItemType, linkType: listItemType }),
 
   markupRule("defaults:heading markup", [
-    ["layout mode", "block", "direct"],
+    ["layout level", "block", "direct"],
     ["box", "true", "direct"],
     ["bold", "true", "content"],
     ["font size", "1.5em", "content"]

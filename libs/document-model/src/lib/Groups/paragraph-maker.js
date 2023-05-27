@@ -18,7 +18,7 @@ export function BlockMaker(zettel) {
     }
 
     function inline(attributes) {
-      return attributes.get("layout mode") === "inline";
+      return attributes.get("layout level") === "inline";
     }
 
     function processList(list) {

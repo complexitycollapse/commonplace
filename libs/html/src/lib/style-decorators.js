@@ -31,7 +31,7 @@ export const decorators = [
   compoundingStyleDecorator("color", "color"),
   compoundingStyleDecorator("background colour", "backgroundColor"),
   compoundingStyleDecorator("background color", "backgroundColor"),
-  compoundingStyleDecorator("layout mode", "display"),
+  compoundingStyleDecorator("layout level", "display"),
   compoundingStyleDecorator("font size", "fontSize"),
   listStyleDecorator
 ];
