@@ -29,7 +29,7 @@ export function Edl(type, clips, links) {
 
 export function leafDataToEdl(leafData) {
   return Edl(
-    leafDataToPointer(leafData.typ),
+    leafData.typ ? leafDataToPointer(leafData.typ) : undefined,
     leafData.cps.map(leafDataToClip),
     leafData.lks.map(leafDataToLinkPointer));
 }

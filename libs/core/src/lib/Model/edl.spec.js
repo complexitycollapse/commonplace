@@ -60,10 +60,16 @@ describe('leafData', () => {
       lks: expect.arrayContaining(links.map(l => l.leafData())),
     });
   });
-});
 
-test('leafDataToEdl is inverse of leafData', () => {
-  let clips = [...makeSpans(10), Image("orig3", 11, 22, 33, 44)];
-  let d = Edl(InlinePointer("the type"), clips, [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")]);
-  expect(leafDataToEdl(d.leafData())).toEqual(d);
+  test('leafDataToEdl is inverse of leafData', () => {
+    let clips = [...makeSpans(10), Image("orig3", 11, 22, 33, 44)];
+    let d = Edl(InlinePointer("the type"), clips, [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")]);
+    expect(leafDataToEdl(d.leafData())).toEqual(d);
+  });
+
+  test('leafDataToEdl can parse an Edl with no type', () => {
+    let clips = [...makeSpans(10), Image("orig3", 11, 22, 33, 44)];
+    let d = Edl(undefined, clips, [LinkPointer("link1"), LinkPointer("link2"), LinkPointer("link3")]);
+    expect(leafDataToEdl(d.leafData())).toEqual(d);
+  });
 });
