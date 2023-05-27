@@ -48,7 +48,7 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType, 
   attributeDescriptions.forEach(desc => {
     ends.push(["attribute", [InlinePointer(desc[0])]]);
     ends.push(["value", [InlinePointer(desc[1])]]);
-    ends.push(["inherit", [InlinePointer(desc[2])]]);
+    ends.push(["inheritance", [InlinePointer(desc[2])]]);
   });
 
   if (clipType) { ends.push(["clip types", [InlinePointer(clipType)]]); }
