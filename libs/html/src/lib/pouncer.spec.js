@@ -14,8 +14,8 @@ async function make(docPointer, nameContentPairs = []) {
   return TestPouncer(repo, docPointer, nameContentPairs.map(pair => Part(pair[0], pair[1])));
 }
 
-function anEdl(clips = [], links = []) {
-  return [EdlPointer("p"), makeEdl(clips, links)];
+function anEdl(clips = [], links = [], type) {
+  return [EdlPointer("p"), makeEdl(clips, links, type)];
 }
 
 function aLink(n = 1, linkContent, type) {
@@ -32,8 +32,8 @@ function aClip(n = 1) {
   return [Span("or", n, 10), "x".repeat(n+10)];
 }
 
-function makeEdl(clips = [], links = []) {
-  return Edl(undefined, clips.map(x => x[0]), links.map(x => x[0]));
+function makeEdl(clips = [], links = [], type) {
+  return Edl(type ? type[0] : undefined, clips.map(x => x[0]), links.map(x => x[0]));
 }
 
 describe('docStatus', () => {
@@ -132,8 +132,8 @@ describe('docStatus', () => {
   });
 
   describe('after EDL downloaded', () => {
-    async function makeAndGetDocStatus(clips = [], links = [], cached = []) {
-      let edlPair = anEdl(clips, links);
+    async function makeAndGetDocStatus(clips = [], links = [], cached = [], type) {
+      let edlPair = anEdl(clips, links, type);
       return (await make(edlPair[0], [[defaultsPointer, makeEdl()], edlPair, ...cached])).docStatus();
     }
 
@@ -151,6 +151,14 @@ describe('docStatus', () => {
 
     it('stops requesting the EDL', async () => {
       expect((await makeAndGetDocStatus()).required).toEqual([]);
+    });
+
+    it('starts requesting the EDL type', async () => {
+      let link = aLink(1);
+
+      let required = (await makeAndGetDocStatus([], [], [], link)).required;
+
+      expect(required).toContain(link[0]);
     });
 
     it('starts requesting the EDL clips and links', async () => {
