@@ -1,0 +1,13 @@
+{
+  "typ": {"typ": "link", "name": "list"},
+  "es": [
+    { "name": "items", "ptr": [
+        { "typ": "link", "name": "lists/listItem1.json" },
+        { "typ": "link", "name": "lists/listItem2.json" },
+        { "typ": "link", "name": "lists/listItem3.json" },
+        { "typ": "link", "name": "lists/listItem4.json" },
+        { "typ": "link", "name": "lists/listItem5.json" }
+      ]
+    }
+  ]
+}

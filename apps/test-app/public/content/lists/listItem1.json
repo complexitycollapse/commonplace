@@ -1,0 +1,6 @@
+{
+  "typ": {"typ": "link", "name": "list item"},
+  "es": [
+    { "ptr": [{"typ": "span", "ori": "lists/testContent.txt", "st": 0, "ln": 3}] }
+  ]
+}

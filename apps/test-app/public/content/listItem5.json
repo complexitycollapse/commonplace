@@ -1,6 +1,0 @@
-{
-  "typ": {"typ": "link", "name": "list item"},
-  "es": [
-    { "ptr": [{"typ": "span", "ori": "testContent.txt", "st": 15, "ln": 4}] }
-  ]
-}

@@ -1,23 +1,37 @@
 import { DocumentModelComponent, FlightComponent, BoxModelComponent } from '@commonplace/ui';
 import { EdlPointer } from '@commonplace/core';
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import liveRepository from './live-repository';
 
 let repository = liveRepository();
 
 export function App() {
+
   return (
     <Routes>
-      <Route path="/" exact Component={Flight} />
-      <Route path="/model" exact Component={DocModel} />
-      <Route path="/box" exact Component={BoxModel} />
+      <Route path="/:docName" exact Component={Flight} />
+      <Route path="/:docName/model" exact Component={DocModel} />
+      <Route path="/:docName/box" exact Component={BoxModel} />
     </Routes>
 
   );
 }
 export default App;
 
-let doc = EdlPointer("testCases.json");
-const Flight = () => <FlightComponent docPointers={[doc]} repository={ repository } />;
-const DocModel = () => <DocumentModelComponent docPointer={doc} repository={ repository } />
-const BoxModel = () => <BoxModelComponent docPointer={doc} repository={ repository } />
+const Flight = () => {
+  let { docName } = useParams();
+
+  return (<FlightComponent docPointers={[EdlPointer(docName + "/doc.json")]} repository={repository} />);
+}
+
+const DocModel = () => {
+  let { docName } = useParams();
+
+  return (<DocumentModelComponent docPointer={EdlPointer(docName + "/doc.json")} repository={repository} />);
+}
+
+const BoxModel = () => {
+  let { docName } = useParams();
+
+  return (<BoxModelComponent docPointer={EdlPointer(docName + "/doc.json")} repository={repository} />);
+}
