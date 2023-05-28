@@ -169,6 +169,23 @@ describe('BoxModelBuilder', () => {
     expect(box.members[0].members).toHaveLength(3);
   });
 
+  it('places all spans in the root box', () => {
+    // This test is for a bug where duplicate root boxes were being created. The cause
+    // was that a box was being created for each span, rather than subsequent spans
+    // being skipped because they have already been placed in a box.
+
+    let spans = [aSpan(), aSpan(), aSpan()];
+    let childSequenceLinks = SequenceLinkBuilder(spans);
+    let model = makeModel(spans)
+      .withLinks(childSequenceLinks.link, childSequenceLinks.metalink)
+      .withLink(aBoxLink(childSequenceLinks.link))
+      .withBoxSequenceLink([childSequenceLinks.link])
+      .withExtraLinks([childSequenceLinks.type, childSequenceLinks.metalink]);
+
+    let boxModel = make(model);
+    expect(boxModel.members).toHaveLength(1);
+  });
+
   it('creates implicit boxes around a box sequence if that content is not in an explicit box', () => {
     let spans = [aSpan(), aSpan(), aSpan()];
     let model = makeModel(spans).withBoxSequenceLink([spans[1]]);

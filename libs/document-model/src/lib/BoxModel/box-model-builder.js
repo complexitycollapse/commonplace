@@ -53,7 +53,7 @@ export function BoxModelBuilder(docModel) {
         // Skip this zettel if it is part of a sequence we have previously processed.
         // (This will happen if a box sequence was detected and a box formed from its
         // members. We can then drop the remaining zettel in the sequence).
-        if (!z.isSequence && z.sequences.includes(currentSequence)) { return; }
+        if (!z.isSequence && z.sequences.map(climbToTopBoxSequence).includes(currentSequence)) { return; }
 
         currentSequence = undefined;
 
@@ -69,7 +69,8 @@ export function BoxModelBuilder(docModel) {
           if (!inSequence) {
 
             // Check to see if any box sequences begin here. Get the highest in the sequence hierarchy.
-            let startingSequences = z.sequences.filter(s => s.members[0] === z)
+            let sequencesThatBeginHere = z.sequences.filter(s => s.members[0].key === z.key);
+            let startingSequences = sequencesThatBeginHere
               .map(climbToTopBoxSequence)
               .filter(s => s);
 
