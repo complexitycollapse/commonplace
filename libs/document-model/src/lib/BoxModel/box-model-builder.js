@@ -31,7 +31,7 @@ export function BoxModelBuilder(docModel) {
   function convertToBox(originObject, objectChildren, inSequence) {
     let childBoxes = [];
     let currentImplicitBox = [];
-    let currentSequence = undefined;
+    let currentBoxSequence = undefined;
 
     function terminateImplicitBox() {
       if (currentImplicitBox.length > 0) {
@@ -53,9 +53,10 @@ export function BoxModelBuilder(docModel) {
         // Skip this zettel if it is part of a sequence we have previously processed.
         // (This will happen if a box sequence was detected and a box formed from its
         // members. We can then drop the remaining zettel in the sequence).
-        if (!z.isSequence && z.sequences.map(climbToTopBoxSequence).includes(currentSequence)) { return; }
+        if (!z.isSequence && z.sequences.map(climbToTopBoxSequence).includes(currentBoxSequence)) { return; }
 
-        currentSequence = undefined;
+        // If the above check failed then we are not in a box sequence.
+        currentBoxSequence = undefined;
 
         if (z.isSequence) {
           if (isBox(z.definingLink)) {
@@ -78,32 +79,31 @@ export function BoxModelBuilder(docModel) {
 
               terminateImplicitBox();
 
+              // If there are multiple starting sequences here, pick the highest priority
+              startingSequences.sort((a, b) => compareLinkPriority(a.definingLink, b.definingLink));
+              currentBoxSequence = startingSequences[0];
+
               // Add the box sequence as a child box
-              startingSequences.sort((a, b) => compareLinkPriority(a[0].definingLink, b[0].definingLink));
-              currentSequence = startingSequences[0];
-              let sequenceBox = convertToBox(currentSequence, currentSequence.members, true);
+              let sequenceBox = convertToBox(currentBoxSequence, currentBoxSequence.members, true);
               childBoxes.push(sequenceBox);
             }
           }
 
           // If we didn't find a box sequence...
-          if (currentSequence === undefined) {
+          if (currentBoxSequence === undefined) {
             if (z.isEdl) {
               if (isBox(z)) {
 
                 terminateImplicitBox();
 
                 // The Edl is a box, so convert it to a child box.
-
                 childBoxes.push(convertToBox(z, z.zettel, false));
               } else {
                 // If it's an EDL that's not a box then it needs to be flattened.
-
                 gatherZettel(z.zettel, false);
               }
             } else {
               // It's just content, so add it to an implicit box.
-
               currentImplicitBox.push(z);
             }
           }
