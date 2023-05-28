@@ -16,7 +16,8 @@ export default function resolveTypeAndMetalinks(typePointer, cache) {
     if (type?.isLink) {
       type.forEachPointer(metalinkPointer => {
         if (metalinkPointer.pointerType === "link") {
-          let metalink = cache.getPart(metalinkPointer).content;
+          let metalinkPart = cache.getPart(metalinkPointer);
+          let metalink = metalinkPart.content;
           metalinkPairs.push([metalinkPointer, metalink]);
         }
       });

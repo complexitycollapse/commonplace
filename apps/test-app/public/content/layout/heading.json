@@ -1,0 +1,6 @@
+{
+  "typ": {"typ": "link", "name": "heading"},
+  "es": [
+    { "ptr": [{"typ": "span", "ori": "layout/text.txt", "st": 0, "ln": 30}] }
+  ]
+}

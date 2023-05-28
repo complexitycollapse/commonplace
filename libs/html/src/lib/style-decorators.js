@@ -17,6 +17,22 @@ function listStyleDecorator(cssMap, target) {
   return cssMap;
 }
 
+function displayDecorator(cssMap, target) {
+  if (target.markup.get("box") !== "true") { return cssMap; }
+  let layoutLevel = target.markup.get("layout level") ?? "inline";
+  let layoutDirection = target.markup.get("layout direction") ?? "vertical";
+
+  if (layoutDirection === "vertical") {
+    cssMap.set("display", layoutLevel);
+  } else if (layoutDirection === "horizontal") {
+    cssMap.set("display", layoutLevel === "block" ? "flex" : "inline-flex");
+    cssMap.set("flexDirection", "row");
+    cssMap.set("gap", "0.5em");
+  }
+
+  return cssMap;
+}
+
 export const decorators = [
   compoundingStyleDecorator("bold", "fontWeight", "bold"),
   compoundingStyleDecorator("italic", "fontStyle", "italic"),
@@ -31,7 +47,7 @@ export const decorators = [
   compoundingStyleDecorator("color", "color"),
   compoundingStyleDecorator("background colour", "backgroundColor"),
   compoundingStyleDecorator("background color", "backgroundColor"),
-  compoundingStyleDecorator("layout level", "display"),
+  displayDecorator,
   compoundingStyleDecorator("font size", "fontSize"),
   listStyleDecorator
 ];

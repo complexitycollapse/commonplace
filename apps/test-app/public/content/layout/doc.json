@@ -1,0 +1,14 @@
+{
+  "typ": { "typ": "link", "name": "document" },
+  "cps": [
+    {"typ": "span", "ori": "layout/text.txt", "st": 0, "ln": 30},
+    {"typ": "edl", "name": "layout/container.json"}
+  ],
+  "lks": [
+    { "typ": "link", "name": "layout/box1.json" },
+    { "typ": "link", "name": "layout/box2.json" },
+    { "typ": "link", "name": "layout/box3.json" },
+    { "typ": "link", "name": "layout/horizontal.json" },
+    { "typ": "link", "name": "layout/heading.json" }
+  ]
+}

@@ -1,0 +1,2 @@
+Horizontal and Vertical Layout
+The first boxThis is the content of the second boxThe third box
