@@ -1,5 +1,5 @@
 import { finalObject } from '@commonplace/utils';
-import { serializeLink, serializeAtom, serializeEdl } from './common-serializers';
+import { serializeLink, serializeAtom, serializeEdl, linkName } from './common-serializers';
 
 export function BoxModelSerializer(boxModel) {
   function serialize() {
@@ -19,6 +19,8 @@ function serializeBox(box) {
 
 function serializeOrigin(origin) {
   if (origin === undefined) { return "implicit"; }
-  if (origin.isLink) { return serializeLink(origin); }
+  if (origin.isSequence) { return `Sequence (${linkName(origin.definingLink)})`; }
   if (origin.isEdl) { return serializeEdl(origin); }
+  if (origin.isLink) { return serializeLink(origin); } // Is this valid? Wouldn't it be a sequence?
+  return "Unexpected origin type";
 }

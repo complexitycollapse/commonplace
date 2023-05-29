@@ -1,7 +1,8 @@
 export function serializeEdl(model) {
   let links = Object.values(model.links).map(serializeLink);
   let incomingPointers = model.incomingPointers.map(serializeIncomingPointer);
-  let sequences = model.sequences.map(s => linkName(s.definingLink));
+  let sequences = model.sequences.map(serializeSequence);
+  let rootSequences = model.rootSequences().map(serializeSequence);
   let zettel = model.zettel.map(serializeZettel);
 
   return {
@@ -12,6 +13,7 @@ export function serializeEdl(model) {
     links,
     incomingPointers,
     sequences,
+    rootSequences,
     markup: markup(model.markup),
     contentMarkup: markup(model.contentMarkup),
     classes: model.getClasses().map(c => c.pointer.linkName),
@@ -90,12 +92,12 @@ function serializeSequencePrototype(prototype) {
 
 function serializeIncomingPointer(model) {
   return {
-    end: model.end.name,
+    end: model.end.name ?? "(Unnamed)",
     link: linkName(model.link)
   };
 }
 
-const linkName = model => {
+export const linkName = model => {
   let name = model.pointer.linkName;
   if (model.resolvedType) {
     if (typeof model.resolvedType === "string") {
@@ -109,3 +111,15 @@ const linkName = model => {
 }
 
 const markup = m => Object.fromEntries(m.entries());
+
+export function serializeSequence(sequence) {
+  return {
+    name: linkName(sequence.definingLink),
+    key: sequence.key,
+    definingLink: serializeLink(sequence.definingLink),
+    signature: sequence.signature,
+    type: sequence.type,
+    members: sequence.members.map(member => member.isSequence ? serializeSequence(member) : member.pointer),
+    isSubordinated: sequence.isSubordinated
+  };
+}
