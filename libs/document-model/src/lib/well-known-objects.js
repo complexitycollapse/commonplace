@@ -51,8 +51,10 @@ export const [paragraphType, paragraphPart] = makeType("paragraph", makeSequence
 export const [emphasisType, emphasisPart] = makeType("emphasis", makeClass("emphasis", "", ["end", [InlinePointer("")]]));
 export const [foreignWordType, foreignWordPart] = makeType("foreign word", makeClass("foreign word", "", ["end", [InlinePointer("")]]));
 export const [quoteEmphasisType, quoteEmphasisPart] = makeType("quote emphasis", makeClass("quote emphasis", "", ["end", [InlinePointer("")]]));
-export const [titleType, titlePart] = makeType("title");
-export const [headingType, headingPart] = makeType("heading");
+export const [titleType, titlePart] = makeType("title", makeSequence("title"));
+export const [headingType, headingPart] = makeType("heading", makeSequence("heading"));
+export const [listType, listPart] = makeType("list", makeSequence("list", "items"));
+export const [listItemType, listItemPart] = makeType("list item", makeSequence("list item"));
 
 export function WellKnownObjectsPartFetcher() {
   async function getPart(pointer) {

@@ -2,7 +2,8 @@ import {
   Edl, Link, InlinePointer, LinkPointer, Part
 } from "@commonplace/core";
 import {
-  markupType, defaultsType, defaultsPointer, paragraphType, headingType
+  markupType, defaultsType, defaultsPointer, paragraphType, headingType,
+  listType, listItemType
 } from '../well-known-objects';
 import { DocumentModelBuilder } from '../DocumentModel/document-model-builder';
 import { finalObject } from "@commonplace/utils";
@@ -60,8 +61,6 @@ function markupRule(name, attributeDescriptions, { clipType, edlType, linkType, 
 }
 
 export let defaultsLinksParts = [
-  // directAttribute("paragraph", "paragraph", true),
-  // directAttribute("title", "title", true),
   // contentAttribute("left aligned text", "text align", "left"),
   // contentAttribute("right aligned text", "text align", "right"),
   // contentAttribute("centre aligned text", "text align", "center"),
@@ -70,22 +69,35 @@ export let defaultsLinksParts = [
   // directAttribute("block", "layout mode", "block"),
   // directAttribute("break", "break", true),
   markupRule("defaults:spans", [["layout mode", "inline", "direct"]], {clipType: "span"}),
-  markupRule("defaults:blocks", [["layout mode", "block", "direct"]], {clipType: "image"}),
-  markupRule("defaults:paragraphs", [
+  markupRule("defaults:blocks", [["layout mode", "block", "direct"]], { clipType: "image" }),
+
+  markupRule("defaults:paragraph", [
     ["layout mode", "block", "direct"],
     ["box", "true", "direct"]
   ], { edlType: paragraphType, linkType: paragraphType }),
+
+  markupRule("defaults:list", [
+    ["layout mode", "block", "direct"],
+    ["box", "true", "direct"],
+    ["list", "true", "direct"]
+  ], { edlType: listType, linkType: listType }),
+  markupRule("defaults:list item", [
+    ["layout mode", "block", "direct"],
+    ["box", "true", "direct"],
+    ["list item", "true", "direct"]
+  ], { edlType: listItemType, linkType: listItemType }),
+
   markupRule("defaults:heading markup", [
     ["layout mode", "block", "direct"],
     ["box", "true", "direct"],
     ["bold", "true", "content"],
-    ["font size", "2em", "content"]
-  ], { linkTypes: [headingType], edlTypes: [headingType] }),
+    ["font size", "1.5em", "content"]
+  ], { linkType: headingType, edlType: headingType }),
+
   markupRule("defaults:emphasis", [["italic", "true", "content"]], {classes: LinkPointer("emphasis")}),
   markupRule("defaults:foreign word", [["italic", "true", "content"]], {classes: LinkPointer("foreign word")}),
   markupRule("defaults:quote emphasis", [["italic", "true", "content"]], {classes: LinkPointer("quote emphasis")}),
   //Link("inline", [undefined, [PointerTypePointer("span")]]),
-  //Link("block", [undefined, [EdlTypePointer("paragraph")]]),
 ];
 
 function deriveLinkPointer(link) {

@@ -8,5 +8,10 @@ export function BoxComponent({ box }) {
   let innerComponents = boxChildren ? box.members.map(m => (<BoxComponent key={m.key} box={m} />))
     : box.members.map(m => (<ZettelComponent key={m.key} zettel={m} />));
 
-  return (<cpla-box cpla-key={box.key}><div style={style}>{innerComponents}</div></cpla-box>);
+  if (box.markup.get("list")) {
+    let listItems = innerComponents.map(component => (<li key={component.key}>{component}</li>));
+    return (<cpla-box key={box.key} cpla-key={box.key} style={style}><ul>{listItems}</ul></cpla-box>);
+  } else {
+    return (<cpla-box key={box.key} cpla-key={box.key} style={style}>{innerComponents}</cpla-box>);
+  }
 }
