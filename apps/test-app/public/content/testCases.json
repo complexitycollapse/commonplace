@@ -1,0 +1,20 @@
+{
+  "typ": { "typ": "link", "name": "document" },
+  "cps": [
+    {"typ": "span", "ori": "testContent.txt", "st": 19, "ln": 14},
+    {"typ": "span", "ori": "testContent.txt", "st": 0, "ln": 3},
+    {"typ": "span", "ori": "testContent.txt", "st": 3, "ln": 3},
+    {"typ": "span", "ori": "testContent.txt", "st": 6, "ln": 5},
+    {"typ": "span", "ori": "testContent.txt", "st": 11, "ln": 4},
+    {"typ": "span", "ori": "testContent.txt", "st": 15, "ln": 4}
+  ],
+  "lks": [
+    { "typ": "link", "name": "listItem1.json" },
+    { "typ": "link", "name": "listItem2.json" },
+    { "typ": "link", "name": "listItem3.json" },
+    { "typ": "link", "name": "listItem4.json" },
+    { "typ": "link", "name": "listItem5.json" },
+    { "typ": "link", "name": "unorderedList.json" },
+    { "typ": "link", "name": "unorderedListHeading.json" }
+  ]
+}
