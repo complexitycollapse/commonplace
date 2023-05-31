@@ -52,6 +52,12 @@ describe('BoxModelBuilder', () => {
     expect(box.isBox).toBeTruthy();
   });
 
+  it('sets isRootBox to true on the root box', () => {
+    let box = make(makeModel([]));
+
+    expect(box.isRootBox).toBeTruthy();
+  });
+
   it('sets originObject to be the document model', () => {
     let model = makeModel([]);
 
@@ -70,6 +76,15 @@ describe('BoxModelBuilder', () => {
     expectMemberMatches(box, 0, spans[0]);
     expectMemberMatches(box, 1, spans[1]);
     expectMemberMatches(box, 2, spans[2]);
+  });
+
+  it('sets isRootBox to false on child boxes', () => {
+    let spans = [aSpan()];
+    let model = makeModel(spans);
+
+    let box = make(model);
+
+    expect(box.members[0].isRootBox).toBeFalsy();
   });
 
   it('never generates a box for a span, as a span is never a box', () => {

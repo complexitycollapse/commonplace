@@ -18,11 +18,17 @@ function listStyleDecorator(cssMap, target) {
 }
 
 function displayDecorator(cssMap, target) {
-  if (target.markup.get("box") !== "true") { return cssMap; }
+  if (target.isRootBox) {
+    cssMap.set("display", "block");
+    return cssMap;
+  }
+
   let layoutLevel = target.markup.get("layout level") ?? "inline";
   let layoutDirection = target.markup.get("layout direction") ?? "vertical";
 
-  if (layoutDirection === "vertical") {
+  if (target.markup.get("box") !== "true") {
+    cssMap.set("display", layoutLevel);
+  } else if (layoutDirection === "vertical") {
     cssMap.set("display", layoutLevel);
   } else if (layoutDirection === "horizontal") {
     cssMap.set("display", layoutLevel === "block" ? "flex" : "inline-flex");

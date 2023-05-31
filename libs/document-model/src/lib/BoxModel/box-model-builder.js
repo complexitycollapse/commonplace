@@ -28,7 +28,7 @@ export function BoxModelBuilder(docModel) {
 
   // This will return an ORDERED hierarchy of boxes (ordered by appearance in the EDL).
   // Edls and sequences that are not boxes will be flattened.
-  function convertToBox(originObject, objectChildren, inSequence) {
+  function convertToBox(originObject, objectChildren, inSequence, isRootBox) {
     let childBoxes = [];
     let currentImplicitBox = [];
     let currentBoxSequence = undefined;
@@ -121,7 +121,7 @@ export function BoxModelBuilder(docModel) {
     }
 
     let markup = originObject.isSequence ? originObject.definingLink.markup : originObject.markup;
-    return Box(originObject, childBoxes, markup);
+    return Box(originObject, childBoxes, markup, isRootBox);
   }
 
   return finalObject({}, {
@@ -130,7 +130,7 @@ export function BoxModelBuilder(docModel) {
       // EDLs, including the root Edl. An Edl may be contained directly or be
       // part of a sequence. This needs to be calculated hierarchically all the
       // way down.
-      let rootBox = convertToBox(docModel, docModel.zettel, false);
+      let rootBox = convertToBox(docModel, docModel.zettel, false, true);
       return rootBox;
     }
   });
