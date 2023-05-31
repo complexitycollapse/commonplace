@@ -2,17 +2,9 @@
   "typ": { "typ": "link", "name": "document" },
   "cps": [
     {"typ": "span", "ori": "lists/testContent.txt", "st": 19, "ln": 13},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 0, "ln": 3},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 3, "ln": 3},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 6, "ln": 5},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 11, "ln": 4},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 15, "ln": 4},
+    {"typ": "edl", "name": "lists/bulletedListEdl.json"},
     {"typ": "span", "ori": "lists/testContent.txt", "st": 32, "ln": 13},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 0, "ln": 3},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 3, "ln": 3},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 6, "ln": 5},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 11, "ln": 4},
-    {"typ": "span", "ori": "lists/testContent.txt", "st": 15, "ln": 4}
+    {"typ": "edl", "name": "lists/numberedListEdl.json"}
   ],
   "lks": [
     { "typ": "link", "name": "lists/listItem1.json" },
@@ -23,7 +15,6 @@
     { "typ": "link", "name": "lists/bulletedList.json" },
     { "typ": "link", "name": "lists/bulletedListHeading.json" },
     { "typ": "link", "name": "lists/numberedList.json" },
-    { "typ": "link", "name": "lists/numberedListHeading.json" },
-    { "typ": "link", "name": "lists/numberedListStyle.json" }
+    { "typ": "link", "name": "lists/numberedListHeading.json" }
   ]
 }

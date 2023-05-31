@@ -27,7 +27,8 @@ export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, 
     sequencePrototypes: () => incomingPointers.map(p => p.end.sequencePrototypes).flat(),
     setContainedSequences: sequences => containedSequences = sequences,
     rootSequences: () => {
-      return containedSequences.filter(s => !s.isSubordinated);
+      let roots = containedSequences.filter(s => !s.isSubordinated);
+      return roots;
     }
   });
 }
