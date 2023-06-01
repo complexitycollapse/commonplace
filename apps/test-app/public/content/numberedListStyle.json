@@ -1,0 +1,9 @@
+{
+  "typ": {"typ": "link", "name": "markup"},
+  "es": [
+    { "name": "targets", "ptr": [{ "typ": "link", "name": "numberedList.json" }] },
+    { "name": "attribute", "ptr": [{ "typ": "inline", "txt": "list marker" }] },
+    { "name": "value", "ptr": [{ "typ": "inline", "txt": "numbers" }] },
+    { "name": "inheritance", "ptr": [{ "typ": "inline", "txt": "direct" }] }
+  ]
+}

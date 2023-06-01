@@ -10,7 +10,11 @@ export function BoxComponent({ box }) {
 
   if (box.markup.get("list")) {
     let listItems = innerComponents.map(component => (<li key={component.key}>{component}</li>));
-    return (<cpla-box key={box.key} cpla-key={box.key} style={style}><ul>{listItems}</ul></cpla-box>);
+    if (style["listStyleType"] === "numeric") {
+      return (<cpla-box key={box.key} cpla-key={box.key} style={style}><ol>{listItems}</ol></cpla-box>);
+    } else {
+      return (<cpla-box key={box.key} cpla-key={box.key} style={style}><ul>{listItems}</ul></cpla-box>);
+    }
   } else {
     return (<cpla-box key={box.key} cpla-key={box.key} style={style}>{innerComponents}</cpla-box>);
   }
