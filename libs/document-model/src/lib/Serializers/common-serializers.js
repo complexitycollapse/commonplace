@@ -21,8 +21,9 @@ export function serializeEdl(model) {
 
 function markupRule(markupRule) {
   return {
+    name: markupRule.attributeDescriptors.map(d => `${d.attribute}=${d.value}`).join(", "),
     attributes: markupRule.attributeDescriptors,
-    targets: markupRule.targets,
+    immediateTargets: markupRule.immediateTargets,
     clipTypes: markupRule.clipTypes,
     edlTypes: markupRule.edlTypes,
     linkTypes: markupRule.linkTypes,
