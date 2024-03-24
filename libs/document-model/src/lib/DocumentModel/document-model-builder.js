@@ -27,19 +27,19 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
   let obj = {};
   let childBuilders = [];
   let zettel = [];
-  let edl, model, allLinks, links, linksObject, key;
+  let edl, model, allLinks, links, linksMap, key;
 
   function createDefaults() {
     let defaultsEdl = cache.getPart(defaultsPointer)?.content;
-    let defaults = defaultsEdl ? Object.fromEntries(createLinkPairs(defaultsEdl, cache, undefined, true)) : {};
+    let defaults = new Map(defaultsEdl ? createLinkPairs(defaultsEdl, cache, undefined, true) : []);
     return defaults;
   }
 
   function createLinks(edl, parent, defaults) {
     let linkPairs = createLinkPairs(edl, cache, parent, false);
-    linksObject = Object.fromEntries(linkPairs);
-    links = Object.values(linksObject);
-    allLinks = links.concat(Object.values(defaults));
+    linksMap = new Map(linkPairs);
+    links = [...linksMap.values()];
+    allLinks = links.concat([...defaults.values()]);
     allLinks.forEach((link, i) => link.key = key + ":" + i);
   }
 
@@ -77,7 +77,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
       resolvedType,
       metalinks,
       zettel,
-      linksObject,
+      linksMap,
       parent,
       incommingPointers,
       defaults,
@@ -153,8 +153,8 @@ function createLinkPairs(edl, cache, parent, isDefault) {
   let linkPairs = [];
 
   if (parent) {
-    linkPairs = Object.entries(parent.links)
-      .map(([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
+    linkPairs = Array.from(parent.links.entries(), 
+      ([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
   }
 
   let childParts = edl.links.map((x, index) => [cache.getPart(x), index]);

@@ -1,5 +1,5 @@
 export function serializeEdl(model) {
-  let links = Object.values(model.links).map(serializeLink);
+  let links = Array.from(model.links.values(), serializeLink);
   let incomingPointers = model.incomingPointers.map(serializeIncomingPointer);
   let sequences = model.sequences.map(serializeSequence);
   let rootSequences = model.rootSequences().map(serializeSequence);

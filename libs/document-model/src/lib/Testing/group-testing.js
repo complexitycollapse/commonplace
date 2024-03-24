@@ -55,7 +55,7 @@ export function buildMockedEdlModel(content, ...links) {
 
 export function scan(content, ...links) {
   let docModel = buildMockedEdlModel(content, ...links);
-  return SequenceScanner(docModel.zettel, Object.values(docModel.links)).sequences();
+  return SequenceScanner(docModel.zettel, [...docModel.links.values()]).sequences();
 }
 
 export function sequenceFor(sequences, linkAndMetalink) {

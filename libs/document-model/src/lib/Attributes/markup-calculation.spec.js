@@ -90,6 +90,10 @@ function makeFromDmb(docBuilder, target) {
   return markup;
 }
 
+function getLinks(edlModel) {
+  return Array.from(edlModel.links.values());
+}
+
 describe('markup', () => {
   it('returns no attributes if there are no pointers', () => {
     let dmb = aDmbWithSpan();
@@ -264,7 +268,7 @@ describe('markup', () => {
         .withLink(targetLink)
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "direct");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect(markup.get("attr1")).toBe("link value");
     });
@@ -275,7 +279,7 @@ describe('markup', () => {
         .withLink(targetLink)
         .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "direct");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect([...markup.values()]).toEqual([]);
     });
@@ -292,7 +296,7 @@ describe('markup', () => {
         dmb: obj.aDocModelBuilder(obj.edl)
       })).build();
 
-      let markup = Object.values(dv.dmb.build().links)[0].markup;
+      let markup = getLinks(dv.dmb.build())[0].markup;
 
       expect(markup.get("attr1")).toBe("class value");
     });
@@ -309,7 +313,7 @@ describe('markup', () => {
         dmb: obj.aDocModelBuilder(obj.edl)
       })).build();
 
-      let markup = Object.values(dv.dmb.build().links)[0].markup;
+      let markup = getLinks(dv.dmb.build())[0].markup;
 
       expect([...markup.values()]).toEqual([]);
     });
@@ -406,7 +410,7 @@ describe('markup', () => {
         .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "direct")
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "direct");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect(markup.get("attr1")).toBe("targeted value");
     });
@@ -557,7 +561,7 @@ describe('markup', () => {
         .withLink(targetLink)
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "content");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect(markup.get("attr1")).toBe("link value");
     });
@@ -568,7 +572,7 @@ describe('markup', () => {
         .withLink(targetLink)
         .withMarkupLinkOnLinks("wrong link type", "attr1", "link value", "content");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect([...markup.values()]).toEqual([]);
     });
@@ -601,7 +605,7 @@ describe('markup', () => {
         .withMarkupLinkPointingTo(targetLink, "attr1", "targeted value", "content")
         .withMarkupLinkOnLinks("link type", "attr1", "link value", "content");
 
-      let markup = Object.values(dmb.build().build().links)[0].markup;
+      let markup = getLinks(dmb.build().build())[0].markup;
 
       expect(markup.get("attr1")).toBe("targeted value");
     });

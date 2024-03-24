@@ -10,7 +10,7 @@ import {
 import { createTestCache } from '../Testing/docuverse-builder';
 
 function getLink(links, name) {
-  return links[LinkPointer(name).hashableName];
+  return links.get(LinkPointer(name).hashableName);
 }
 
 function sequenceMetalink({ name, end, type, clipsInSequence = [] } = {}) {
@@ -74,8 +74,8 @@ describe('build', () => {
   });
 
   describe('links', () => {
-    it('returns an empty object of links when the doc has no links', () => {
-      expect(make().links).toEqual({});
+    it('returns an empty map of links when the doc has no links', () => {
+      expect(make().links.size).toBe(0);
     });
 
     it('returns a link under its hashable name if it is present in the cache', () => {
@@ -96,7 +96,7 @@ describe('build', () => {
 
       let zettel = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).zettel;
 
-      expect(Object.values(zettel[0].links).length).toBe(2);
+      expect(zettel[0].links.size).toBe(2);
       expect(getLink(zettel[0].links, "link1").type).toEqual(InlinePointer("link1"));
       expect(getLink(zettel[0].links, "link2").type).toEqual(InlinePointer("link2"));
     });
@@ -107,9 +107,9 @@ describe('build', () => {
 
       let links = make([[EdlPointer("edl1"), edl1, ["link2", link2]]], [["link1", link1]]).links;
 
-      expect(Object.values(links)).toHaveLength(1);
+      expect(links.size).toBe(1);
       expect(getLink(links, "link1").type).toEqual(InlinePointer("link1"));
-      expect(links).not.toHaveProperty("links2");
+      expect(links.has("links2")).toBeFalsy();
     });
 
     it('links in the EDL have depth 0 and those from the parent have depth 1', () => {
@@ -250,8 +250,8 @@ describe('build', () => {
       expect(child.type).toEqual(InlinePointer("nested EDL"));
       expect(child.zettel).toHaveLength(1);
       expect(child.zettel[0].pointer).toEqual(clip1);
-      expect(Object.entries(child.links)).toHaveLength(1);
-      expect(child.links[LinkPointer("link1").hashableName]).toMatchObject(link1);
+      expect(child.links.size).toBe(1);
+      expect(getLink(child.links, "link1")).toMatchObject(link1);
       expect(child.zettel[0].incomingPointers[0].link).toMatchObject(link1);
     });
 
@@ -331,7 +331,7 @@ describe('build', () => {
     it('sets markupRule on the link to the rule', () => {
       let model = make([], [markupLink()]);
 
-      expect(Object.values(model.links)[0].markupRule).toBeTruthy();
+      expect([...model.links.values()][0].markupRule).toBeTruthy();
     });
 
     it('returns a rule for each markup link', () => {
@@ -465,8 +465,8 @@ describe('build', () => {
   });
 
   describe('defaultLinks', () => {
-    it('is {} when there are no defaults', () => {
-      expect(make().defaultsLinks).toEqual({});
+    it('is empty Map when there are no defaults', () => {
+      expect(make().defaultsLinks.size).toBe(0);
     });
 
     it('returns all defaults links found in the cache', () => {

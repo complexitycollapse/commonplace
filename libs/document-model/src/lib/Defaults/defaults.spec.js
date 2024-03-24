@@ -10,6 +10,6 @@ describe('DefaultsDocModel', () => {
 
     let defaults = DefaultsDocModel(cache);
 
-    expect(Object.values(defaults.links)).toHaveLength(defaultsEdl.links.length);
+    expect(Array.from(defaults.links.values())).toHaveLength(defaultsEdl.links.length);
   });
 });
