@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { DocuverseBuilder } from './Testing/docuverse-builder';
+import { DocuverseBuilder } from '../Testing/docuverse-builder';
 import { DocumentModelSerializer } from './document-model-serializer';
 
 describe('DocumentModelSerializer.serialize', () => {
