@@ -109,7 +109,6 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     // Process all the links and their consequences
     connectLinks(allLinks);
     gatherRules(model, allLinks);
-    //applyMetarules(model, allLinks);
 
     // Add Zettel to the model, and gather all the builders for the EDL children, ready for the next pass.
     edl.clips.forEach(addZettelAndChildBuildersForClip);
