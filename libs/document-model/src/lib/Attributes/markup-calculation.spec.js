@@ -306,9 +306,11 @@ describe('markup', () => {
         target: obj.aLink(),
         klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
         type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+        badKlass: obj.aLink(definesSemanticClassType),
+        badType: obj.aLink(metatype).withEnd([undefined, [obj.badKlass]]),
         endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
         attr1: obj.aMarkupRule().endowing("attr1", "class value", "direct")
-          .withClasses(InlinePointer("bad class")),
+          .withClasses(obj.badType),
         edl: obj.anEdl().withLinks(obj.target, obj.attr1, obj.endower),
         dmb: obj.aDocModelBuilder(obj.edl)
       })).build();
