@@ -118,7 +118,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     model.setContainedSequences(sequences);
     populateSequenceKeys(sequences);
 
-    // Handle content
+    // Apply content to clips
     populateSpanContent(zettel, cache);
 
     return finalObject(model, {});
