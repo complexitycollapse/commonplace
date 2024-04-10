@@ -13,5 +13,5 @@ export function SequencePrototype(type, end, definingLink, metalinkPointer) {
   }
   });
 
-  return finalObject(obj, {});
+  return finalObject(obj);
 }

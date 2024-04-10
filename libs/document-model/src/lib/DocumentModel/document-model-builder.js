@@ -121,7 +121,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     // Apply content to clips
     populateSpanContent(zettel, cache);
 
-    return finalObject(model, {});
+    return finalObject(model);
   }
 
   function addMarkup(parentMarkup) {

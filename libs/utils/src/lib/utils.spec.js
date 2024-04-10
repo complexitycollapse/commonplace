@@ -3,13 +3,13 @@ import { memoize, mergeObjects, finalObject, decorateObject, addUnenumerable } f
 
 describe('decorateObject', () => {
   it('adds new properties to a frozen object', () => {
-    let frozen = finalObject({x: 1, y: 2}, {});
+    let frozen = finalObject({x: 1, y: 2});
 
     expect(decorateObject(frozen, {z: 3, w: 4})).toMatchObject({z: 3, w: 4});
   });
 
   it('preserves existing properties of a frozen object', () => {
-    let frozen = finalObject({x: 1, y: 2}, {});
+    let frozen = finalObject({x: 1, y: 2});
 
     expect(decorateObject(frozen, {z: 3, w: 4})).toMatchObject({x: 1, y: 2});
   });

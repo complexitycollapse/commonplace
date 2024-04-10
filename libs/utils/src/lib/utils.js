@@ -20,6 +20,8 @@ export function decorateObject(obj, props) {
 }
 
 export function addMethods(obj, props) {
+  if (props == undefined) { return obj; }
+
   forAllOwnProperties(props, key => {
     Object.defineProperty(obj, key, {
       value: props[key]
