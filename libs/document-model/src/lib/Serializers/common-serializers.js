@@ -14,8 +14,8 @@ export function serializeEdl(model) {
     incomingPointers,
     sequences,
     rootSequences,
-    markup: markup(model.markup),
-    contentMarkup: markup(model.contentMarkup),
+    markup: serializeMarkup(model.markup),
+    contentMarkup: serializeMarkup(model.contentMarkup),
     classes: model.getClasses().map(c => c.pointer.linkName),
     markupRules: model.markupRules.map(markupRule).filter(x => x)
   };
@@ -47,8 +47,8 @@ export function serializeAtom(model) {
     pointer: model.pointer,
     incomingPointers,
     sequences,
-    markup: markup(model.markup),
-    contentMarkup: markup(model.contentMarkup),
+    markup: serializeMarkup(model.markup),
+    contentMarkup: serializeMarkup(model.contentMarkup),
     classes: model.getClasses().map(c => c.pointer.linkName)
   };
 }
@@ -65,8 +65,8 @@ export function serializeLink(model) {
     ends,
     incomingPointers,
     sequences,
-    markup: markup(model.markup),
-    contentMarkup: markup(model.contentMarkup),
+    markup: serializeMarkup(model.markup),
+    contentMarkup: serializeMarkup(model.contentMarkup),
     classes: model.getClasses().map(c => c.pointer.linkName),
     markupRule: model.markupRule ? true : false
   };
@@ -110,7 +110,7 @@ export const linkName = model => {
   return name;
 }
 
-const markup = m => Object.fromEntries(m.entries());
+const serializeMarkup = m => Object.fromEntries(m.entries());
 
 export function serializeSequence(sequence) {
   return {
