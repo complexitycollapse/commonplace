@@ -5,22 +5,26 @@ import { MarkupDetails } from "./markup-details";
 /*
   How the Markup Algorithm Works
 
-  Iterate through all the objects, and for each one find all the rules that apply to it and all content attributes possessed
-  by its parents. Construct a LispMap of attribute names to lists of PotentialAttributeValue objects, each one representing a
-  value assigned to the attribute by a particular rule or parent. Then use prioritization rules to sort each list of
-  PotentialAttributeValue objects. Finally, create a MarkupDetails object to hold all the lists for the object.
+  Iterate through all the objects, and for each one find all the rules that apply to it and all 
+  content attributes possessed by its parents. Construct a LispMap of attribute names to lists 
+  of PotentialAttributeValue objects, each one representing a value assigned to the attribute 
+  by a particular rule or parent. Then use prioritization rules to sort each list of 
+  PotentialAttributeValue objects. Finally, create a MarkupDetails object to hold all the lists 
+  for the object.
 
-  The result is returned as a ListMap, mapping each object key to its MarkupDetails object. Each MarkupDetails in turn contains
-  the priority sorted lists of PotentialAttributeValue objects. MarkupDetails will also calculate the final values for each
-  attribute.
+  The result is returned as a ListMap, mapping each object key to its MarkupDetails object. Each 
+  MarkupDetails in turn contains the priority sorted lists of PotentialAttributeValue objects. 
+  MarkupDetails will also calculate the final values for each attribute.
 
-  Calculating the PotentialAttributeValue objects for an object requires also calculating the MarkupDetails for its containers
-  (so we know what the inherited content values are). So one calculation triggers other calculations which must complete first.
-/*
+  Calculating the PotentialAttributeValue objects for an object requires also calculating the 
+  MarkupDetails for its containers (so we know what the inherited content values are). So one 
+  calculation triggers other calculations which must complete first.
+*/
+
 
 /**
- * Constructs a MarkupMapBuilder object that will build the markup map for requested objects in an EdlModel.
- * The markup map has format {key: object.key, value: MarkupDetails object}.
+ * Constructs a MarkupMapBuilder object that will build the markup map for requested objects in
+ * an EdlModel. The markup map has format {key: object.key, value: MarkupDetails object}.
  * @param {Object} edl - The EdlModel that contains the objects.
  * @param {Array} rules - The list of markup rules to apply.
  * @param {Array} objects - The list of objects in the Edl to process.

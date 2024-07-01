@@ -1,8 +1,11 @@
 import { memoize } from "@commonplace/utils";
 
 /**
- * Creates a MarkupDetails object that describes the fully resolved markup that applies to an object and its contents.
- * @param {Map} markupAttributeValues - The ListMap {key: attribute name, value: PotentialAttributeValues object}.
+ * Creates a MarkupDetails object that describes the fully resolved markup that applies to an 
+ * object and its contents.
+ * 
+ * @param {Map} markupAttributeValues - The ListMap {key: attribute name, value: 
+ * PotentialAttributeValues object}.
  * @returns {Object} - The MarkupDetails object.
  */
 export function MarkupDetails(markupAttributeValues) {

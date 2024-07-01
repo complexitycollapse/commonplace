@@ -1,17 +1,20 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 
 /**
- * Constructs an PotentialAttributeValue object that represents a potential markup attribute value an object
- * may receive. It contains the attribute value being assigned, the rule that assigns it (or undefined if it is
- * inherited from a container), and information from which the priority of this assignment can be calculated,
- * which allows conflicting values to be resolved.
+ * Constructs an PotentialAttributeValue object that represents a potential markup attribute 
+ * value an object may receive. It contains the attribute value being assigned, the rule that 
+ * assigns it (or undefined if it is inherited from a container), and information from which the 
+ * priority of this assignment can be calculated, which allows conflicting values to be resolved.
+ * 
  * @param {string} attributeName - The name of the attribute.
  * @param {*} attributeValue - The value of the attribute.
  * @param {string} attributeInheritance - Whether the attribute is configured to be direct or content.
- * @param {string} matchResult - Ghe match explanation returned by Rule.match.
- * @param {Object} origin - The rule that assigns this attribute value to the target, or undefined if it is inherited.
+ * @param {string} matchResult - The match explanation returned by Rule.match.
+ * @param {Object} origin - The rule that assigns this attribute value to the target, or undefined 
+ * if it is inherited.
  * @returns {Object} - The constructed PotentialAttributeValue object.
  */
+
 export function PotentialAttributeValue(attributeName, attributeValue, attributeInheritance, matchResult, origin) {
   
   let obj = {};
