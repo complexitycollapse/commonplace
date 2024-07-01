@@ -301,14 +301,14 @@ describe('build', () => {
   });
 
   describe('markupRules', () => {
-    function markupLink({ name, attributeDescriptors = [], immediateTargets, linkTypes, clipTypes, edlTypes } = {}) {
+    function markupLink({ name, attributeDescriptors = [], namedTargets, linkTypes, clipTypes, edlTypes } = {}) {
       let endSpecs = attributeDescriptors.map(av => [
         ["attribute", [InlinePointer(av[0])]],
         ["value", [InlinePointer(av[1])]],
         ["inheritance", [InlinePointer(av[2])]]]
       ).flat();
 
-      if (immediateTargets) endSpecs.push(["targets", immediateTargets]);
+      if (namedTargets) endSpecs.push(["targets", namedTargets]);
       if (linkTypes) endSpecs.push(["link types", linkTypes]);
       if (clipTypes) endSpecs.push(["clip types", clipTypes]);
       if (edlTypes) endSpecs.push(["edl types", edlTypes]);

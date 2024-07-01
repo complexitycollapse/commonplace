@@ -25,7 +25,7 @@ function markupRule(markupRule) {
   return {
     name: markupRule.attributeDescriptors.map(d => `${d.attribute}=${d.value}`).join(", "),
     attributes: markupRule.attributeDescriptors,
-    immediateTargets: markupRule.immediateTargets,
+    namedTargets: markupRule.namedTargets,
     clipTypes: markupRule.clipTypes,
     edlTypes: markupRule.edlTypes,
     linkTypes: markupRule.linkTypes,

@@ -4,7 +4,7 @@ import { ZettelSchneider } from "./zettel-schneider";
 import { defaultsPointer } from '../well-known-objects';
 import { EdlModel, MissingEdlReplacementModel } from "./edl-model";
 import { SequenceScanner } from './sequence-scanner';
-import { MarkupCalculation } from "../Attributes/markup-calculation";
+import { MarkupMapBuilder } from "../Attributes/markup-map-builder";
 import resolveTypeAndMetalinks from "./resolve-type";
 import { createTestCache } from "../Testing/docuverse-builder";
 
@@ -129,11 +129,13 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     parentMarkup = parentMarkup ?? new Map();
 
     let objectsRequiringMarkup = [model].concat(model.zettel.filter(z => z.isZettel)).concat(allLinks);
-    let calc = MarkupCalculation(model, model.markupRules, objectsRequiringMarkup, parentMarkup);
-    let markupMap = calc.initialize();
+    let mmBuilder = MarkupMapBuilder(model, model.markupRules, objectsRequiringMarkup, parentMarkup);
+    let markupMap = mmBuilder.getMarkupMap();
 
     objectsRequiringMarkup.forEach(object => {
       let allMarkup = markupMap.get(object.key);
+
+      // Although this says "merge" the original maps will in fact be empty
       mergeMaps(object.markup, allMarkup.markup());
       mergeMaps(object.contentMarkup, allMarkup.contentMarkup());
     });

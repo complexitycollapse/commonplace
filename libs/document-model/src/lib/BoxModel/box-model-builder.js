@@ -1,5 +1,4 @@
 import { finalObject } from '@commonplace/utils';
-import { compareLinkPriority } from '../link-priority';
 import { Box } from './box';
 
 /*
@@ -80,7 +79,7 @@ export function BoxModelBuilder(docModel) {
               terminateImplicitBox();
 
               // If there are multiple starting sequences here, pick the highest priority
-              startingSequences.sort((a, b) => compareLinkPriority(a.definingLink, b.definingLink));
+              startingSequences.sort((a, b) => a.definingLink.compareLinkPriority(b.definingLink));
               currentBoxSequence = startingSequences[0];
 
               // Add the box sequence as a child box

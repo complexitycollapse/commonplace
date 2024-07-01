@@ -19,8 +19,22 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
 
   let newLink = Object.create(link, {ends: {value: link.ends.map(docModelEnd), enumerable: true}});
 
+  // Determines relative priority with another link, from most significant factor to least:
+  // 1. Non-defaults higher than defaults
+  // 3. Inner links higher than outer links
+  // 4. Links later in the EDL higher than those earlier
+  function compareLinkPriority(b) {
+    if (newLink.isDefault !== b.isDefault) {
+      return newLink.isDefault ? 1 : -1;
+    } else if (newLink.depth != b.depth) {
+      return newLink.depth - b.depth;
+    }
+    else { return b.index - newLink.index; }
+  }
+
   addMethods(newLink, {
-    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat()
+    sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
+    compareLinkPriority
   })
 
   function getPointers(name) {

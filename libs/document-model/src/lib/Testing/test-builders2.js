@@ -139,7 +139,7 @@ export function MarkupBuilder() {
   };
 
   builder.pointingTo = pointer => {
-    builder.withEnd([undefined, [pointer]]);
+    builder.withEnd(["targets", [pointer]]);
     return builder;
   };
 

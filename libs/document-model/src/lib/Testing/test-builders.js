@@ -176,7 +176,7 @@ export function MarkupBuilder() {
   };
 
   builder.pointingTo = pointer => {
-    builder.withEnd(EndBuilder().withPointer(pointer));
+    builder.withEnd(EndBuilder().withPointer(pointer).withName("targets"));
     return builder;
   };
 

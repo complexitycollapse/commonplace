@@ -10,13 +10,13 @@ const addIncoming = docModelBuilderTesting.addIncomingPointers;
 
 function make({
   originLink,
-  immediateTargets = [],
+  namedTargets = [],
   classes = [],
   linkTypes = [],
   clipTypes = [],
   edlTypes = [],
   attributeDescriptors = [] } = {}) {
-  return Rule(originLink ?? link("origin"), immediateTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors);
+  return Rule(originLink ?? link("origin"), namedTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors);
 }
 
 function link(name, incomingPointers = []) {
@@ -40,35 +40,35 @@ test('attributrDescriptors set in constructor',  () => {
 });
 
 describe('Rule.match', () => {
-  it('returns true if there is a direct pointer to the target',  () => {
+  it('returns "named" if there is a direct pointer to the target',  () => {
     let target = link("link1");
-    let rule = make({immediateTargets: [LinkPointer("link1")]});
+    let rule = make({namedTargets: [LinkPointer("link1")]});
 
-    expect(rule.match(target)).toBeTruthy();
+    expect(rule.match(target)).toEqual("named");
   });
 
-  it('returns false if there is NO direct pointer to the target',  () => {
+  it('returns falsy if there is NO direct pointer to the target',  () => {
     let target = link("link1");
-    let rule = make({immediateTargets: [LinkPointer("other link")]});
+    let rule = make({namedTargets: [LinkPointer("other link")]});
 
     expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns true if the target is a link and has the specified link type',  () => {
+  it('returns "type" if the target is a link and has the specified link type (no class specified)',  () => {
     let target = link("link1");
     let rule = make({linkTypes: [InlinePointer("link1")]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns false if the target is a link but does not have the specified link type',  () => {
+  it('returns falsy if the target is a link but does not have the specified link type (no class specified)',  () => {
     let target = link("link1");
     let rule = make({linkTypes: [InlinePointer("other type")]});
 
     expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns false if the target has the correct link type but not the correct class',  () => {
+  it('returns falsy if the target has the correct link type but not the correct class',  () => {
     let target = {
       isLink: true,
       type: InlinePointer("link1"),
@@ -79,7 +79,7 @@ describe('Rule.match', () => {
     expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns false if the target has the correct class but not the correct link type', () => {
+  it('returns falsy if the target has the correct class but not the correct link type', () => {
     let target = {
       isLink: true,
       type: InlinePointer("link1"),
@@ -90,7 +90,7 @@ describe('Rule.match', () => {
     expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns true if the target has the correct link type AND the correct class', () => {
+  it('returns "class and type" if the target has the correct link type AND the correct class', () => {
     let target = {
       isLink: true,
       type: InlinePointer("link1"),
@@ -101,7 +101,7 @@ describe('Rule.match', () => {
     expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns true if the target has the correct class and no link type is specified', () => {
+  it('returns "class" if the target has the correct class and no link type is specified', () => {
     let target = {
       isLink: true,
       type: InlinePointer("whatever"),
@@ -112,28 +112,28 @@ describe('Rule.match', () => {
     expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns true if the target is a clip and has the specified pointer type',  () => {
+  it('returns "type" if the target is a clip and has the specified pointer type (no class specified)',  () => {
     let target = { isClip: true, pointer: Span("origin", 1, 10) };
     let rule = make({clipTypes: ["span"]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns false if the target is a clip but does not have the specified pointer type',  () => {
+  it('returns falsy if the target is a clip but does not have the specified pointer type',  () => {
     let target = { isClip: true, pointer: Span("origin", 1, 10) };
     let rule = make({clipTypes: ["image"]});
 
     expect(rule.match(target)).toBeFalsy();
   });
 
-  it('returns true if the target is an EDL and has the specified EDL type',  () => {
+  it('returns "type" if the target is an EDL and has the specified EDL type (no class specified)',  () => {
     let target = Edl(InlinePointer("edl1"), [], []);
     let rule = make({edlTypes: [InlinePointer("edl1")]});
 
     expect(rule.match(target)).toBeTruthy();
   });
 
-  it('returns false if the target is an EDL but it does NOT have the specified EDL type',  () => {
+  it('returns falsy if the target is an EDL but it does NOT have the specified EDL type',  () => {
     let target = Edl(InlinePointer("edl1"), [], []);
     let rule = make({edlTypes: [InlinePointer("other EDL type")]});
 
