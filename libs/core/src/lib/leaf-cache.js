@@ -1,9 +1,9 @@
 import { Part } from './part';
-import { finalObject, listMap } from "@commonplace/utils";
+import { finalObject, ListMap } from "@commonplace/utils";
 
 export function LeafCache() {
   let obj = {};
-  let cache = listMap();
+  let cache = ListMap();
 
   function getPart(pointer) {
     if (pointer.pointerType === "inline") {

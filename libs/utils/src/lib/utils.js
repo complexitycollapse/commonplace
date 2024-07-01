@@ -47,7 +47,7 @@ export function forAllOwnProperties(obj, callback) {
   }
 }
 
-export function listMap() {
+export function ListMap() {
   let obj = {};
   let table = new Map();
 
@@ -71,7 +71,7 @@ export function listMap() {
 }
 
 export function listMapFromList(keyFn, valueFn, list) {
-  let map = listMap();
+  let map = ListMap();
   list.forEach(item => map.push(keyFn(item), valueFn(item)));
   return map;
 }

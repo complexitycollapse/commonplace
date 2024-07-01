@@ -1,4 +1,4 @@
-import { finalObject, listMap } from "@commonplace/utils";
+import { finalObject, ListMap } from "@commonplace/utils";
 import { PotentialAttributeValue } from "./potential-attribute-value";
 import { MarkupDetails } from "./markup-details";
 
@@ -49,7 +49,7 @@ export function MarkupMapBuilder(edl, rules, objects, parentMap) {
         return markupMap.get(object.key);
       }
 
-      let markupAttributeValues = listMap();
+      let markupAttributeValues = ListMap();
       // Create and add the MarkupDetails now. This prevents loops when the hierarchy
       // is searched.
       let markup = MarkupDetails(markupAttributeValues);
