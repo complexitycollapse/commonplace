@@ -40,7 +40,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     linksMap = new Map(linkPairs);
     links = [...linksMap.values()];
     allLinks = links.concat([...defaults.values()]);
-    allLinks.forEach((link, i) => link.key = key + ":" + i);
+    allLinks.forEach((link, i) => link.key = key + ":L" + i);
   }
 
   function addZettelAndChildBuildersForClip(clip, index) {
@@ -64,7 +64,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
   }
 
   function populateSequenceKeys(sequences) {
-    sequences.forEach((sequence, i) => sequence.key = sequence.definingLink.key + "-" + i);
+    sequences.forEach((sequence, i) => sequence.key = sequence.definingLink.key + "-S" + i);
   }
 
   function createModel(incommingPointers, defaults) {
@@ -87,7 +87,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
 
   function buildHierarchy() {
     // Calculate the model's key (i.e. the unique identifier that will be used to refer to the model)
-    key = parent ? parent.key + ":" + indexInParent.toString() : "1";
+    key = parent ? parent.key + ":E" + indexInParent.toString() : "E1";
 
     // Fetch the EDL from the cache
     let edlPart = cache.getPart(edlPointer);

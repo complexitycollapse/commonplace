@@ -522,23 +522,23 @@ describe('build', () => {
 
   describe('key', () => {
     it('is set to 1 on the document', () => {
-      expect(make().key).toBe("1");
+      expect(make().key).toBe("E1");
     });
 
     it('is set to 1:0:0 on the first child span', () => {
-      expect(make([[Span("x", 1, 10), true]]).zettel[0].key).toBe("1:0:0");
+      expect(make([[Span("x", 1, 10), true]]).zettel[0].key).toBe("E1:C0:Z0");
     });
 
     it('is set to 1:0 on the first child image', () => {
-      expect(make([[Image("x", 1, 1, 10, 10), true]]).zettel[0].key).toBe("1:0");
+      expect(make([[Image("x", 1, 1, 10, 10), true]]).zettel[0].key).toBe("E1:C0");
     });
 
     it('is set to 1:0 on the first child EDL', () => {
-      expect(make([[EdlPointer("edl1"), Edl(undefined, [], [])]]).zettel[0].key).toBe("1:0");
+      expect(make([[EdlPointer("edl1"), Edl(undefined, [], [])]]).zettel[0].key).toBe("E1:E0");
     });
 
     it('is set to 1:0 on the first child link', () => {
-      expect(getLink(make([], [["link1", true]]).links, "link1").key).toEqual("1:0");
+      expect(getLink(make([], [["link1", true]]).links, "link1").key).toEqual("E1:L0");
     });
 
     it('is set to unique values on different children', () => {
@@ -546,11 +546,11 @@ describe('build', () => {
         [[Span("x", 1, 10), true], [Image("x", 1, 1, 10, 10), true], [Span("x", 1, 10), true]],
         [["link1", true], ["link2", true]]);
 
-      expect(getLink(model.links, "link1").key).toBe("1:0");
-      expect(getLink(model.links, "link2").key).toBe("1:1");
-      expect(model.zettel[0].key).toBe("1:2:0");
-      expect(model.zettel[1].key).toBe("1:3");
-      expect(model.zettel[2].key).toBe("1:4:0");
+      expect(getLink(model.links, "link1").key).toBe("E1:L0");
+      expect(getLink(model.links, "link2").key).toBe("E1:L1");
+      expect(model.zettel[0].key).toBe("E1:C2:Z0");
+      expect(model.zettel[1].key).toBe("E1:C3");
+      expect(model.zettel[2].key).toBe("E1:C4:Z0");
     });
 
     it('is set to unique values on zettel produced by a schneidered span', () => {
@@ -559,8 +559,8 @@ describe('build', () => {
 
       let zettel = make([[clip1, true]], [["link1", link]]).zettel;
 
-      expect(zettel[0].key).toBe("1:1:0");
-      expect(zettel[1].key).toBe("1:1:1");
+      expect(zettel[0].key).toBe("E1:C1:Z0");
+      expect(zettel[1].key).toBe("E1:C1:Z1");
     });
 
     it('is set to a subkey on children of a child EDL', () => {
@@ -569,7 +569,7 @@ describe('build', () => {
 
       let zettel = make([[EdlPointer("edl1"), edl1]]).zettel;
 
-      expect(zettel[0].zettel[0].key).toBe("1:0:0:0");
+      expect(zettel[0].zettel[0].key).toBe("E1:E0:C0:Z0");
     });
 
     it('is an extension of the sequences defining link for a sequence', () => {
@@ -578,7 +578,7 @@ describe('build', () => {
 
       let sequence = make([[clip1, true]], links).rootSequences()[0];
 
-      expect(sequence.key).toEqual(sequence.definingLink.key + "-0");
+      expect(sequence.key).toEqual(sequence.definingLink.key + "-S0");
     });
 
     it('is unique for each instance of a sequence', () => {
@@ -587,9 +587,9 @@ describe('build', () => {
 
       let sequences = make([[clip1, true], [clip1, true], [clip1, true]], links).rootSequences();
 
-      expect(sequences[0].key).toEqual(sequences[0].definingLink.key + "-0");
-      expect(sequences[1].key).toEqual(sequences[1].definingLink.key + "-1");
-      expect(sequences[2].key).toEqual(sequences[2].definingLink.key + "-2");
+      expect(sequences[0].key).toEqual(sequences[0].definingLink.key + "-S0");
+      expect(sequences[1].key).toEqual(sequences[1].definingLink.key + "-S1");
+      expect(sequences[2].key).toEqual(sequences[2].definingLink.key + "-S2");
     });
   });
 });

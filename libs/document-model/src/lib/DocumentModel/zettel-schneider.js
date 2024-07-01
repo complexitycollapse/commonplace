@@ -7,11 +7,11 @@ export function ZettelSchneider(clip, links, parentKey, index) {
 
   function zettel() {
     let incomingPointers = buildIncomingPointers(links, clip);
-    let rootKey = parentKey + ":" + index.toString();
+    let rootKey = parentKey + ":C" + index.toString();
 
     if (clip.pointerType === "span") {
       let result = mapSpanToZettel(clip, incomingPointers, []);
-      return result.map((z, i) => Zettel(z.pointer, z.incomingPointers, rootKey + ":" + i));
+      return result.map((z, i) => Zettel(z.pointer, z.incomingPointers, rootKey + ":Z" + i));
 
     } else {
       let singleZettel = Zettel(clip, incomingPointers, rootKey);
