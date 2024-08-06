@@ -1,0 +1,5 @@
+{
+  "include": ["\\.js$", "\\.jsx$", "\\.cjs$", "\\.mjs$"],
+  "exclude": ["node_modules"],
+  "test": ["\\.test\\.js$", "\\.spec\\.js$"]
+}
