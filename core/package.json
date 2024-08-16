@@ -1,0 +1,12 @@
+{
+  "name": "@commonplace/core",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.js",
+  "dependencies": {
+    "@commonplace/utils": "^0.0.1"
+  },
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
+  }
+}

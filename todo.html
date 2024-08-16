@@ -1,0 +1,102 @@
+<html data-theme="dark blue"><head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="file:///./window/index.css">
+    <title>Commonplace Todo</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left-pane">
+        <div class="controls">
+          <div class="todo-buttons">
+            <button id="add-todo" class="todo-button">Add Todo</button>
+            <button id="add-sub-todo" class="todo-button">Add Sub-Todo</button>
+            <button id="delete-todo" class="todo-button">Delete</button>
+            <button id="collapse-all" class="todo-button">Collapse All</button>
+          </div>
+          <input id="todo-filter" placeholder="Filter todos...">
+        </div>
+        <ul id="main-list" class="todo-list">
+          
+          
+          
+        <li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button">+</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Grid</span><span class="todo-count">0/1</span></div><ul class="todo-list nested-list collapsed"><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Figure out what actually needs to be supported</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Figure out how to map that to Commonplace</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Figure out where the code changes will be required</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Make the code changes</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Make a test file with these changes</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes="And the asscociated test files"><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Remove the old way of doing it</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li></ul></li><li class="todo-item" data-notes="This is the first attempt at creating an app that embeds the commonplace code.
+
+Not sure what it will be yet.
+
+It will probably live outside the Commonplace repo"><div class="todo-headline"><button class="collapse-button">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">First App</span><span class="todo-count">0/1</span></div><ul class="todo-list nested-list"><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Ideas for app</span><span class="todo-count">0/3</span></div><ul class="todo-list nested-list"><li class="todo-item" data-notes="Converts markdown to Commonplace and displays it. A nice way to create simple Commonplace pages.
+
+Maybe could be made into a lib later, as it sounds generally useful.
+
+------
+
+Heading 	# H1
+## H2
+### H3
+
+Bold 	**bold text**
+
+Italic 	*italicized text*
+
+Blockquote 	> blockquote
+
+Ordered List 	1. First item
+2. Second item
+3. Third item
+
+Unordered List 	- First item
+- Second item
+- Third item
+
+Code 	`code`
+
+Horizontal Rule 	---
+
+Link 	[title](https://www.example.com)
+
+Image 	![alt text](image.jpg)
+"><div class="todo-headline"><button class="collapse-button">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Markdown app</span><span class="todo-count">2/4</span></div><ul class="todo-list nested-list"><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Parse markdown to JSON</span><span class="todo-count">0/1</span></div><ul class="todo-list nested-list"><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">The basic stuff</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">String encoding</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item selected" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Nest</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Generate commonplace files</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item completed" data-notes="" data-prev="0"><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Set up repo and project structure</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item completed" data-notes="" data-prev="0"><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Get al list of all markdown stuff worth supporting</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li></ul></li><li class="todo-item" data-notes="Todo app just like this! But using Xanadu features to...
+
+Have a proper notes editor.
+
+Link todos in multiple places
+
+Transclude todos across multiple todo lists
+
+Have links between todos
+
+Virtual content (todos defined by a filter)
+
+-------------
+
+This may be a bit ambitious, as it requires custom editing defined by Commonplace, and lists, and templating.
+
+However, it's a good target to aim for."><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Todo</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes="Like editor.js.
+
+Really a small demonstration of the whole thing that can be embedded in other things."><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Simple editor</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Figure out how to embed Commonplace</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Add it to local node_modules</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes=""><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Do whatever's required to make it embeddable.</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes="Flat files, like the current example files, may be fine.
+
+That's no good for editing though."><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Need some kind of temporary storage</span><span class="todo-count invisible">0/0</span></div><ul class="todo-list nested-list"></ul></li></ul></li><li class="todo-item" data-notes="Could be a a type of pointer.
+
+CSS has variables, which are useful for defining themes. That's a good inspiration.
+
+Can variables be dynamically changed? That would certainly be a powerful feature.
+
+Variables could also be placed in the UI to give the page more interactivity.
+
+CSS allows you to define sets of values of variables (themes) and which one is used depends on an attribute of your choice. Thus semantic attributes are bound to presentation."><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Variables</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li><li class="todo-item" data-notes="Collapsable sections. Expanding spider diagrams etc.
+
+It's clearly something very useful, but how does it work?
+"><div class="todo-headline"><button class="collapse-button invisible">-</button><input type="checkbox" class="todo-checkbox"><span class="todo-text">Changing the visibility of things</span><span class="todo-count invisible"></span></div><ul class="todo-list nested-list"></ul></li></ul>
+      </div>
+      <div class="divider"></div>
+      <div class="right-pane">
+        <input id="todo-title" placeholder="Edit a todo here...">
+        <textarea id="notes" placeholder="Select a todo to view or edit its notes..."></textarea>
+      </div>
+  </div>
+    <script type="module" src="file:///./window/window.js"></script>
+  
+
+</body></html>
