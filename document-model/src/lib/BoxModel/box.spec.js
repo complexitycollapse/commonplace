@@ -1,4 +1,4 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect } from "vitest";
 import { Box } from "./box";
 import { Zettel } from "../DocumentModel/zettel";
 import { Span } from "@commonplace/core";

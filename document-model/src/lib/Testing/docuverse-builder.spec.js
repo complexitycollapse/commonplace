@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { DocuverseBuilder } from './docuverse-builder';
 import { LinkPointer, Link, EdlPointer, Edl, Span } from '@commonplace/core';
 

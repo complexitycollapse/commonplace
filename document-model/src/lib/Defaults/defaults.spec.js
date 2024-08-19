@@ -1,4 +1,4 @@
-import { expect, it, describe } from '@jest/globals';
+import { expect, it, describe } from 'vitest';
 import { Part } from '@commonplace/core';
 import { DefaultsDocModel, defaultsEdl, defaultsLinksParts } from './defaults';
 import { defaultsPointer } from '../well-known-objects';

@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { ZettelSchneider } from './zettel-schneider';
 import { testing, Span, Image } from '@commonplace/core';
 

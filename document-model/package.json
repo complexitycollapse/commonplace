@@ -9,5 +9,8 @@
   "dependencies": {
     "@commonplace/core": "^0.0.1",
     "@commonplace/utils": "^0.0.1"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.5"
   }
 }

@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { RecordLinkParser } from './record-link-parser';
 import { Link, LinkPointer } from '@commonplace/core';
 

@@ -1,4 +1,4 @@
-import { it, describe, expect } from '@jest/globals';
+import { it, describe, expect } from 'vitest';
 import { aSpan, buildMockedEdlModel, makeSequenceLink, } from '../Testing/group-testing';
 
 describe('rootSequences', () => {

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { DocuverseBuilder } from '../Testing/docuverse-builder';
 import { DocumentModelSerializer } from './document-model-serializer';
 

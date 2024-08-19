@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { CommonplaceCore } from './commonplace-core';
 import { MockRepository } from './mock-repository';
 

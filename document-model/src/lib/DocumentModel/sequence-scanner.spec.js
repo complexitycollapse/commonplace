@@ -1,4 +1,4 @@
-import { it, describe, expect } from '@jest/globals';
+import { it, describe, expect } from 'vitest';
 import { aMetalink, aSpan, aTargetLink, scan, content, makeSequenceLink, sequenceFor } from '../Testing/group-testing';
 import { LinkPointer } from '@commonplace/core';
 import { metatype } from '../well-known-objects';

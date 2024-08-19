@@ -1,4 +1,4 @@
-import { it, describe, expect, test } from '@jest/globals';
+import { it, describe, expect, test } from 'vitest';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
 import { anEdl, aSpan, aTargetLink, } from '../Testing/group-testing';
 import { SequencePrototype } from './sequence-prototype';

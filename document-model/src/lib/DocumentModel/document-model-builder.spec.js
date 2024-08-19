@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { DocumentModelBuilder, docModelBuilderTesting } from './document-model-builder';
 import {
   Part, LinkPointer, Link, Span, Image, Edl, EdlPointer, InlinePointer

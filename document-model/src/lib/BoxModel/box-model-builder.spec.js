@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { BoxModelBuilder } from './box-model-builder';
 import {
   DocModelBuilderBuilder, EdlBuilder, MarkupBuilder, SequenceLinkBuilder, SpanBuilder, ImageBuilder

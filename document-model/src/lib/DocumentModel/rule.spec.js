@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from '@jest/globals';
+import { describe, expect, it, test } from 'vitest';
 import { Rule } from './rule';
 import { docModelBuilderTesting } from './document-model-builder';
 import { LinkPointer, Link, Span, Edl, InlinePointer } from '@commonplace/core';
@@ -15,8 +15,9 @@ function make({
   linkTypes = [],
   clipTypes = [],
   edlTypes = [],
+  levels = [],
   attributeDescriptors = [] } = {}) {
-  return Rule(originLink ?? link("origin"), namedTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors);
+  return Rule(originLink ?? link("origin"), namedTargets, classes, linkTypes, clipTypes, edlTypes, levels, attributeDescriptors);
 }
 
 function link(name, incomingPointers = []) {

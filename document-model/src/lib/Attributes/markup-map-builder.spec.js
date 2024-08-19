@@ -1,4 +1,4 @@
-import { expect, it, describe } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import {
   MarkupBuilder, EdlBuilder, EndBuilder, LinkBuilder, SpanBuilder, Builder, PointerBuilder, DocModelBuilderBuilder
 } from '../Testing/test-builders';
