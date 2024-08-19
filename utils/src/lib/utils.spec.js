@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { memoize, mergeObjects, finalObject, decorateObject, addUnenumerable } from './utils';
 
 describe('decorateObject', () => {
