@@ -1,4 +1,4 @@
-import { expect, test, describe } from '@jest/globals';
+import { expect, test, describe } from 'vitest';
 import { LinkPointer, EdlPointer, Span, InlinePointer } from './pointers';
 import { LeafCache } from './leaf-cache';
 import { Part } from './part';

@@ -1,10 +1,6 @@
-import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, imageTesting, Span, spanTesting, LinkPointer, EdlPointer, InlinePointer } from "../pointers";
+import { expect, test, describe, it } from 'vitest';
+import { imageTesting, Span, spanTesting, LinkPointer, EdlPointer, InlinePointer } from "../pointers";
 import { Link, leafDataToLink } from './link';
-
-expect.extend({
-  hasClips
-});
 
 let makeSpan = spanTesting.makeSpan;
 let makeImage = imageTesting.makeImage;
@@ -82,18 +78,6 @@ test('leafDataToLink can convert an array to an array of links', () => {
   let actualLinks = leafDataToLink(leafData);
 
   expect(actualLinks).toEqual(expectedLinks);
-});
-
-describe('clipSource', () => {
-  it('returns a function', () => {
-    expect(typeof Link().clipSource()).toBe('function');
-  });
-
-  it('returns undefined on first call', () => {
-    let link = Link();
-    let source = link.clipSource();
-    expect(source()).toBeUndefined();
-  });
 });
 
 describe('getEnd', () => {

@@ -1,4 +1,3 @@
-import { ClipIterator } from "./clip-iterator.js";
 import { addProperties, addMethods } from "@commonplace/utils";
 import { Pointer } from "./pointer.js";
 
@@ -12,7 +11,6 @@ export function Clip(pointerType, origin, partBuilder, hashableNameFn, originalC
 
   addMethods(obj, {
     equalOrigin: clip => clip.origin == origin,
-    clipSource: () => ClipIterator(x => x, [obj]),
     endowsTo: clip => obj.overlaps(clip)
   });
 

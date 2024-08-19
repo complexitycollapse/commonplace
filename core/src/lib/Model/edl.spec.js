@@ -1,11 +1,6 @@
-import { expect, test, describe, it } from '@jest/globals';
-import { hasClips, Image, spanTesting, LinkPointer, InlinePointer } from "../pointers";
+import { expect, test, describe, it } from 'vitest';
+import { Image, spanTesting, LinkPointer, InlinePointer } from "../pointers";
 import { Edl, leafDataToEdl } from './edl';
-
-expect.extend({
-  hasClips,
-  toEqualSpan: spanTesting.toEqualSpan
-});
 
 let makeSpans = spanTesting.makeSpans;
 
@@ -20,7 +15,7 @@ test('clips is set on the Edl', () => {
 
   let d = Edl(undefined, spans);
 
-  expect(d.clips).hasClips(...spans);
+  expect(d.clips).toEqual(spans);
 });
 
 test('links is set on the Edl', () => {
@@ -41,7 +36,7 @@ test('can pass no arguments and get an empty spanSet', () => {
   let d = Edl();
 
   expect(d.clips).toBeTruthy();
-  expect(d.clips).hasClips();
+  expect(d.clips).toEqual([]);
 });
 
 test('can pass no arguments and get an empty links array', () => {

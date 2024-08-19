@@ -1,4 +1,4 @@
-import { describe, expect, it, test, jest } from '@jest/globals';
+import { describe, expect, it, test, jest } from 'vitest';
 import { Span, leafDataToSpan, spanTesting } from './span.js';
 import { imageTesting, Image } from './image.js';
 import { EdlPointer } from './edl-pointer.js';
@@ -377,60 +377,6 @@ describe('crop', () => {
     let s = make();
     expect(s.crop(-1, s.length - 1)).toEqualSpan(s.crop(0, s.length - 1));
   });
-});
-
-describe('clipSource', () => {
-  it('returns a function', () => {
-    expect(typeof make().clipSource()).toBe('function');
-  });
-
-  it('returns the span on first call', () => {
-    let s = make();
-    expect(s.clipSource()()).toEqualSpan(s);
-  });
-
-  it('has 0 position after first call', () => {
-    let s = make();
-    let iterator = s.clipSource();
-
-    iterator();
-
-    expect(iterator.position()).toBe(0);
-  });
-
-  it('returns undefined on second call', () => {
-    let s = make();
-    let source = s.clipSource();
-    source();
-    expect(source()).toBeUndefined();
-  });
-
-  describe('clipSource.forEach', () => {
-    it('is present on the iterator', () => {
-      expect(make().clipSource()).toHaveProperty("forEach");
-    });
-
-    it('calls the callback exactly once with the span and zero as arguments', () => {
-      let s = make();
-      const mockCallback = jest.fn((x, y) => x+y);
-
-      s.clipSource().forEach(mockCallback);
-
-      expect(mockCallback.mock.calls.length).toBe(1);
-      expect(mockCallback.mock.calls[0][0]).toBe(s);
-      expect(mockCallback.mock.calls[0][1]).toBe(0);
-    });
-
-    it('does not call the callback if the span has already been iterated', () => {
-      let source = make().clipSource();
-      const mockCallback = jest.fn(x => x);
-
-      source();
-      source.forEach(mockCallback);
-
-      expect(mockCallback.mock.calls.length).toBe(0);
-    });
-  })
 });
 
 describe('leafData', () => {

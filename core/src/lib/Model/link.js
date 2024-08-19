@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/utils";
-import { Span, ClipIterator, LinkPointer, leafDataToPointer } from "../pointers.js";
+import { Span, LinkPointer, leafDataToPointer } from "../pointers.js";
 
 export function Link(type, ...endSpecs) {
   let ends = endSpecs.map((e, i) => {
@@ -68,7 +68,6 @@ export function LinkWithEnds(type, ends) {
 
   return finalObject(obj, {
     leafData,
-    clipSource: () => ClipIterator(x => x, []),
     forEachPointer,
     getEnd,
     getEnds
