@@ -1,4 +1,4 @@
-import { test, expect, describe } from '@jest/globals';
+import { test, expect, describe } from 'vitest';
 import { CssStyle } from './css-style';
 
 function makeCss(object) {
