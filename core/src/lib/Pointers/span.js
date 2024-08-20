@@ -145,15 +145,6 @@ export let spanTesting = {
     return result;
   },
 
-  toEqualSpan(actualSpan, expectedSpan) {
-    return spanTesting.compareElements(actualSpan, expectedSpan, (actual, expected) => {
-      return actual.origin === expected.origin &&
-        actual.start === expected.start &&
-        actual.length === expected.length &&
-        compareOriginalContexts(actual, expected);
-    })
-  },
-
   compareElements(actual, expected, testFn) {
     if (actual === undefined) return {
       message: () => `expected ${JSON.stringify(expected)} but received undefined`,

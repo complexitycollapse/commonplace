@@ -7,21 +7,6 @@ let makeSpanLink = (...args) => {
   return link;
 }
 
-let toEqualClip = testing.toEqualClip;
-
-function clipArraysEqual(actual, expected) {
-  if (actual === undefined || expected === undefined) { return false; }
-  if (actual.length !== expected.length) { return false; }
-
-  for (let j = 0; j < actual.length; ++j) {
-    if (!testing.toEqualClip(actual[j], expected[j]).pass) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 function hasEnd(zettel, link, index = 0) {
   let expectedEnd = link.ends[index];
 
@@ -29,12 +14,15 @@ function hasEnd(zettel, link, index = 0) {
     if (candidate.end.name === expectedEnd.name
         && candidate.end.index === index
         && candidate.link.type === link.type) {
-      if (clipArraysEqual(candidate.end.pointers, expectedEnd.pointers)) {
-        return {
-          message: () => `did not expect zettel to contain ${JSON.stringify(expectedEnd)}`,
-          pass: true
-        };
-      }
+          try {
+            expect(candidate.end.pointers).toEqual(expectedEnd.pointers);
+            return {
+              message: () => `did not expect zettel to contain ${JSON.stringify(expectedEnd)}`,
+              pass: true
+            };
+          } catch {
+            // The effect of the exception is to skip the return.
+          }
     }
   }
 
@@ -49,7 +37,6 @@ function make(clip, links) {
 }
 
 expect.extend({
-  toEqualClip,
   hasEnd: hasEnd,
   hasZettelProperties(zettel, start, length, ...ends) {
     ends = ends ?? [];
@@ -156,8 +143,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 5));
-    expect(zettel[1].pointer).toEqualClip(Span(s.origin, endSpan.start, 5));
+    expect(zettel[0].pointer).toEqual(Span(s.origin, s.start, 5));
+    expect(zettel[1].pointer).toEqual(Span(s.origin, endSpan.start, 5));
     expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 
@@ -180,8 +167,8 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(2);
-    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 5));
-    expect(zettel[1].pointer).toEqualClip(Span(s.origin, 6, 5));
+    expect(zettel[0].pointer).toEqual(Span(s.origin, s.start, 5));
+    expect(zettel[1].pointer).toEqual(Span(s.origin, 6, 5));
     expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 
@@ -205,9 +192,9 @@ describe('ZettelSchneider.zettel', () => {
     let zettel = make(s, [l]).zettel();
 
     expect(zettel).toHaveLength(3);
-    expect(zettel[0].pointer).toEqualClip(Span(s.origin, s.start, 1));
-    expect(zettel[1].pointer).toEqualClip(Span(s.origin, endSpan.start, endSpan.length));
-    expect(zettel[2].pointer).toEqualClip(Span(s.origin, endSpan.next, 1));
+    expect(zettel[0].pointer).toEqual(Span(s.origin, s.start, 1));
+    expect(zettel[1].pointer).toEqual(Span(s.origin, endSpan.start, endSpan.length));
+    expect(zettel[2].pointer).toEqual(Span(s.origin, endSpan.next, 1));
     expect(zettel.reduce((n, z) => n + z.pointer.length, 0)).toBe(s.length);
   });
 

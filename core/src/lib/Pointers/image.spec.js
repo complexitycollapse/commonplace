@@ -1,4 +1,4 @@
-import { describe, expect, it, test, jest } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import { Image, leafDataToImage, imageTesting } from "./image";
 import { spanTesting } from './span';
 import { EdlPointer } from './edl-pointer';

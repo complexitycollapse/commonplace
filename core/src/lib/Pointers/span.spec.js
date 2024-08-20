@@ -1,12 +1,8 @@
-import { describe, expect, it, test, jest } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import { Span, leafDataToSpan, spanTesting } from './span.js';
 import { imageTesting, Image } from './image.js';
 import { EdlPointer } from './edl-pointer.js';
 import { Part } from '../part.js';
-
-expect.extend({
-  toEqualSpan: spanTesting.toEqualSpan
-});
 
 let make = spanTesting.makeSpan;
 
@@ -37,24 +33,27 @@ describe('span', () => {
 describe('clone', () => {
   it('produces an exact copy when there are no arguments', () => {
     let original = make();
-    expect(original.clone()).toEqualSpan(original);
+    expect(original.clone()).toEqual(original);
   });
 
   it('produces an exact copy when passed an empty object', () => {
     let original = make();
-    expect(original.clone({})).toEqualSpan(original);
+    expect(original.clone({})).toEqual(original);
   });
 
   it('replaces only origin when that is passed as a parameter', () => {
-    expect(make().clone({ origin: 'other' })).toEqualSpan(Span('other', 10, 20 ));
+    let original = make();
+    expect(original.clone({ origin: "other" })).toMatchObject({origin: "other", start: original.start, length: original.length});
   });
 
   it('replaces only start when that is passed as a parameter', () => {
-    expect(make().clone({ start: 99 })).toEqualSpan(Span('origin', 99, 20));
+    let original = make();
+    expect(original.clone({ start:99})).toMatchObject({origin: original.origin, start: 99, length: original.length});
   });
 
   it('replaces only length when that is passed as a parameter', () => {
-    expect(make().clone({ length: 99 })).toEqualSpan(Span('origin', 10, 99));
+    let original = make();
+    expect(original.clone({ length: 99 })).toMatchObject({origin: original.origin, start: original.start, length: 99});
   });
 });
 
@@ -105,7 +104,7 @@ describe('basic span functions', () => {
 
   test('displace returns a span whose start has been moved by the given amount', () => {
     let original = make();
-    expect(original.displace(22)).toEqualSpan(
+    expect(original.displace(22)).toEqual(
       Span(original.origin, original.start + 22, original.length)
     );
   });
@@ -303,54 +302,54 @@ describe('merge', () => {
   it('returns an identical span if the argument is contained in this', () => {
     let s1 = Span("o", 10, 20);
     let s2 = Span ("o", 11, 10);
-    expect(s1.merge(s2)).toEqualSpan(s1);
+    expect(s1.merge(s2)).toEqual(s1);
   });
 
   it('returns a span identical to the argument if this is contained in the argument', () => {
     let s1 = Span("a", 10, 20);
     let s2 = Span ("a", 11, 10);
-    expect(s2.merge(s1)).toEqualSpan(s1);
+    expect(s2.merge(s1)).toEqual(s1);
   });
 
   it('returns a span identical to the original if they are both equal', () => {
     let s1 = Span("b", 10, 20);
     let s2 = s1.clone();
-    expect(s1.merge(s2)).toEqualSpan(s1);
+    expect(s1.merge(s2)).toEqual(s1);
   });
 
   it('returns a span encompassing both spans if this comes before that', () => {
     let s1 = Span("c", 10, 20);
     let s2 = Span ("c", 11, 30);
-    expect(s1.merge(s2)).toEqualSpan(Span("c", 10, 31));
+    expect(s1.merge(s2)).toEqual(Span("c", 10, 31));
   });
 
   it('returns a span encompassing both spans if that comes before this', () => {
     let s1 = Span("d", 10, 20);
     let s2 = Span ("d", 11, 30);
-    expect(s2.merge(s1)).toEqualSpan(Span("d", 10, 31));
+    expect(s2.merge(s1)).toEqual(Span("d", 10, 31));
   });
 
   it('uses the origin of the spans', () => {
     let s1 = Span("original", 10, 20);
     let s2 = Span ("original,", 11, 10);
-    expect(s1.merge(s2).origin).toEqualSpan("original");
+    expect(s1.merge(s2).origin).toEqual("original");
   });
 });
 
 describe('crop', () => {
   it('returns an identical span if whole span is selected', () => {
     let s = make();
-    expect(s.crop(0, s.length)).toEqualSpan(s);
+    expect(s.crop(0, s.length)).toEqual(s);
   });
 
   it('removes initial elements if start is greater than 0', () => {
     let s = make();
-    expect(s.crop(2, s.length)).toEqualSpan(s.clone({start: s.start + 2, length: s.length - 2}));
+    expect(s.crop(2, s.length)).toEqual(s.clone({start: s.start + 2, length: s.length - 2}));
   });
 
   it('removes final elements if length is less than the span length', () => {
     let s = make();
-    expect(s.crop(0, s.length - 2)).toEqualSpan(s.clone({length: s.length - 2}));
+    expect(s.crop(0, s.length - 2)).toEqual(s.clone({length: s.length - 2}));
   });
 
   it('always returns a span of the given length, even when initial elements are removed, so long as the requested length is shorter or equal to the original', () => {
@@ -360,22 +359,22 @@ describe('crop', () => {
 
   it('removes initial and final elements if a narrow span is requested', () => {
     let s = make();
-    expect(s.crop(1, s.length - 2)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 2}));
+    expect(s.crop(1, s.length - 2)).toEqual(s.clone({start: s.start + 1, length: s.length - 2}));
   });
 
   it('removes no final elements if length is not passed', () => {
     let s = make();
-    expect(s.crop(1)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 1}));
+    expect(s.crop(1)).toEqual(s.clone({start: s.start + 1, length: s.length - 1}));
   });
 
   it('removes no final elements if length is longer than the span length', () => {
     let s = make();
-    expect(s.crop(1, s.length + 1)).toEqualSpan(s.clone({start: s.start + 1, length: s.length - 1}));
+    expect(s.crop(1, s.length + 1)).toEqual(s.clone({start: s.start + 1, length: s.length - 1}));
   });
 
   it('treats negative start as equivalent to 0', () => {
     let s = make();
-    expect(s.crop(-1, s.length - 1)).toEqualSpan(s.crop(0, s.length - 1));
+    expect(s.crop(-1, s.length - 1)).toEqual(s.crop(0, s.length - 1));
   });
 });
 
@@ -402,12 +401,12 @@ describe('leafData', () => {
 
 test('leafDataToSpan is inverse of leafData', () => {
   let s = make();
-  expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
+  expect(leafDataToSpan(s.leafData())).toEqual(s);
 });
 
 test('leafDataToSpan is inverse of leafData when Span has originalContext', () => {
   let s = make({ originalContext: EdlPointer("foo", 10) });
-  expect(leafDataToSpan(s.leafData())).toEqualSpan(s);
+  expect(leafDataToSpan(s.leafData())).toEqual(s);
 });
 
 describe('intersect', () => {
@@ -429,21 +428,21 @@ describe('intersect', () => {
     let s1 = make();
     let s2 = s1.clone();
 
-    expect(s1.intersect(s2)[1]).toEqualSpan(s1);
+    expect(s1.intersect(s2)[1]).toEqual(s1);
   });
 
   it('returns the original dimensions if the second span encompasses it', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
 
-    expect(s1.intersect(s2)[1]).toEqualSpan(s1);
+    expect(s1.intersect(s2)[1]).toEqual(s1);
   });
 
   it('returns the dimensions of the second span if we encompass it', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start - 1, length: s1.length + 2 });
 
-    expect(s2.intersect(s1)[1]).toEqualSpan(s1);
+    expect(s2.intersect(s1)[1]).toEqual(s1);
   });
 
   it('has the start of the other span if that is later', () => {
@@ -510,7 +509,7 @@ describe('clipPart', () => {
     let s1 = make();
     let s2 = s1.clone({ start: s1.start + 1, length: s1.length + 3});
 
-    expect(s2.clipPart(makePart(s1))[1].pointer).toEqualSpan(s1.intersect(s2)[1]);
+    expect(s2.clipPart(makePart(s1))[1].pointer).toEqual(s1.intersect(s2)[1]);
   });
 
   it('returns content trimmed to the portion represented by the overlapping portion', () => {
@@ -668,7 +667,7 @@ describe('nibble', () => {
   });
 
   it('returns the remainder if other is shorter than this', () => {
-    expect(Span("x", 1, 10).nibble(Span("x", 1, 9)).remainder).toEqualSpan(Span("x", 10, 1));
+    expect(Span("x", 1, 10).nibble(Span("x", 1, 9)).remainder).toEqual(Span("x", 10, 1));
   });
 
   it('returns undefined remainder if other is longer than this', () => {
