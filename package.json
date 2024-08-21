@@ -2,7 +2,7 @@
   "name": "cp2",
   "version": "1.0.0",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +13,10 @@
     "cross-env": "^7.0.3",
     "vite": "^5.4.1"
   },
-  "workspaces": ["./*"]
+  "workspaces": [
+    "./*"
+  ],
+  "devDependencies": {
+    "vitest": "^2.0.5"
+  }
 }

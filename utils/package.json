@@ -4,6 +4,6 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
+    "test": "vitest"
   }
 }

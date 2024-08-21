@@ -8,10 +8,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest --root lib/"
+    "test": "vitest"
   },
   "dependencies": {
-    "@testing-library/jest-dom": "^6.4.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@commonplace/html": "^0.0.1",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -30,7 +30,6 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "jsdom": "^24.1.1",
-    "vite": "^5.4.1",
-    "vitest": "^2.0.5"
+    "vite": "^5.4.1"
   }
 }

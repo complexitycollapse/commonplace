@@ -9,6 +9,6 @@
     "@commonplace/document-model": "^0.0.1"
   },
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
+    "test": "vitest"
   }
 }
