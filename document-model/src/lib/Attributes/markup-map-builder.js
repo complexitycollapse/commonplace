@@ -45,7 +45,7 @@ export function MarkupMapBuilder(edl, rules, objects, parentMap) {
     /**
      * Creates MarkupDetails for a given object.
      * @param {Object} object - The object to create markup for.
-     * @returns {Object} - The created markup for the object.
+     * @returns {Object} - The created MarkupDetails for the object.
      */
     function createMarkupDetailsForObject(object) {
       // Only process each object once.
@@ -80,7 +80,7 @@ export function MarkupMapBuilder(edl, rules, objects, parentMap) {
           // TODO how does this work with calculated markup? Do we use a calculated attribute
           // from the container or could we inherit the calculation itself? In which case, what
           // previous value is the calculation applied to?
-          markupAttributeValues.push(attribute, PotentialAttributeValue(attribute, value, "content"));
+          markupAttributeValues.push(attribute, PotentialAttributeValue(attribute, value, "content", true));
         }
       }
 
@@ -126,6 +126,7 @@ function pushAttributeValue(markupAttributes, rule, matchResult) {
         descriptor.attribute,
         descriptor.value,
         descriptor.inheritance,
+        false,
         matchResult,
         rule
     ));

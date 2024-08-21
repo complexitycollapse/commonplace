@@ -15,10 +15,10 @@ import { addProperties, finalObject } from "@commonplace/utils";
  * @returns {Object} - The constructed PotentialAttributeValue object.
  */
 
-export function PotentialAttributeValue(attributeName, attributeValue, attributeInheritance, matchResult, origin) {
+export function PotentialAttributeValue(attributeName, attributeValue, attributeInheritance, inherited, matchResult, origin) {
   
   let obj = {};
-  let attributeRoute = calculateRoute(attributeInheritance, matchResult);
+  let attributeRoute = calculateRoute(inherited, attributeInheritance, matchResult);
   let isHeritable = attributeRoute == AttributeRoute.immediateContentTarget ||
     attributeRoute == AttributeRoute.immediateContentType ||
     attributeRoute == AttributeRoute.inheritedNonDefault;
@@ -29,6 +29,7 @@ export function PotentialAttributeValue(attributeName, attributeValue, attribute
     attributeInheritance, // direct only or content also?
     attributeRoute,
     isHeritable, // should children inherit this attribute? Only true if for content attributes that are not inherited via a class (TODO: why?)
+    matchResult,
     origin
   });
 
@@ -55,24 +56,24 @@ export function PotentialAttributeValue(attributeName, attributeValue, attribute
 
 // Helper functions
 
-function calculateRoute(inheritance, matchResult) {
-  if (matchResult == undefined) {
+function calculateRoute(inherited, attributeInheritance, matchResult) {
+  if (inherited) {
     return AttributeRoute.inheritedNonDefault;
   }
 
   if (matchResult == "named") {
-    return inheritance == "direct" ? AttributeRoute.immediateDirectTarget : AttributeRoute.immediateContentTarget;
+    return attributeInheritance == "direct" ? AttributeRoute.immediateDirectTarget : AttributeRoute.immediateContentTarget;
   }
   
   if (matchResult == "class") {
-    return inheritance == "direct" ? AttributeRoute.immediateDirectClass : AttributeRoute.immediateContentClass;
+    return attributeInheritance == "direct" ? AttributeRoute.immediateDirectClass : AttributeRoute.immediateContentClass;
   }
   
   if (matchResult == "class and type") {
-    return inheritance == "direct" ? AttributeRoute.immediateDirectClassAndType : AttributeRoute.immediateContentClassAndType;
+    return attributeInheritance == "direct" ? AttributeRoute.immediateDirectClassAndType : AttributeRoute.immediateContentClassAndType;
   }
 
-  return inheritance == "direct" ? AttributeRoute.immediateDirectType : AttributeRoute.immediateContentType;
+  return attributeInheritance == "direct" ? AttributeRoute.immediateDirectType : AttributeRoute.immediateContentType;
 }
 
 function routeToOrder(route) {
