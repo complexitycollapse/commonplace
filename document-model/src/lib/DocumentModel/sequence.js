@@ -8,7 +8,8 @@ export function Sequence(sequencePrototype, members) {
     members,
     isSequence: true,
     isSubordinated: false,
-    key: undefined
+    key: undefined,
+    getContainers: sequencePrototype.definingLink.getContainers
   };
 
   addUnenumerable(sequence, "parent", undefined, true);

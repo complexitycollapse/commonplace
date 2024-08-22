@@ -20,7 +20,8 @@ export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, 
     contentMarkup: new Map(),
     resolvedType,
     metalinks,
-    getClasses
+    getClasses,
+    getContainers: () => parent ? [parent].concat(model.sequences) : model.sequences
   });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});
   return finalObject(model, {

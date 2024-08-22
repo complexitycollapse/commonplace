@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ZettelSchneider } from './zettel-schneider';
-import { testing, Span, Image } from '@commonplace/core';
+import { testing, Span, Image, Edl } from '@commonplace/core';
 
 let makeSpanLink = (...args) => {
   let link = testing.links.makeSpanLink.call(null, ...args);
@@ -33,7 +33,7 @@ function hasEnd(zettel, link, index = 0) {
 }
 
 function make(clip, links) {
-  return ZettelSchneider(clip, links, "1", 0);
+  return ZettelSchneider(clip, Edl([], []), links, "1", 0);
 }
 
 expect.extend({

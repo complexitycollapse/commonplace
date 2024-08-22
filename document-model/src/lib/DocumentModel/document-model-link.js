@@ -9,7 +9,7 @@ import resolveTypeAndMetalinks from "./resolve-type.js";
 import getClasses from "../Attributes/get-classes.js";
 import SemanticClass from "./semantic-class.js";
 
-export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
+export function DocumentModelLink(link, parentModel, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
@@ -34,7 +34,10 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
 
   addMethods(newLink, {
     sequencePrototypes: () => newLink.incomingPointers.map(p => p.end.sequencePrototypes).flat(),
-    compareLinkPriority
+    compareLinkPriority,
+    // Why would parentModel be null? If the link is a default then null is passed in.
+    // TODO: This is an ugly hack. Better to have a model for the defaults Edl.
+    getContainers: () => parentModel ? [parentModel].concat(newLink.sequences) : newLink.sequences
   })
 
   function getPointers(name) {

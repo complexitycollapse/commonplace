@@ -2,7 +2,7 @@ import { it, describe, expect, test } from 'vitest';
 import { SequenceBuildingCursor } from './sequence-building-cursor';
 import { anEdl, aSpan, aTargetLink, } from '../Testing/group-testing';
 import { SequencePrototype } from './sequence-prototype';
-import { LinkPointer, InlinePointer } from '@commonplace/core';
+import { LinkPointer, InlinePointer, Edl } from '@commonplace/core';
 import { Zettel } from './zettel';
 import { IncomingPointer } from './incoming-pointer';
 import { DocumentModelLink } from './document-model-link';
@@ -13,7 +13,7 @@ import { metatype } from '../well-known-objects';
 function make(sequenceElements) {
   let scenario = {};
   let sequenceLinkBuilder = aTargetLink(sequenceElements, {end: "grouping end", type: LinkBuilder(metatype)});
-  let sequenceLink = DocumentModelLink(sequenceLinkBuilder.build(), 0, LinkPointer("group"), 0);
+  let sequenceLink = DocumentModelLink(sequenceLinkBuilder.build(), Edl([], []), 0, LinkPointer("group"), 0);
   let sequenceEnd = sequenceLink.getEnd("grouping end");
   let prototype = SequencePrototype("test type", sequenceEnd, sequenceLink, LinkPointer("metalink"));
   sequenceEnd.sequencePrototypes = [prototype];
@@ -29,7 +29,7 @@ function make(sequenceElements) {
   scenario.consumeZettel = clipBuilder => {
     let clip = clipBuilder.build();
     let incomingPointer = IncomingPointer(clipBuilder.pointer, sequenceEnd, sequenceLink);
-    let zettel = Zettel(clip, [incomingPointer]);
+    let zettel = Zettel(clip, Edl([], []), [incomingPointer]);
     clipBuilder.zettel = zettel;
 
     return scenario.cursor.consumeZettel(zettel)
@@ -52,11 +52,11 @@ function make(sequenceElements) {
 
 function sequenceAndLink(sequenceMemberBuilders, linkArg) {
   let underlyingLinkBuilder = aTargetLink(sequenceMemberBuilders, {...linkArg, type: LinkBuilder(metatype) });
-  let link = DocumentModelLink(underlyingLinkBuilder.build(), 0, underlyingLinkBuilder.pointer, 0);
+  let link = DocumentModelLink(underlyingLinkBuilder.build(), Edl([], []), 0, underlyingLinkBuilder.pointer, 0);
   let prototype = SequencePrototype("child sequence", link.ends[0], link, LinkPointer("child sequence"));
   let members = sequenceMemberBuilders.map(b => {
     let built = b.build();
-    return built.isLink ? b.sequenceBuilder.build() : Zettel(built, []);
+    return built.isLink ? b.sequenceBuilder.build() : Zettel(built, Edl([], []), []);
   });
   let sequence = SequenceBuilder(prototype, members);
   let linkBuilder = wrap(link, link.pointer);

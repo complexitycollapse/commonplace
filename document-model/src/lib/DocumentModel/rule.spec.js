@@ -21,7 +21,7 @@ function make({
 }
 
 function link(name, incomingPointers = []) {
-  let l = makeLink(Link(InlinePointer(name)), 0, LinkPointer(name), 0);
+  let l = makeLink(Link(InlinePointer(name)), Edl([], []), 0, LinkPointer(name), 0);
   addIncoming(l, incomingPointers);
   return l;
 }

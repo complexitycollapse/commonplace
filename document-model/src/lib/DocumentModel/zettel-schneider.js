@@ -2,7 +2,7 @@ import { finalObject } from "@commonplace/utils";
 import { IncomingPointer } from "./incoming-pointer.js";
 import { Zettel } from "./zettel.js";
 
-export function ZettelSchneider(clip, links, parentKey, index) {
+export function ZettelSchneider(clip, parentModel, links, parentKey, index) {
   let obj = {};
 
   function zettel() {
@@ -11,16 +11,16 @@ export function ZettelSchneider(clip, links, parentKey, index) {
 
     if (clip.pointerType === "span") {
       let result = mapSpanToZettel(clip, incomingPointers, []);
-      return result.map((z, i) => Zettel(z.pointer, z.incomingPointers, rootKey + ":Z" + i));
+      return result.map((z, i) => Zettel(z.pointer, parentModel, z.incomingPointers, rootKey + ":Z" + i));
 
     } else {
-      let singleZettel = Zettel(clip, incomingPointers, rootKey);
+      let singleZettel = Zettel(clip, parentModel, incomingPointers, rootKey);
       return [singleZettel];
     }
   }
 
   function mapSpanToZettel(span, overlappingEntries, linksToAdd) {
-    if (overlappingEntries.length == 0) { return [Zettel(span, linksToAdd)]; }
+    if (overlappingEntries.length == 0) { return [Zettel(span, parentModel, linksToAdd)]; }
 
     let overlappingClip = overlappingEntries[0].pointer;
     let remainingEntries = overlappingEntries.slice(1);

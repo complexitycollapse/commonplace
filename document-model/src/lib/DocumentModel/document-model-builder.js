@@ -31,12 +31,12 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
 
   function createDefaults() {
     let defaultsEdl = cache.getPart(defaultsPointer)?.content;
-    let defaults = new Map(defaultsEdl ? createLinkPairs(defaultsEdl, cache, undefined, true) : []);
+    let defaults = new Map(defaultsEdl ? createLinkPairs(defaultsEdl, undefined, cache, undefined, true) : []);
     return defaults;
   }
 
   function createLinks(edl, parent, defaults) {
-    let linkPairs = createLinkPairs(edl, cache, parent, false);
+    let linkPairs = createLinkPairs(edl, model, cache, parent, false);
     linksMap = new Map(linkPairs);
     links = [...linksMap.values()];
     allLinks = links.concat([...defaults.values()]);
@@ -50,7 +50,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
       childBuilders.push(childBuilder);
       zettel.push(childBuilder.buildHierarchy());
     } else {
-      let z = ZettelSchneider(clip, links, key, index + allLinks.length).zettel();
+      let z = ZettelSchneider(clip, model, links, key, index + allLinks.length).zettel();
       zettel.push(...z);
     }
   }
@@ -111,6 +111,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     gatherRules(model, allLinks);
 
     // Add Zettel to the model, and gather all the builders for the EDL children, ready for the next pass.
+    // TODO: this doesn't seem to be using the second parameter to the fn. What's going on?
     edl.clips.forEach(addZettelAndChildBuildersForClip);
 
     // Add sequences to the model
@@ -150,18 +151,18 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
   });
 }
 
-function createLinkPairs(edl, cache, parent, isDefault) {
+function createLinkPairs(edl, parentModel, cache, parent, isDefault) {
   let linkPairs = [];
 
   if (parent) {
     linkPairs = Array.from(parent.links.entries(), 
-      ([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
+      ([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), parentModel, link.index, link.pointer, link.depth+1, cache)]);
   }
 
   let childParts = edl.links.map((x, index) => [cache.getPart(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
-  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, cache, isDefault)]);
+  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, parentModel, index, part.pointer, 0, cache, isDefault)]);
 
   linkPairs = linkPairs.concat(childPairs);
 

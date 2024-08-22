@@ -6,9 +6,9 @@ import { MarkupDetails } from "./markup-details.js";
   How the Markup Algorithm Works
 
   Iterate through all the objects, and for each one find all the rules that apply to it and all 
-  content attributes possessed by its parents. Construct a LispMap of attribute names to lists 
+  content attributes possessed by its containers. Construct a LispMap of attribute names to lists 
   of PotentialAttributeValue objects, each one representing a value assigned to the attribute 
-  by a particular rule or parent. Then use prioritization rules to sort each list of 
+  by a particular rule or container. Then use prioritization rules to sort each list of 
   PotentialAttributeValue objects. Finally, create a MarkupDetails object to hold all the lists 
   for the object.
 
@@ -85,12 +85,7 @@ export function MarkupMapBuilder(edl, rules, objects, parentMap) {
       }
 
       // Handle inheritance of content values from containers.
-      if (object === edl) {
-        addContentValueFromContainer(edl.parent);
-      } else {
-        addContentValueFromContainer(edl);
-      }
-      object.sequences.forEach(sequence => addContentValueFromContainer(sequence.definingLink));
+      object.getContainers().forEach(container => addContentValueFromContainer(container?.isSequence ? container.definingLink : container));
 
       // Sort values by priority
       for (let values of markupAttributeValues.values()) {

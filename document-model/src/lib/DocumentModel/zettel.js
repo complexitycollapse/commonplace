@@ -1,7 +1,7 @@
 import { addProperties, finalObject } from "@commonplace/utils";
 import getClasses from "../Attributes/get-classes.js";
 
-export function Zettel(clip, incomingPointers, key) {
+export function Zettel(clip, parentModel, incomingPointers, key) {
   let originContentPart = undefined;
 
   let obj = addProperties({}, {
@@ -15,7 +15,8 @@ export function Zettel(clip, incomingPointers, key) {
     contentMarkup: new Map(),
     getContent: () => originContentPart?.content,
     setOriginContentPart: part => originContentPart = part,
-    getClasses
+    getClasses,
+    getContainers: () => [parentModel].concat(obj.sequences)
   })
 
   return finalObject(obj, {
