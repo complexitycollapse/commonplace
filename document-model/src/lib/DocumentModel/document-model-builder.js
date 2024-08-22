@@ -135,7 +135,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     objectsRequiringMarkup.forEach(object => {
       let allMarkup = markupMap.get(object.key);
 
-      // Although this says "merge" the original maps will in fact be empty
+      // Copy all the entries from the MarkupMap to the object's markup properties
       mergeMaps(object.markup, allMarkup.markup());
       mergeMaps(object.contentMarkup, allMarkup.contentMarkup());
     });

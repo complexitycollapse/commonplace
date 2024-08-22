@@ -74,24 +74,23 @@ export function MarkupMapBuilder(edl, rules, objects, parentMap) {
 
         // If the container has not had its markupAttributeValues created yet, do it now.
         let containerMarkup = createMarkupDetailsForObject(container);
-        let contentMarkup = containerMarkup.contentMarkup();
+        let contentMarkup = containerMarkup.winningContentAttributeValues();
 
-        for (var [attribute, value] of contentMarkup.entries()) {
+        for (var av of contentMarkup) {
           // TODO how does this work with calculated markup? Do we use a calculated attribute
           // from the container or could we inherit the calculation itself? In which case, what
           // previous value is the calculation applied to?
-          markupAttributeValues.push(attribute, PotentialAttributeValue(attribute, value, "content", true));
+          markupAttributeValues.push(av.attributeName, PotentialAttributeValue(av.attributeName, av.attributeValue, "content", true, av.matchResult, av.origin));
         }
       }
 
       // Handle inheritance of content values from containers.
       if (object === edl) {
         addContentValueFromContainer(edl.parent);
-      } else if (object.sequences.length > 0) {
-        object.sequences.forEach(sequence => addContentValueFromContainer(sequence.definingLink));
       } else {
         addContentValueFromContainer(edl);
       }
+      object.sequences.forEach(sequence => addContentValueFromContainer(sequence.definingLink));
 
       // Sort values by priority
       for (let values of markupAttributeValues.values()) {
