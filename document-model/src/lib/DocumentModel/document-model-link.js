@@ -6,7 +6,7 @@ import { Rule } from "./rule.js";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype.js";
 import resolveTypeAndMetalinks from "./resolve-type.js";
-import getClasses from "../Attributes/get-classes.js";
+import {getClasses, hasClass} from "../Attributes/get-classes.js";
 import SemanticClass from "./semantic-class.js";
 
 export function DocumentModelLink(link, parentModel, index, linkPointer, depth, cache, isDefault) {
@@ -118,6 +118,7 @@ export function DocumentModelLink(link, parentModel, index, linkPointer, depth, 
   newLink.depth = depth;
   newLink.key = undefined; // set later
   newLink.getClasses = getClasses;
+  newLink.hasClass = hasClass;
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   newLink.metalinks = [];

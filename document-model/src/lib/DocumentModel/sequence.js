@@ -9,7 +9,9 @@ export function Sequence(sequencePrototype, members) {
     isSequence: true,
     isSubordinated: false,
     key: undefined,
-    getContainers: sequencePrototype.definingLink.getContainers
+    getContainers: sequencePrototype.definingLink.getContainers,
+    getClasses: sequencePrototype.definingLink.getClasses,
+    hasClasses: sequencePrototype.definingLink.hasClasses
   };
 
   addUnenumerable(sequence, "parent", undefined, true);
