@@ -67,7 +67,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
     sequences.forEach((sequence, i) => sequence.key = sequence.definingLink.key + "-S" + i);
   }
 
-  function createModel(incommingPointers, defaults) {
+  function createModel(incomingPointers, defaults) {
     let [resolvedType, metalinkPairs] = resolveTypeAndMetalinks(edl.type, cache);
     let metalinks = metalinkPairs.map(x => x[1]);
 
@@ -79,7 +79,7 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
       zettel,
       linksMap,
       parent,
-      incommingPointers,
+      incomingPointers,
       defaults,
       key);
     return model;
