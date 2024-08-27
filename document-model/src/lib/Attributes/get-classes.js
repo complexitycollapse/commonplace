@@ -1,4 +1,4 @@
-export default function getClasses() {
+export function getClasses() {
   // TODO: this will return duplicates if a class is endowed multiple ways. Needs to make classes distinct.
   let classes = this.incomingPointers.map(p => p.end.semanticClasses).flat();
   return classes;
