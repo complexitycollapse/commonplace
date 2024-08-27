@@ -18,7 +18,7 @@ import { addProperties, finalObject } from "@commonplace/utils";
 export function PotentialAttributeValue(attributeName, attributeValue, attributeInheritance, inherited, matchResult, origin) {
   
   let obj = {};
-  let attributeRoute = calculateRoute(inherited, attributeInheritance, matchResult);
+  let attributeRoute = calculateRoute(inherited, attributeInheritance, matchResult.specificity);
   let isHeritable = attributeRoute == AttributeRoute.immediateContentTarget ||
     attributeRoute == AttributeRoute.immediateContentType ||
     attributeRoute == AttributeRoute.inheritedNonDefault;
@@ -28,6 +28,7 @@ export function PotentialAttributeValue(attributeName, attributeValue, attribute
     attributeValue,
     attributeInheritance, // direct only or content also?
     attributeRoute,
+    levelScopeDistance: matchResult.levelScopeDistance,
     isHeritable, // should children inherit this attribute? Only true if for content attributes that are not inherited via a class (TODO: why?)
     matchResult,
     origin
@@ -36,13 +37,19 @@ export function PotentialAttributeValue(attributeName, attributeValue, attribute
   // Sorting the values by priority, from most significant factor to least:
   // 1. Non-defaults preferred to defaults
   // 2. High priority routes preferred over low priority routes
-  // 3. Inner links preferred over outer links
-  // 4. Links later in the EDL preferred to those earlier
+  // 3. Inner level scopes preferred to outer level scopes (or no scope)
+  // 4. Inner links preferred over outer links
+  // 5. Links later in the EDL preferred to those earlier
   function compareValuePriority(b) {
+
+    const levelComparison = (obj.levelScopeDistance ?? Number.MAX_SAFE_INTEGER) - (b.levelScopeDistance ?? Number.MAX_SAFE_INTEGER);
+
     if (origin.originLink.isDefault !== b.origin.originLink.isDefault) {
       return origin.originLink.isDefault ? 1 : -1;
     } else if (obj.attributeRoute !== b.attributeRoute) {
       return routeToOrder(obj.attributeRoute) - routeToOrder(b.attributeRoute);
+    } else if (levelComparison !== 0) {
+      return levelComparison;
     } else if (origin.originLink.depth != b.origin.originLink.depth) {
       return origin.originLink.depth - b.origin.originLink.depth;
     }
@@ -56,20 +63,20 @@ export function PotentialAttributeValue(attributeName, attributeValue, attribute
 
 // Helper functions
 
-function calculateRoute(inherited, attributeInheritance, matchResult) {
+function calculateRoute(inherited, attributeInheritance, specificity) {
   if (inherited) {
     return AttributeRoute.inheritedNonDefault;
   }
 
-  if (matchResult == "named") {
+  if (specificity == "named") {
     return attributeInheritance == "direct" ? AttributeRoute.immediateDirectTarget : AttributeRoute.immediateContentTarget;
   }
   
-  if (matchResult == "class") {
+  if (specificity == "class") {
     return attributeInheritance == "direct" ? AttributeRoute.immediateDirectClass : AttributeRoute.immediateContentClass;
   }
   
-  if (matchResult == "class and type") {
+  if (specificity == "class and type") {
     return attributeInheritance == "direct" ? AttributeRoute.immediateDirectClassAndType : AttributeRoute.immediateContentClassAndType;
   }
 

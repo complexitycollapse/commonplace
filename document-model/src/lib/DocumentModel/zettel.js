@@ -1,5 +1,5 @@
-import { addProperties, finalObject } from "@commonplace/utils";
-import {getClasses, hasClasses} from "../class-mixins.js";
+import { addProperties, finalObject, memoize } from "@commonplace/utils";
+import { getClasses, hasClasses, getLevels } from "../class-mixins.js";
 
 export function Zettel(clip, parentModel, incomingPointers, key) {
   let originContentPart = undefined;
@@ -17,6 +17,7 @@ export function Zettel(clip, parentModel, incomingPointers, key) {
     setOriginContentPart: part => originContentPart = part,
     getClasses,
     hasClasses,
+    getLevels: memoize(() => getLevels.apply(obj)),
     getContainers: () => [parentModel].concat(obj.sequences)
   })
 

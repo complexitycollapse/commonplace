@@ -82,6 +82,10 @@ function RecursiveDocumentModelBuilder(edlPointer, cache, parent, indexInParent)
       incomingPointers,
       defaults,
       key);
+
+    // Nasty hack to resolve the circularity between links and their Edl. TODO: find a better way.
+    allLinks.forEach(link => link.parentModel = model);
+
     return model;
   }
 
@@ -156,13 +160,13 @@ function createLinkPairs(edl, parentModel, cache, parent, isDefault) {
 
   if (parent) {
     linkPairs = Array.from(parent.links.entries(), 
-      ([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), parentModel, link.index, link.pointer, link.depth+1, cache)]);
+      ([key, link]) => [key, DocumentModelLink(Object.getPrototypeOf(link), link.index, link.pointer, link.depth+1, cache)]);
   }
 
   let childParts = edl.links.map((x, index) => [cache.getPart(x), index]);
   let childPairs = childParts
   .filter(x => x[0])
-  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, parentModel, index, part.pointer, 0, cache, isDefault)]);
+  .map(([part, index]) => [part.pointer.hashableName, DocumentModelLink(part.content, index, part.pointer, 0, cache, isDefault)]);
 
   linkPairs = linkPairs.concat(childPairs);
 

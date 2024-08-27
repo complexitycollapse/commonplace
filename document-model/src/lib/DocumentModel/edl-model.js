@@ -1,6 +1,6 @@
 import { missingEdlType } from "../well-known-objects.js";
-import { addProperties, finalObject } from "@commonplace/utils";
-import {getClasses, hasClass} from "../class-mixins.js";
+import { addProperties, finalObject, memoize } from "@commonplace/utils";
+import { getClasses, hasClass, getLevels } from "../class-mixins.js";
 
 export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, parent, incomingPointers, defaultsLinks, key) {
   let containedSequences = [];
@@ -22,6 +22,7 @@ export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, 
     metalinks,
     getClasses,
     hasClass,
+    getLevels: memoize(() => getLevels.apply(model)),
     getContainers: () => parent ? [parent].concat(model.sequences) : model.sequences
   });
   Object.defineProperty(model, "parent", { value: parent, enumerable: false});

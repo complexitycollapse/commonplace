@@ -3,13 +3,13 @@ import {
 } from "../well-known-objects.js";
 import { RecordLinkParser } from "../record-link-parser.js";
 import { Rule } from "./rule.js";
-import { decorateObject, addMethods } from "@commonplace/utils";
+import { decorateObject, addMethods, memoize } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype.js";
 import resolveTypeAndMetalinks from "./resolve-type.js";
-import {getClasses, hasClass} from "../class-mixins.js";
+import { getClasses, hasClass, getLevels } from "../class-mixins.js";
 import SemanticClass from "./semantic-class.js";
 
-export function DocumentModelLink(link, parentModel, index, linkPointer, depth, cache, isDefault) {
+export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefault) {
   function docModelEnd(end) {
     let dme = Object.create(end);
     dme.sequencePrototypes = [];
@@ -37,7 +37,7 @@ export function DocumentModelLink(link, parentModel, index, linkPointer, depth, 
     compareLinkPriority,
     // Why would parentModel be null? If the link is a default then null is passed in.
     // TODO: This is an ugly hack. Better to have a model for the defaults Edl.
-    getContainers: () => parentModel ? [parentModel].concat(newLink.sequences) : newLink.sequences
+    getContainers: () => newLink.parentModel ? [newLink.parentModel].concat(newLink.sequences) : newLink.sequences
   })
 
   function getPointers(name) {
@@ -64,10 +64,27 @@ export function DocumentModelLink(link, parentModel, index, linkPointer, depth, 
     }
   }
 
-  function buildRule(attributeEnds, hasEnd) {
-    function resolveAttribute(attribute) {
+  function buildRule(hasEnd) {
+
+    function resolveAttributes(record) {
       return Object.fromEntries(
-        Object.entries(attribute).map(([key, val]) => [key, concatenateContent(val)]));
+        Object.entries(record).map(([key, val]) => [key, concatenateContent(val)]));
+    }
+
+    function resolveLevel(record) {
+      const level = {
+        level: record.level[0],
+        depth: undefined
+      };
+      if (record?.depth) {
+        const depthString = concatenateContent(record.depth);
+        const depthInt = parseInt(depthString, 10);
+        if (!isNaN(depthInt)) {
+          level.depth = depthInt;
+        }
+      }
+
+      return level;
     }
 
     let targets = getPointers("targets");
@@ -75,14 +92,13 @@ export function DocumentModelLink(link, parentModel, index, linkPointer, depth, 
     let linkTypes = getPointers("link types");
     let edlTypes = getPointers("edl types");
     let clipTypes = getContent(getPointers("clip types"));
-    let unresolvedAttributes = RecordLinkParser(link, attributeEnds);
+    let levels = RecordLinkParser(link, ["level", "depth"]).map(resolveLevel);
+    let attributes = RecordLinkParser(link, ["attribute", "value", "inheritance"]).map(resolveAttributes);
     let extraEnds = [];
     if (hasEnd) { extraEnds.push(["end", getContent(getPointers("end")).join("")]); }
 
-    let attributes = unresolvedAttributes.map(resolveAttribute);
-
     let rule = decorateObject(
-      Rule(newLink, targets, classes, linkTypes, clipTypes, edlTypes, attributes),
+      Rule(newLink, targets, classes, linkTypes, clipTypes, edlTypes, levels, attributes),
       Object.fromEntries(extraEnds));
     return rule;
   }
@@ -119,14 +135,16 @@ export function DocumentModelLink(link, parentModel, index, linkPointer, depth, 
   newLink.key = undefined; // set later
   newLink.getClasses = getClasses;
   newLink.hasClass = hasClass;
+  newLink.getLevels = memoize(() => getLevels.apply(newLink));
   newLink.markup = new Map();
   newLink.contentMarkup = new Map();
   newLink.metalinks = [];
+  newLink.parentModel = undefined; // needs to be set after the EdlModel is created
 
   let [resolvedType, metalinkPairs] = resolveTypeAndMetalinks(link.type, cache);
   newLink.resolvedType = resolvedType;
 
-  if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(["attribute", "value", "inheritance"]); }
+  if (markupType.denotesSame(link.type)) { newLink.markupRule = buildRule(); }
 
   processMetalinks();
 

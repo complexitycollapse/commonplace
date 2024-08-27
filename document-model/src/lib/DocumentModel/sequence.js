@@ -11,7 +11,8 @@ export function Sequence(sequencePrototype, members) {
     key: undefined,
     getContainers: sequencePrototype.definingLink.getContainers,
     getClasses: sequencePrototype.definingLink.getClasses,
-    hasClasses: sequencePrototype.definingLink.hasClasses
+    hasClasses: sequencePrototype.definingLink.hasClasses,
+    getLevels: sequencePrototype.definingLink.getLevels
   };
 
   addUnenumerable(sequence, "parent", undefined, true);

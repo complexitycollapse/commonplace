@@ -1,4 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/utils";
+import { getContainerLevelsAsMaps } from "../class-mixins";
 
 /*
   A rule matches the target if any of the following are true:
@@ -22,7 +23,7 @@ import { addProperties, finalObject } from "@commonplace/utils";
  * @param {Object} attributeDescriptors - Attributes endowed to the objects that match this rule.
  * @returns {Object} - The constructed Rule object.
  */
-export function Rule(originLink, namedTargets, classes, linkTypes, clipTypes, edlTypes, attributeDescriptors) {
+export function Rule(originLink, namedTargets, classes, linkTypes, clipTypes, edlTypes, levels, attributeDescriptors) {
   let obj = {};
 
   // Determine if there are any type or class criteria
@@ -38,6 +39,7 @@ export function Rule(originLink, namedTargets, classes, linkTypes, clipTypes, ed
     clipTypes,
     edlTypes,
     classes,
+    levels,
     hasTypeCriteria,
     hasClassCriteria
   });
@@ -45,9 +47,22 @@ export function Rule(originLink, namedTargets, classes, linkTypes, clipTypes, ed
   /**
    * Checks if the target matches the criteria defined by the rule.
    * @param {Object} target - The target to be matched (clip, link or Edl).
-   * @returns {boolean} - True if the target matches any of the criteria, otherwise false.
+   * @returns {boolean} - A string describing the criteria that matched, or undefined if there was no match.
    */
   function match(target) {
+    // Check that the target is within the rule's level scope.
+    const levelResult = withinLevelScope(target, levels);
+    if (levelResult === undefined) { return; }
+    
+    const levelScopeDistance = Number.isInteger(levelResult) ? levelResult : undefined;
+    const specificity = calculateSpecificity(target);
+
+    if (specificity) { return { specificity, levelScopeDistance }; }
+
+    return;
+  }
+
+  function calculateSpecificity(target) {
     // Check if any immediate target endows to the target pointer
     if (namedTargets.some(t => t.endowsTo(target.pointer))) {
       return "named";
@@ -92,4 +107,24 @@ export function Rule(originLink, namedTargets, classes, linkTypes, clipTypes, ed
   return finalObject(obj, {
     match
   });
+}
+
+function withinLevelScope(target, levels) {
+  if (levels.length === 0) { return true; }
+
+  const containers = target.getContainers();
+  const [levelDepths, distances] = getContainerLevelsAsMaps(containers);
+  let distance = Number.MAX_SAFE_INTEGER;
+
+  for (const level of levels) {
+    const depth = levelDepths.get(level.level.hashableName);
+    if (!depth) {
+      return;
+    } else if (level?.depth && depth < level.depth) {
+      return;
+    }
+    distance = Math.min(distance, distances.get(level.level.hashableName));
+  }
+
+  return distance;
 }

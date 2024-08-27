@@ -91,7 +91,7 @@ function makeFromDmb(docBuilder, target) {
 }
 
 function getLinks(edlModel) {
-  return Array.from(edlModel.links.values());
+  return Array.from(edlModel.links.values()).sort(l => l.index);
 }
 
 describe('markup', () => {
@@ -415,6 +415,70 @@ describe('markup', () => {
       let markup = getLinks(dmb.build().build())[0].markup;
 
       expect(markup.get("attr1")).toBe("targeted value");
+    });
+
+    it('prefers a scoped value to an unscoped value', () => {
+      let dv = DocuverseBuilder().add(obj => ({
+        target: obj.aLink(),
+        klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+        endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+        attr1Unscoped: obj.aMarkupRule().endowing("attr1", "unscoped value", "direct")
+          .withClasses(obj.type),
+
+        edlKlass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        edlEndowerType: obj.aLink(metatype).withEnd([undefined, [obj.edlKlass]]),
+        edlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.edl]]),
+        attr1Scoped: obj.aMarkupRule().endowing("attr1", "scoped value", "direct")
+          .withClasses(obj.type)
+          .withLevelScopes([{level: obj.edlEndowerType}]),
+
+        edl: obj.anEdl().withLinks(obj.target, obj.attr1Scoped, obj.attr1Unscoped, obj.endower),
+        parentEdl: obj.anEdl().withLinks(obj.edlEndower).withClip(obj.edl),
+        dmb: obj.aDocModelBuilder(obj.parentEdl)
+      })).build();
+
+      const parent = dv.dmb.build();
+      const target = getLinks(parent.zettel[0])[1]; // target is at index 1 because the link in the parent
+                                                    // will be copied down.
+      let markup = target.markup;
+
+      expect(markup.get("attr1")).toBe("scoped value");
+    });
+
+    it('prefers a closer scoped value to a more distant scoped value', () => {
+      let dv = DocuverseBuilder().add(obj => ({
+        target: obj.aLink(),
+        klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+        endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+
+        edlKlass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        edlEndowerType: obj.aLink(metatype).withEnd([undefined, [obj.edlKlass]]),
+        edlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.edl]]),
+        nearScoped: obj.aMarkupRule().endowing("attr1", "near value", "direct")
+          .withClasses(obj.type)
+          .withLevelScopes([{level: obj.edlEndowerType}]),
+
+        distantEdlKlass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+        distantEdlEndowerType: obj.aLink(metatype).withEnd([undefined, [obj.distantEdlKlass]]),
+        distantEdlEndower: obj.aLink(obj.distantEdlEndowerType).withEnd(["endowing end", [obj.parentEdl]]),
+        distantScoped: obj.aMarkupRule().endowing("attr1", "far value", "direct")
+          .withClasses(obj.type)
+          .withLevelScopes([{level: obj.distantEdlEndowerType}]),
+
+        edl: obj.anEdl().withLinks(obj.target, obj.distantScoped, obj.nearScoped, obj.endower),
+        parentEdl: obj.anEdl().withLinks(obj.edlEndower).withClip(obj.edl),
+        grandparentEdl: obj.anEdl().withLinks(obj.distantEdlEndower).withClip(obj.parentEdl),
+        dmb: obj.aDocModelBuilder(obj.grandparentEdl)
+      })).build();
+
+      const parent = dv.dmb.build();
+      const target = getLinks(parent.zettel[0].zettel[0])[2]; // target is at index 2 because the link in the ancestor
+                                                              // will be copied down.
+      let markup = target.markup;
+
+      expect(markup.get("attr1")).toBe("near value");
     });
   });
 
