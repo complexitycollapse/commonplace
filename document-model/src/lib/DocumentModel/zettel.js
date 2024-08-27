@@ -1,5 +1,5 @@
 import { addProperties, finalObject } from "@commonplace/utils";
-import {getClasses, hasClasses} from "../Attributes/get-classes.js";
+import {getClasses, hasClasses} from "../class-mixins.js";
 
 export function Zettel(clip, parentModel, incomingPointers, key) {
   let originContentPart = undefined;

@@ -6,7 +6,7 @@ import { Rule } from "./rule.js";
 import { decorateObject, addMethods } from "@commonplace/utils";
 import { SequencePrototype } from "./sequence-prototype.js";
 import resolveTypeAndMetalinks from "./resolve-type.js";
-import {getClasses, hasClass} from "../Attributes/get-classes.js";
+import {getClasses, hasClass} from "../class-mixins.js";
 import SemanticClass from "./semantic-class.js";
 
 export function DocumentModelLink(link, parentModel, index, linkPointer, depth, cache, isDefault) {

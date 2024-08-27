@@ -1,6 +1,6 @@
 import { missingEdlType } from "../well-known-objects.js";
 import { addProperties, finalObject } from "@commonplace/utils";
-import {getClasses, hasClass} from "../Attributes/get-classes.js";
+import {getClasses, hasClass} from "../class-mixins.js";
 
 export function EdlModel(pointer, type, resolvedType, metalinks, zettel, links, parent, incomingPointers, defaultsLinks, key) {
   let containedSequences = [];
