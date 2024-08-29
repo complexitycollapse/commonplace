@@ -73,7 +73,7 @@ export function DocumentModelLink(link, index, linkPointer, depth, cache, isDefa
 
     function resolveLevel(record) {
       const level = {
-        level: record.level[0],
+        classPointer: record.level[0],
         depth: undefined
       };
       if (record?.depth) {

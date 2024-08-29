@@ -4,7 +4,7 @@ import { docModelBuilderTesting } from './document-model-builder';
 import { LinkPointer, Link, Span, Edl, InlinePointer } from '@commonplace/core';
 import { DocumentModelLink } from './document-model-link';
 import SemanticClass from './semantic-class';
-import { getLevels, hasClass } from '../class-mixins';
+import { getLevels } from '../class-mixins';
 
 const makeLink = DocumentModelLink;
 const addIncoming = docModelBuilderTesting.addIncomingPointers;
@@ -166,7 +166,7 @@ describe('Rule.match with levels', () => {
   }
 
   function makeScoped(levels) {
-    return make({classes: [LinkPointer("type")], levels: levels.map(l => ({level: LinkPointer(l.level), depth: l?.depth}))});
+    return make({classes: [LinkPointer("type")], levels: levels.map(l => ({classPointer: LinkPointer(l.classPointer), depth: l?.depth}))});
   }
 
   it('does not match the target\'s own class', () => {
@@ -178,7 +178,7 @@ describe('Rule.match with levels', () => {
       getLevels: () => getLevels.apply(target)
     };
 
-    let rule = make({classes: [LinkPointer("type")], levels: [{level: LinkPointer("type")}]});
+    let rule = make({classes: [LinkPointer("type")], levels: [{classPointer: LinkPointer("type")}]});
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -186,7 +186,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if the target matches and is inside the scope', () => {
     let target = makeTarget(makeContainer("scope"));
 
-    let rule = makeScoped([{level: "scope"}]);
+    let rule = makeScoped([{classPointer: "scope"}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -194,7 +194,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if the target matches and is inside the scope, even if there are other levels between the object and the scope', () => {
     let target = makeTarget(makeContainer("different scope", [makeContainer("scope")]));
 
-    let rule = makeScoped([{level: "scope"}]);
+    let rule = makeScoped([{classPointer: "scope"}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -202,7 +202,7 @@ describe('Rule.match with levels', () => {
   it('returns falsy if the target matches but is outside the scope', () => {
     let target = makeTarget(makeContainer("scope"));
 
-    let rule = makeScoped([{level: "wrong scope"}]);
+    let rule = makeScoped([{classPointer: "wrong scope"}]);
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -210,7 +210,7 @@ describe('Rule.match with levels', () => {
   it('returns falsy if only one scope is matched but two are provided', () => {
     let target = makeTarget(makeContainer("scope1"));
 
-    let rule = makeScoped([{level: "scope1"}, {level: "scope2"}]);
+    let rule = makeScoped([{classPointer: "scope1"}, {classPointer: "scope2"}]);
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -218,7 +218,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if two scopes are provided and both match at the same level', () => {
     let target = makeTarget(makeContainer("scope1"), makeContainer("scope2"));
 
-    let rule = makeScoped([{level: "scope1"}, {level: "scope2"}]);
+    let rule = makeScoped([{classPointer: "scope1"}, {classPointer: "scope2"}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -226,7 +226,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if two scopes are provided and they match at different levels', () => {
     let target = makeTarget(makeContainer("scope1", [makeContainer("scope2")]));
 
-    let rule = makeScoped([{level: "scope1"}, {level: "scope2"}]);
+    let rule = makeScoped([{classPointer: "scope1"}, {classPointer: "scope2"}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -234,7 +234,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if two scopes are provided and they match at different levels even though other levels are in between', () => {
     let target = makeTarget(makeContainer("scope1", [makeContainer("different scope", [makeContainer("scope2")])]));
 
-    let rule = makeScoped([{level: "scope1"}, {level: "scope2"}]);
+    let rule = makeScoped([{classPointer: "scope1"}, {classPointer: "scope2"}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -242,7 +242,7 @@ describe('Rule.match with levels', () => {
   it('returns falsy if a depth of 2 is required but there is only one level of nesting', () => {
     let target = makeTarget(makeContainer("scope"));
 
-    let rule = makeScoped([{level: "scope", depth: 2}]);
+    let rule = makeScoped([{classPointer: "scope", depth: 2}]);
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -250,7 +250,7 @@ describe('Rule.match with levels', () => {
   it('returns falsy if a depth of 2 is required but the required scopes are not nested', () => {
     let target = makeTarget(makeContainer("scope"), makeContainer("scope"));
 
-    let rule = makeScoped([{level: "scope", depth: 2}]);
+    let rule = makeScoped([{classPointer: "scope", depth: 2}]);
 
     expect(rule.match(target)).toBeFalsy();
   });
@@ -258,7 +258,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if a depth of 2 is required and the required scope is nested to level 2', () => {
     let target = makeTarget(makeContainer("scope", [makeContainer("scope")]));
 
-    let rule = makeScoped([{level: "scope", depth: 2}]);
+    let rule = makeScoped([{classPointer: "scope", depth: 2}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -266,7 +266,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if a depth of 2 is required and the required scope is nested to a greater level', () => {
     let target = makeTarget(makeContainer("scope", [makeContainer("scope", [makeContainer("scope")])]));
 
-    let rule = makeScoped([{level: "scope", depth: 2}]);
+    let rule = makeScoped([{classPointer: "scope", depth: 2}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -274,7 +274,7 @@ describe('Rule.match with levels', () => {
   it('returns truthy if a depth of 2 is required and the scope is nested to level 2 but with other levels in between', () => {
     let target = makeTarget(makeContainer("scope", [makeContainer("different scope", [makeContainer("scope")])]));
 
-    let rule = makeScoped([{level: "scope", depth: 2}]);
+    let rule = makeScoped([{classPointer: "scope", depth: 2}]);
 
     expect(rule.match(target)).toBeTruthy();
   });
@@ -283,7 +283,7 @@ describe('Rule.match with levels', () => {
     it('is 1 if the target is immediately contained in the scope', () => {
       let target = makeTarget(makeContainer("scope"));
   
-      let rule = makeScoped([{level: "scope"}]);
+      let rule = makeScoped([{classPointer: "scope"}]);
   
       expect(rule.match(target).levelScopeDistance).toBe(1);
     });
@@ -291,7 +291,7 @@ describe('Rule.match with levels', () => {
     it('is 2 if there is a level in between', () => {
       let target = makeTarget(makeContainer("different scope", [makeContainer("scope")]));
   
-      let rule = makeScoped([{level: "scope"}]);
+      let rule = makeScoped([{classPointer: "scope"}]);
   
       expect(rule.match(target).levelScopeDistance).toBe(2);
     });
@@ -299,7 +299,7 @@ describe('Rule.match with levels', () => {
     it('is the minimum if there are multiple scopes that match at different distances', () => {
       let target = makeTarget(makeContainer("different scope", [makeContainer("scope1")]), makeContainer("scope2"));
   
-      let rule = makeScoped([{level: "scope1"}, {level: "scope2"}]);
+      let rule = makeScoped([{classPointer: "scope1"}, {classPointer: "scope2"}]);
   
       expect(rule.match(target).levelScopeDistance).toBe(1);
     });

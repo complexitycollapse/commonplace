@@ -16,14 +16,14 @@ export function getContainerLevelsAsMaps(containers) {
   const classPointerMap = new Map();
 
   for (const level of containerLevels) {
-    if (levelMap.has(level.level.hashableName)) {
-      levelMap.set(level.level.hashableName, Math.max(levelMap.get(level.level.hashableName), level.depth));
+    if (levelMap.has(level.classPointer.hashableName)) {
+      levelMap.set(level.classPointer.hashableName, Math.max(levelMap.get(level.classPointer.hashableName), level.depth));
     } else {
-      levelMap.set(level.level.hashableName, level.depth);
-      classPointerMap.set(level.level.hashableName, level.level);
+      levelMap.set(level.classPointer.hashableName, level.depth);
+      classPointerMap.set(level.classPointer.hashableName, level.classPointer);
     }
 
-    distanceMap.set(level.level.hashableName, level.distance + 1);
+    distanceMap.set(level.classPointer.hashableName, level.distance + 1);
   }
 
   return [levelMap, distanceMap, classPointerMap];
@@ -48,7 +48,7 @@ export function getLevels() {
   const result = [];
 
   for (const [name, depth] of levelMap.entries()) {
-    result.push({level: classPointerMap.get(name), depth, distance: distanceMap.get(name)});
+    result.push({classPointer: classPointerMap.get(name), depth, distance: distanceMap.get(name)});
   }
 
   return result;

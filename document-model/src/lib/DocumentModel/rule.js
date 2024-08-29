@@ -117,13 +117,13 @@ function withinLevelScope(target, levels) {
   let distance = Number.MAX_SAFE_INTEGER;
 
   for (const level of levels) {
-    const depth = levelDepths.get(level.level.hashableName);
+    const depth = levelDepths.get(level.classPointer.hashableName);
     if (!depth) {
       return;
     } else if (level?.depth && depth < level.depth) {
       return;
     }
-    distance = Math.min(distance, distances.get(level.level.hashableName));
+    distance = Math.min(distance, distances.get(level.classPointer.hashableName));
   }
 
   return distance;
