@@ -81,6 +81,10 @@ export function LinkBuilder(type, ...endSpecs) {
     ends: [],
     withType: type => obj.withProperty("type", type),
     withEnd: e => obj.pushTo("ends", e),
+    withEnds: endSpecs => {
+      endSpecs.forEach(e => obj.withEnd(e));
+      return obj;
+    },
     getPointer: name => {
       if (name) { obj.withName(name); }
       obj.withName(obj.name ?? (++unique).toString());
@@ -134,7 +138,14 @@ export function MarkupBuilder() {
     }
     builder.withClasses = (...classes) => {
       return builder.withEnd(["classes", classes]);
-    }
+    };
+    builder.withLevelScopes = scopes => {
+      scopes.forEach(scope => {
+        builder.withEnd(["level", [scope.level]]);
+        if (scope.depth) { builder.withEnd(["depth", [InlineBuilder(scope.depth.toString())]]); }
+      });
+      return builder;
+    };
     return builder;
   };
 
@@ -166,7 +177,7 @@ export function EdlBuilder() {
     withLinks: (...links) => { links.forEach(link => obj.withLink(link)); return obj; },
     withClip: clip => obj.pushTo("clips", clip),
     withClips: (...clips) => { clips.forEach(clip => obj.withClip(clip)); return obj; },
-    getPointer: name => EdlPointer(name),
+    getPointer: name => EdlPointer(name ?? obj.name),
     withTarget: clip => { obj.target = clip; return obj.withClip(clip); }
   });
 
