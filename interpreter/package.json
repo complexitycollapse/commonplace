@@ -1,0 +1,16 @@
+{
+  "name": "@commonplace/interpreter",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@commonplace/core": "^0.0.1",
+    "@commonplace/utils": "^0.0.1"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.5"
+  }
+}
