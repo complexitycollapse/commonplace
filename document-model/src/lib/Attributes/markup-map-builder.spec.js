@@ -480,6 +480,75 @@ describe('markup', () => {
 
       expect(markup.get("attr1")).toBe("near value");
     });
+
+    // TODO: these tests fail because level scoping was not implemented properly. It will be reimplemented
+    // as part of the rewrite, when markup rules scopes will be restricted to lower layers only. (i.e. the
+    // scope of a scoped rule cannot be wider than the scope of the markup link itself)/
+
+    // it('prefers a deeper scope to a shallower scope', () => {
+    //   let dv = DocuverseBuilder().add(obj => ({
+    //     target: obj.aLink(),
+    //     klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+    //     type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+    //     endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+
+    //     edlKlass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+    //     edlEndowerType: obj.aLink(metatype).withEnd([undefined, [obj.edlKlass]]),
+    //     edlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.edl]]),
+        
+    //     distantEdlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.parentEdl]]),
+
+    //     shallowScope: obj.aMarkupRule().endowing("attr1", "shalllow value", "direct")
+    //     .withClasses(obj.type)
+    //     .withLevelScopes([{level: obj.edlEndowerType, depth: 1}]),
+    //     deepScope: obj.aMarkupRule().endowing("attr1", "deep value", "direct")
+    //     .withClasses(obj.type)
+    //     .withLevelScopes([{level: obj.edlEndowerType, depth: 2}]),
+
+    //     edl: obj.anEdl().withLinks(obj.target, obj.deepScope, obj.shallowScope, obj.endower),
+    //     parentEdl: obj.anEdl().withLinks(obj.edlEndower).withClip(obj.edl),
+    //     grandparentEdl: obj.anEdl().withLinks(obj.distantEdlEndower).withClip(obj.parentEdl),
+    //     dmb: obj.aDocModelBuilder(obj.grandparentEdl)
+    //   })).build();
+
+    //   const parent = dv.dmb.build();
+    //   const target = getLinks(parent.zettel[0].zettel[0])[2]; // target is at index 2 because the link in the ancestor
+    //                                                           // will be copied down.
+    //   let markup = target.markup;
+
+    //   expect(markup.get("attr1")).toBe("deep value");
+    // });
+
+    // it('a scoped rule does not match scopes defined at a higher level than the rule link itself', () => {
+    //   let dv = DocuverseBuilder().add(obj => ({
+    //     target: obj.aLink(),
+    //     klass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+    //     type: obj.aLink(metatype).withEnd([undefined, [obj.klass]]),
+    //     endower: obj.aLink(obj.type).withEnd(["endowing end", [obj.target]]),
+
+    //     edlKlass: obj.aLink(definesSemanticClassType).withEnd(["end", [InlineBuilder("endowing end")]]),
+    //     edlEndowerType: obj.aLink(metatype).withEnd([undefined, [obj.edlKlass]]),
+    //     edlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.edl]]),
+        
+    //     distantEdlEndower: obj.aLink(obj.edlEndowerType).withEnd(["endowing end", [obj.parentEdl]]),
+
+    //     deepScope: obj.aMarkupRule().endowing("attr1", "deep value", "direct")
+    //     .withClasses(obj.type)
+    //     .withLevelScopes([{level: obj.edlEndowerType, depth: 2}]),
+
+    //     edl: obj.anEdl().withLinks(obj.target, obj.deepScope, obj.endower),
+    //     parentEdl: obj.anEdl().withLinks(obj.edlEndower).withClip(obj.edl),
+    //     grandparentEdl: obj.anEdl().withLinks(obj.distantEdlEndower).withClip(obj.parentEdl),
+    //     dmb: obj.aDocModelBuilder(obj.grandparentEdl)
+    //   })).build();
+
+    //   const parent = dv.dmb.build();
+    //   const target = getLinks(parent.zettel[0].zettel[0])[2]; // target is at index 2 because the link in the ancestor
+    //                                                           // will be copied down.
+    //   let markup = target.markup;
+
+    //   expect(markup.get("attr1")).toBe(undefined);
+    // });
   });
 
   describe("content attributes", () => {
