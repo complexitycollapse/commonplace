@@ -1,4 +1,4 @@
-import { addMethods } from "@commonplace/utils";
+import { addMethods, addProperties, ListMap } from "@commonplace/utils";
 
 export default function TypeModel(type) {
   const obj = {
@@ -10,8 +10,13 @@ export default function TypeModel(type) {
     unresolved: []
   };
 
+  addProperties(obj, {
+    hooks: ListMap()
+  });
+
   function updateUnresolved()
   {
+    const previous = obj.unresolved;
     obj.unresolved = [];
 
     if (obj.type)
@@ -20,6 +25,21 @@ export default function TypeModel(type) {
         obj.unresolved.push(obj.type);
       }
     }
+
+    const newUnresolved = obj.unresolved.filter(pointer => !previous.find(p => p.denotesSame(pointer)));
+    callHook("resolution requested", { pointers: newUnresolved });
+  }
+
+  function callHook(type, event) {
+    const hooks = obj.hooks.get(type);
+    hooks.forEach(hook => {
+      try {
+        hook(type, event);
+      }
+      catch {
+
+      }
+    });
   }
 
   addMethods(obj, {
@@ -42,11 +62,20 @@ export default function TypeModel(type) {
       updateUnresolved();
     },
     resolve: (pointer, value) => {
+      let typeResolved;
       if (pointer.denotesSame(type)) {
         obj.typeLink = value;
+        typeResolved = true;
       }
 
       updateUnresolved();
+      if (typeResolved)
+      {
+        callHook("resolved", { pointer, value, requirement: "type" });
+      }
+    },
+    addHook: (type, handler) => {
+      obj.hooks.push(type, handler);
     }
   });
 
