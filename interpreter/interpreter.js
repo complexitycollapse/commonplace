@@ -1,11 +1,18 @@
 import { addProperties, finalObject} from '@commonplace/utils';
+import CreateInterface from './create-interface';
 
 export default function Interpreter() {
-  let obj = {};
+  let obj = {
+  };
+
+  const createInterface = CreateInterface(obj);
+
+  addProperties(obj, {
+    models: []
+  });
 
   return finalObject(obj, {
-    select: model => {},
-    create: () => {},
+    create: () => createInterface,
     load: pointer => {}
   });
 }
