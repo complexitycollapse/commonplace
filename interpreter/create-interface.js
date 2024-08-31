@@ -1,5 +1,5 @@
-import EdlModel from "./edl-model";
-import FlightModel from "./flight-model";
+import EdlModel from "./Models/edl-model";
+import FlightModel from "./Models/flight-model";
 
 export default function CreateInterface(interpreter) {
   return {
