@@ -1,3 +1,4 @@
+import { addMethods, addProperties } from "@commonplace/utils";
 import EndModel from "./end-model";
 import TypeModel from "./type-model";
 
@@ -10,12 +11,11 @@ export default function LinkModel(depth, index) {
 
   addProperties(obj, {
     modelType: "link",
-    pointer: linkPointer,
     ends: [],
     unresolved: []
   });
 
-  return finalObject(obj, {
+  return addMethods(obj, {
     setType: type => {
       obj.type.setType(type);
     },

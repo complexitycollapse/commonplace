@@ -15,4 +15,19 @@ describe("interpreter", () => {
     const i = Interpreter();
     expect(i.create().edl().depth).toBe(0);
   });
+
+  it("can create a flight", () => {
+    const i = Interpreter();
+    expect(i.create().flight().isFlight).toBe(true);
+  });
+
+  it("can add an edl to a created flight", () => {
+    const i = Interpreter();
+    const flight = i.create().flight();
+    const edl = i.create().edl();
+
+    flight.addEdl(edl);
+
+    expect(flight.getModels()).toEqual([edl]);
+  });
 });

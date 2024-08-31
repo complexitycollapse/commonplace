@@ -1,9 +1,10 @@
 import { addMethods } from "@commonplace/utils";
 
-export default function EndModel(name, pointers) {
+export default function EndModel(name, pointers = []) {
   const obj = {
     name,
-    pointers: [...pointers]
+    pointers: [...pointers],
+    value: undefined
   };
 
   addMethods(obj, {
@@ -12,6 +13,10 @@ export default function EndModel(name, pointers) {
     },
     setPointers: pointers => {
       obj.pointers = [...pointers];
+    },
+    setValue: value => {
+      obj.value = value;
+      obj.pointers = [];
     }
   });
 
