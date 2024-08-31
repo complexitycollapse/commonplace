@@ -11,6 +11,7 @@ export default function TypeModel(type) {
   };
 
   addProperties(obj, {
+    modelType: "type",
     hooks: ListMap()
   });
 
