@@ -4,7 +4,8 @@ import Zettel from "./Zettel";
 
 export default function EdlModel(depth) {
   const obj = {
-    depth
+    depth,
+    unresolvedChangedCallback: undefined,
   };
 
   addProperties(obj, {
@@ -28,7 +29,8 @@ export default function EdlModel(depth) {
         obj.clips.push(clip);
         obj.zettel.push(clip);
       }
-    }
+    },
+    attachToUnresolved: callback => obj.unresolvedChangedCallback = callback
   });
 
   return obj;
