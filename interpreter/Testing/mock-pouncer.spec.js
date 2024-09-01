@@ -9,7 +9,8 @@ describe("MockPouncer", () => {
     const i = MockInterface();
     const pouncer = MockPouncer(i);
 
-    expect(i.callback).toBeTruthy();
+    expect(i.addedCallback).toBeTruthy();
+    expect(i.cancelledCallback).toBeTruthy();
   });
 
   it('adds unresolved pointers on the interface to its unresolved collection', () => {
@@ -57,6 +58,16 @@ describe("MockPouncer", () => {
     pouncer.add(LinkPointer("foo"), Link());
 
     i.request([LinkPointer("foo")]);
+
+    expect(pouncer.unresolved).toEqual([]);
+  });
+
+  it('removes a pointer from unresolved when the interface removes it', () => {
+    const i = MockInterface();
+    i.request(LinkPointer("foo"));
+    const pouncer = MockPouncer(i);
+
+    i.cancel([LinkPointer("foo")]);
 
     expect(pouncer.unresolved).toEqual([]);
   });

@@ -10,7 +10,7 @@ export default function MockPouncer(model) {
     unresolved: [...model.unresolved]
   });
 
-  function unresolvedCallback(newPointers) {
+  function unresolvedAddedCallback(newPointers) {
 
     // Update unresolved
     newPointers.forEach(n => {
@@ -24,6 +24,11 @@ export default function MockPouncer(model) {
     obj.resolve(parts);
   }
 
+  function unresolvedcancelledCallback(cancelledPointers)
+  {
+    cancelledPointers.forEach(pointer => removeFromArray(obj.unresolved, p => p.denotesSame(pointer)));
+  }
+
   addMethods(obj, {
     add: (pointer, object) => {
       obj.cache.push(Part(pointer, object));
@@ -34,7 +39,7 @@ export default function MockPouncer(model) {
     }
   });
 
-  obj.model.attachToUnresolved(unresolvedCallback);
+  obj.model.attachToUnresolved(unresolvedAddedCallback, unresolvedcancelledCallback);
 
   return obj;
 }

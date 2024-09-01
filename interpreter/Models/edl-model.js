@@ -5,7 +5,8 @@ import Zettel from "./Zettel";
 export default function EdlModel(depth) {
   const obj = {
     depth,
-    unresolvedChangedCallback: undefined,
+    unresolvedAddedCallback: undefined,
+    unresolvedRemovedCallback: undefined,
   };
 
   addProperties(obj, {
@@ -30,7 +31,10 @@ export default function EdlModel(depth) {
         obj.zettel.push(clip);
       }
     },
-    attachToUnresolved: callback => obj.unresolvedChangedCallback = callback
+    attachToUnresolved: (addedCallback, removedCallback) => {
+      obj.unresolvedAddedCallback = addedCallback;
+      obj.unresolvedRemovedCallback = removedCallback;
+    }
   });
 
   return obj;

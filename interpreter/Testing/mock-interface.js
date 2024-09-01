@@ -4,10 +4,14 @@
 
 export default function MockInterface(){
   const obj = {
-    callback: undefined,
+    addedCallback: undefined,
+    cancelledCallback: undefined,
     unresolved: [],
     resolved: [],
-    attachToUnresolved: callback => obj.callback = callback,
+    attachToUnresolved: (addedCallback, cancelledCallback) => {
+      obj.addedCallback = addedCallback;
+      obj.cancelledCallback = cancelledCallback;
+    },
     resolve: values => {
       values.forEach(({pointer, object}) => {
         removeFromArray(obj.unresolved, p => p.denotesSame(pointer));
@@ -16,7 +20,11 @@ export default function MockInterface(){
     },
     request: pointers => {
       obj.unresolved = obj.unresolved.concat(pointers);
-      if (obj.callback) { obj.callback(pointers); }
+      if (obj.addedCallback) { obj.addedCallback(pointers); }
+    },
+    cancel: pointers => {
+      pointers.forEach(pointer => removeFromArray(obj.unresolved, p => p.denotesSame(pointer)));
+      if (obj.cancelledCallback) { obj.cancelledCallback(pointers); }
     }
   };
 
