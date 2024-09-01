@@ -10,7 +10,7 @@ export default function CreateInterface(interpreter) {
     },
 
     flight: () => {
-      const model = FlightModel(0);
+      const model = FlightModel();
       interpreter.models.push(model);
       return model;
     }
