@@ -24,7 +24,7 @@ describe("TypeModel", () => {
   });
 
   it('requests resolution of a LinkPointer type', () => {
-    expect(TypeModel(LinkPointer("name")).unresolved).toEqual([LinkPointer("name")]);
+    expect(TypeModel(LinkPointer("name")).outstanding).toEqual([LinkPointer("name")]);
   });
 
   it('stops requesting resolution of the LinkPointer type when it has been resolved', () => {
@@ -32,7 +32,7 @@ describe("TypeModel", () => {
 
     model.resolve(LinkPointer("name"), Link());
 
-    expect(model.unresolved).toEqual([]);
+    expect(model.outstanding).toEqual([]);
   });
 
   it('raises an type resolved event when the type link is resolved', () => {

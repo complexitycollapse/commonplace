@@ -13,33 +13,33 @@ describe("MockPouncer", () => {
     expect(i.cancelledCallback).toBeTruthy();
   });
 
-  it('adds unresolved pointers on the interface to its unresolved collection', () => {
+  it('adds outstanding pointers on the interface to its outstanding collection', () => {
     const i = MockInterface();
     i.request(LinkPointer("foo"));
 
     const pouncer = MockPouncer(i);
 
-    expect(pouncer.unresolved).toEqual([LinkPointer("foo")]);
+    expect(pouncer.outstanding).toEqual([LinkPointer("foo")]);
   });
 
-  it('attempts to resolve an unresolved pointer when resolve is called', () => {
+  it('attempts to resolve an outstanding pointer when resolve is called', () => {
     const i = MockInterface();
     i.request(LinkPointer("foo"));    
     const pouncer = MockPouncer(i);
 
     pouncer.resolve([Part(LinkPointer("foo"), Link())]);
 
-    expect(i.unresolved).toEqual([]);
+    expect(i.outstanding).toEqual([]);
   });
 
-  it('updates the unresolved property when pointers are resolved in the interface', () => {
+  it('updates the outstanding property when pointers are resolved in the interface', () => {
     const i = MockInterface();
     i.request(LinkPointer("foo"));    
     const pouncer = MockPouncer(i);
 
     pouncer.resolve([Part(LinkPointer("foo"), Link())]);
 
-    expect(pouncer.unresolved).toEqual([]);
+    expect(pouncer.outstanding).toEqual([]);
   });
 
   it('attempts to resolve requested pointers from its cache', () => {
@@ -49,26 +49,26 @@ describe("MockPouncer", () => {
 
     i.request([LinkPointer("foo")]);
 
-    expect(i.unresolved).toEqual([]);
+    expect(i.outstanding).toEqual([]);
   });
 
-  it('doesn\'t put requested pointers in unresolved if it can satify them from the cache', () => {
+  it('doesn\'t put requested pointers in outstanding if it can satify them from the cache', () => {
     const i = MockInterface();
     const pouncer = MockPouncer(i);
     pouncer.add(LinkPointer("foo"), Link());
 
     i.request([LinkPointer("foo")]);
 
-    expect(pouncer.unresolved).toEqual([]);
+    expect(pouncer.outstanding).toEqual([]);
   });
 
-  it('removes a pointer from unresolved when the interface removes it', () => {
+  it('removes a pointer from outstanding when the interface removes it', () => {
     const i = MockInterface();
     i.request(LinkPointer("foo"));
     const pouncer = MockPouncer(i);
 
     i.cancel([LinkPointer("foo")]);
 
-    expect(pouncer.unresolved).toEqual([]);
+    expect(pouncer.outstanding).toEqual([]);
   });
 });

@@ -12,7 +12,7 @@ export default function LinkModel(depth, index) {
   addProperties(obj, {
     modelType: "link",
     ends: [],
-    unresolved: []
+    outstanding: []
   });
 
   return addMethods(obj, {

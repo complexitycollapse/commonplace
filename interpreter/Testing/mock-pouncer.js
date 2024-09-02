@@ -7,15 +7,15 @@ export default function MockPouncer(model) {
   addProperties(obj, {
     cache: [],
     model,
-    unresolved: [...model.unresolved]
+    outstanding: [...model.outstanding]
   });
 
-  function unresolvedAddedCallback(newPointers) {
+  function outstandingAddedCallback(newPointers) {
 
-    // Update unresolved
+    // Update outstanding
     newPointers.forEach(n => {
-      if (!obj.unresolved.some(p => p.denotesSame(n))) {
-        obj.unresolved.push(n);
+      if (!obj.outstanding.some(p => p.denotesSame(n))) {
+        obj.outstanding.push(n);
       }
     });
 
@@ -24,9 +24,9 @@ export default function MockPouncer(model) {
     obj.resolve(parts);
   }
 
-  function unresolvedcancelledCallback(cancelledPointers)
+  function outstandingcancelledCallback(cancelledPointers)
   {
-    cancelledPointers.forEach(pointer => removeFromArray(obj.unresolved, p => p.denotesSame(pointer)));
+    cancelledPointers.forEach(pointer => removeFromArray(obj.outstanding, p => p.denotesSame(pointer)));
   }
 
   addMethods(obj, {
@@ -34,12 +34,12 @@ export default function MockPouncer(model) {
       obj.cache.push(Part(pointer, object));
     },
     resolve: values => {
-      values.map(part => part.pointer).forEach(pointer => removeFromArray(obj.unresolved, p => p.denotesSame(pointer)));
+      values.map(part => part.pointer).forEach(pointer => removeFromArray(obj.outstanding, p => p.denotesSame(pointer)));
       model.resolve(values);
     }
   });
 
-  obj.model.attachToUnresolved(unresolvedAddedCallback, unresolvedcancelledCallback);
+  obj.model.attachToOutstanding(outstandingAddedCallback, outstandingcancelledCallback);
 
   return obj;
 }

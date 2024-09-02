@@ -7,7 +7,7 @@ export default function TypeModel(type) {
     hasType: false,
     hasStringType: false,
     hasPointerType: false,
-    unresolved: []
+    outstanding: []
   };
 
   addProperties(obj, {
@@ -15,20 +15,20 @@ export default function TypeModel(type) {
     hooks: ListMap()
   });
 
-  function updateUnresolved()
+  function updateOutstanding()
   {
-    const previous = obj.unresolved;
-    obj.unresolved = [];
+    const previous = obj.outstanding;
+    obj.outstanding = [];
 
     if (obj.type)
     {
       if (obj.hasPointerType && obj.typeLink === undefined) {
-        obj.unresolved.push(obj.type);
+        obj.outstanding.push(obj.type);
       }
     }
 
-    const newUnresolved = obj.unresolved.filter(pointer => !previous.find(p => p.denotesSame(pointer)));
-    callHook("resolution requested", { pointers: newUnresolved });
+    const newOutstanding = obj.outstanding.filter(pointer => !previous.find(p => p.denotesSame(pointer)));
+    callHook("resolution requested", { pointers: newOutstanding });
   }
 
   function callHook(type, event) {
@@ -60,7 +60,7 @@ export default function TypeModel(type) {
           obj.hasPointerType = true;
         }
       }
-      updateUnresolved();
+      updateOutstanding();
     },
     resolve: (pointer, value) => {
       let typeResolved;
@@ -69,7 +69,7 @@ export default function TypeModel(type) {
         typeResolved = true;
       }
 
-      updateUnresolved();
+      updateOutstanding();
       if (typeResolved)
       {
         callHook("resolved", { pointer, value, requirement: "type" });

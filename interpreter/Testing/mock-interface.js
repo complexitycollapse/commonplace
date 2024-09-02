@@ -6,24 +6,24 @@ export default function MockInterface(){
   const obj = {
     addedCallback: undefined,
     cancelledCallback: undefined,
-    unresolved: [],
+    outstanding: [],
     resolved: [],
-    attachToUnresolved: (addedCallback, cancelledCallback) => {
+    attachToOutstanding: (addedCallback, cancelledCallback) => {
       obj.addedCallback = addedCallback;
       obj.cancelledCallback = cancelledCallback;
     },
     resolve: values => {
       values.forEach(({pointer, object}) => {
-        removeFromArray(obj.unresolved, p => p.denotesSame(pointer));
+        removeFromArray(obj.outstanding, p => p.denotesSame(pointer));
         obj.resolved.push(object);
       });
     },
     request: pointers => {
-      obj.unresolved = obj.unresolved.concat(pointers);
+      obj.outstanding = obj.outstanding.concat(pointers);
       if (obj.addedCallback) { obj.addedCallback(pointers); }
     },
     cancel: pointers => {
-      pointers.forEach(pointer => removeFromArray(obj.unresolved, p => p.denotesSame(pointer)));
+      pointers.forEach(pointer => removeFromArray(obj.outstanding, p => p.denotesSame(pointer)));
       if (obj.cancelledCallback) { obj.cancelledCallback(pointers); }
     }
   };

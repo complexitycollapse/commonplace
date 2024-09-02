@@ -5,8 +5,8 @@ import Zettel from "./Zettel";
 export default function EdlModel(depth) {
   const obj = {
     depth,
-    unresolvedAddedCallback: undefined,
-    unresolvedRemovedCallback: undefined,
+    outstandingAddedCallback: undefined,
+    outstandingRemovedCallback: undefined,
   };
 
   addProperties(obj, {
@@ -14,7 +14,7 @@ export default function EdlModel(depth) {
     clips: [],
     links: [],
     zettel: [],
-    unresolved: []
+    outstanding: []
   });
 
   addMethods(obj, {
@@ -31,9 +31,9 @@ export default function EdlModel(depth) {
         obj.zettel.push(clip);
       }
     },
-    attachToUnresolved: (addedCallback, removedCallback) => {
-      obj.unresolvedAddedCallback = addedCallback;
-      obj.unresolvedRemovedCallback = removedCallback;
+    attachToOutstanding: (addedCallback, removedCallback) => {
+      obj.outstandingAddedCallback = addedCallback;
+      obj.outstandingRemovedCallback = removedCallback;
     }
   });
 
