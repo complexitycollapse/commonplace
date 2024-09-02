@@ -6,9 +6,9 @@ describe("interpreter", () => {
     expect(() => Interpreter()).not.throws();
   });
 
-  it("can create an EdlModel", () => {
+  it("can create an EdlBuilder", () => {
     const i = Interpreter();
-    expect(i.create().edl().modelType).toBe("edl");
+    expect(i.create().edl().builderType).toBe("edl");
   });
 
   it("sets the depth of a new edl to 0", () => {
@@ -28,6 +28,6 @@ describe("interpreter", () => {
 
     flight.addEdl(edl);
 
-    expect(flight.getModels()).toEqual([edl]);
+    expect(flight.getBuilders()).toEqual([edl]);
   });
 });

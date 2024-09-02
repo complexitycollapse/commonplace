@@ -1,8 +1,8 @@
 import { addMethods, addProperties } from "@commonplace/utils";
-import LinkModel from "./link-model";
+import LinkBuilder from "./link-builder";
 import Zettel from "./Zettel";
 
-export default function EdlModel(depth) {
+export default function EdlBuilder(depth) {
   const obj = {
     depth,
     outstandingAddedCallback: undefined,
@@ -10,7 +10,7 @@ export default function EdlModel(depth) {
   };
 
   addProperties(obj, {
-    modelType: "edl",
+    builderType: "edl",
     clips: [],
     links: [],
     zettel: [],
@@ -19,14 +19,14 @@ export default function EdlModel(depth) {
 
   addMethods(obj, {
     appendLink: () => {
-      const linkModel = LinkModel(obj.depth, obj.links.length);
-      links.push(linkModel);
-      return linkModel;
+      const linkBuilder = LinkBuilder(obj.depth, obj.links.length);
+      links.push(linkBuilder);
+      return linkBuilder;
     },
     appendClip: clip => {
       if (clip.isClip) {
         addClip(clip, obj.clips, obj.zettel);
-      } else if (clip.modelType === "edl") {
+      } else if (clip.builderType === "edl") {
         obj.clips.push(clip);
         obj.zettel.push(clip);
       }

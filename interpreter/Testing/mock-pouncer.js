@@ -1,13 +1,13 @@
 import { addMethods, addProperties } from "@commonplace/utils";
 import Part from "./part";
 
-export default function MockPouncer(model) {
+export default function MockPouncer(builder) {
   const obj = {};
 
   addProperties(obj, {
     cache: [],
-    model,
-    outstanding: [...model.outstanding]
+    builder,
+    outstanding: [...builder.outstanding]
   });
 
   function outstandingAddedCallback(newPointers) {
@@ -35,11 +35,11 @@ export default function MockPouncer(model) {
     },
     resolve: values => {
       values.map(part => part.pointer).forEach(pointer => removeFromArray(obj.outstanding, p => p.denotesSame(pointer)));
-      model.resolve(values);
+      builder.resolve(values);
     }
   });
 
-  obj.model.attachToOutstanding(outstandingAddedCallback, outstandingcancelledCallback);
+  obj.builder.attachToOutstanding(outstandingAddedCallback, outstandingcancelledCallback);
 
   return obj;
 }

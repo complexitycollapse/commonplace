@@ -1,6 +1,6 @@
 import { addMethods, addProperties, ListMap } from "@commonplace/utils";
 
-export default function TypeModel(type) {
+export default function TypeBuilder(type) {
   const obj = {
     type,
     typeLink: undefined,
@@ -11,7 +11,7 @@ export default function TypeModel(type) {
   };
 
   addProperties(obj, {
-    modelType: "type",
+    builderType: "type",
     hooks: ListMap()
   });
 

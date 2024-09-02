@@ -8,7 +8,7 @@ export default function Interpreter() {
   const createInterface = CreateInterface(obj);
 
   addProperties(obj, {
-    models: []
+    builders: []
   });
 
   return finalObject(obj, {

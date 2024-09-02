@@ -1,18 +1,18 @@
 import { addMethods, addProperties } from "@commonplace/utils";
-import LinkModel from "./link-model";
+import LinkBuilder from "./link-builder";
 
-export default function FlightModel() {
-  const obj = LinkModel();
+export default function FlightBuilder() {
+  const obj = LinkBuilder();
   addProperties(obj, {
     isFlight: true
   });
 
   addMethods(obj, {
-    addEdl: edlModel => {
+    addEdl: edlBuilder => {
       const end = obj.appendEnd("edl");
-      end.setValue(edlModel);
+      end.setValue(edlBuilder);
     },
-    getModels: () => obj.ends.filter(end => end.name === "edl" 
+    getBuilders: () => obj.ends.filter(end => end.name === "edl" 
       && end.value).map(end => end.value)
   });
 

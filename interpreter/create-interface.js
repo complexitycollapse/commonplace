@@ -1,18 +1,18 @@
-import EdlModel from "./Models/edl-model";
-import FlightModel from "./Models/flight-model";
+import EdlBuilder from "./Builders/edl-builder";
+import FlightBuilder from "./Builders/flight-builder";
 
 export default function CreateInterface(interpreter) {
   return {
     edl: () => {
-      const model = EdlModel(0);
-      interpreter.models.push(model);
-      return model;
+      const builder = EdlBuilder(0);
+      interpreter.builders.push(builder);
+      return builder;
     },
 
     flight: () => {
-      const model = FlightModel();
-      interpreter.models.push(model);
-      return model;
+      const builder = FlightBuilder();
+      interpreter.builders.push(builder);
+      return builder;
     }
   };
 }

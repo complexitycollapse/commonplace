@@ -1,6 +1,6 @@
 import { addMethods } from "@commonplace/utils";
 
-export default function EndModel(name, pointers = []) {
+export default function EndBuilder(name, pointers = []) {
   const obj = {
     name,
     pointers: [...pointers],

@@ -1,16 +1,16 @@
 import { addMethods, addProperties } from "@commonplace/utils";
-import EndModel from "./end-model";
-import TypeModel from "./type-model";
+import EndBuilder from "./end-builder";
+import TypeBuilder from "./type-builder";
 
-export default function LinkModel(depth, index) {
+export default function LinkBuilder(depth, index) {
   const obj = {
-    type: TypeModel(),
+    type: TypeBuilder(),
     depth,
     index
   };
 
   addProperties(obj, {
-    modelType: "link",
+    builderType: "link",
     ends: [],
     outstanding: []
   });
@@ -20,7 +20,7 @@ export default function LinkModel(depth, index) {
       obj.type.setType(type);
     },
     appendEnd: (name, pointers) => {
-      const end = EndModel(name, pointers);
+      const end = EndBuilder(name, pointers);
       obj.ends.push(end);
       return end;
     },
