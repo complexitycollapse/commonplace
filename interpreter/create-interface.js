@@ -1,5 +1,6 @@
 import EdlBuilder from "./Builders/edl-builder";
 import FlightBuilder from "./Builders/flight-builder";
+import LinkBuilder from "./Builders/link-builder";
 
 export default function CreateInterface(interpreter) {
   return {
@@ -11,6 +12,11 @@ export default function CreateInterface(interpreter) {
 
     flight: () => {
       const builder = FlightBuilder();
+      interpreter.builders.push(builder);
+      return builder;
+    },
+    link: () => {
+      const builder = LinkBuilder();
       interpreter.builders.push(builder);
       return builder;
     }

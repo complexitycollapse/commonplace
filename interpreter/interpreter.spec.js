@@ -30,4 +30,9 @@ describe("interpreter", () => {
 
     expect(flight.getBuilders()).toEqual([edl]);
   });
+
+  it("can create a link", () => {
+    const i = Interpreter();
+    expect(i.create().link().builderType).toBe("link");
+  });
 });
