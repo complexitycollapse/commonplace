@@ -30,26 +30,9 @@ describe("TypeBuilder", () => {
   it('stops requesting resolution of the LinkPointer type when it has been resolved', () => {
     const builder = TypeBuilder(LinkPointer("name"));
 
-    builder.resolve(LinkPointer("name"), Link());
+    builder.resolve([{pointer: LinkPointer("name"), object: Link()}]);
 
     expect(builder.outstanding).toEqual([]);
-  });
-
-  it('raises an type resolved event when the type link is resolved', () => {
-    let hookCalled;
-    const resolvedValue = Link();
-    const builder = TypeBuilder(LinkPointer("name"));
-    builder.addHook("resolved", (type, ev) => {
-      expect(type).toBe("resolved");
-      expect(ev.pointer).toEqual(LinkPointer("name"));
-      expect(ev.requirement).toBe("type");
-      expect(ev.value).toBe(resolvedValue);
-      hookCalled = true;
-    });
-
-    builder.resolve(LinkPointer("name"), resolvedValue);
-
-    expect(hookCalled).toBe(true);
   });
 
   it('sets all the type predicates to false when the type is set to undefined', () => {
@@ -85,9 +68,8 @@ describe("TypeBuilder", () => {
   it('raises an event to request resolution when the type is set to a LinkPointer', () => {
     let hookCalled;
     const builder = TypeBuilder();
-    builder.addHook("resolution requested", (type, ev) => {
-      expect(type).toBe("resolution requested");
-      expect(ev.pointers).toEqual([LinkPointer("name")]);
+    builder.attachToOutstanding(pointers => {
+      expect(pointers).toEqual([LinkPointer("name")]);
       hookCalled = true;
     });
 

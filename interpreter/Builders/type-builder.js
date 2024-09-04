@@ -1,4 +1,4 @@
-import { addMethods, addProperties, ListMap } from "@commonplace/utils";
+import { addMethods, addProperties } from "@commonplace/utils";
 
 export default function TypeBuilder(type) {
   const obj = {
@@ -7,12 +7,13 @@ export default function TypeBuilder(type) {
     hasType: false,
     hasStringType: false,
     hasPointerType: false,
-    outstanding: []
+    outstanding: [],
+    outstandingAddedCallback: undefined,
+    outstandingCancelledCallback: undefined,
   };
 
   addProperties(obj, {
-    builderType: "type",
-    hooks: ListMap()
+    builderType: "type"
   });
 
   function updateOutstanding()
@@ -20,27 +21,13 @@ export default function TypeBuilder(type) {
     const previous = obj.outstanding;
     obj.outstanding = [];
 
-    if (obj.type)
+    if (obj.hasPointerType && !obj.typeLink)
     {
-      if (obj.hasPointerType && obj.typeLink === undefined) {
         obj.outstanding.push(obj.type);
-      }
     }
 
     const newOutstanding = obj.outstanding.filter(pointer => !previous.find(p => p.denotesSame(pointer)));
-    callHook("resolution requested", { pointers: newOutstanding });
-  }
-
-  function callHook(type, event) {
-    const hooks = obj.hooks.get(type);
-    hooks.forEach(hook => {
-      try {
-        hook(type, event);
-      }
-      catch {
-
-      }
-    });
+    if (obj.outstandingAddedCallback) { obj.outstandingAddedCallback(newOutstanding); }
   }
 
   addMethods(obj, {
@@ -62,21 +49,18 @@ export default function TypeBuilder(type) {
       }
       updateOutstanding();
     },
-    resolve: (pointer, value) => {
-      let typeResolved;
-      if (pointer.denotesSame(type)) {
-        obj.typeLink = value;
-        typeResolved = true;
-      }
+    resolve: values => {
+      values.forEach(({pointer, object}) => {
+        if (!obj.typeLink && pointer.denotesSame(type)) {
+          obj.typeLink = object;
+          updateOutstanding();
+        }
+      });
 
-      updateOutstanding();
-      if (typeResolved)
-      {
-        callHook("resolved", { pointer, value, requirement: "type" });
-      }
     },
-    addHook: (type, handler) => {
-      obj.hooks.push(type, handler);
+    attachToOutstanding: (addedCallback, cancelledCallback) => {
+      obj.outstandingAddedCallback = addedCallback;
+      obj.outstandingCancelledCallback = cancelledCallback;
     }
   });
 
