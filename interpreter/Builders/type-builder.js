@@ -51,7 +51,7 @@ export default function TypeBuilder(type) {
     },
     resolve: values => {
       values.forEach(({pointer, object}) => {
-        if (!obj.typeLink && pointer.denotesSame(type)) {
+        if (!obj.typeLink && pointer.denotesSame(obj.type)) {
           obj.typeLink = object;
           updateOutstanding();
         }

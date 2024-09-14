@@ -7,7 +7,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "An attempt at building a true hypertext system.",
   "private": true,
   "dependencies": {
     "cross-env": "^7.0.3",

@@ -19,7 +19,7 @@ export default function EdlBuilder(depth) {
 
   addMethods(obj, {
     appendLink: () => {
-      const linkBuilder = LinkBuilder(obj.depth, obj.links.length);
+      const linkBuilder = LinkBuilder({ depth: obj.depth, index: obj.links.length });
       links.push(linkBuilder);
       return linkBuilder;
     },

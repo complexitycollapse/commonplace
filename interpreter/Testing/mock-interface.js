@@ -2,7 +2,7 @@
  * This is purely for testing the MockPouncer.
  */
 
-export default function MockInterface(){
+export default function MockInterface() {
   const obj = {
     addedCallback: undefined,
     cancelledCallback: undefined,
