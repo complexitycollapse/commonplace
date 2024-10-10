@@ -105,7 +105,7 @@ function routeToOrder(route) {
       return 9;
     default:
       // This is an error so relegate it to the bottom
-      return 8;
+      return 10;
   }
 }
 
